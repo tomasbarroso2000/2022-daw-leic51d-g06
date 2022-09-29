@@ -11,12 +11,14 @@ import pt.isel.leic.daw.explodingbattleships.services.comp.RankingServices
  * @property gameServices the games section
  * @property playerServices the players section
  * @property rankingServices the ranking section
- * @property systemInfo the system's information
  */
 class Services(data: Data) {
     val gameServices = GameServices(data)
     val playerServices = PlayerServices(data)
     val rankingServices = RankingServices(data)
 
+    /**
+     * Get home information
+     */
     fun getHome() = Home()
 }

@@ -1,5 +1,7 @@
 begin transaction;
 
+delete from lobby;
+
 delete from ship_type;
 
 delete from ship;

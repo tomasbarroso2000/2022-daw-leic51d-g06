@@ -39,4 +39,25 @@ data class EnterLobbyOutput(
     val entered: Boolean
 )
 
+data class Ship(
+    val name: String?,
+    val square: String?,
+    val orientation: String?,
+)
+
+data class Layout(
+    val gameId: Int?,
+    val token: String?,
+    val ships: List<Ship>?
+)
+
+data class Game(
+    val id: Int,
+    val width: Int,
+    val height: Int,
+    val state: String,
+    val player1: Int,
+    val player2: Int
+)
+
 

@@ -3,7 +3,7 @@ package pt.isel.leic.daw.explodingbattleships.data.comp.ranking
 import org.jdbi.v3.core.kotlin.mapTo
 import pt.isel.leic.daw.explodingbattleships.data.comp.transactions.Transaction
 import pt.isel.leic.daw.explodingbattleships.data.comp.transactions.TransactionDataDb
-import pt.isel.leic.daw.explodingbattleships.data.comp.utils.toPlayer
+import pt.isel.leic.daw.explodingbattleships.data.comp.utils.processReceivedList
 import pt.isel.leic.daw.explodingbattleships.domain.ListOfData
 import pt.isel.leic.daw.explodingbattleships.domain.Player
 
@@ -17,14 +17,7 @@ class RankingDataDb : RankingData {
                     .bind("skip", skip)
                     .bind("limit", limit + 1)
                     .mapTo<Player>().list()
-            var found = 0
-            foundPlayers.forEach {
-                found++
-                if (found <= limit)
-                    players.add(it)
-                else
-                    hasMore = true
-            }
+            hasMore = processReceivedList(foundPlayers, players, limit)
         }
         return ListOfData(players, hasMore)
     }

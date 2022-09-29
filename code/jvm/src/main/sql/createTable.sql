@@ -1,3 +1,4 @@
+abort;
 begin transaction;
 
 create table if not exists player(
@@ -42,5 +43,13 @@ create table if not exists ship_type(
     stype_name varchar(20) primary key check (stype_name in ('carrier', 'battleship', 'submarine', 'cruiser', 'destroyer')),
     ship_size integer not null
 );
+
+create table if not exists lobby(
+	player integer references player(id) primary key;
+	lobby_time timestamp not null;
+	width integer not null;
+	height integer not null;
+);
+
 
 commit transaction;

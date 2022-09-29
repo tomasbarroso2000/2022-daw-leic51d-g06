@@ -2,6 +2,7 @@ package pt.isel.leic.daw.explodingbattleships.services.comp.utils
 
 import pt.isel.leic.daw.explodingbattleships.data.Data
 import pt.isel.leic.daw.explodingbattleships.data.comp.transactions.Transaction
+import pt.isel.leic.daw.explodingbattleships.domain.Ship
 import java.util.regex.Pattern
 
 /**
@@ -74,4 +75,10 @@ fun checkLimitAndSkip(limit: Int, skip: Int) {
         throw AppException("Invalid limit", AppExceptionStatus.BAD_REQUEST)
     if (skip < 0)
         throw AppException("Invalid skip", AppExceptionStatus.BAD_REQUEST)
+}
+
+private fun checkShipLayout(ships: List<Ship>, width: Int, height: Int) {
+    if (ships.size != 5)
+        throw AppException("Can only place 5 ships", AppExceptionStatus.BAD_REQUEST)
+
 }

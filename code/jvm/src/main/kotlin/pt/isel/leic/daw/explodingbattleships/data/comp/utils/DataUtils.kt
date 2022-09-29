@@ -2,3 +2,22 @@ package pt.isel.leic.daw.explodingbattleships.data.comp.utils
 
 fun String.isPasswordInvalid(): Boolean =
     !any { it.isDigit() } || !any { it.isUpperCase() }
+
+/**
+ * Processes the list received from the database and returns if there were more items in the result set
+ * @param receivedList the list received from the database
+ * @param finalList the final to be return to the calling function
+ * @param limit the maximum size of the final list
+ * @return a [Boolean] if there were more items in the result set
+ */
+fun <T> processReceivedList(receivedList: List<T>, finalList: MutableList<T>, limit: Int): Boolean {
+    var found = 0
+    receivedList.forEach {
+        found++
+        if (found <= limit)
+            finalList.add(it)
+        else
+            return true
+    }
+    return false
+}
