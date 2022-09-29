@@ -104,7 +104,7 @@ fun checkShipLayout(ships: List<Ship>, width: Int, height: Int) {
 private fun checkShipsValid(ships: List<Ship>) =
     ships.map { it.name }.containsAll(ShipType.values().map { it.shipName })
 
-private fun squareInBoard(square: Square?, width: Int, height: Int): Boolean {
+fun squareInBoard(square: Square?, width: Int, height: Int): Boolean {
     if (square == null) return false
     val lastRow = square.row?.plus(height)?.minus(1) ?: return false
     val lastColumn = square.column?.plus(width)?.minus(1) ?: return false

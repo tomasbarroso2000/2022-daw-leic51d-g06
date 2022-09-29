@@ -6,7 +6,9 @@ import pt.isel.leic.daw.explodingbattleships.data.comp.transactions.Transaction
 import pt.isel.leic.daw.explodingbattleships.data.comp.transactions.TransactionDataDb
 import pt.isel.leic.daw.explodingbattleships.domain.Game
 import pt.isel.leic.daw.explodingbattleships.domain.Ship
+import pt.isel.leic.daw.explodingbattleships.domain.Square
 import pt.isel.leic.daw.explodingbattleships.domain.getString
+import java.time.LocalDate
 
 class GameDataDb : GameData {
     override fun getNumberOfPlayedGames(transaction: Transaction): Int {
@@ -66,5 +68,19 @@ class GameDataDb : GameData {
 
     override fun enemyFleetState(transaction: Transaction) {
         TODO("Not yet implemented")
+    }
+
+    override fun squareHit(transaction: Transaction, square: Square, hitTimestamp: LocalDate, playerId: Int, gameId: Int) : Boolean {
+        var success = false
+        (transaction as TransactionDataDb).withHandle { handle ->
+            handle.createUpdate("insert into hit values (:square, :hitTimestamp, :playerId, :gameId)")
+                .bind("square", square.getString())
+                .bind("hitTimestamp", hitTimestamp)
+                .bind("playerId", playerId)
+                .bind("gameId", gameId)
+                .execute()
+            success = true
+        }
+        return success
     }
 }

@@ -78,4 +78,10 @@ enum class ShipType(val shipName: String, val size: Int) {
     DESTROYER("destroyer", 2)
 }
 
-
+data class Hit(
+    val token: String?,
+    val square: Square?,
+    val hit_timestamp: String?,
+    val player: Int?,
+    val gameId: Int?
+)
