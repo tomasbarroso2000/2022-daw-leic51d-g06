@@ -1,6 +1,7 @@
 package pt.isel.leic.daw.explodingbattleships.services.comp
 
 import pt.isel.leic.daw.explodingbattleships.data.Data
+import pt.isel.leic.daw.explodingbattleships.data.DataDb
 import pt.isel.leic.daw.explodingbattleships.domain.ListOfData
 import pt.isel.leic.daw.explodingbattleships.domain.Player
 import pt.isel.leic.daw.explodingbattleships.services.comp.utils.checkLimitAndSkip
@@ -11,4 +12,8 @@ class RankingServices(private val data: Data) {
         checkLimitAndSkip(limit, skip)
         data.rankingData.getRankings(transaction, limit, skip)
     }
+}
+
+fun main() {
+    println(RankingServices(DataDb()).getRankings(10, 0))
 }

@@ -122,7 +122,7 @@ private fun checkShipSquares(
     occupiedSquares: MutableSet<Square?>,
     nextShip: Square.() -> Square
 ) {
-    val shipSize = ShipType.values().find { it.name == ship.name }?.size ?: throw IllegalStateException()
+    val shipSize = ShipType.values().find { it.shipName == ship.name }?.size ?: throw IllegalStateException()
     var currentSquare = ship.square
     for (i in 0 until shipSize) {
         if (occupiedSquares.contains(currentSquare))

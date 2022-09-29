@@ -12,7 +12,7 @@ class PlayerDataDb : PlayerData {
     override fun getPlayerIdByToken(transaction: Transaction, token: String): Int? {
         var id: Int? = null
         (transaction as TransactionDataDb).withHandle { handle ->
-            id = handle.select("select player from token where token = :token")
+            id = handle.select("select player from token where token_ver = :token")
                     .bind("token", token)
                     .mapTo<Int>().first()
         }
@@ -22,7 +22,7 @@ class PlayerDataDb : PlayerData {
     override fun createPlayer(transaction: Transaction, name: String, email: String, password: Int): PlayerOutput? {
         var playerOutput: PlayerOutput? = null
         (transaction as TransactionDataDb).withHandle { handle ->
-            val generatedId = handle.createUpdate("insert into player (name, email, score, password) values (:name, :email, 0, :password)")
+            val generatedId = handle.createUpdate("insert into player (name, email, score, password_ver) values (:name, :email, 0, :password)")
                     .bind("name", name)
                     .bind("email", email)
                     .bind("password", password)

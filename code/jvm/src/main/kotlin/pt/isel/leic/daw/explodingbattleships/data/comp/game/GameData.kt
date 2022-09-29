@@ -2,6 +2,7 @@ package pt.isel.leic.daw.explodingbattleships.data.comp.game
 
 import pt.isel.leic.daw.explodingbattleships.data.comp.transactions.Transaction
 import pt.isel.leic.daw.explodingbattleships.domain.Game
+import pt.isel.leic.daw.explodingbattleships.domain.Ship
 
 interface GameData {
     fun getNumberOfPlayedGames(transaction: Transaction): Int
@@ -10,7 +11,7 @@ interface GameData {
 
     fun getGame(transaction: Transaction, gameId: Int): Game?
 
-    fun defineLayout(transaction: Transaction) // TODO: add parameters
+    fun defineLayout(transaction: Transaction, gameId: Int, playerId: Int, ships: List<Ship>): Boolean
 
     fun sendShots(transaction: Transaction) // TODO: add parameters
 

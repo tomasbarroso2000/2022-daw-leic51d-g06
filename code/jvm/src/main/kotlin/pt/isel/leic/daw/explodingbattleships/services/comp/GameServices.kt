@@ -1,8 +1,10 @@
 package pt.isel.leic.daw.explodingbattleships.services.comp
 
 import pt.isel.leic.daw.explodingbattleships.data.Data
+import pt.isel.leic.daw.explodingbattleships.data.DataDb
 import pt.isel.leic.daw.explodingbattleships.domain.Layout
 import pt.isel.leic.daw.explodingbattleships.domain.Ship
+import pt.isel.leic.daw.explodingbattleships.domain.Square
 import pt.isel.leic.daw.explodingbattleships.services.comp.utils.AppException
 import pt.isel.leic.daw.explodingbattleships.services.comp.utils.AppExceptionStatus
 import pt.isel.leic.daw.explodingbattleships.services.comp.utils.checkShipLayout
@@ -36,6 +38,19 @@ class GameServices(private val data: Data) {
         if (layout.ships == null)
             throw AppException("No ships provided", AppExceptionStatus.BAD_REQUEST)
         checkShipLayout(layout.ships, game.width, game.height)
-        // TODO: Call data methods
+        data.gameData.defineLayout(transaction, layout.gameId, playerId, layout.ships)
     }
+}
+
+fun main() {
+    val layout = Layout(
+        1, "123", listOf(
+            Ship("carrier", Square('a', 1), "horizontal"),
+            Ship("battleship", Square('b', 1), "vertical"),
+            Ship("submarine", Square('b', 2), "horizontal"),
+            Ship("cruiser", Square('c', 2), "horizontal"),
+            Ship("destroyer", Square('d', 2), "vertical")
+        )
+    )
+    GameServices(DataDb()).defineLayout(layout)
 }

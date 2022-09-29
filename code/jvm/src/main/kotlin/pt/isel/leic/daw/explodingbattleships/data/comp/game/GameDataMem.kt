@@ -3,6 +3,7 @@ package pt.isel.leic.daw.explodingbattleships.data.comp.game
 import pt.isel.leic.daw.explodingbattleships.data.comp.transactions.Transaction
 import pt.isel.leic.daw.explodingbattleships.data.comp.utils.MockData
 import pt.isel.leic.daw.explodingbattleships.domain.Game
+import pt.isel.leic.daw.explodingbattleships.domain.Ship
 
 class GameDataMem(private val mockData: MockData) : GameData {
     override fun getNumberOfPlayedGames(transaction: Transaction): Int = mockData.games.size
@@ -14,7 +15,7 @@ class GameDataMem(private val mockData: MockData) : GameData {
         TODO("Not yet implemented")
     }
 
-    override fun defineLayout(transaction: Transaction) {
+    override fun defineLayout(transaction: Transaction, gameId: Int, playerId: Int, ships: List<Ship>): Boolean {
         TODO("Not yet implemented")
     }
 
