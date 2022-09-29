@@ -39,9 +39,19 @@ data class EnterLobbyOutput(
     val entered: Boolean
 )
 
+data class Square(
+    val row: Char?,
+    val column: Int?
+)
+
+fun Square.down() = Square(row?.plus(1), column)
+fun Square.right() = Square(row, column?.plus(1))
+
+fun Square?.getString() = "${this?.row}${this?.column}"
+
 data class Ship(
     val name: String?,
-    val square: String?,
+    val square: Square?,
     val orientation: String?,
 )
 
@@ -59,5 +69,13 @@ data class Game(
     val player1: Int,
     val player2: Int
 )
+
+enum class ShipType(val shipName: String, val size: Int) {
+    CARRIER("carrier", 5),
+    BATTLESHIP("battleship", 4),
+    CRUISER("cruiser", 3),
+    SUBMARINE("submarine", 3),
+    DESTROYER("destroyer", 2)
+}
 
 

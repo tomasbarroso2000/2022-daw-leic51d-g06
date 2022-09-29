@@ -5,6 +5,7 @@ import pt.isel.leic.daw.explodingbattleships.domain.Layout
 import pt.isel.leic.daw.explodingbattleships.domain.Ship
 import pt.isel.leic.daw.explodingbattleships.services.comp.utils.AppException
 import pt.isel.leic.daw.explodingbattleships.services.comp.utils.AppExceptionStatus
+import pt.isel.leic.daw.explodingbattleships.services.comp.utils.checkShipLayout
 import pt.isel.leic.daw.explodingbattleships.services.comp.utils.doService
 
 class GameServices(private val data: Data) {
@@ -35,5 +36,6 @@ class GameServices(private val data: Data) {
         if (layout.ships == null)
             throw AppException("No ships provided", AppExceptionStatus.BAD_REQUEST)
         checkShipLayout(layout.ships, game.width, game.height)
+        // TODO: Call data methods
     }
 }
