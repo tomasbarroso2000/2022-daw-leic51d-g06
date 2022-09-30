@@ -4,6 +4,8 @@ import pt.isel.leic.daw.explodingbattleships.data.comp.transactions.Transaction
 import pt.isel.leic.daw.explodingbattleships.data.comp.utils.MockData
 import pt.isel.leic.daw.explodingbattleships.domain.Game
 import pt.isel.leic.daw.explodingbattleships.domain.Ship
+import pt.isel.leic.daw.explodingbattleships.domain.Square
+import java.time.LocalDate
 
 class GameDataMem(private val mockData: MockData) : GameData {
     override fun getNumberOfPlayedGames(transaction: Transaction): Int = mockData.games.size
@@ -19,7 +21,7 @@ class GameDataMem(private val mockData: MockData) : GameData {
         TODO("Not yet implemented")
     }
 
-    override fun sendShots(transaction: Transaction) {
+    override fun sendHits(transaction: Transaction, gameId: Int, playerId: Int, squares: List<Square>): Boolean {
         TODO("Not yet implemented")
     }
 
@@ -28,6 +30,10 @@ class GameDataMem(private val mockData: MockData) : GameData {
     }
 
     override fun enemyFleetState(transaction: Transaction) {
+        TODO("Not yet implemented")
+    }
+
+    override fun hitSquares(transaction: Transaction, gameId: Int, playerId: Int): List<Square>? {
         TODO("Not yet implemented")
     }
 }

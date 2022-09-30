@@ -4,7 +4,6 @@ import pt.isel.leic.daw.explodingbattleships.data.comp.transactions.Transaction
 import pt.isel.leic.daw.explodingbattleships.domain.Game
 import pt.isel.leic.daw.explodingbattleships.domain.Ship
 import pt.isel.leic.daw.explodingbattleships.domain.Square
-import java.time.LocalDate
 
 interface GameData {
     fun getNumberOfPlayedGames(transaction: Transaction): Int
@@ -15,11 +14,11 @@ interface GameData {
 
     fun defineLayout(transaction: Transaction, gameId: Int, playerId: Int, ships: List<Ship>): Boolean
 
-    fun sendShots(transaction: Transaction) // TODO: add parameters
+    fun sendHits(transaction: Transaction, gameId: Int, playerId: Int, squares: List<Square>): Boolean
 
     fun playerFleetState(transaction: Transaction) // TODO: add parameters
 
     fun enemyFleetState(transaction: Transaction) // TODO: add parameters
 
-    fun squareHit(transaction: Transaction, square: Square, hitTimestamp: LocalDate, playerId: Int, gameId: Int) : Boolean
+    fun hitSquares(transaction: Transaction, gameId: Int, playerId: Int): List<Square>?
 }

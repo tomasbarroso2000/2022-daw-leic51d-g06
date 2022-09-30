@@ -17,6 +17,7 @@ create table if not exists game(
     id serial primary key,
     width integer not null check (width >= 10),
     height integer not null check (height >= 10),
+    hits_per_round integer not null check (hits_per_round >= 1),
     state varchar(20) not null check (state in ('layout_definition', 'shooting', 'completed')),
     player1 integer not null references player(id),
     player2 integer not null references player(id),
@@ -50,8 +51,9 @@ create table if not exists ship(
 create table if not exists lobby(
 	player integer references player(id) primary key,
 	lobby_time timestamp not null,
-	width integer not null,
-	height integer not null
+	width integer not null check (width >= 10),
+	height integer not null check (height >= 10),
+	hits_per_round integer not null check (lobby.hits_per_round >= 1)
 );
 
 commit transaction;

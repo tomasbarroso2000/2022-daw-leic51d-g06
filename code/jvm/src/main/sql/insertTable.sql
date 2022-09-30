@@ -8,8 +8,8 @@ insert into player (id, name, email, score, password_ver) values
 insert into token (token_ver, player) values
     ('123', 1);
 
-insert into game (id, width, height, state, player1, player2, curr_player) values
-    (1, 10, 10, 'layout_definition', 1, 2, 1);
+insert into game (id, width, height, hits_per_round, state, player1, player2, curr_player) values
+    (1, 10, 10, 1, 'shooting', 1, 2, 1);
 
 insert into ship_type values
     ('carrier', 5),

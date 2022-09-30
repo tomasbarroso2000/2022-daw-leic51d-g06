@@ -8,6 +8,7 @@ import pt.isel.leic.daw.explodingbattleships.domain.Game
 import pt.isel.leic.daw.explodingbattleships.domain.Ship
 import pt.isel.leic.daw.explodingbattleships.domain.Square
 import pt.isel.leic.daw.explodingbattleships.domain.getString
+import pt.isel.leic.daw.explodingbattleships.domain.toSquare
 import java.time.LocalDate
 
 class GameDataDb : GameData {
@@ -33,9 +34,9 @@ class GameDataDb : GameData {
     override fun getGame(transaction: Transaction, gameId: Int): Game? {
         var game: Game? = null
         (transaction as TransactionDataDb).withHandle { handle ->
-            game = handle.createQuery("select id, width, height, state, player1, player2 from game where id = :id")
+            game = handle.createQuery("select * from game where id = :id")
                 .bind("id", gameId)
-                .mapTo(Game::class.java).list().first()
+                .mapTo<Game>().first()
         }
         return game
     }
@@ -58,8 +59,19 @@ class GameDataDb : GameData {
 
     }
 
-    override fun sendShots(transaction: Transaction) {
-        TODO("Not yet implemented")
+    override fun sendHits(transaction: Transaction, gameId: Int, playerId: Int, squares: List<Square>): Boolean {
+        var success = false
+        (transaction as TransactionDataDb).withHandle { handle ->
+            squares.forEach { square ->
+                handle.createUpdate("insert into hit values (:square, now(), :playerId, :gameId)")
+                    .bind("square", square.getString())
+                    .bind("playerId", playerId)
+                    .bind("gameId", gameId)
+                    .execute()
+            }
+            success = true
+        }
+        return success
     }
 
     override fun playerFleetState(transaction: Transaction) {
@@ -70,17 +82,14 @@ class GameDataDb : GameData {
         TODO("Not yet implemented")
     }
 
-    override fun squareHit(transaction: Transaction, square: Square, hitTimestamp: LocalDate, playerId: Int, gameId: Int) : Boolean {
-        var success = false
+    override fun hitSquares(transaction: Transaction, gameId: Int, playerId: Int): List<Square>? {
+        var squares: List<Square>? = null
         (transaction as TransactionDataDb).withHandle { handle ->
-            handle.createUpdate("insert into hit values (:square, :hitTimestamp, :playerId, :gameId)")
-                .bind("square", square.getString())
-                .bind("hitTimestamp", hitTimestamp)
-                .bind("playerId", playerId)
+            squares = handle.createQuery("select square from hit where game = :gameId and player = :playerId")
                 .bind("gameId", gameId)
-                .execute()
-            success = true
+                .bind("playerId", playerId)
+                .mapTo<String>().list().map { it.toSquare() }
         }
-        return success
+        return squares
     }
 }

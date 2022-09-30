@@ -126,9 +126,9 @@ private fun checkShipSquares(
     var currentSquare = ship.square
     for (i in 0 until shipSize) {
         if (occupiedSquares.contains(currentSquare))
-            throw AppException("Square already occupied on ${currentSquare.getString()}")
+            throw AppException("Square already occupied on ${currentSquare.getString()}", AppExceptionStatus.BAD_REQUEST)
         if (!squareInBoard(currentSquare, width, height))
-            throw AppException("Invalid square on ${currentSquare.getString()}")
+            throw AppException("Invalid square on ${currentSquare.getString()}", AppExceptionStatus.BAD_REQUEST)
         occupiedSquares.add(currentSquare)
         currentSquare = currentSquare?.nextShip()
     }

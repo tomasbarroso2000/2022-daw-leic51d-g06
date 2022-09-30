@@ -49,6 +49,8 @@ fun Square.right() = Square(row, column?.plus(1))
 
 fun Square?.getString() = "${this?.row}${this?.column}"
 
+fun String.toSquare() = Square(first(), subSequence(1, lastIndex).toString().toInt())
+
 data class Ship(
     val name: String?,
     val square: Square?,
@@ -56,8 +58,8 @@ data class Ship(
 )
 
 data class Layout(
-    val gameId: Int?,
     val token: String?,
+    val gameId: Int?,
     val ships: List<Ship>?
 )
 
@@ -65,10 +67,14 @@ data class Game(
     val id: Int,
     val width: Int,
     val height: Int,
+    val hitsPerRound: Int,
     val state: String,
     val player1: Int,
-    val player2: Int
+    val player2: Int,
+    val currPlayer: Int
 )
+
+fun Game.otherPlayer() = if (currPlayer == player1) player2 else player1
 
 enum class ShipType(val shipName: String, val size: Int) {
     CARRIER("carrier", 5),
@@ -78,10 +84,8 @@ enum class ShipType(val shipName: String, val size: Int) {
     DESTROYER("destroyer", 2)
 }
 
-data class Hit(
+data class Hits(
     val token: String?,
-    val square: Square?,
-    val hit_timestamp: String?,
-    val player: Int?,
-    val gameId: Int?
+    val gameId: Int?,
+    val squares: List<Square>?
 )
