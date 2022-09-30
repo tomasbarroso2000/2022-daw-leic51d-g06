@@ -11,6 +11,11 @@ import pt.isel.leic.daw.explodingbattleships.domain.down
 import pt.isel.leic.daw.explodingbattleships.domain.getString
 import pt.isel.leic.daw.explodingbattleships.domain.right
 
+/**
+ * Throws an [AppException] if the undesired condition is verified
+ * @param undesiredCondition the undesired condition
+ * @param errorMessage the error message to be thrown
+ */
 fun checkOrThrow(undesiredCondition: Boolean, errorMessage: String) {
     if (undesiredCondition)
         throw AppException(errorMessage, AppExceptionStatus.BAD_REQUEST)
@@ -42,9 +47,20 @@ fun checkShipLayout(ships: List<Ship>, width: Int, height: Int) {
     }
 }
 
+/**
+ * Checks if a list of ships is a valid one
+ * @param ships the list of ships
+ * @return true if the list is valid
+ */
 private fun shipsValid(ships: List<Ship>) =
     ships.map { it.name }.containsAll(ShipType.values().map { it.shipName })
 
+/**
+ * Checks if a square is within a board
+ * @param square the square in question
+ * @param width the width of the board
+ * @param height the height of the board
+ */
 fun squareInBoard(square: Square?, width: Int, height: Int): Boolean {
     if (square == null) return false
     val lastRow = square.row?.plus(height)?.minus(1) ?: return false
@@ -56,6 +72,14 @@ fun squareInBoard(square: Square?, width: Int, height: Int): Boolean {
     return true
 }
 
+/**
+ * Validates the squares of a [Ship]
+ * @param ship the [Ship]
+ * @param width the width of the board
+ * @param height the height of the board
+ * @param occupiedSquares the occupied squares
+ * @param nextSquare the function to calculate the next square
+ */
 private fun validateShipSquares(ship: Ship, width: Int, height: Int, occupiedSquares: MutableSet<Square?>, nextSquare: NextSquare) {
     val shipSize = ShipType.values().find { it.shipName == ship.name }?.size
         ?: throw IllegalStateException("No ship found with the name ${ship.name}")
@@ -68,6 +92,13 @@ private fun validateShipSquares(ship: Ship, width: Int, height: Int, occupiedSqu
     }
 }
 
+/**
+ * Computes a player id through a token
+ * @param transaction the current transaction
+ * @param token the user token
+ * @param data the [Data] module
+ * @return the player id
+ */
 fun computePlayerId(transaction: Transaction, token: String?, data: Data): Int {
     if (token.isNullOrBlank())
         throw AppException("No token provided", AppExceptionStatus.UNAUTHORIZED)
