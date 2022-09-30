@@ -1,15 +1,18 @@
-package pt.isel.leic.daw.explodingbattleships.data.comp.player
+package pt.isel.leic.daw.explodingbattleships.data.comp.players
 
 import org.jdbi.v3.core.kotlin.mapTo
 import pt.isel.leic.daw.explodingbattleships.data.comp.transactions.Transaction
 import pt.isel.leic.daw.explodingbattleships.data.comp.transactions.TransactionDataDb
+import pt.isel.leic.daw.explodingbattleships.data.comp.utils.processReceivedList
 import pt.isel.leic.daw.explodingbattleships.domain.EnterLobbyOutput
+import pt.isel.leic.daw.explodingbattleships.domain.ListOfData
+import pt.isel.leic.daw.explodingbattleships.domain.Player
 import pt.isel.leic.daw.explodingbattleships.domain.PlayerOutput
 import pt.isel.leic.daw.explodingbattleships.domain.TokenOutput
 import java.util.UUID
 
-class PlayerDataDb : PlayerData {
-    override fun getPlayerIdByToken(transaction: Transaction, token: String): Int? {
+class PlayersDataDb : PlayersData {
+    override fun getPlayerIdFromToken(transaction: Transaction, token: String): Int? {
         var id: Int? = null
         (transaction as TransactionDataDb).withHandle { handle ->
             id = handle.select("select player from token where token_ver = :token")
@@ -46,6 +49,20 @@ class PlayerDataDb : PlayerData {
             tokenOutput = TokenOutput(token)
         }
         return tokenOutput
+    }
+
+    override fun getRankings(transaction: Transaction, limit: Int, skip: Int): ListOfData<Player> {
+        val players = mutableListOf<Player>()
+        var hasMore = false
+        (transaction as TransactionDataDb).withHandle { handle ->
+            val foundPlayers  =
+                handle.createQuery("select id, name, score from player order by score desc offset :skip limit :limit")
+                    .bind("skip", skip)
+                    .bind("limit", limit + 1)
+                    .mapTo<Player>().list()
+            hasMore = processReceivedList(foundPlayers, players, limit)
+        }
+        return ListOfData(players, hasMore)
     }
 
     override fun enterLobby(transaction: Transaction, playerId: Int): EnterLobbyOutput? {

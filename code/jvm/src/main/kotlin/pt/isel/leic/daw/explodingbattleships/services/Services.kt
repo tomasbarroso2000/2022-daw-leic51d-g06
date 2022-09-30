@@ -2,20 +2,20 @@ package pt.isel.leic.daw.explodingbattleships.services
 
 import pt.isel.leic.daw.explodingbattleships.data.Data
 import pt.isel.leic.daw.explodingbattleships.domain.Home
-import pt.isel.leic.daw.explodingbattleships.services.comp.GameServices
-import pt.isel.leic.daw.explodingbattleships.services.comp.PlayerServices
-import pt.isel.leic.daw.explodingbattleships.services.comp.RankingServices
+import pt.isel.leic.daw.explodingbattleships.services.comp.AuthenticatedServices
+import pt.isel.leic.daw.explodingbattleships.services.comp.InGameServices
+import pt.isel.leic.daw.explodingbattleships.services.comp.UnauthenticatedServices
 
 /**
  * Represents the services module of the app
- * @property gameServices the games section
- * @property playerServices the players section
- * @property rankingServices the ranking section
+ * @property inGameServices the in-game section
+ * @property authenticatedServices the authentication-protected section
+ * @property unauthenticatedServices the unprotected section
  */
 class Services(data: Data) {
-    val gameServices = GameServices(data)
-    val playerServices = PlayerServices(data)
-    val rankingServices = RankingServices(data)
+    val inGameServices = InGameServices(data)
+    val authenticatedServices = AuthenticatedServices(data)
+    val unauthenticatedServices = UnauthenticatedServices(data)
 
     /**
      * Get home information

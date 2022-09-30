@@ -39,18 +39,6 @@ data class EnterLobbyOutput(
     val entered: Boolean
 )
 
-data class Square(
-    val row: Char?,
-    val column: Int?
-)
-
-fun Square.down() = Square(row?.plus(1), column)
-fun Square.right() = Square(row, column?.plus(1))
-
-fun Square?.getString() = "${this?.row}${this?.column}"
-
-fun String.toSquare() = Square(first(), subSequence(1, lastIndex).toString().toInt())
-
 data class Ship(
     val name: String?,
     val square: Square?,
@@ -58,7 +46,6 @@ data class Ship(
 )
 
 data class Layout(
-    val token: String?,
     val gameId: Int?,
     val ships: List<Ship>?
 )
@@ -85,7 +72,12 @@ enum class ShipType(val shipName: String, val size: Int) {
 }
 
 data class Hits(
-    val token: String?,
     val gameId: Int?,
     val squares: List<Square>?
+)
+
+data class HitOutcome(
+    val square: Square,
+    val hit: Boolean,
+    val destroyedShip: String?
 )

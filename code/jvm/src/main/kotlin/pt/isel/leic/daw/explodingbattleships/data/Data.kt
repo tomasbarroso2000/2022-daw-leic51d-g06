@@ -1,16 +1,14 @@
 package pt.isel.leic.daw.explodingbattleships.data
 
-import org.jdbi.v3.core.Jdbi
-import pt.isel.leic.daw.explodingbattleships.data.comp.game.GameData
-import pt.isel.leic.daw.explodingbattleships.data.comp.player.PlayerData
-import pt.isel.leic.daw.explodingbattleships.data.comp.ranking.RankingData
+import pt.isel.leic.daw.explodingbattleships.data.comp.games.GamesData
+import pt.isel.leic.daw.explodingbattleships.data.comp.ingame.InGameData
+import pt.isel.leic.daw.explodingbattleships.data.comp.players.PlayersData
 import pt.isel.leic.daw.explodingbattleships.data.comp.transactions.Transaction
-import pt.isel.leic.daw.explodingbattleships.data.comp.transactions.TransactionDataMem
 
 interface Data {
-    val rankingData: RankingData
-    val gameData: GameData
-    val playerData: PlayerData
+    val inGameData: InGameData
+    val gamesData: GamesData
+    val playersData: PlayersData
 
     fun getTransaction(): Transaction
 }

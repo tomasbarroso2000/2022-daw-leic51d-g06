@@ -5,9 +5,9 @@ import org.junit.jupiter.api.assertThrows
 import pt.isel.leic.daw.explodingbattleships.data.DataMem
 import pt.isel.leic.daw.explodingbattleships.services.comp.utils.AppException
 
-class GameServicesTests {
+class UnauthenticatedServicesTests {
     private val data = DataMem()
-    private val services = Services(data).gameServices
+    private val services = Services(data).unauthenticatedServices
 
     @Test
     fun get_number_of_played_games() {
@@ -35,5 +35,20 @@ class GameServicesTests {
             services.getGameState(100)
         }
         assert(exception.message == "Game does not exist")
+    }
+
+    @Test
+    fun get_rankings() {
+        val rankings = services.getRankings(10, 0)
+        assert(rankings.list[0].id == 2)
+        assert(rankings.list[1].id == 1)
+    }
+
+    @Test
+    fun get_rankings_with_invalid_limit() {
+        val exception = assertThrows<AppException> {
+            services.getRankings(-1, 0)
+        }
+        assert(exception.message == "Invalid limit")
     }
 }
