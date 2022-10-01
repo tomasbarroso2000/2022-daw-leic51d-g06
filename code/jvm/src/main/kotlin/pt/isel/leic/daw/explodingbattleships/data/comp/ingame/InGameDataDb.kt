@@ -34,7 +34,7 @@ class InGameDataDb : InGameData {
         (transaction as TransactionDataDb).withHandle { handle ->
             val shipsSquares =
                 handle.createQuery(
-                    "select ship_type.name, first_square, orientation from ship join ship_type on ship.ship_type = ship_type.type_name " +
+                    "select ship_type.type_name name, first_square, orientation from ship join ship_type on ship.ship_type = ship_type.type_name " +
                             "where game = :gameId and player = :playerId"
                 )
                     .bind("gameId", gameId)

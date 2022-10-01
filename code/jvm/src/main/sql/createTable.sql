@@ -63,7 +63,7 @@ $$;
 
 
 create or replace trigger maybe_destroy_ship
-    after update of n_of_hits on ship
+    before update of n_of_hits on ship
     for each row
 execute function maybe_destroy_ship();
 

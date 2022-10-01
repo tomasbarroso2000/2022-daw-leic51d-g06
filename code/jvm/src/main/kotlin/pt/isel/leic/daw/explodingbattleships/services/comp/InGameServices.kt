@@ -64,5 +64,5 @@ fun main() {
     GameServices(DataDb()).defineLayout("123", layout)
      */
     val hits = Hits(1, listOf(Square('a', 1)))
-    InGameServices(DataDb()).sendHits("123", hits)
+    println(InGameServices(DataDb()).sendHits("123", hits))
 }
