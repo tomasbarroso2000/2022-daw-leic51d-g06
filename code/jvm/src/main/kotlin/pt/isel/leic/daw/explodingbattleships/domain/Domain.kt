@@ -41,9 +41,31 @@ data class EnterLobbyOutput(
 
 data class Ship(
     val name: String?,
-    val square: Square?,
+    val firstSquare: Square?,
     val orientation: String?,
 )
+
+// might need cleaning up. should it be Square or a new class?
+fun Ship.getSquares(): Set<Square> {
+    val squares = mutableSetOf<Square>()
+    val size = getSize()
+    var currentSquare = firstSquare ?: throw IllegalArgumentException("No first square found")
+    when (orientation?.lowercase()) {
+        "vertical" -> for (i in 0 until size) {
+            squares.add(currentSquare)
+            currentSquare = currentSquare.down()
+        }
+        "horizontal" -> for (i in 0 until size) {
+            squares.add(currentSquare)
+            currentSquare = currentSquare.right()
+        }
+        else -> throw throw IllegalArgumentException("Invalid orientation")
+    }
+    return squares
+}
+
+fun Ship.getSize() = ShipType.values().find { it.shipName == name }?.size
+    ?: throw IllegalArgumentException("No ship found with the name $name")
 
 data class Layout(
     val gameId: Int?,
@@ -79,5 +101,5 @@ data class Hits(
 data class HitOutcome(
     val square: Square,
     val hit: Boolean,
-    val destroyedShip: String?
+    val destroyedShip: String? = null
 )

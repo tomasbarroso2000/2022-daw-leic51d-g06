@@ -8,6 +8,7 @@ import pt.isel.leic.daw.explodingbattleships.domain.Ship
 import pt.isel.leic.daw.explodingbattleships.domain.ShipType
 import pt.isel.leic.daw.explodingbattleships.domain.Square
 import pt.isel.leic.daw.explodingbattleships.domain.down
+import pt.isel.leic.daw.explodingbattleships.domain.getSize
 import pt.isel.leic.daw.explodingbattleships.domain.getString
 import pt.isel.leic.daw.explodingbattleships.domain.right
 
@@ -37,7 +38,7 @@ fun checkShipLayout(ships: List<Ship>, width: Int, height: Int) {
     checkOrThrow(!shipsValid(ships), "Invalid ship list")
     val occupiedSquares = mutableSetOf<Square?>()
     ships.forEach { ship ->
-        checkOrThrow(ship.square == null, "No square provided for ${ship.name}")
+        checkOrThrow(ship.firstSquare == null, "No square provided for ${ship.name}")
         checkOrThrow(ship.orientation == null, "No orientation provided for ${ship.name}")
         when (ship.orientation?.lowercase()) {
             "vertical" -> validateShipSquares(ship, width, height, occupiedSquares, Square::down)
@@ -81,9 +82,8 @@ fun squareInBoard(square: Square?, width: Int, height: Int): Boolean {
  * @param nextSquare the function to calculate the next square
  */
 private fun validateShipSquares(ship: Ship, width: Int, height: Int, occupiedSquares: MutableSet<Square?>, nextSquare: NextSquare) {
-    val shipSize = ShipType.values().find { it.shipName == ship.name }?.size
-        ?: throw IllegalStateException("No ship found with the name ${ship.name}")
-    var currentSquare = ship.square
+    val shipSize = ship.getSize()
+    var currentSquare = ship.firstSquare
     for (i in 0 until shipSize) {
         checkOrThrow(!squareInBoard(currentSquare, width, height), "Invalid square on ${currentSquare.getString()}")
         checkOrThrow(occupiedSquares.contains(currentSquare), "Square already occupied on ${currentSquare.getString()}")

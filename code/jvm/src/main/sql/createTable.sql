@@ -40,6 +40,7 @@ create table if not exists ship_type(
 create table if not exists ship(
    first_square varchar(5) check (first_square ~ '[a-z][0-9]+'),
    n_of_hits integer check (n_of_hits >= 0),
+   destroyed bool not null,
    orientation varchar(50) check (orientation in ('vertical', 'horizontal')),
    player integer references player(id),
    game integer references game(id),
@@ -47,6 +48,24 @@ create table if not exists ship(
    primary key (first_square, player, game)
 
 );
+
+create function maybe_destroy_ship() returns trigger language plpgsql as $$
+    declare
+        size_of_ship integer;
+    begin
+        select ship_size into size_of_ship from ship_type where type_name = new.ship_type;
+        if (new.n_of_hits = size_of_ship) then
+            new.destroyed = true;
+        end if;
+        return new;
+    end;
+$$;
+
+
+create or replace trigger maybe_destroy_ship
+    after update of n_of_hits on ship
+    for each row
+execute function maybe_destroy_ship();
 
 create table if not exists lobby(
 	player integer references player(id) primary key,
