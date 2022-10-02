@@ -1,14 +1,31 @@
 package pt.isel.leic.daw.explodingbattleships.domain
 
-typealias NextSquare = Square.() -> Square
+typealias NextSquare = VerifiedSquare.() -> VerifiedSquare
 
-data class Square(
-    val row: Char?,
+interface Square {
+    val row: Char?
     val column: Int?
-)
-fun Square.down() = Square(row?.plus(1), column)
-fun Square.right() = Square(row, column?.plus(1))
+}
 
-fun Square?.getString() = "${this?.row}${this?.column}"
+data class UnverifiedSquare(
+    override val row: Char?,
+    override val column: Int?
+) : Square
 
-fun String.toSquare() = Square(first(), subSequence(1, lastIndex).toString().toInt())
+data class VerifiedSquare(
+    override val row: Char,
+    override val column: Int
+) : Square
+
+fun UnverifiedSquare.toVerifiedSquareOrNull(): VerifiedSquare? {
+    row ?: return null
+    column ?: return null
+    return VerifiedSquare(row, column)
+}
+
+fun VerifiedSquare.down() = VerifiedSquare(row + 1 , column)
+fun VerifiedSquare.right() = VerifiedSquare(row, column + 1)
+
+fun Square.getString() = "$row$column"
+
+fun String.toVerifiedSquare() = VerifiedSquare(first(), subSequence(1, lastIndex + 1).toString().toInt())

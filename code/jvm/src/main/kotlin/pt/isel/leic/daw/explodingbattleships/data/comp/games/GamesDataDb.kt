@@ -4,8 +4,8 @@ import org.jdbi.v3.core.kotlin.mapTo
 import pt.isel.leic.daw.explodingbattleships.data.comp.transactions.Transaction
 import pt.isel.leic.daw.explodingbattleships.data.comp.transactions.TransactionDataDb
 import pt.isel.leic.daw.explodingbattleships.domain.Game
-import pt.isel.leic.daw.explodingbattleships.domain.Square
-import pt.isel.leic.daw.explodingbattleships.domain.toSquare
+import pt.isel.leic.daw.explodingbattleships.domain.VerifiedSquare
+import pt.isel.leic.daw.explodingbattleships.domain.toVerifiedSquare
 
 class GamesDataDb : GamesData {
     override fun getNumberOfPlayedGames(transaction: Transaction): Int {
@@ -37,13 +37,13 @@ class GamesDataDb : GamesData {
         return game
     }
 
-    override fun getHitSquares(transaction: Transaction, gameId: Int, playerId: Int): List<Square>? {
-        var squares: List<Square>? = null
+    override fun getHitSquares(transaction: Transaction, gameId: Int, playerId: Int): List<VerifiedSquare>? {
+        var squares: List<VerifiedSquare>? = null
         (transaction as TransactionDataDb).withHandle { handle ->
             squares = handle.createQuery("select square from hit where game = :gameId and player = :playerId")
                 .bind("gameId", gameId)
                 .bind("playerId", playerId)
-                .mapTo<String>().list().map { it.toSquare() }
+                .mapTo<String>().list().map { it.toVerifiedSquare() }
         }
         return squares
     }

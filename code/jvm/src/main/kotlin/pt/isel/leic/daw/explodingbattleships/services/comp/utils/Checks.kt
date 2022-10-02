@@ -4,13 +4,15 @@ import pt.isel.leic.daw.explodingbattleships.data.Data
 import pt.isel.leic.daw.explodingbattleships.data.comp.transactions.Transaction
 import pt.isel.leic.daw.explodingbattleships.domain.Game
 import pt.isel.leic.daw.explodingbattleships.domain.NextSquare
-import pt.isel.leic.daw.explodingbattleships.domain.Ship
+import pt.isel.leic.daw.explodingbattleships.domain.UnverifiedShip
 import pt.isel.leic.daw.explodingbattleships.domain.ShipType
-import pt.isel.leic.daw.explodingbattleships.domain.Square
+import pt.isel.leic.daw.explodingbattleships.domain.VerifiedShip
+import pt.isel.leic.daw.explodingbattleships.domain.VerifiedSquare
 import pt.isel.leic.daw.explodingbattleships.domain.down
 import pt.isel.leic.daw.explodingbattleships.domain.getSize
 import pt.isel.leic.daw.explodingbattleships.domain.getString
 import pt.isel.leic.daw.explodingbattleships.domain.right
+import pt.isel.leic.daw.explodingbattleships.domain.toVerifiedShipOrNull
 
 /**
  * Throws an [AppException] if the undesired condition is verified
@@ -33,19 +35,21 @@ fun checkLimitAndSkip(limit: Int, skip: Int) {
     checkOrThrow(skip < 0, "Invalid skip")
 }
 
-fun checkShipLayout(ships: List<Ship>, width: Int, height: Int) {
+fun checkShipLayout(ships: List<UnverifiedShip>, width: Int, height: Int): List<VerifiedShip> {
     checkOrThrow(ships.size != 5, "Can only place 5 ships")
     checkOrThrow(!shipsValid(ships), "Invalid ship list")
-    val occupiedSquares = mutableSetOf<Square?>()
-    ships.forEach { ship ->
-        checkOrThrow(ship.firstSquare == null, "No square provided for ${ship.name}")
-        checkOrThrow(ship.orientation == null, "No orientation provided for ${ship.name}")
-        when (ship.orientation?.lowercase()) {
-            "vertical" -> validateShipSquares(ship, width, height, occupiedSquares, Square::down)
-            "horizontal" -> validateShipSquares(ship, width, height, occupiedSquares, Square::right)
-            else -> throw AppException("Invalid orientation for ${ship.name}", AppExceptionStatus.BAD_REQUEST)
+    val occupiedSquares = mutableSetOf<VerifiedSquare?>()
+    val verifiedShips = mutableListOf<VerifiedShip>()
+    ships.forEach { unverifiedShip ->
+        val verifiedShip = unverifiedShip.toVerifiedShipOrNull()
+            ?: throw AppException("Invalid ship", AppExceptionStatus.BAD_REQUEST)
+        when (verifiedShip.orientation.lowercase()) {
+            "vertical" -> validateShipSquares(verifiedShip, width, height, occupiedSquares, VerifiedSquare::down)
+            "horizontal" -> validateShipSquares(verifiedShip, width, height, occupiedSquares, VerifiedSquare::right)
+            else -> throw AppException("Invalid orientation for ${verifiedShip.name}", AppExceptionStatus.BAD_REQUEST)
         }
     }
+    return verifiedShips
 }
 
 /**
@@ -53,7 +57,7 @@ fun checkShipLayout(ships: List<Ship>, width: Int, height: Int) {
  * @param ships the list of ships
  * @return true if the list is valid
  */
-private fun shipsValid(ships: List<Ship>) =
+private fun shipsValid(ships: List<UnverifiedShip>) =
     ships.map { it.name }.containsAll(ShipType.values().map { it.shipName })
 
 /**
@@ -62,33 +66,30 @@ private fun shipsValid(ships: List<Ship>) =
  * @param width the width of the board
  * @param height the height of the board
  */
-fun squareInBoard(square: Square?, width: Int, height: Int): Boolean {
-    if (square == null) return false
-    val lastRow = square.row?.plus(height)?.minus(1) ?: return false
-    val lastColumn = square.column?.plus(width)?.minus(1) ?: return false
-    if (square.row !in 'a'..lastRow)
-        return false
-    if (square.column !in 1..lastColumn)
-        return false
+fun squareInBoard(square: VerifiedSquare, width: Int, height: Int): Boolean {
+    val lastRow = square.row + height - 1
+    val lastColumn = square.column + width - 1
+    if (square.row !in 'a'..lastRow) return false
+    if (square.column !in 1..lastColumn) return false
     return true
 }
 
 /**
- * Validates the squares of a [Ship]
- * @param ship the [Ship]
+ * Validates the squares of a [UnverifiedShip]
+ * @param ship the [UnverifiedShip]
  * @param width the width of the board
  * @param height the height of the board
  * @param occupiedSquares the occupied squares
  * @param nextSquare the function to calculate the next square
  */
-private fun validateShipSquares(ship: Ship, width: Int, height: Int, occupiedSquares: MutableSet<Square?>, nextSquare: NextSquare) {
+private fun validateShipSquares(ship: VerifiedShip, width: Int, height: Int, occupiedSquares: MutableSet<VerifiedSquare?>, nextSquare: NextSquare) {
     val shipSize = ship.getSize()
     var currentSquare = ship.firstSquare
     for (i in 0 until shipSize) {
         checkOrThrow(!squareInBoard(currentSquare, width, height), "Invalid square on ${currentSquare.getString()}")
         checkOrThrow(occupiedSquares.contains(currentSquare), "Square already occupied on ${currentSquare.getString()}")
         occupiedSquares.add(currentSquare)
-        currentSquare = currentSquare?.nextSquare()
+        currentSquare = currentSquare.nextSquare()
     }
 }
 

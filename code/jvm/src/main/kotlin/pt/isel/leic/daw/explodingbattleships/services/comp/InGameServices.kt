@@ -4,8 +4,10 @@ import pt.isel.leic.daw.explodingbattleships.data.Data
 import pt.isel.leic.daw.explodingbattleships.data.DataDb
 import pt.isel.leic.daw.explodingbattleships.domain.Hits
 import pt.isel.leic.daw.explodingbattleships.domain.Layout
-import pt.isel.leic.daw.explodingbattleships.domain.Square
+import pt.isel.leic.daw.explodingbattleships.domain.UnverifiedSquare
+import pt.isel.leic.daw.explodingbattleships.domain.VerifiedSquare
 import pt.isel.leic.daw.explodingbattleships.domain.otherPlayer
+import pt.isel.leic.daw.explodingbattleships.domain.toVerifiedSquareOrNull
 import pt.isel.leic.daw.explodingbattleships.services.comp.utils.AppException
 import pt.isel.leic.daw.explodingbattleships.services.comp.utils.AppExceptionStatus
 import pt.isel.leic.daw.explodingbattleships.services.comp.utils.checkCurrentPlayer
@@ -26,8 +28,8 @@ class InGameServices(private val data: Data) {
         checkPlayerInGame(game, playerId)
         if (layout.ships == null)
             throw AppException("No ships provided", AppExceptionStatus.BAD_REQUEST)
-        checkShipLayout(layout.ships, game.width, game.height)
-        data.inGameData.defineLayout(transaction, game.id, playerId, layout.ships)
+        val verifiedShips = checkShipLayout(layout.ships, game.width, game.height)
+        data.inGameData.defineLayout(transaction, game.id, playerId, verifiedShips)
     }
 
     fun sendHits(token: String?, hits: Hits) = doService(data) { transaction ->
@@ -42,12 +44,16 @@ class InGameServices(private val data: Data) {
             throw AppException("Invalid amount of hits", AppExceptionStatus.BAD_REQUEST)
         val hitSquares = data.gamesData.getHitSquares(transaction, game.id, game.otherPlayer())?.toMutableSet()
             ?: throw AppException("Error")
-        hits.squares.forEach { square ->
-            checkOrThrow(!squareInBoard(square, game.width, game.height), "Invalid square")
-            checkOrThrow(hitSquares.contains(square), "Square already hit")
-            hitSquares.add(square)
+        val verifiedSquares = mutableListOf<VerifiedSquare>()
+        hits.squares.forEach { unverifiedSquare ->
+            val verifiedSquare = unverifiedSquare.toVerifiedSquareOrNull()
+                ?: throw AppException("Invalid square", AppExceptionStatus.BAD_REQUEST)
+            checkOrThrow(!squareInBoard(verifiedSquare, game.width, game.height), "Invalid square")
+            checkOrThrow(hitSquares.contains(verifiedSquare), "Square already hit")
+            hitSquares.add(verifiedSquare)
+            verifiedSquares.add(verifiedSquare)
         }
-        data.inGameData.sendHits(transaction, game.id, game.otherPlayer(), hits.squares)
+        data.inGameData.sendHits(transaction, game.id, game.otherPlayer(), verifiedSquares)
     }
 }
 
@@ -63,6 +69,6 @@ fun main() {
     )
     GameServices(DataDb()).defineLayout("123", layout)
      */
-    val hits = Hits(1, listOf(Square('a', 1)))
+    val hits = Hits(1, listOf(UnverifiedSquare('a', 1)))
     println(InGameServices(DataDb()).sendHits("123", hits))
 }
