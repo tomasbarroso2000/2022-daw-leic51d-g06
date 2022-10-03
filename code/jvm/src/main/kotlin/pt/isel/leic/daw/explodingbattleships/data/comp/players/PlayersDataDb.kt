@@ -65,7 +65,17 @@ class PlayersDataDb : PlayersData {
         return ListOfData(players, hasMore)
     }
 
-    override fun enterLobby(transaction: Transaction, playerId: Int): EnterLobbyOutput? {
-        TODO("Not yet implemented")
+    override fun enterLobby(transaction: Transaction, playerId: Int, width: Int, height: Int, hitsPerRound: Int): EnterLobbyOutput? {
+        var enterLobbyOutput: EnterLobbyOutput? = null
+        (transaction as TransactionDataDb).withHandle { handle ->
+            handle.createUpdate("insert into lobby values (:playerId, :width, :height, :hitsPerRound)")
+                .bind("playerId", playerId)
+                .bind("width", width)
+                .bind("height", height)
+                .bind("hitsPerRound", hitsPerRound)
+                .execute()
+            enterLobbyOutput = EnterLobbyOutput(true)
+        }
+        return enterLobbyOutput
     }
 }

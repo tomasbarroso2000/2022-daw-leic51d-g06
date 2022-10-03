@@ -47,4 +47,14 @@ class GamesDataDb : GamesData {
         }
         return squares
     }
+
+    override fun getPlayerGame(transaction: Transaction, playerId: Int): Game? {
+        var game: Game? = null
+        (transaction as TransactionDataDb).withHandle { handle ->
+            game = handle.createQuery("select * from game where player1 = :playerId or player2 = :playerId")
+                .bind("playerId", playerId)
+                .mapTo<Game>().first()
+        }
+        return game
+    }
 }

@@ -46,10 +46,9 @@ create table if not exists ship(
    game integer references game(id),
    ship_type varchar(20) references ship_type(type_name),
    primary key (first_square, player, game)
-
 );
 
-create function maybe_destroy_ship() returns trigger language plpgsql as $$
+create or replace function maybe_destroy_ship() returns trigger language plpgsql as $$
     declare
         size_of_ship integer;
     begin
@@ -61,7 +60,6 @@ create function maybe_destroy_ship() returns trigger language plpgsql as $$
     end;
 $$;
 
-
 create or replace trigger maybe_destroy_ship
     before update of n_of_hits on ship
     for each row
@@ -69,10 +67,31 @@ execute function maybe_destroy_ship();
 
 create table if not exists lobby(
 	player integer references player(id) primary key,
-	lobby_time timestamp not null,
 	width integer not null check (width >= 10),
 	height integer not null check (height >= 10),
 	hits_per_round integer not null check (lobby.hits_per_round >= 1)
 );
+
+create or replace function maybe_start_game() returns trigger language plpgsql as $$
+    declare
+        player_with_same_settings integer = null;
+    begin
+        select player into player_with_same_settings from lobby
+        where width = new.width and height = new.height and hits_per_round = new.hits_per_round;
+        if (player_with_same_settings is not null) then
+            insert into game (width, height, hits_per_round, state, player1, player2, curr_player) values
+            (new.width, new.height, new.hits_per_round, 'layout_definition', player_with_same_settings, new.player, player_with_same_settings);
+            delete from lobby where (player = player_with_same_settings);
+            return null;
+        else
+            return new;
+        end if;
+    end;
+$$;
+
+create or replace trigger maybe_start_game
+    before insert on lobby
+    for each row
+execute function maybe_start_game();
 
 commit transaction;

@@ -16,5 +16,5 @@ interface PlayersData {
 
     fun getRankings(transaction: Transaction, limit: Int, skip: Int): ListOfData<Player>
 
-    fun enterLobby(transaction: Transaction, playerId: Int): EnterLobbyOutput?
+    fun enterLobby(transaction: Transaction, playerId: Int, width: Int, height: Int, hitsPerRound: Int): EnterLobbyOutput?
 }

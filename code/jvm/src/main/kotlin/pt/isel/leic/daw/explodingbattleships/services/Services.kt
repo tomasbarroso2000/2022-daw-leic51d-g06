@@ -1,7 +1,6 @@
 package pt.isel.leic.daw.explodingbattleships.services
 
 import pt.isel.leic.daw.explodingbattleships.data.Data
-import pt.isel.leic.daw.explodingbattleships.domain.Home
 import pt.isel.leic.daw.explodingbattleships.services.comp.AuthenticatedServices
 import pt.isel.leic.daw.explodingbattleships.services.comp.InGameServices
 import pt.isel.leic.daw.explodingbattleships.services.comp.UnauthenticatedServices
@@ -16,9 +15,4 @@ class Services(data: Data) {
     val inGameServices = InGameServices(data)
     val authenticatedServices = AuthenticatedServices(data)
     val unauthenticatedServices = UnauthenticatedServices(data)
-
-    /**
-     * Get home information
-     */
-    fun getHome() = Home()
 }

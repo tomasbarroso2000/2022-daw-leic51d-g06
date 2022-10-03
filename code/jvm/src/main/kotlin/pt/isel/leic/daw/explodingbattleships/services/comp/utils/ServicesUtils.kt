@@ -2,7 +2,11 @@ package pt.isel.leic.daw.explodingbattleships.services.comp.utils
 
 import pt.isel.leic.daw.explodingbattleships.data.Data
 import pt.isel.leic.daw.explodingbattleships.data.comp.transactions.Transaction
+import pt.isel.leic.daw.explodingbattleships.domain.Game
 import java.util.regex.Pattern
+
+const val BOARD_MIN_HEIGHT = 10
+const val BOARD_MIN_WIDTH = 10
 
 /**
  * Executes a function within a [Transaction]
@@ -49,4 +53,16 @@ fun isEmailValid(email: String): Boolean {
     return Pattern.compile("^(.+)@(\\S+)$")
         .matcher(email)
         .matches()
+}
+
+/**
+ * Returns the game id of the game the player is playing
+ * @param transaction the current transaction
+ * @param playerId the player id
+ * @param data the data module to be used
+ * @return the game that the player is playing
+ */
+fun getPlayerGame(transaction: Transaction, playerId: Int, data: Data): Game {
+    return data.gamesData.getPlayerGame(transaction, playerId)
+        ?: throw AppException("Player not in game", AppExceptionStatus.NOT_FOUND)
 }

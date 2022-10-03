@@ -2,6 +2,7 @@ package pt.isel.leic.daw.explodingbattleships.services.comp
 
 import pt.isel.leic.daw.explodingbattleships.data.Data
 import pt.isel.leic.daw.explodingbattleships.data.comp.utils.isPasswordInvalid
+import pt.isel.leic.daw.explodingbattleships.domain.SystemInfo
 import pt.isel.leic.daw.explodingbattleships.domain.ListOfData
 import pt.isel.leic.daw.explodingbattleships.domain.Player
 import pt.isel.leic.daw.explodingbattleships.domain.PlayerInput
@@ -37,4 +38,9 @@ class UnauthenticatedServices(private val data: Data) {
         checkLimitAndSkip(limit, skip)
         data.playersData.getRankings(transaction, limit, skip)
     }
+
+    /**
+     * Get home information
+     */
+    fun getSystemInfo() = SystemInfo()
 }

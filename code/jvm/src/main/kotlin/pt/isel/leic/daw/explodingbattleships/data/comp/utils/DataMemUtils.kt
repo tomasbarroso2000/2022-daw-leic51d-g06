@@ -1,10 +1,8 @@
 package pt.isel.leic.daw.explodingbattleships.data.comp.utils
 
-import org.jdbi.v3.core.Jdbi
+import pt.isel.leic.daw.explodingbattleships.domain.Game
 import pt.isel.leic.daw.explodingbattleships.domain.Player
-import pt.isel.leic.daw.explodingbattleships.domain.ShipType
 import java.sql.Timestamp
-import java.time.Instant
 
 /**
  * To be thrown by the DataMem module when an error is detected
@@ -61,6 +59,9 @@ data class StoredGame(
     val currPlayer: Int
 )
 
+fun StoredGame.toGame() =
+    Game(id, gameWidth, gameHeight, hitsPerRound, state, player1, player2, currPlayer)
+
 data class StoredToken(
     val tokenVer: String,
     val player: Int
@@ -94,15 +95,13 @@ data class MockData(
         StoredPlayer(2, "Daizer", "daizer@daizer.daizer", 500, 123)
     ),
     val games: MutableSet<StoredGame> = mutableSetOf(
-        StoredGame(1, 10, 10, 1, "completed", 1, 2, 1)
+        StoredGame(1, 10, 10, 1, "layout_definition", 1, 2, 1)
     ),
     val tokens: MutableSet<StoredToken> = mutableSetOf(
         StoredToken("123", 1),
         StoredToken("321", 2)
     ),
-    val ships: MutableSet<StoredShip> = mutableSetOf(
-        StoredShip("a1", 1, false, "horizontal", 1, 1, "destroyer")
-    ),
+    val ships: MutableSet<StoredShip> = mutableSetOf(),
     val shipTypes: MutableSet<StoredShipType> = mutableSetOf(
         StoredShipType("carrier", 5),
         StoredShipType("battleship", 4),

@@ -25,7 +25,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("net.glxn:qrgen:1.4")
-
+    implementation("junit:junit:4.13.1")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 

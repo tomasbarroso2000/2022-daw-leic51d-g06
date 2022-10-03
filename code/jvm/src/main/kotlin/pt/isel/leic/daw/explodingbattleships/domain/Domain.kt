@@ -10,7 +10,7 @@ data class Link(
     val requiresAuth: Boolean
 )
 
-data class Home(
+data class SystemInfo(
     val name: String = "Exploding Battleships",
     val version: String = "0.0.0",
     val authors: List<String> = listOf("Leki", "Palmilha", "TBMASTER2000"),
@@ -55,7 +55,11 @@ data class Game(
     val currPlayer: Int
 )
 
-fun Game.otherPlayer() = if (currPlayer == player1) player2 else player1
+fun Game.idlePlayer() = if (currPlayer == player1) player2 else player1
+fun Game.otherPlayer(playerId: Int) =
+    if (player1 == playerId) player2
+    else if (player2 == playerId) player1
+    else throw IllegalArgumentException("Player not in game")
 
 data class Hits(
     val gameId: Int?,
@@ -66,4 +70,10 @@ data class HitOutcome(
     val square: VerifiedSquare,
     val hit: Boolean,
     val destroyedShip: String? = null
+)
+
+data class EnterLobbyInput(
+    val width: Int,
+    val height: Int,
+    val hitsPerRound: Int
 )

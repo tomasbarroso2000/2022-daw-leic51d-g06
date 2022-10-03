@@ -2,23 +2,8 @@ package pt.isel.leic.daw.explodingbattleships.services.comp
 
 import pt.isel.leic.daw.explodingbattleships.data.Data
 import pt.isel.leic.daw.explodingbattleships.data.DataDb
-import pt.isel.leic.daw.explodingbattleships.domain.Hits
-import pt.isel.leic.daw.explodingbattleships.domain.Layout
-import pt.isel.leic.daw.explodingbattleships.domain.UnverifiedSquare
-import pt.isel.leic.daw.explodingbattleships.domain.VerifiedSquare
-import pt.isel.leic.daw.explodingbattleships.domain.otherPlayer
-import pt.isel.leic.daw.explodingbattleships.domain.toVerifiedSquareOrNull
-import pt.isel.leic.daw.explodingbattleships.services.comp.utils.AppException
-import pt.isel.leic.daw.explodingbattleships.services.comp.utils.AppExceptionStatus
-import pt.isel.leic.daw.explodingbattleships.services.comp.utils.checkCurrentPlayer
-import pt.isel.leic.daw.explodingbattleships.services.comp.utils.checkGameState
-import pt.isel.leic.daw.explodingbattleships.services.comp.utils.checkOrThrow
-import pt.isel.leic.daw.explodingbattleships.services.comp.utils.checkPlayerInGame
-import pt.isel.leic.daw.explodingbattleships.services.comp.utils.checkShipLayout
-import pt.isel.leic.daw.explodingbattleships.services.comp.utils.computeGame
-import pt.isel.leic.daw.explodingbattleships.services.comp.utils.computePlayerId
-import pt.isel.leic.daw.explodingbattleships.services.comp.utils.doService
-import pt.isel.leic.daw.explodingbattleships.services.comp.utils.squareInBoard
+import pt.isel.leic.daw.explodingbattleships.domain.*
+import pt.isel.leic.daw.explodingbattleships.services.comp.utils.*
 
 class InGameServices(private val data: Data) {
     fun defineLayout(token: String?, layout: Layout) = doService(data) { transaction ->
@@ -42,7 +27,7 @@ class InGameServices(private val data: Data) {
             throw AppException("No squares provided", AppExceptionStatus.BAD_REQUEST)
         if (hits.squares.size != game.hitsPerRound)
             throw AppException("Invalid amount of hits", AppExceptionStatus.BAD_REQUEST)
-        val hitSquares = data.gamesData.getHitSquares(transaction, game.id, game.otherPlayer())?.toMutableSet()
+        val hitSquares = data.gamesData.getHitSquares(transaction, game.id, game.idlePlayer())?.toMutableSet()
             ?: throw AppException("Error")
         val verifiedSquares = mutableListOf<VerifiedSquare>()
         hits.squares.forEach { unverifiedSquare ->
@@ -53,7 +38,23 @@ class InGameServices(private val data: Data) {
             hitSquares.add(verifiedSquare)
             verifiedSquares.add(verifiedSquare)
         }
-        data.inGameData.sendHits(transaction, game.id, game.otherPlayer(), verifiedSquares)
+        data.inGameData.sendHits(transaction, game.id, game.idlePlayer(), verifiedSquares)
+    }
+
+    fun playerFleetState(token: String?) = doService(data) { transaction ->
+        val playerId = computePlayerId(transaction, token, data)
+        val game = getPlayerGame(transaction, playerId, data)
+        checkGameState(game.state, "shooting")
+        checkPlayerInGame(game, playerId)
+        data.inGameData.playerFleetState(transaction, game.id, playerId)
+    }
+
+    fun enemyFleetState(token: String?) = doService(data) { transaction ->
+        val playerId = computePlayerId(transaction, token, data)
+        val game = getPlayerGame(transaction, playerId, data)
+        checkGameState(game.state, "shooting")
+        checkPlayerInGame(game, playerId)
+        data.inGameData.playerFleetState(transaction, game.id, game.otherPlayer(playerId))
     }
 }
 

@@ -3,13 +3,7 @@ package pt.isel.leic.daw.explodingbattleships.data.comp.ingame
 import org.jdbi.v3.core.kotlin.mapTo
 import pt.isel.leic.daw.explodingbattleships.data.comp.transactions.Transaction
 import pt.isel.leic.daw.explodingbattleships.data.comp.transactions.TransactionDataDb
-import pt.isel.leic.daw.explodingbattleships.domain.HitOutcome
-import pt.isel.leic.daw.explodingbattleships.domain.ShipFromDb
-import pt.isel.leic.daw.explodingbattleships.domain.VerifiedShip
-import pt.isel.leic.daw.explodingbattleships.domain.VerifiedSquare
-import pt.isel.leic.daw.explodingbattleships.domain.getSquares
-import pt.isel.leic.daw.explodingbattleships.domain.getString
-import pt.isel.leic.daw.explodingbattleships.domain.toVerifiedShip
+import pt.isel.leic.daw.explodingbattleships.domain.*
 
 class InGameDataDb : InGameData {
     override fun defineLayout(
@@ -85,11 +79,17 @@ class InGameDataDb : InGameData {
         return hits
     }
 
-    override fun playerFleetState(transaction: Transaction) {
-        TODO("Not yet implemented")
-    }
-
-    override fun enemyFleetState(transaction: Transaction) {
-        TODO("Not yet implemented")
+    override fun playerFleetState(transaction: Transaction, gameId: Int, playerId: Int): List<ShipState> {
+        val ships = mutableListOf<ShipState>()
+        (transaction as TransactionDataDb).withHandle { handle ->
+            val ships: List<ShipState> =
+                handle.createQuery(
+                    "select destroyed, n_of_hits from ship where game = :gameId and player = :playerId"
+                )
+                    .bind("gameId", gameId)
+                    .bind("playerId", playerId)
+                    .mapTo<ShipState>().list()
+        }
+        return ships
     }
 }

@@ -16,7 +16,7 @@ import java.util.UUID
 
 class PlayersDataMem(private val mockData: MockData) : PlayersData {
     override fun getPlayerIdFromToken(transaction: Transaction, token: String): Int? =
-        mockData.tokens.find { equals(token) }?.player
+        mockData.tokens.find { it.tokenVer == token }?.player
 
     override fun createPlayer(transaction: Transaction, name: String, email: String, password: Int): PlayerOutput {
         val id = mockData.players.maxOf { it.id } + 1
@@ -35,7 +35,13 @@ class PlayersDataMem(private val mockData: MockData) : PlayersData {
         return ListOfData(getSublist(players, limit, skip), hasMore(players.size, limit, skip))
     }
 
-    override fun enterLobby(transaction: Transaction, playerId: Int): EnterLobbyOutput? {
+    override fun enterLobby(
+        transaction: Transaction,
+        playerId: Int,
+        width: Int,
+        height: Int,
+        hitsPerRound: Int
+    ): EnterLobbyOutput? {
         TODO("Not yet implemented")
     }
 }

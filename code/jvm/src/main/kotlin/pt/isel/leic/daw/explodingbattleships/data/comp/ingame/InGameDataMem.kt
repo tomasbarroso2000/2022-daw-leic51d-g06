@@ -4,11 +4,7 @@ import pt.isel.leic.daw.explodingbattleships.data.comp.transactions.Transaction
 import pt.isel.leic.daw.explodingbattleships.data.comp.utils.MockData
 import pt.isel.leic.daw.explodingbattleships.data.comp.utils.StoredHit
 import pt.isel.leic.daw.explodingbattleships.data.comp.utils.StoredShip
-import pt.isel.leic.daw.explodingbattleships.domain.HitOutcome
-import pt.isel.leic.daw.explodingbattleships.domain.VerifiedShip
-import pt.isel.leic.daw.explodingbattleships.domain.VerifiedSquare
-import pt.isel.leic.daw.explodingbattleships.domain.getSquares
-import pt.isel.leic.daw.explodingbattleships.domain.toVerifiedSquare
+import pt.isel.leic.daw.explodingbattleships.domain.*
 import java.sql.Timestamp
 import java.time.Instant
 
@@ -78,11 +74,7 @@ class InGameDataMem(private val mockData: MockData) : InGameData {
         return hits
     }
 
-    override fun playerFleetState(transaction: Transaction) {
-        TODO("Not yet implemented")
-    }
-
-    override fun enemyFleetState(transaction: Transaction) {
+    override fun playerFleetState(transaction: Transaction, gameId: Int, playerId: Int): List<ShipState> {
         TODO("Not yet implemented")
     }
 }

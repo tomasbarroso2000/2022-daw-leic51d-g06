@@ -14,6 +14,11 @@ data class ShipFromDb(
     val orientation: String,
 )
 
+data class ShipState(
+    val destroyed: Boolean,
+    val nOfHits: Int
+)
+
 fun ShipFromDb.toVerifiedShip() = VerifiedShip(name, firstSquare.toVerifiedSquare(), orientation)
 
 interface Ship {

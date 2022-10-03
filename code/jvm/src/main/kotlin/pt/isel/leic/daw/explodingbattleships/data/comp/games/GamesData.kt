@@ -12,4 +12,6 @@ interface GamesData {
     fun getGame(transaction: Transaction, gameId: Int): Game?
 
     fun getHitSquares(transaction: Transaction, gameId: Int, playerId: Int): List<VerifiedSquare>?
+
+    fun getPlayerGame(transaction: Transaction, playerId: Int): Game?
 }
