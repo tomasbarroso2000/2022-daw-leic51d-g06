@@ -41,7 +41,7 @@ class PlayersDataMem(private val mockData: MockData) : PlayersData {
         width: Int,
         height: Int,
         hitsPerRound: Int
-    ): EnterLobbyOutput? {
+    ): EnterLobbyOutput {
         TODO("Not yet implemented")
     }
 }

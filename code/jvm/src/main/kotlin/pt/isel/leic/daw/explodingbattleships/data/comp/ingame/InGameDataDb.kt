@@ -11,8 +11,7 @@ class InGameDataDb : InGameData {
         gameId: Int,
         playerId: Int,
         ships: List<VerifiedShip>
-    ): Boolean {
-        var success = false
+    ): Boolean =
         (transaction as TransactionDataDb).withHandle { handle ->
             ships.forEach { ship ->
                 handle.createUpdate("insert into ship values (:square, 0, false, :orientation, :playerId, :gameId, :type)")
@@ -24,19 +23,16 @@ class InGameDataDb : InGameData {
                     .execute()
                 // check if the game can go into shooting phase
             }
-            success = true
+            true
         }
-        return success
 
-    }
-
+    // needs to be split into multiple data functions that will be called in the services
     override fun sendHits(
         transaction: Transaction,
         gameId: Int,
         playerId: Int,
         squares: List<VerifiedSquare>
-    ): List<HitOutcome> {
-        val hits = mutableListOf<HitOutcome>()
+    ): List<HitOutcome> =
         (transaction as TransactionDataDb).withHandle { handle ->
             val shipsSquares =
                 handle.createQuery(
@@ -46,6 +42,7 @@ class InGameDataDb : InGameData {
                     .bind("gameId", gameId)
                     .bind("playerId", playerId)
                     .mapTo<ShipFromDb>().list().map { it.toVerifiedShip() }.associateWith { ship -> ship.getSquares() }
+            val hits = mutableListOf<HitOutcome>()
             squares.forEach { square ->
                 handle.createUpdate("insert into hit values (:square, now(), :playerId, :gameId)")
                     .bind("square", square.getString())
@@ -75,21 +72,14 @@ class InGameDataDb : InGameData {
                     hits.add(HitOutcome(square, false))
                 }
             }
+            hits
         }
-        return hits
-    }
 
-    override fun playerFleetState(transaction: Transaction, gameId: Int, playerId: Int): List<ShipState> {
-        val ships = mutableListOf<ShipState>()
+    override fun fleetState(transaction: Transaction, gameId: Int, playerId: Int): List<ShipState> =
         (transaction as TransactionDataDb).withHandle { handle ->
-            val ships: List<ShipState> =
-                handle.createQuery(
-                    "select destroyed, n_of_hits from ship where game = :gameId and player = :playerId"
-                )
-                    .bind("gameId", gameId)
-                    .bind("playerId", playerId)
-                    .mapTo<ShipState>().list()
+            handle.createQuery("select ship_type, destroyed, n_of_hits from ship where game = :gameId and player = :playerId")
+                .bind("gameId", gameId)
+                .bind("playerId", playerId)
+                .mapTo<ShipState>().list()
         }
-        return ships
-    }
 }

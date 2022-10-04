@@ -8,53 +8,37 @@ import pt.isel.leic.daw.explodingbattleships.domain.VerifiedSquare
 import pt.isel.leic.daw.explodingbattleships.domain.toVerifiedSquare
 
 class GamesDataDb : GamesData {
-    override fun getNumberOfPlayedGames(transaction: Transaction): Int {
-        var n = 0
+    override fun getNumberOfPlayedGames(transaction: Transaction): Int =
         (transaction as TransactionDataDb).withHandle { handle ->
-            n = handle.createQuery("select count(*) from game").mapTo<Int>().first()
+            handle.createQuery("select count(*) from game").mapTo<Int>().first()
         }
-        return n
-    }
 
-    override fun getGameState(transaction: Transaction, gameId: Int): String? {
-        var state: String? = null
+    override fun getGameState(transaction: Transaction, gameId: Int): String? =
         (transaction as TransactionDataDb).withHandle { handle ->
-            state = handle.createQuery("select state from game where id = :id")
+            handle.createQuery("select state from game where id = :id")
                 .bind("id", gameId)
-                .mapTo<String>()
-                .first()
+                .mapTo<String>().firstOrNull()
         }
-        return state
-    }
 
-    override fun getGame(transaction: Transaction, gameId: Int): Game? {
-        var game: Game? = null
+    override fun getGame(transaction: Transaction, gameId: Int): Game? =
         (transaction as TransactionDataDb).withHandle { handle ->
-            game = handle.createQuery("select * from game where id = :id")
+            handle.createQuery("select * from game where id = :id")
                 .bind("id", gameId)
-                .mapTo<Game>().first()
+                .mapTo<Game>().firstOrNull()
         }
-        return game
-    }
 
-    override fun getHitSquares(transaction: Transaction, gameId: Int, playerId: Int): List<VerifiedSquare>? {
-        var squares: List<VerifiedSquare>? = null
+    override fun getHitSquares(transaction: Transaction, gameId: Int, playerId: Int): List<VerifiedSquare> =
         (transaction as TransactionDataDb).withHandle { handle ->
-            squares = handle.createQuery("select square from hit where game = :gameId and player = :playerId")
+            handle.createQuery("select square from hit where game = :gameId and player = :playerId")
                 .bind("gameId", gameId)
                 .bind("playerId", playerId)
                 .mapTo<String>().list().map { it.toVerifiedSquare() }
         }
-        return squares
-    }
 
-    override fun getPlayerGame(transaction: Transaction, playerId: Int): Game? {
-        var game: Game? = null
+    override fun getPlayerGame(transaction: Transaction, playerId: Int): Game? =
         (transaction as TransactionDataDb).withHandle { handle ->
-            game = handle.createQuery("select * from game where player1 = :playerId or player2 = :playerId")
+            handle.createQuery("select * from game where (player1 = :playerId or player2 = :playerId) and state <> 'completed'")
                 .bind("playerId", playerId)
-                .mapTo<Game>().first()
+                .mapTo<Game>().firstOrNull()
         }
-        return game
-    }
 }

@@ -8,7 +8,6 @@ interface InGameData {
 
     fun sendHits(transaction: Transaction, gameId: Int, playerId: Int, squares: List<VerifiedSquare>): List<HitOutcome>
 
-    fun playerFleetState(transaction: Transaction, gameId: Int, playerId: Int): List<ShipState>
-
+    fun fleetState(transaction: Transaction, gameId: Int, playerId: Int): List<ShipState>
 
 }

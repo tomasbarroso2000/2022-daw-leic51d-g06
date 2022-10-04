@@ -46,7 +46,7 @@ class InGameServices(private val data: Data) {
         val game = getPlayerGame(transaction, playerId, data)
         checkGameState(game.state, "shooting")
         checkPlayerInGame(game, playerId)
-        data.inGameData.playerFleetState(transaction, game.id, playerId)
+        data.inGameData.fleetState(transaction, game.id, playerId)
     }
 
     fun enemyFleetState(token: String?) = doService(data) { transaction ->
@@ -54,22 +54,6 @@ class InGameServices(private val data: Data) {
         val game = getPlayerGame(transaction, playerId, data)
         checkGameState(game.state, "shooting")
         checkPlayerInGame(game, playerId)
-        data.inGameData.playerFleetState(transaction, game.id, game.otherPlayer(playerId))
+        data.inGameData.fleetState(transaction, game.id, game.otherPlayer(playerId))
     }
-}
-
-fun main() {
-    /*
-    val layout = Layout(1, listOf(
-            Ship("carrier", Square('a', 1), "horizontal"),
-            Ship("battleship", Square('b', 1), "vertical"),
-            Ship("submarine", Square('b', 2), "horizontal"),
-            Ship("cruiser", Square('c', 2), "horizontal"),
-            Ship("destroyer", Square('d', 2), "vertical")
-        )
-    )
-    GameServices(DataDb()).defineLayout("123", layout)
-     */
-    val hits = Hits(1, listOf(UnverifiedSquare('a', 1)))
-    println(InGameServices(DataDb()).sendHits("123", hits))
 }

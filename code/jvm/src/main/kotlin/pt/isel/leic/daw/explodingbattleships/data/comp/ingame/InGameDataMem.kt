@@ -74,7 +74,7 @@ class InGameDataMem(private val mockData: MockData) : InGameData {
         return hits
     }
 
-    override fun playerFleetState(transaction: Transaction, gameId: Int, playerId: Int): List<ShipState> {
+    override fun fleetState(transaction: Transaction, gameId: Int, playerId: Int): List<ShipState> {
         TODO("Not yet implemented")
     }
 }

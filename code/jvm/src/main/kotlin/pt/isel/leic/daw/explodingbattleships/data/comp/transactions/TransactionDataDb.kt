@@ -13,7 +13,7 @@ class TransactionDataDb(private val handle: Handle) : Transaction {
      * Execute a task using the transaction's connection
      * @param function the task that will be executed
      */
-    fun withHandle(function: (h: Handle) -> Unit) = function(handle)
+    fun <T> withHandle(function: (h: Handle) -> T) = function(handle)
 
     override fun begin() { handle.begin() }
     override fun commit() { handle.commit() }
