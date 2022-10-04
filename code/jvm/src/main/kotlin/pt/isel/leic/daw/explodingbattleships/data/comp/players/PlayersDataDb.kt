@@ -12,11 +12,11 @@ import pt.isel.leic.daw.explodingbattleships.domain.TokenOutput
 import java.util.UUID
 
 class PlayersDataDb : PlayersData {
-    override fun getPlayerIdFromToken(transaction: Transaction, token: String): Int? =
+    override fun getPlayerFromToken(transaction: Transaction, token: String): Player? =
         (transaction as TransactionDataDb).withHandle { handle ->
-            handle.select("select player from token where token_ver = :token")
+            handle.select("select id, name, score from token join player on player = id where token_ver = :token")
                     .bind("token", token)
-                    .mapTo<Int>().firstOrNull()
+                    .mapTo<Player>().firstOrNull()
         }
 
     override fun createPlayer(transaction: Transaction, name: String, email: String, password: Int): PlayerOutput =
@@ -50,6 +50,13 @@ class PlayersDataDb : PlayersData {
             val players = mutableListOf<Player>()
             val hasMore = getHasMoreAndProcessList(foundPlayers, players, limit)
             ListOfData(players, hasMore)
+        }
+
+    override fun isPlayerInLobby(transaction: Transaction, playerId: Int): Boolean =
+        (transaction as TransactionDataDb).withHandle {  handle ->
+            handle.createQuery("select exists (select * from lobby where player = :playerId)")
+                .bind("playerId", playerId)
+                .mapTo<Boolean>().first()
         }
 
     override fun enterLobby(transaction: Transaction, playerId: Int, width: Int, height: Int, hitsPerRound: Int): EnterLobbyOutput =

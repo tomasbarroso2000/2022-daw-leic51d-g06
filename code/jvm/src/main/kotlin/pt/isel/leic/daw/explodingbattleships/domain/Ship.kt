@@ -16,8 +16,7 @@ data class ShipFromDb(
 
 data class ShipState(
     val shipType: String,
-    val destroyed: Boolean,
-    val nOfHits: Int
+    val destroyed: Boolean
 )
 
 fun ShipFromDb.toVerifiedShip() = VerifiedShip(name, firstSquare.toVerifiedSquare(), orientation)

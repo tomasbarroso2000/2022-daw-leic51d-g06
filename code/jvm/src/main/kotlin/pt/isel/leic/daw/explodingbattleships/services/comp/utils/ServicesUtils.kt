@@ -3,6 +3,8 @@ package pt.isel.leic.daw.explodingbattleships.services.comp.utils
 import pt.isel.leic.daw.explodingbattleships.data.Data
 import pt.isel.leic.daw.explodingbattleships.data.comp.transactions.Transaction
 import pt.isel.leic.daw.explodingbattleships.domain.Game
+import pt.isel.leic.daw.explodingbattleships.domain.HitOutcome
+import pt.isel.leic.daw.explodingbattleships.domain.VerifiedSquare
 import java.util.regex.Pattern
 
 const val BOARD_MIN_HEIGHT = 10
@@ -62,7 +64,47 @@ fun isEmailValid(email: String): Boolean {
  * @param data the data module to be used
  * @return the game that the player is playing
  */
-fun getPlayerGame(transaction: Transaction, playerId: Int, data: Data): Game {
-    return data.gamesData.getPlayerGame(transaction, playerId)
-        ?: throw AppException("Player not in game", AppExceptionStatus.NOT_FOUND)
+fun getPlayerGame(transaction: Transaction, playerId: Int, data: Data): Game? =
+    data.gamesData.getPlayerGame(transaction, playerId)
+
+/**
+ * Returns whether the player is already in a lobby
+ * @param transaction the current transaction
+ * @param playerId the player id
+ * @param data the data module to be used
+ * @return true if the player is already in a lobby
+ */
+fun isPlayerInLobby(transaction: Transaction, playerId: Int, data: Data): Boolean =
+    data.playersData.isPlayerInLobby(transaction, playerId)
+
+/**
+ * Responsible for executing the hit, producing a list with the hits outcome
+ * and if any ship was detroyed
+ * @param transaction the current transaction
+ * @param game the current game
+ * @param verifiedSquares the squares that will be hit
+ * @param playerId the player id
+ * @param data the data module to be used
+ * @return a list with the hits outcome
+ */
+fun executeHit(transaction: Transaction, game: Game, verifiedSquares: MutableList<VerifiedSquare>, playerId: Int, data: Data) : MutableList<HitOutcome> {
+    val shipsSquares = data.inGameData.getShipAndSquares(transaction, game.id, playerId)
+    val hitOutcomeList = mutableListOf<HitOutcome>()
+    verifiedSquares.forEach { square ->
+        if (data.inGameData.createHit(transaction, square, game.id, playerId) != 1)
+            throw AppException("Unsuccessful hit")
+        val entry = shipsSquares.entries.find { it.value.contains(square) }
+        if (entry != null) {
+            if (data.inGameData.updateNumOfHits(transaction, game.id, playerId, entry.key.name) != 1)
+                throw AppException("Unsuccessful hit")
+            val destroyed = data.inGameData.isShipDestroyed(transaction, game.id, playerId, entry.key.name)
+            if (destroyed)
+                hitOutcomeList.add(HitOutcome(square, true, entry.key.name))
+            else
+                hitOutcomeList.add(HitOutcome(square, true))
+        } else {
+            hitOutcomeList.add(HitOutcome(square, false))
+        }
+    }
+    return hitOutcomeList
 }

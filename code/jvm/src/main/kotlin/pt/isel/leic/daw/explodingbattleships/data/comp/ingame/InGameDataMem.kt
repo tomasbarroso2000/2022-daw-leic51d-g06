@@ -30,51 +30,50 @@ class InGameDataMem(private val mockData: MockData) : InGameData {
         return true
     }
 
-    override fun sendHits(
+    override fun getShipAndSquares(
         transaction: Transaction,
         gameId: Int,
-        playerId: Int,
-        squares: List<VerifiedSquare>
-    ): List<HitOutcome> {
-        val hits = mutableListOf<HitOutcome>()
-        val shipsSquares =
-            mockData.ships
-                .filter { it.game == gameId && it.player == playerId }
-                .map { VerifiedShip(it.shipType, it.firstSquare.toVerifiedSquare(), it.orientation) }
-                .associateWith { ship -> ship.getSquares() }
-        squares.forEach {  square ->
-            mockData.hits.add(
-                StoredHit(
-                    square.toString(),
-                    Timestamp.from(Instant.now()),
-                    playerId,
-                    gameId
-                )
+        playerId: Int
+    ): Map<VerifiedShip, Set<VerifiedSquare>> =
+        mockData.ships
+            .filter { it.game == gameId && it.player == playerId }
+            .map { VerifiedShip(it.shipType, it.firstSquare.toVerifiedSquare(), it.orientation) }
+            .associateWith { ship -> ship.getSquares() }
+
+    override fun createHit(
+        transaction: Transaction,
+        square: VerifiedSquare,
+        gameId: Int,
+        playerId: Int
+    ): Int {
+        mockData.hits.add(
+            StoredHit(
+                square.toString(),
+                Timestamp.from(Instant.now()),
+                playerId,
+                gameId
             )
-            val entry = shipsSquares.entries.find { it.value.contains(square) }
-            if (entry != null) {
-                val ship = entry.key
-                val storedShip = mockData.ships.find { it.game == gameId && it.player == playerId && it.shipType == ship.name }
-                val size = mockData.shipTypes.find { it.typeName == ship.name }?.shipSize
-                mockData.ships.remove(storedShip)
-                val newStoredShip =
-                    if (storedShip?.nOfHits?.plus(1) == size) {
-                        hits.add(HitOutcome(square, true, ship.name))
-                        storedShip?.copy(nOfHits = storedShip.nOfHits + 1, destroyed = true)
-                    }
-                    else {
-                        hits.add(HitOutcome(square, true))
-                        storedShip?.copy(nOfHits = storedShip.nOfHits + 1)
-                    }
-                newStoredShip?.let { mockData.ships.add(it) }
-            } else {
-                hits.add(HitOutcome(square, false))
-            }
-        }
-        return hits
+        )
+        return 1
     }
 
-    override fun fleetState(transaction: Transaction, gameId: Int, playerId: Int): List<ShipState> {
-        TODO("Not yet implemented")
+    override fun updateNumOfHits(transaction: Transaction, gameId: Int, playerId: Int, shipType: String): Int {
+        val storedShip = mockData.ships.find { it.game == gameId && it.player == playerId && it.shipType == shipType }
+        mockData.ships.remove(storedShip)
+        val newStoredShip = storedShip?.copy(nOfHits = storedShip.nOfHits + 1)
+        newStoredShip?.let { mockData.ships.add(it) }
+        return 1
     }
+
+    override fun isShipDestroyed(transaction: Transaction, gameId: Int, playerId: Int, shipType: String): Boolean {
+        val storedShip = mockData.ships.find { it.game == gameId && it.player == playerId && it.shipType == shipType }
+        val size = mockData.shipTypes.find { it.typeName == shipType }?.shipSize
+        return storedShip?.nOfHits?.plus(1) == size
+    }
+
+    override fun fleetState(transaction: Transaction, gameId: Int, playerId: Int): List<ShipState> =
+        mockData
+            .ships
+            .filter { it.game == gameId && it.player == playerId }
+            .map { ShipState(it.shipType, it.destroyed) }
 }

@@ -26,58 +26,80 @@ class InGameDataDb : InGameData {
             true
         }
 
-    // needs to be split into multiple data functions that will be called in the services
+    override fun getShipAndSquares(
+        transaction: Transaction,
+        gameId: Int,
+        playerId: Int
+    ) : Map<VerifiedShip, Set<VerifiedSquare>> =
+        (transaction as TransactionDataDb).withHandle { handle ->
+            handle.createQuery(
+                "select ship_type.type_name name, first_square, orientation from ship join ship_type on ship.ship_type = ship_type.type_name " +
+                        "where game = :gameId and player = :playerId"
+            )
+                .bind("gameId", gameId)
+                .bind("playerId", playerId)
+                .mapTo<ShipFromDb>().list().map { it.toVerifiedShip() }.associateWith { ship -> ship.getSquares() }
+        }
+
+    override fun createHit(
+        transaction: Transaction,
+        square: VerifiedSquare,
+        gameId: Int,
+        playerId: Int
+    ): Int =
+        (transaction as TransactionDataDb).withHandle { handle ->
+            handle.createUpdate("insert into hit values (:square, now(), :playerId, :gameId)")
+                .bind("square", square.getString())
+                .bind("playerId", playerId)
+                .bind("gameId", gameId)
+                .execute()
+        }
+
+    override fun updateNumOfHits(
+        transaction: Transaction,
+        gameId: Int,
+        playerId: Int,
+        shipType: String
+    ): Int =
+        (transaction as TransactionDataDb).withHandle { handle ->
+            handle.createUpdate(
+                "update ship set n_of_hits = n_of_hits + 1 " +
+                        "where game = :gameId and player = :playerId and ship_type = :name"
+            )
+                .bind("gameId", gameId)
+                .bind("playerId", playerId)
+                .bind("name", shipType)
+                .execute()
+        }
+
+    override fun isShipDestroyed(
+        transaction: Transaction,
+        gameId: Int,
+        playerId: Int,
+        shipType: String
+    ): Boolean =
+        (transaction as TransactionDataDb).withHandle { handle ->
+            handle
+                .createQuery("select destroyed from ship " +
+                        "where game = :gameId and player = :playerId and ship_type = :name")
+                .bind("gameId", gameId)
+                .bind("playerId", playerId)
+                .bind("name", shipType)
+                .mapTo<Boolean>().first()
+        }
+
     override fun sendHits(
         transaction: Transaction,
         gameId: Int,
         playerId: Int,
         squares: List<VerifiedSquare>
-    ): List<HitOutcome> =
-        (transaction as TransactionDataDb).withHandle { handle ->
-            val shipsSquares =
-                handle.createQuery(
-                    "select ship_type.type_name name, first_square, orientation from ship join ship_type on ship.ship_type = ship_type.type_name " +
-                            "where game = :gameId and player = :playerId"
-                )
-                    .bind("gameId", gameId)
-                    .bind("playerId", playerId)
-                    .mapTo<ShipFromDb>().list().map { it.toVerifiedShip() }.associateWith { ship -> ship.getSquares() }
-            val hits = mutableListOf<HitOutcome>()
-            squares.forEach { square ->
-                handle.createUpdate("insert into hit values (:square, now(), :playerId, :gameId)")
-                    .bind("square", square.getString())
-                    .bind("playerId", playerId)
-                    .bind("gameId", gameId)
-                    .execute()
-                val entry = shipsSquares.entries.find { it.value.contains(square) }
-                if (entry != null) {
-                    handle.createUpdate("update ship set n_of_hits = n_of_hits + 1 " +
-                            "where game = :gameId and player = :playerId and ship_type = :name")
-                        .bind("gameId", gameId)
-                        .bind("playerId", playerId)
-                        .bind("name", entry.key.name)
-                        .execute()
-                    val destroyed = handle
-                        .createQuery("select destroyed from ship " +
-                                "where game = :gameId and player = :playerId and ship_type = :name")
-                        .bind("gameId", gameId)
-                        .bind("playerId", playerId)
-                        .bind("name", entry.key.name)
-                        .mapTo<Boolean>().first()
-                    if (destroyed)
-                        hits.add(HitOutcome(square, true, entry.key.name))
-                    else
-                        hits.add(HitOutcome(square, true))
-                } else {
-                    hits.add(HitOutcome(square, false))
-                }
-            }
-            hits
-        }
+    ): List<HitOutcome> {
+        TODO("Not yet implemented")
+    }
 
     override fun fleetState(transaction: Transaction, gameId: Int, playerId: Int): List<ShipState> =
         (transaction as TransactionDataDb).withHandle { handle ->
-            handle.createQuery("select ship_type, destroyed, n_of_hits from ship where game = :gameId and player = :playerId")
+            handle.createQuery("select ship_type, destroyed from ship where game = :gameId and player = :playerId")
                 .bind("gameId", gameId)
                 .bind("playerId", playerId)
                 .mapTo<ShipState>().list()

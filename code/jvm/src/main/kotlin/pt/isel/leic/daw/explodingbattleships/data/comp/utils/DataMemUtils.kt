@@ -1,7 +1,10 @@
 package pt.isel.leic.daw.explodingbattleships.data.comp.utils
 
+import org.apache.catalina.Store
 import pt.isel.leic.daw.explodingbattleships.domain.Game
 import pt.isel.leic.daw.explodingbattleships.domain.Player
+import pt.isel.leic.daw.explodingbattleships.domain.UnverifiedShip
+import pt.isel.leic.daw.explodingbattleships.domain.UnverifiedSquare
 import java.sql.Timestamp
 
 /**
@@ -87,21 +90,43 @@ data class StoredHit(
     val hitTimestamp: Timestamp,
     val player: Int,
     val game: Int
-    )
+)
+
+data class StoredLobby(
+    val player: Int,
+    val width: Int,
+    val height: Int,
+    val hitsPerRound: Int
+)
 
 data class MockData(
     val players: MutableSet<StoredPlayer> = mutableSetOf(
         StoredPlayer(1, "Leki", "leki@yes.com", 420, 123),
-        StoredPlayer(2, "Daizer", "daizer@daizer.daizer", 500, 123)
+        StoredPlayer(2, "Daizer", "daizer@daizer.daizer", 500, 123),
+        StoredPlayer(3, "LordFarquaad", "farquaad@buebuelonge.com", 510, 123),
+        StoredPlayer(4, "GingerbreadMan", "ginger@buebuelonge.com", 520, 123)
     ),
     val games: MutableSet<StoredGame> = mutableSetOf(
         StoredGame(1, 10, 10, 1, "layout_definition", 1, 2, 1)
     ),
     val tokens: MutableSet<StoredToken> = mutableSetOf(
         StoredToken("123", 1),
-        StoredToken("321", 2)
+        StoredToken("321", 2),
+        StoredToken("fiona", 3),
+        StoredToken("homem-queque", 4)
     ),
-    val ships: MutableSet<StoredShip> = mutableSetOf(),
+    val ships: MutableSet<StoredShip> = mutableSetOf(
+        StoredShip("a1", 0, false, "horizontal", 1, 1, "carrier"),
+        StoredShip("b1", 0, false, "vertical", 1, 1, "battleship"),
+        StoredShip("c2", 0, false, "horizontal", 1, 1, "cruiser"),
+        StoredShip("b2", 0, false, "horizontal", 1, 1, "submarine"),
+        StoredShip("d2", 0, false, "vertical", 1, 1, "destroyer"),
+        StoredShip("a1", 0, false, "horizontal", 2, 1, "carrier"),
+        StoredShip("b1", 0, false, "vertical", 2, 1, "battleship"),
+        StoredShip("c2", 0, false, "horizontal", 2, 1, "cruiser"),
+        StoredShip("b2", 3, true, "horizontal", 2, 1, "submarine"),
+        StoredShip("d2", 2, true, "vertical", 2, 1, "destroyer")
+    ),
     val shipTypes: MutableSet<StoredShipType> = mutableSetOf(
         StoredShipType("carrier", 5),
         StoredShipType("battleship", 4),
@@ -109,7 +134,10 @@ data class MockData(
         StoredShipType("submarine", 3),
         StoredShipType("destroyer", 2)
     ),
-    val hits: MutableSet<StoredHit> = mutableSetOf()
+    val hits: MutableSet<StoredHit> = mutableSetOf(),
+    val lobby: MutableSet<StoredLobby> = mutableSetOf(
+        StoredLobby(4, 10, 10, 1)
+    )
 )
 
 fun StoredPlayer.toPlayer() = Player(id, name, score)

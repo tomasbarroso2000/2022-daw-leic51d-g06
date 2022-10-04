@@ -2,17 +2,7 @@ package pt.isel.leic.daw.explodingbattleships.services.comp.utils
 
 import pt.isel.leic.daw.explodingbattleships.data.Data
 import pt.isel.leic.daw.explodingbattleships.data.comp.transactions.Transaction
-import pt.isel.leic.daw.explodingbattleships.domain.Game
-import pt.isel.leic.daw.explodingbattleships.domain.NextSquare
-import pt.isel.leic.daw.explodingbattleships.domain.UnverifiedShip
-import pt.isel.leic.daw.explodingbattleships.domain.ShipType
-import pt.isel.leic.daw.explodingbattleships.domain.VerifiedShip
-import pt.isel.leic.daw.explodingbattleships.domain.VerifiedSquare
-import pt.isel.leic.daw.explodingbattleships.domain.down
-import pt.isel.leic.daw.explodingbattleships.domain.getSize
-import pt.isel.leic.daw.explodingbattleships.domain.getString
-import pt.isel.leic.daw.explodingbattleships.domain.right
-import pt.isel.leic.daw.explodingbattleships.domain.toVerifiedShipOrNull
+import pt.isel.leic.daw.explodingbattleships.domain.*
 
 /**
  * Throws an [AppException] if the undesired condition is verified
@@ -94,16 +84,16 @@ private fun validateShipSquares(ship: VerifiedShip, width: Int, height: Int, occ
 }
 
 /**
- * Computes a player id through a token
+ * Computes a player through a token
  * @param transaction the current transaction
  * @param token the user token
  * @param data the [Data] module
- * @return the player id
+ * @return the player
  */
-fun computePlayerId(transaction: Transaction, token: String?, data: Data): Int {
+fun computePlayer(transaction: Transaction, token: String?, data: Data): Player {
     if (token.isNullOrBlank())
         throw AppException("No token provided", AppExceptionStatus.UNAUTHORIZED)
-    return data.playersData.getPlayerIdFromToken(transaction, token)
+    return data.playersData.getPlayerFromToken(transaction, token)
         ?: throw AppException("Invalid token", AppExceptionStatus.UNAUTHORIZED)
 }
 
