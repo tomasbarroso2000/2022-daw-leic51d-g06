@@ -25,6 +25,12 @@ class InGameServices(private val data: Data) {
         data.inGameData.defineLayout(transaction, game.id, playerId, verifiedShips)
     }
 
+    /**
+     * Sends the hits the user has thrown in his turn
+     * @param token the user's token
+     * @param hits the hits to be sent
+     * @return List<HitOutcome> Representing the hit's outcome
+     */
     fun sendHits(token: String?, hits: Hits) = doService(data) { transaction ->
         val playerId = computePlayer(transaction, token, data).id
         val game = computeGame(transaction, hits.gameId, data)
@@ -47,17 +53,19 @@ class InGameServices(private val data: Data) {
         executeHit(transaction, game, verifiedSquares, game.idlePlayer(), data)
     }
 
-    fun playerFleetState(token: String?) = doService(data) { transaction ->
+    /**
+     * Shows the state of the player's or enemy's fleet
+     * @param token the user token
+     * @param isPlayer represents if it is the player or enemy fleet
+     * @return List<ShipState>
+     */
+    fun fleetState(token: String?, isPlayer: Boolean) = doService(data) { transaction ->
         val playerId = computePlayer(transaction, token, data).id
         val game = getPlayerGame(transaction, playerId, data)
             ?: throw AppException("Player not in game", AppExceptionStatus.BAD_REQUEST)
-        data.inGameData.fleetState(transaction, game.id, playerId)
-    }
-
-    fun enemyFleetState(token: String?) = doService(data) { transaction ->
-        val playerId = computePlayer(transaction, token, data).id
-        val game = getPlayerGame(transaction, playerId, data)
-            ?: throw AppException("Player not in game", AppExceptionStatus.BAD_REQUEST)
-        data.inGameData.fleetState(transaction, game.id, game.otherPlayer(playerId))
+        if (isPlayer)
+            data.inGameData.fleetState(transaction, game.id, playerId)
+        else
+            data.inGameData.fleetState(transaction, game.id, game.otherPlayer(playerId))
     }
 }

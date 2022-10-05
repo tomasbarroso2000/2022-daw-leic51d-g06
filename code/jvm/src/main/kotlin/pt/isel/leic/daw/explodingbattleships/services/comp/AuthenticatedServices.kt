@@ -8,10 +8,22 @@ import pt.isel.leic.daw.explodingbattleships.services.comp.utils.*
  * Section of services that requires authentication
  */
 class AuthenticatedServices(private val data: Data) {
+
+    /**
+     * Get the player with the token passed as parameter
+     * @param token the user's token
+     * @return the player
+     */
     fun getPlayerInfo(token: String?) = doService(data) { transaction ->
         computePlayer(transaction, token, data)
     }
 
+    /**
+     * Places the user in a lobby or in a game if there is already someone waiting in the lobby with the same game characteristics
+     * @param token the user's token
+     * @param lobbyInput the characteristics of the game the user wants to play
+     * @return EnterLobbyOutput representing if the player was placed in queue
+     */
     fun enterLobby(token: String?, lobbyInput: EnterLobbyInput) = doService(data) { transaction ->
         val playerId = computePlayer(transaction, token, data).id
         if (getPlayerGame(transaction, playerId, data) != null)

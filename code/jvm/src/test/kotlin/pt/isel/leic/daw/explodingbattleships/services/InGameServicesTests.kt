@@ -311,7 +311,7 @@ class InGameServicesTests {
             ShipState("submarine", false),
             ShipState("destroyer", false)
         )
-        val actualFleet = services.playerFleetState(token)
+        val actualFleet = services.fleetState(token, true)
         assertEquals(expectedFleet, actualFleet)
     }
 
@@ -319,7 +319,7 @@ class InGameServicesTests {
     fun player_fleet_state_without_token() {
         val token = ""
         val exception = assertThrows<AppException> {
-            services.playerFleetState(token)
+            services.fleetState(token, true)
         }
         assertEquals("No token provided", exception.message)
         assertEquals(AppExceptionStatus.UNAUTHORIZED, exception.status)
@@ -329,7 +329,7 @@ class InGameServicesTests {
     fun player_fleet_state_with_invalid_token() {
         val token = "nope"
         val exception = assertThrows<AppException> {
-            services.playerFleetState(token)
+            services.fleetState(token, true)
         }
         assertEquals("Invalid token", exception.message)
         assertEquals(AppExceptionStatus.UNAUTHORIZED, exception.status)
@@ -339,7 +339,7 @@ class InGameServicesTests {
     fun player_fleet_state_with_player_not_in_a_game() {
         val token = "fiona"
         val exception = assertThrows<AppException> {
-            services.playerFleetState(token)
+            services.fleetState(token, true)
         }
         assertEquals("Player not in game", exception.message)
         assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
@@ -355,7 +355,7 @@ class InGameServicesTests {
             ShipState("submarine", true),
             ShipState("destroyer", true)
         )
-        val actualFleet = services.enemyFleetState(token)
+        val actualFleet = services.fleetState(token, false)
         assertEquals(expectedFleet, actualFleet)
     }
 
@@ -363,7 +363,7 @@ class InGameServicesTests {
     fun enemy_fleet_state_without_token() {
         val token = ""
         val exception = assertThrows<AppException> {
-            services.enemyFleetState(token)
+            services.fleetState(token, false)
         }
         assertEquals("No token provided", exception.message)
         assertEquals(AppExceptionStatus.UNAUTHORIZED, exception.status)
@@ -373,7 +373,7 @@ class InGameServicesTests {
     fun enemy_fleet_state_with_invalid_token() {
         val token = "nope"
         val exception = assertThrows<AppException> {
-            services.enemyFleetState(token)
+            services.fleetState(token, false)
         }
         assertEquals("Invalid token", exception.message)
         assertEquals(AppExceptionStatus.UNAUTHORIZED, exception.status)
@@ -383,7 +383,7 @@ class InGameServicesTests {
     fun enemy_fleet_state_with_player_not_in_a_game() {
         val token = "fiona"
         val exception = assertThrows<AppException> {
-            services.enemyFleetState(token)
+            services.fleetState(token, false)
         }
         assertEquals("Player not in game", exception.message)
         assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
