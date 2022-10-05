@@ -16,6 +16,7 @@ class InGameServices(private val data: Data) {
      */
     fun defineLayout(token: String?, layout: Layout) = doService(data) { transaction ->
         val playerId = computePlayer(transaction, token, data).id
+        // why not use gatPlayerGame? layout would stop needing to have gameId
         val game = computeGame(transaction, layout.gameId, data)
         checkPlayerInGame(game, playerId)
         checkGameState(game.state, "layout_definition")
@@ -33,6 +34,7 @@ class InGameServices(private val data: Data) {
      */
     fun sendHits(token: String?, hits: Hits) = doService(data) { transaction ->
         val playerId = computePlayer(transaction, token, data).id
+        // why not use gatPlayerGame? hits would stop needing to have gameId
         val game = computeGame(transaction, hits.gameId, data)
         checkPlayerInGame(game, playerId)
         checkCurrentPlayer(game, playerId)
