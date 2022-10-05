@@ -88,15 +88,6 @@ class InGameDataDb : InGameData {
                 .mapTo<Boolean>().first()
         }
 
-    override fun sendHits(
-        transaction: Transaction,
-        gameId: Int,
-        playerId: Int,
-        squares: List<VerifiedSquare>
-    ): List<HitOutcome> {
-        TODO("Not yet implemented")
-    }
-
     override fun fleetState(transaction: Transaction, gameId: Int, playerId: Int): List<ShipState> =
         (transaction as TransactionDataDb).withHandle { handle ->
             handle.createQuery("select ship_type, destroyed from ship where game = :gameId and player = :playerId")

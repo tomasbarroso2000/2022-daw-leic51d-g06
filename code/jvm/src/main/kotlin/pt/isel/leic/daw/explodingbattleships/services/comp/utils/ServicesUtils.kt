@@ -5,6 +5,7 @@ import pt.isel.leic.daw.explodingbattleships.data.comp.transactions.Transaction
 import pt.isel.leic.daw.explodingbattleships.domain.Game
 import pt.isel.leic.daw.explodingbattleships.domain.HitOutcome
 import pt.isel.leic.daw.explodingbattleships.domain.VerifiedSquare
+import pt.isel.leic.daw.explodingbattleships.domain.idlePlayer
 import java.util.regex.Pattern
 
 const val BOARD_MIN_HEIGHT = 10
@@ -79,7 +80,7 @@ fun isPlayerInLobby(transaction: Transaction, playerId: Int, data: Data): Boolea
 
 /**
  * Responsible for executing the hit, producing a list with the hits outcome
- * and if any ship was detroyed
+ * and if any ship was destroyed
  * @param transaction the current transaction
  * @param game the current game
  * @param verifiedSquares the squares that will be hit
@@ -87,7 +88,7 @@ fun isPlayerInLobby(transaction: Transaction, playerId: Int, data: Data): Boolea
  * @param data the data module to be used
  * @return a list with the hits outcome
  */
-fun executeHit(transaction: Transaction, game: Game, verifiedSquares: MutableList<VerifiedSquare>, playerId: Int, data: Data) : MutableList<HitOutcome> {
+fun executeHit(transaction: Transaction, game: Game, verifiedSquares: List<VerifiedSquare>, playerId: Int, data: Data): List<HitOutcome> {
     val shipsSquares = data.inGameData.getShipAndSquares(transaction, game.id, playerId)
     val hitOutcomeList = mutableListOf<HitOutcome>()
     verifiedSquares.forEach { square ->
@@ -98,13 +99,14 @@ fun executeHit(transaction: Transaction, game: Game, verifiedSquares: MutableLis
             if (data.inGameData.updateNumOfHits(transaction, game.id, playerId, entry.key.name) != 1)
                 throw AppException("Unsuccessful hit")
             val destroyed = data.inGameData.isShipDestroyed(transaction, game.id, playerId, entry.key.name)
-            if (destroyed)
-                hitOutcomeList.add(HitOutcome(square, true, entry.key.name))
-            else
-                hitOutcomeList.add(HitOutcome(square, true))
+            if (destroyed) hitOutcomeList.add(HitOutcome(square, true, entry.key.name))
+            else hitOutcomeList.add(HitOutcome(square, true))
         } else {
             hitOutcomeList.add(HitOutcome(square, false))
         }
     }
+    // verify win condition
+    if (data.gamesData.changeCurrPlayer(transaction, game.id, game.idlePlayer()) != 1)
+        throw AppException("Unsuccessful hit")
     return hitOutcomeList
 }

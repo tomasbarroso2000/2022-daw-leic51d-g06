@@ -24,4 +24,14 @@ class GamesDataMem(private val mockData: MockData) : GamesData {
             .games
             .filter { (it.player1 == playerId || it.player2 == playerId) && it.state != "completed" }
             .map { it.toGame() }.firstOrNull()
+
+    override fun changeCurrPlayer(transaction: Transaction, gameId: Int, newCurrPlayer: Int): Int {
+        mockData.games.find { it.id == gameId }?.let { game ->
+            mockData.games.remove(game)
+            val newGame = game.copy(currPlayer = newCurrPlayer)
+            mockData.games.add(newGame)
+            return 1
+        }
+        return 0
+    }
 }

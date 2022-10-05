@@ -9,7 +9,7 @@ create table if not exists player(
 );
 
 create table if not exists token(
-    token_ver varchar(40) primary key,
+    token_ver varchar(40) primary key, -- maybe should be hashed
     player integer references player(id)
 );
 

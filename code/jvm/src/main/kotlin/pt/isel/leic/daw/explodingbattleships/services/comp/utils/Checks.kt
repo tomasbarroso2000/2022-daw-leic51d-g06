@@ -57,8 +57,8 @@ private fun shipsValid(ships: List<UnverifiedShip>) =
  * @param height the height of the board
  */
 fun squareInBoard(square: VerifiedSquare, width: Int, height: Int): Boolean {
-    val lastRow = square.row + height - 1
-    val lastColumn = square.column + width - 1
+    val lastRow = 'a' + height - 1
+    val lastColumn = 1 + width - 1
     if (square.row !in 'a'..lastRow) return false
     if (square.column !in 1..lastColumn) return false
     return true
@@ -108,7 +108,7 @@ fun checkGameState(gameState: String, state: String) =
     checkOrThrow(gameState != state, "Invalid game state")
 
 fun checkPlayerInGame(game: Game, playerId: Int) =
-    checkOrThrow(game.player1 != playerId && game.player2 != playerId, "Wrong game")
+    checkOrThrow(game.player1 != playerId && game.player2 != playerId, "Player not in game")
 
 fun checkCurrentPlayer(game: Game, playerId: Int) =
     checkOrThrow(game.currPlayer != playerId, "Not your turn")

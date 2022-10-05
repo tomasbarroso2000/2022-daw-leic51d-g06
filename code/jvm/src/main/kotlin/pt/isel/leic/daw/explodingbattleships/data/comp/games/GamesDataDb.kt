@@ -41,4 +41,12 @@ class GamesDataDb : GamesData {
                 .bind("playerId", playerId)
                 .mapTo<Game>().firstOrNull()
         }
+
+    override fun changeCurrPlayer(transaction: Transaction, gameId: Int, newCurrPlayer: Int): Int =
+        (transaction as TransactionDataDb).withHandle { handle ->
+            handle.createUpdate("update game set curr_player = :newCurrPlayer where id = :gameId")
+                .bind("newCurrPlayer", newCurrPlayer)
+                .bind("gameId", gameId)
+                .execute()
+        }
 }

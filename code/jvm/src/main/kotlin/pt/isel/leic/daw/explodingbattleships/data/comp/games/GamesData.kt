@@ -14,4 +14,6 @@ interface GamesData {
     fun getHitSquares(transaction: Transaction, gameId: Int, playerId: Int): List<VerifiedSquare>
 
     fun getPlayerGame(transaction: Transaction, playerId: Int): Game?
+
+    fun changeCurrPlayer(transaction: Transaction, gameId: Int, newCurrPlayer: Int): Int
 }

@@ -60,16 +60,15 @@ class InGameDataMem(private val mockData: MockData) : InGameData {
     override fun updateNumOfHits(transaction: Transaction, gameId: Int, playerId: Int, shipType: String): Int {
         val storedShip = mockData.ships.find { it.game == gameId && it.player == playerId && it.shipType == shipType }
         mockData.ships.remove(storedShip)
-        val newStoredShip = storedShip?.copy(nOfHits = storedShip.nOfHits + 1)
+        val size = mockData.shipTypes.find { it.typeName == shipType }?.shipSize
+        val destroyed = storedShip?.nOfHits?.plus(1) == size
+        val newStoredShip = storedShip?.copy(nOfHits = storedShip.nOfHits + 1, destroyed = destroyed)
         newStoredShip?.let { mockData.ships.add(it) }
         return 1
     }
 
-    override fun isShipDestroyed(transaction: Transaction, gameId: Int, playerId: Int, shipType: String): Boolean {
-        val storedShip = mockData.ships.find { it.game == gameId && it.player == playerId && it.shipType == shipType }
-        val size = mockData.shipTypes.find { it.typeName == shipType }?.shipSize
-        return storedShip?.nOfHits?.plus(1) == size
-    }
+    override fun isShipDestroyed(transaction: Transaction, gameId: Int, playerId: Int, shipType: String): Boolean =
+        mockData.ships.find { it.game == gameId && it.player == playerId && it.shipType == shipType }?.destroyed ?: false
 
     override fun fleetState(transaction: Transaction, gameId: Int, playerId: Int): List<ShipState> =
         mockData
