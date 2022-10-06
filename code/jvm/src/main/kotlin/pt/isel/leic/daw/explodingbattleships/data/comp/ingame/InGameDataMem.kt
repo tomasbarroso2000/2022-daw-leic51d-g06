@@ -4,6 +4,8 @@ import pt.isel.leic.daw.explodingbattleships.data.comp.transactions.Transaction
 import pt.isel.leic.daw.explodingbattleships.data.comp.utils.MockData
 import pt.isel.leic.daw.explodingbattleships.data.comp.utils.StoredHit
 import pt.isel.leic.daw.explodingbattleships.data.comp.utils.StoredShip
+import pt.isel.leic.daw.explodingbattleships.data.comp.utils.toShipState
+import pt.isel.leic.daw.explodingbattleships.data.comp.utils.toVerifiedShip
 import pt.isel.leic.daw.explodingbattleships.domain.*
 import java.sql.Timestamp
 import java.time.Instant
@@ -37,7 +39,7 @@ class InGameDataMem(private val mockData: MockData) : InGameData {
     ): Map<VerifiedShip, Set<VerifiedSquare>> =
         mockData.ships
             .filter { it.game == gameId && it.player == playerId }
-            .map { VerifiedShip(it.shipType, it.firstSquare.toVerifiedSquare(), it.orientation) }
+            .map { it.toVerifiedShip() }
             .associateWith { ship -> ship.getSquares() }
 
     override fun createHit(
@@ -74,5 +76,5 @@ class InGameDataMem(private val mockData: MockData) : InGameData {
         mockData
             .ships
             .filter { it.game == gameId && it.player == playerId }
-            .map { ShipState(it.shipType, it.destroyed) }
+            .map { it.toShipState() }
 }

@@ -3,8 +3,11 @@ package pt.isel.leic.daw.explodingbattleships.data.comp.utils
 import org.apache.catalina.Store
 import pt.isel.leic.daw.explodingbattleships.domain.Game
 import pt.isel.leic.daw.explodingbattleships.domain.Player
+import pt.isel.leic.daw.explodingbattleships.domain.ShipState
 import pt.isel.leic.daw.explodingbattleships.domain.UnverifiedShip
 import pt.isel.leic.daw.explodingbattleships.domain.UnverifiedSquare
+import pt.isel.leic.daw.explodingbattleships.domain.VerifiedShip
+import pt.isel.leic.daw.explodingbattleships.domain.toVerifiedSquare
 import java.sql.Timestamp
 import java.time.Instant
 
@@ -80,6 +83,9 @@ data class StoredShip(
     val game: Int,
     val shipType: String
 )
+
+fun StoredShip.toShipState() = ShipState(shipType, destroyed)
+fun StoredShip.toVerifiedShip() = VerifiedShip(shipType, firstSquare.toVerifiedSquare(), orientation)
 
 data class StoredShipType(
     val typeName: String,
