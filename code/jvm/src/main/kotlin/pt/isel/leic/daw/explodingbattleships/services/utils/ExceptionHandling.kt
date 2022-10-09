@@ -1,4 +1,4 @@
-package pt.isel.leic.daw.explodingbattleships.services.comp.utils
+package pt.isel.leic.daw.explodingbattleships.services.utils
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

@@ -1,4 +1,4 @@
-package pt.isel.leic.daw.explodingbattleships.data.comp.transactions
+package pt.isel.leic.daw.explodingbattleships.data
 
 /**
  * Represents a transaction that can be requested

@@ -1,19 +1,20 @@
 package pt.isel.leic.daw.explodingbattleships.services
 
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import pt.isel.leic.daw.explodingbattleships.data.DataMem
+import pt.isel.leic.daw.explodingbattleships.data.mem.DataMem
 import pt.isel.leic.daw.explodingbattleships.domain.HitOutcome
 import pt.isel.leic.daw.explodingbattleships.domain.Hits
 import pt.isel.leic.daw.explodingbattleships.domain.Layout
+import pt.isel.leic.daw.explodingbattleships.domain.LayoutOutcome
+import pt.isel.leic.daw.explodingbattleships.domain.LayoutOutcomeStatus
 import pt.isel.leic.daw.explodingbattleships.domain.ShipState
 import pt.isel.leic.daw.explodingbattleships.domain.UnverifiedShip
 import pt.isel.leic.daw.explodingbattleships.domain.UnverifiedSquare
 import pt.isel.leic.daw.explodingbattleships.domain.VerifiedSquare
-import pt.isel.leic.daw.explodingbattleships.services.comp.utils.AppException
-import pt.isel.leic.daw.explodingbattleships.services.comp.utils.AppExceptionStatus
+import pt.isel.leic.daw.explodingbattleships.services.utils.AppException
+import pt.isel.leic.daw.explodingbattleships.services.utils.AppExceptionStatus
 
 class InGameServicesTests {
     private val data = DataMem()
@@ -23,7 +24,6 @@ class InGameServicesTests {
     fun define_layout() {
         val token = "123"
         val layout = Layout(
-            1,
             listOf(
                 UnverifiedShip("carrier", UnverifiedSquare('a', 1), "horizontal"),
                 UnverifiedShip("battleship", UnverifiedSquare('b', 1), "vertical"),
@@ -32,14 +32,15 @@ class InGameServicesTests {
                 UnverifiedShip("destroyer", UnverifiedSquare('d', 2), "vertical")
             )
         )
-        assertTrue(services.defineLayout(token, layout))
+        val expectedLayoutOutcome = LayoutOutcome(LayoutOutcomeStatus.STARTED)
+        val actualLayoutOutcome = services.defineLayout(token, layout)
+        assertEquals(expectedLayoutOutcome, actualLayoutOutcome)
     }
 
     @Test
     fun define_layout_without_token() {
         val token = ""
         val layout = Layout(
-            1,
             listOf(
                 UnverifiedShip("carrier", UnverifiedSquare('a', 1), "horizontal"),
                 UnverifiedShip("battleship", UnverifiedSquare('b', 1), "vertical"),
@@ -59,7 +60,6 @@ class InGameServicesTests {
     fun define_layout_with_invalid_token() {
         val token = "nope"
         val layout = Layout(
-            1,
             listOf(
                 UnverifiedShip("carrier", UnverifiedSquare('a', 1), "horizontal"),
                 UnverifiedShip("battleship", UnverifiedSquare('b', 1), "vertical"),
@@ -76,30 +76,9 @@ class InGameServicesTests {
     }
 
     @Test
-    fun define_layout_with_player_not_in_a_game() {
-        val token = "123"
-        val layout = Layout(
-            2,
-            listOf(
-                UnverifiedShip("carrier", UnverifiedSquare('a', 1), "horizontal"),
-                UnverifiedShip("battleship", UnverifiedSquare('b', 1), "vertical"),
-                UnverifiedShip("submarine", UnverifiedSquare('b', 2), "horizontal"),
-                UnverifiedShip("cruiser", UnverifiedSquare('c', 2), "horizontal"),
-                UnverifiedShip("destroyer", UnverifiedSquare('d', 2), "vertical")
-            )
-        )
-        val exception = assertThrows<AppException> {
-            services.defineLayout(token, layout)
-        }
-        assertEquals("Player not in game", exception.message)
-        assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
-    }
-
-    @Test
     fun define_layout_with_invalid_orientation() {
         val token = "123"
         val layout = Layout(
-            1,
             listOf(
                 UnverifiedShip("carrier", UnverifiedSquare('a', 1), "horizontal"),
                 UnverifiedShip("battleship", UnverifiedSquare('b', 1), "vertical"),
@@ -119,7 +98,6 @@ class InGameServicesTests {
     fun define_layout_with_invalid_ship() {
         val token = "123"
         val layout = Layout(
-            1,
             listOf(
                 UnverifiedShip("carrier", UnverifiedSquare('a', 1), "horizontal"),
                 UnverifiedShip("battleship", UnverifiedSquare('b', 1), "vertical"),
@@ -139,7 +117,6 @@ class InGameServicesTests {
     fun send_hits() {
         val token = "buro"
         val hits = Hits(
-            2,
             listOf(
                 UnverifiedSquare('d', 2),
                 UnverifiedSquare('e', 2)
@@ -157,7 +134,6 @@ class InGameServicesTests {
     fun send_hits_without_token() {
         val token = ""
         val hits = Hits(
-            2,
             listOf(
                 UnverifiedSquare('d', 2),
                 UnverifiedSquare('e', 2)
@@ -174,7 +150,6 @@ class InGameServicesTests {
     fun send_hits_with_invalid_token() {
         val token = "nope"
         val hits = Hits(
-            2,
             listOf(
                 UnverifiedSquare('d', 2),
                 UnverifiedSquare('e', 2)
@@ -191,7 +166,6 @@ class InGameServicesTests {
     fun send_hits_with_player_not_in_a_game() {
         val token = "fiona"
         val hits = Hits(
-            2,
             listOf(
                 UnverifiedSquare('d', 2),
                 UnverifiedSquare('e', 2)
@@ -200,7 +174,7 @@ class InGameServicesTests {
         val exception = assertThrows<AppException> {
             services.sendHits(token, hits)
         }
-        assertEquals("Player not in game", exception.message)
+        assertEquals("Player not in a game", exception.message)
         assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
     }
 
@@ -208,7 +182,6 @@ class InGameServicesTests {
     fun send_hits_with_player_not_current() {
         val token = "shrekinho"
         val hits = Hits(
-            2,
             listOf(
                 UnverifiedSquare('d', 2),
                 UnverifiedSquare('e', 2)
@@ -224,7 +197,7 @@ class InGameServicesTests {
     @Test
     fun send_hits_with_no_squares() {
         val token = "buro"
-        val hits = Hits(2, listOf())
+        val hits = Hits(listOf())
         val exception = assertThrows<AppException> {
             services.sendHits(token, hits)
         }
@@ -236,7 +209,6 @@ class InGameServicesTests {
     fun send_hits_with_invalid_amount_of_hits() {
         val token = "buro"
         val hits = Hits(
-            2,
             listOf(
                 UnverifiedSquare('d', 2),
                 UnverifiedSquare('e', 2),
@@ -254,7 +226,6 @@ class InGameServicesTests {
     fun send_hits_with_invalid_square() {
         val token = "buro"
         val hits = Hits(
-            2,
             listOf(
                 UnverifiedSquare('d', 2),
                 UnverifiedSquare(null, 2)
@@ -271,7 +242,6 @@ class InGameServicesTests {
     fun send_hits_with_square_not_in_board() {
         val token = "buro"
         val hits = Hits(
-            2,
             listOf(
                 UnverifiedSquare('d', 2),
                 UnverifiedSquare('z', 2)
@@ -288,7 +258,6 @@ class InGameServicesTests {
     fun send_hits_with_square_already_hit() {
         val token = "buro"
         val hits = Hits(
-            2,
             listOf(
                 UnverifiedSquare('d', 2),
                 UnverifiedSquare('f', 1)
@@ -341,7 +310,7 @@ class InGameServicesTests {
         val exception = assertThrows<AppException> {
             services.fleetState(token, true)
         }
-        assertEquals("Player not in game", exception.message)
+        assertEquals("Player not in a game", exception.message)
         assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
     }
 
@@ -385,7 +354,7 @@ class InGameServicesTests {
         val exception = assertThrows<AppException> {
             services.fleetState(token, false)
         }
-        assertEquals("Player not in game", exception.message)
+        assertEquals("Player not in a game", exception.message)
         assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
     }
 }

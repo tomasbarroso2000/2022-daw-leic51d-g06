@@ -1,6 +1,9 @@
 package pt.isel.leic.daw.explodingbattleships.domain
 
-data class Layout(
-    val gameId: Int?,
-    val ships: List<UnverifiedShip>?
+enum class LayoutOutcomeStatus { WAITING, STARTED }
+
+data class Layout(val ships: List<UnverifiedShip>?)
+
+data class LayoutOutcome(
+    val status: LayoutOutcomeStatus
 )

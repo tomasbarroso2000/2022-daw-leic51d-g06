@@ -1,8 +1,15 @@
-package pt.isel.leic.daw.explodingbattleships.services.comp
+package pt.isel.leic.daw.explodingbattleships.services
 
 import pt.isel.leic.daw.explodingbattleships.data.Data
 import pt.isel.leic.daw.explodingbattleships.domain.EnterLobbyInput
-import pt.isel.leic.daw.explodingbattleships.services.comp.utils.*
+import pt.isel.leic.daw.explodingbattleships.services.utils.AppException
+import pt.isel.leic.daw.explodingbattleships.services.utils.AppExceptionStatus
+import pt.isel.leic.daw.explodingbattleships.services.utils.BOARD_MIN_HEIGHT
+import pt.isel.leic.daw.explodingbattleships.services.utils.BOARD_MIN_WIDTH
+import pt.isel.leic.daw.explodingbattleships.services.utils.computePlayer
+import pt.isel.leic.daw.explodingbattleships.services.utils.doService
+import pt.isel.leic.daw.explodingbattleships.services.utils.isPlayerInAGame
+import pt.isel.leic.daw.explodingbattleships.services.utils.isPlayerInLobby
 
 /**
  * Section of services that requires authentication
@@ -26,7 +33,7 @@ class AuthenticatedServices(private val data: Data) {
      */
     fun enterLobby(token: String?, lobbyInput: EnterLobbyInput) = doService(data) { transaction ->
         val playerId = computePlayer(transaction, token, data).id
-        if (getPlayerGame(transaction, playerId, data) != null)
+        if (isPlayerInAGame(transaction, playerId, data))
             throw AppException("Player already in a game", AppExceptionStatus.BAD_REQUEST)
         if (isPlayerInLobby(transaction, playerId, data))
             throw AppException("Player already in lobby", AppExceptionStatus.BAD_REQUEST)

@@ -1,7 +1,14 @@
-package pt.isel.leic.daw.explodingbattleships.data.comp.players
+package pt.isel.leic.daw.explodingbattleships.data.mem
 
-import pt.isel.leic.daw.explodingbattleships.data.comp.transactions.Transaction
-import pt.isel.leic.daw.explodingbattleships.data.comp.utils.*
+import pt.isel.leic.daw.explodingbattleships.data.PlayersData
+import pt.isel.leic.daw.explodingbattleships.data.Transaction
+import pt.isel.leic.daw.explodingbattleships.data.comp.utils.MockData
+import pt.isel.leic.daw.explodingbattleships.data.comp.utils.StoredLobby
+import pt.isel.leic.daw.explodingbattleships.data.comp.utils.StoredPlayer
+import pt.isel.leic.daw.explodingbattleships.data.comp.utils.StoredToken
+import pt.isel.leic.daw.explodingbattleships.data.comp.utils.getSublist
+import pt.isel.leic.daw.explodingbattleships.data.comp.utils.hasMore
+import pt.isel.leic.daw.explodingbattleships.data.comp.utils.toPlayer
 import pt.isel.leic.daw.explodingbattleships.domain.EnterLobbyOutput
 import pt.isel.leic.daw.explodingbattleships.domain.ListOfData
 import pt.isel.leic.daw.explodingbattleships.domain.Player

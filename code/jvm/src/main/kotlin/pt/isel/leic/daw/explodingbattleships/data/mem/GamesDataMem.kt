@@ -1,6 +1,7 @@
-package pt.isel.leic.daw.explodingbattleships.data.comp.games
+package pt.isel.leic.daw.explodingbattleships.data.mem
 
-import pt.isel.leic.daw.explodingbattleships.data.comp.transactions.Transaction
+import pt.isel.leic.daw.explodingbattleships.data.GamesData
+import pt.isel.leic.daw.explodingbattleships.data.Transaction
 import pt.isel.leic.daw.explodingbattleships.data.comp.utils.MockData
 import pt.isel.leic.daw.explodingbattleships.data.comp.utils.toGame
 import pt.isel.leic.daw.explodingbattleships.domain.Game
@@ -25,13 +26,12 @@ class GamesDataMem(private val mockData: MockData) : GamesData {
             .filter { (it.player1 == playerId || it.player2 == playerId) && it.state != "completed" }
             .map { it.toGame() }.firstOrNull()
 
-    override fun changeCurrPlayer(transaction: Transaction, gameId: Int, newCurrPlayer: Int): Int {
+    override fun changeCurrPlayer(transaction: Transaction, gameId: Int, newCurrPlayer: Int): Boolean {
         mockData.games.find { it.id == gameId }?.let { game ->
             mockData.games.remove(game)
             val newGame = game.copy(currPlayer = newCurrPlayer)
-            mockData.games.add(newGame)
-            return 1
+            return mockData.games.add(newGame)
         }
-        return 0
+        return false
     }
 }

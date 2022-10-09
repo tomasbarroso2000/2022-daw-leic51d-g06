@@ -1,6 +1,5 @@
-package pt.isel.leic.daw.explodingbattleships.data.comp.players
+package pt.isel.leic.daw.explodingbattleships.data
 
-import pt.isel.leic.daw.explodingbattleships.data.comp.transactions.Transaction
 import pt.isel.leic.daw.explodingbattleships.domain.EnterLobbyOutput
 import pt.isel.leic.daw.explodingbattleships.domain.ListOfData
 import pt.isel.leic.daw.explodingbattleships.domain.Player

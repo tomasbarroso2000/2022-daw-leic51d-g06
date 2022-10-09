@@ -1,6 +1,5 @@
-package pt.isel.leic.daw.explodingbattleships.data.comp.games
+package pt.isel.leic.daw.explodingbattleships.data
 
-import pt.isel.leic.daw.explodingbattleships.data.comp.transactions.Transaction
 import pt.isel.leic.daw.explodingbattleships.domain.Game
 import pt.isel.leic.daw.explodingbattleships.domain.VerifiedSquare
 
@@ -15,5 +14,5 @@ interface GamesData {
 
     fun getPlayerGame(transaction: Transaction, playerId: Int): Game?
 
-    fun changeCurrPlayer(transaction: Transaction, gameId: Int, newCurrPlayer: Int): Int
+    fun changeCurrPlayer(transaction: Transaction, gameId: Int, newCurrPlayer: Int): Boolean
 }

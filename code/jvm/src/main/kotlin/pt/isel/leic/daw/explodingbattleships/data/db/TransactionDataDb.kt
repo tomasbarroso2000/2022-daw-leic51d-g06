@@ -1,7 +1,8 @@
-package pt.isel.leic.daw.explodingbattleships.data.comp.transactions
+package pt.isel.leic.daw.explodingbattleships.data.db
 
 import org.jdbi.v3.core.Handle
 import org.jdbi.v3.core.transaction.TransactionIsolationLevel
+import pt.isel.leic.daw.explodingbattleships.data.Transaction
 
 class TransactionDataDb(private val handle: Handle) : Transaction {
 
@@ -19,5 +20,4 @@ class TransactionDataDb(private val handle: Handle) : Transaction {
     override fun commit() { handle.commit() }
     override fun rollback() { handle.rollback() }
     override fun close() { handle.close() }
-
 }

@@ -1,15 +1,15 @@
-package pt.isel.leic.daw.explodingbattleships.services.comp
+package pt.isel.leic.daw.explodingbattleships.services
 
 import pt.isel.leic.daw.explodingbattleships.data.Data
 import pt.isel.leic.daw.explodingbattleships.data.comp.utils.isPasswordInvalid
-import pt.isel.leic.daw.explodingbattleships.domain.SystemInfo
 import pt.isel.leic.daw.explodingbattleships.domain.ListOfData
 import pt.isel.leic.daw.explodingbattleships.domain.Player
 import pt.isel.leic.daw.explodingbattleships.domain.PlayerInput
-import pt.isel.leic.daw.explodingbattleships.services.comp.utils.AppException
-import pt.isel.leic.daw.explodingbattleships.services.comp.utils.AppExceptionStatus
-import pt.isel.leic.daw.explodingbattleships.services.comp.utils.checkLimitAndSkip
-import pt.isel.leic.daw.explodingbattleships.services.comp.utils.doService
+import pt.isel.leic.daw.explodingbattleships.domain.SystemInfo
+import pt.isel.leic.daw.explodingbattleships.services.utils.AppException
+import pt.isel.leic.daw.explodingbattleships.services.utils.AppExceptionStatus
+import pt.isel.leic.daw.explodingbattleships.services.utils.checkLimitAndSkip
+import pt.isel.leic.daw.explodingbattleships.services.utils.doService
 
 /**
  * Section of services that don't require authentication

@@ -1,7 +1,7 @@
-package pt.isel.leic.daw.explodingbattleships.services.comp.utils
+package pt.isel.leic.daw.explodingbattleships.services.utils
 
 import pt.isel.leic.daw.explodingbattleships.data.Data
-import pt.isel.leic.daw.explodingbattleships.data.comp.transactions.Transaction
+import pt.isel.leic.daw.explodingbattleships.data.Transaction
 import pt.isel.leic.daw.explodingbattleships.domain.*
 
 /**

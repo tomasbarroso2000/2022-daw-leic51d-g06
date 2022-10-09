@@ -3,9 +3,9 @@ package pt.isel.leic.daw.explodingbattleships.services
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import pt.isel.leic.daw.explodingbattleships.data.DataMem
-import pt.isel.leic.daw.explodingbattleships.services.comp.utils.AppException
-import pt.isel.leic.daw.explodingbattleships.services.comp.utils.AppExceptionStatus
+import pt.isel.leic.daw.explodingbattleships.data.mem.DataMem
+import pt.isel.leic.daw.explodingbattleships.services.utils.AppException
+import pt.isel.leic.daw.explodingbattleships.services.utils.AppExceptionStatus
 
 class UnauthenticatedServicesTests {
     private val data = DataMem()

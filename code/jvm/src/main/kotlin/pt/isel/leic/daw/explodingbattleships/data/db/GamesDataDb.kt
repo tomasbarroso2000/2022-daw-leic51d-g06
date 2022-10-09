@@ -1,8 +1,8 @@
-package pt.isel.leic.daw.explodingbattleships.data.comp.games
+package pt.isel.leic.daw.explodingbattleships.data.db
 
 import org.jdbi.v3.core.kotlin.mapTo
-import pt.isel.leic.daw.explodingbattleships.data.comp.transactions.Transaction
-import pt.isel.leic.daw.explodingbattleships.data.comp.transactions.TransactionDataDb
+import pt.isel.leic.daw.explodingbattleships.data.GamesData
+import pt.isel.leic.daw.explodingbattleships.data.Transaction
 import pt.isel.leic.daw.explodingbattleships.domain.Game
 import pt.isel.leic.daw.explodingbattleships.domain.VerifiedSquare
 import pt.isel.leic.daw.explodingbattleships.domain.toVerifiedSquare
@@ -42,11 +42,11 @@ class GamesDataDb : GamesData {
                 .mapTo<Game>().firstOrNull()
         }
 
-    override fun changeCurrPlayer(transaction: Transaction, gameId: Int, newCurrPlayer: Int): Int =
+    override fun changeCurrPlayer(transaction: Transaction, gameId: Int, newCurrPlayer: Int): Boolean =
         (transaction as TransactionDataDb).withHandle { handle ->
             handle.createUpdate("update game set curr_player = :newCurrPlayer where id = :gameId")
                 .bind("newCurrPlayer", newCurrPlayer)
                 .bind("gameId", gameId)
-                .execute()
+                .execute() == 1
         }
 }

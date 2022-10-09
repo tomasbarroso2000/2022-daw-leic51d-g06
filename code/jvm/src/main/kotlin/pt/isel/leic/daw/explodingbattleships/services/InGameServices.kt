@@ -1,8 +1,25 @@
-package pt.isel.leic.daw.explodingbattleships.services.comp
+package pt.isel.leic.daw.explodingbattleships.services
 
 import pt.isel.leic.daw.explodingbattleships.data.Data
-import pt.isel.leic.daw.explodingbattleships.domain.*
-import pt.isel.leic.daw.explodingbattleships.services.comp.utils.*
+import pt.isel.leic.daw.explodingbattleships.domain.Hits
+import pt.isel.leic.daw.explodingbattleships.domain.Layout
+import pt.isel.leic.daw.explodingbattleships.domain.VerifiedSquare
+import pt.isel.leic.daw.explodingbattleships.domain.getString
+import pt.isel.leic.daw.explodingbattleships.domain.idlePlayer
+import pt.isel.leic.daw.explodingbattleships.domain.otherPlayer
+import pt.isel.leic.daw.explodingbattleships.domain.toVerifiedSquareOrNull
+import pt.isel.leic.daw.explodingbattleships.services.utils.AppException
+import pt.isel.leic.daw.explodingbattleships.services.utils.AppExceptionStatus
+import pt.isel.leic.daw.explodingbattleships.services.utils.checkCurrentPlayer
+import pt.isel.leic.daw.explodingbattleships.services.utils.checkGameState
+import pt.isel.leic.daw.explodingbattleships.services.utils.checkOrThrow
+import pt.isel.leic.daw.explodingbattleships.services.utils.checkPlayerInGame
+import pt.isel.leic.daw.explodingbattleships.services.utils.checkShipLayout
+import pt.isel.leic.daw.explodingbattleships.services.utils.computePlayer
+import pt.isel.leic.daw.explodingbattleships.services.utils.doService
+import pt.isel.leic.daw.explodingbattleships.services.utils.executeHit
+import pt.isel.leic.daw.explodingbattleships.services.utils.getPlayerGameOrThrow
+import pt.isel.leic.daw.explodingbattleships.services.utils.squareInBoard
 
 /**
  * Section of services that relates to in-game actions
@@ -16,8 +33,7 @@ class InGameServices(private val data: Data) {
      */
     fun defineLayout(token: String?, layout: Layout) = doService(data) { transaction ->
         val playerId = computePlayer(transaction, token, data).id
-        // why not use gatPlayerGame? layout would stop needing to have gameId
-        val game = computeGame(transaction, layout.gameId, data)
+        val game = getPlayerGameOrThrow(transaction, playerId, data)
         checkPlayerInGame(game, playerId)
         checkGameState(game.state, "layout_definition")
         if (layout.ships == null)
@@ -30,12 +46,11 @@ class InGameServices(private val data: Data) {
      * Sends the hits the user has thrown in his turn
      * @param token the user's token
      * @param hits the hits to be sent
-     * @return List<HitOutcome> Representing the hit's outcome
+     * @return every hit's outcome
      */
     fun sendHits(token: String?, hits: Hits) = doService(data) { transaction ->
         val playerId = computePlayer(transaction, token, data).id
-        // why not use gatPlayerGame? hits would stop needing to have gameId
-        val game = computeGame(transaction, hits.gameId, data)
+        val game = getPlayerGameOrThrow(transaction, playerId, data)
         checkPlayerInGame(game, playerId)
         checkCurrentPlayer(game, playerId)
         checkGameState(game.state, "shooting")
@@ -59,12 +74,11 @@ class InGameServices(private val data: Data) {
      * Shows the state of the player's or enemy's fleet
      * @param token the user token
      * @param isPlayer represents if it is the player or enemy fleet
-     * @return List<ShipState>
+     * @return the state of every ship
      */
     fun fleetState(token: String?, isPlayer: Boolean) = doService(data) { transaction ->
         val playerId = computePlayer(transaction, token, data).id
-        val game = getPlayerGame(transaction, playerId, data)
-            ?: throw AppException("Player not in game", AppExceptionStatus.BAD_REQUEST)
+        val game = getPlayerGameOrThrow(transaction, playerId, data)
         if (isPlayer)
             data.inGameData.fleetState(transaction, game.id, playerId)
         else

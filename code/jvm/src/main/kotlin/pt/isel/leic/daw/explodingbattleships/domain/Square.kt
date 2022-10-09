@@ -23,7 +23,7 @@ fun UnverifiedSquare.toVerifiedSquareOrNull(): VerifiedSquare? {
     return VerifiedSquare(row, column)
 }
 
-fun VerifiedSquare.down() = VerifiedSquare(row + 1 , column)
+fun VerifiedSquare.down() = VerifiedSquare(row + 1, column)
 fun VerifiedSquare.right() = VerifiedSquare(row, column + 1)
 
 fun Square.getString() = "$row$column"
