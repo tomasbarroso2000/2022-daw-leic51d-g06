@@ -35,8 +35,15 @@ class InGameDataDb : InGameData {
                     .bind("gameId", gameId)
                     .bind("playerId", playerId)
                     .mapTo<Boolean>().first()
-            if (isEnemyDone) LayoutOutcome(LayoutOutcomeStatus.STARTED)
-            else LayoutOutcome(LayoutOutcomeStatus.WAITING)
+            if (isEnemyDone) {
+                handle.createUpdate("update game set state = 'shooting' where id = :gameId")
+                    .bind("gameId", gameId)
+                    .execute()
+                LayoutOutcome(LayoutOutcomeStatus.STARTED)
+            }
+            else {
+                LayoutOutcome(LayoutOutcomeStatus.WAITING)
+            }
         }
 
     override fun getShipAndSquares(

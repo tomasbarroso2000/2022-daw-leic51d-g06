@@ -60,6 +60,7 @@ class PlayersDataDb : PlayersData {
         }
 
     override fun enterLobby(transaction: Transaction, playerId: Int, width: Int, height: Int, hitsPerRound: Int): EnterLobbyOutput =
+        // return whether a game was started or whether the player is waiting for a match
         (transaction as TransactionDataDb).withHandle { handle ->
             handle.createUpdate("insert into lobby values (:playerId, :width, :height, :hitsPerRound)")
                 .bind("playerId", playerId)

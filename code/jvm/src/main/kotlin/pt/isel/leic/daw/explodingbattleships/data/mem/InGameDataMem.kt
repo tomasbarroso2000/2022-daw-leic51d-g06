@@ -35,10 +35,18 @@ class InGameDataMem(private val mockData: MockData) : InGameData {
             )
             mockData.ships.add(storedShip)
         }
-        return if (mockData.ships.any { it.game == gameId && it.player != playerId })
+
+        return if (mockData.ships.any { it.game == gameId && it.player != playerId }) {
+            mockData.games.find { it.id == gameId }?.let { game ->
+                mockData.games.remove(game)
+                val newGame = game.copy(state = "shooting")
+                mockData.games.add(newGame)
+            }
             LayoutOutcome(LayoutOutcomeStatus.STARTED)
-        else
+        }
+        else {
             LayoutOutcome(LayoutOutcomeStatus.WAITING)
+        }
     }
 
     override fun getShipAndSquares(
