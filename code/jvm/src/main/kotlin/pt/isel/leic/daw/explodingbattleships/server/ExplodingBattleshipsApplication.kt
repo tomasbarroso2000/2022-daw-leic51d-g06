@@ -8,10 +8,12 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 import org.springframework.web.servlet.function.RouterFunction
+import pt.isel.leic.daw.explodingbattleships.data.db.DataDb
 import pt.isel.leic.daw.explodingbattleships.server.pipeline.argumentresolvers.ClientIpArgumentResolver
 import pt.isel.leic.daw.explodingbattleships.server.pipeline.handlerinterceptors.HandlerInterceptor
 import pt.isel.leic.daw.explodingbattleships.server.pipeline.messageconverters.CustomOutputModelMessageConverter
 import pt.isel.leic.daw.explodingbattleships.server.pipeline.messageconverters.UriToQrCodeMessageConverter
+import pt.isel.leic.daw.explodingbattleships.services.Services
 
 @SpringBootApplication
 class ExplodingBattleshipsApplication(
@@ -21,6 +23,9 @@ class ExplodingBattleshipsApplication(
 
     @Bean
     fun getExampleRoute(): RouterFunction<*> = exampleRouterFunction
+
+    @Bean
+    fun getServices() = Services(DataDb())
 
     @Bean
     fun getExampleWithDependenciesRoute(
@@ -40,6 +45,7 @@ class ExplodingBattleshipsApplication(
         registry.addInterceptor(exampleHandlerInterceptor)
     }
 }
+
 
 fun main(args: Array<String>) {
     runApplication<ExplodingBattleshipsApplication>(*args)

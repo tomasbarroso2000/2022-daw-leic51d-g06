@@ -1,5 +1,6 @@
 package pt.isel.leic.daw.explodingbattleships.services
 
+import org.springframework.stereotype.Component
 import pt.isel.leic.daw.explodingbattleships.data.Data
 import pt.isel.leic.daw.explodingbattleships.data.comp.utils.isPasswordInvalid
 import pt.isel.leic.daw.explodingbattleships.domain.ListOfData
@@ -14,6 +15,7 @@ import pt.isel.leic.daw.explodingbattleships.services.utils.doService
 /**
  * Section of services that don't require authentication
  */
+@Component
 class UnauthenticatedServices(private val data: Data) {
     /**
      * Creates a player

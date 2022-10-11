@@ -1,5 +1,7 @@
 package pt.isel.leic.daw.explodingbattleships.services
 
+
+import org.springframework.stereotype.Service
 import pt.isel.leic.daw.explodingbattleships.data.Data
 
 /**
@@ -8,6 +10,7 @@ import pt.isel.leic.daw.explodingbattleships.data.Data
  * @property authenticatedServices the authentication-protected section
  * @property unauthenticatedServices the unprotected section
  */
+@Service
 class Services(data: Data) {
     val inGameServices = InGameServices(data)
     val authenticatedServices = AuthenticatedServices(data)

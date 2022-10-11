@@ -1,5 +1,6 @@
 package pt.isel.leic.daw.explodingbattleships.services
 
+import org.springframework.stereotype.Component
 import pt.isel.leic.daw.explodingbattleships.data.Data
 import pt.isel.leic.daw.explodingbattleships.domain.EnterLobbyInput
 import pt.isel.leic.daw.explodingbattleships.services.utils.*
@@ -7,6 +8,7 @@ import pt.isel.leic.daw.explodingbattleships.services.utils.*
 /**
  * Section of services that requires authentication
  */
+@Component
 class AuthenticatedServices(private val data: Data) {
 
     /**
