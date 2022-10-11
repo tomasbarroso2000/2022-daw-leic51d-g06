@@ -5,9 +5,6 @@ import pt.isel.leic.daw.explodingbattleships.data.Transaction
 import pt.isel.leic.daw.explodingbattleships.domain.*
 import java.util.regex.Pattern
 
-const val BOARD_MIN_HEIGHT = 10
-const val BOARD_MIN_WIDTH = 10
-
 /**
  * Executes a function within a [Transaction]
  * @param transaction the [Transaction] to be used
@@ -106,7 +103,7 @@ fun executeHit(transaction: Transaction, game: Game, verifiedSquares: List<Verif
         if (entry != null) {
             if (!data.inGameData.updateNumOfHits(transaction, game.id, playerId, entry.key.name))
                 throw AppException("Unsuccessful hit")
-            val destroyed = data.inGameData.isShipDestroyed(transaction, game.id, playerId, entry.key.name)
+            val destroyed = maybeDestroyShip(transaction, playerId, game.id, entry.key, data)
             if (destroyed) hitOutcomeList.add(HitOutcome(square, true, entry.key.name))
             else hitOutcomeList.add(HitOutcome(square, true))
         } else {
@@ -128,11 +125,44 @@ fun getNumberOfHits(transaction: Transaction, gameId: Int, playerId: Int, verifi
 
 
 /**
- * WIP
+ * Checks if a ship
  */
-fun maybeDestroyShip(transaction: Transaction, playerId: Int, gameId: Int, ship: VerifiedShip, data: Data) {
+fun maybeDestroyShip(transaction: Transaction, playerId: Int, gameId: Int, ship: VerifiedShip, data: Data): Boolean {
     val shipSize = ship.getSize()
+    println("shipSize = $shipSize")
     val nOfHits = getNumberOfHits(transaction, gameId, playerId, ship, data)
+    println("nOfHits = $nOfHits")
     if (shipSize == nOfHits)
-        data.inGameData.destroyShip(transaction, gameId, playerId, ship.firstSquare)
+        if (data.inGameData.destroyShip(transaction, gameId, playerId, ship.firstSquare))
+            return true
+        else
+            throw AppException("Error destroying ship")
+    return false
 }
+
+/**
+ * Checks if a game type exists in the system
+ * @param gameType the game type name
+ * @return true if the game type exists
+ */
+fun isGameTypeInvalid(gameType: String) = !GameType.values().map { it.name }.contains(gameType.uppercase())
+
+/**
+ * Inserts in lobby or creates a game
+ * @param transaction the current transaction
+ * @param playerId the player id
+ * @param gameType the game type
+ * @param data the data module to be used
+ * @return information about whether the player was placed in the lobby or a game was started
+ */
+fun enterLobbyOrCreateGame(transaction: Transaction, playerId: Int, gameType: String, data: Data): EnterLobbyOutput {
+    val matchingLobby = data.playersData.searchLobbies(transaction, gameType).firstOrNull()
+    if (matchingLobby != null) {
+        data.playersData.removeLobby(transaction, matchingLobby.player, matchingLobby.gameType, matchingLobby.enterTime)
+        return data.gamesData.createGame(transaction, gameType, playerId, matchingLobby.player)
+            .let { EnterLobbyOutput(false, it) }
+    }
+    return data.playersData.enterLobby(transaction, playerId, gameType)
+}
+
+fun String.toGameType() = GameType.values().find { it.name == this.uppercase() }

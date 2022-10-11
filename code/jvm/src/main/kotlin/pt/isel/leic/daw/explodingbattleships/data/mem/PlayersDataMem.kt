@@ -2,18 +2,10 @@ package pt.isel.leic.daw.explodingbattleships.data.mem
 
 import pt.isel.leic.daw.explodingbattleships.data.PlayersData
 import pt.isel.leic.daw.explodingbattleships.data.Transaction
-import pt.isel.leic.daw.explodingbattleships.data.comp.utils.MockData
-import pt.isel.leic.daw.explodingbattleships.data.comp.utils.StoredLobby
-import pt.isel.leic.daw.explodingbattleships.data.comp.utils.StoredPlayer
-import pt.isel.leic.daw.explodingbattleships.data.comp.utils.StoredToken
-import pt.isel.leic.daw.explodingbattleships.data.comp.utils.getSublist
-import pt.isel.leic.daw.explodingbattleships.data.comp.utils.hasMore
-import pt.isel.leic.daw.explodingbattleships.data.comp.utils.toPlayer
-import pt.isel.leic.daw.explodingbattleships.domain.EnterLobbyOutput
-import pt.isel.leic.daw.explodingbattleships.domain.ListOfData
-import pt.isel.leic.daw.explodingbattleships.domain.Player
-import pt.isel.leic.daw.explodingbattleships.domain.PlayerOutput
-import pt.isel.leic.daw.explodingbattleships.domain.TokenOutput
+import pt.isel.leic.daw.explodingbattleships.data.comp.utils.*
+import pt.isel.leic.daw.explodingbattleships.domain.*
+import java.time.Instant
+import java.time.temporal.ChronoUnit
 import java.util.UUID
 
 class PlayersDataMem(private val mockData: MockData) : PlayersData {
@@ -48,14 +40,30 @@ class PlayersDataMem(private val mockData: MockData) : PlayersData {
     override fun isPlayerInLobby(transaction: Transaction, playerId: Int): Boolean =
         mockData.lobby.any { it.player == playerId }
 
-    override fun enterLobby(
-        transaction: Transaction,
-        playerId: Int,
-        width: Int,
-        height: Int,
-        hitsPerRound: Int
-    ): EnterLobbyOutput {
-        mockData.lobby.add(StoredLobby(playerId, width, height, hitsPerRound))
-        return EnterLobbyOutput(true)
+    override fun enterLobby(transaction: Transaction, playerId: Int, gameType: String): EnterLobbyOutput {
+        mockData.lobby.find { it.gameType == gameType }?.let {
+            val id = mockData.games.last().id + 1
+            mockData.games.add(StoredGame(id, gameType, "layout_definition", it.player, playerId, it.player, Instant.ofEpochSecond(20000)))
+            mockData.lobby.remove(it)
+            return EnterLobbyOutput(false, 25)
+        }
+        mockData.lobby.add(StoredLobby(playerId, gameType, Instant.now()))
+        return EnterLobbyOutput(true, null)
+    }
+
+    override fun searchLobbies(transaction: Transaction, gameType: String): List<Lobby> {
+        val sameTypeLobbies = mutableListOf<Lobby>()
+        mockData.lobby
+            .filter { it.gameType == gameType }
+            .forEach { sameTypeLobbies.add(Lobby(it.player, it.gameType, it.enterTime)) }
+        return sameTypeLobbies
+    }
+
+
+    override fun removeLobby(transaction: Transaction, playerId: Int, gameType: String, enterTime: Instant): Boolean {
+        mockData.lobby.find { it.gameType == gameType && it.player == playerId }?.let {
+            return mockData.lobby.remove(it)
+        }
+        return false
     }
 }

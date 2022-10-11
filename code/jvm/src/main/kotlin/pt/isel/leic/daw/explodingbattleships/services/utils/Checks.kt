@@ -26,7 +26,7 @@ fun checkLimitAndSkip(limit: Int, skip: Int) {
 }
 
 fun checkShipLayout(gameTypeName: String, ships: List<UnverifiedShip>): List<VerifiedShip> {
-    val gameType = GameType.values().find { it.name == gameTypeName }
+    val gameType = gameTypeName.toGameType()
         ?: throw AppException("Game type not registered")
     checkOrThrow(
         ships.size != gameType.fleetComposition.size,

@@ -1,11 +1,16 @@
 package pt.isel.leic.daw.explodingbattleships.domain
 
-data class EnterLobbyInput(
-    val width: Int?,
-    val height: Int?,
-    val hitsPerRound: Int?
-)
+import java.time.Instant
+
+data class EnterLobbyInput(val gameType: String?)
 
 data class EnterLobbyOutput(
-    val entered: Boolean
+    val waitingForGame: Boolean,
+    val gameId: Int?
+)
+
+data class Lobby(
+    val player: Int,
+    val gameType: String,
+    val enterTime: Instant
 )

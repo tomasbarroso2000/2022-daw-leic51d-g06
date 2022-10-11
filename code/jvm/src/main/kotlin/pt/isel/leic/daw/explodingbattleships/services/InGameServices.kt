@@ -37,21 +37,24 @@ class InGameServices(private val data: Data) {
         checkPlayerInGame(game, playerId)
         checkCurrentPlayer(game, playerId)
         checkGameState(game.state, "shooting")
+        val gameType = game.type.toGameType()
+            ?: throw AppException("Game type not registered")
         if (hits.squares.isNullOrEmpty())
             throw AppException("No squares provided", AppExceptionStatus.BAD_REQUEST)
-        if (hits.squares.size > game.hitsPerRound)
+        if (hits.squares.size > gameType.shotsPerRound)
             throw AppException("Invalid amount of hits", AppExceptionStatus.BAD_REQUEST)
         val hitSquares = data.gamesData.getHitSquares(transaction, game.id, game.idlePlayer()).toMutableSet()
         val verifiedSquares = mutableListOf<VerifiedSquare>()
         hits.squares.forEach { unverifiedSquare ->
             val verifiedSquare = unverifiedSquare.toVerifiedSquareOrNull()
                 ?: throw AppException("Invalid square: ${unverifiedSquare.getString()}", AppExceptionStatus.BAD_REQUEST)
-            checkOrThrow(!squareInBoard(verifiedSquare, game.width, game.height), "Invalid square: ${unverifiedSquare.getString()}")
+            checkOrThrow(!squareInBoard(verifiedSquare, gameType.boardSize), "Invalid square: ${unverifiedSquare.getString()}")
             checkOrThrow(hitSquares.contains(verifiedSquare), "Square already hit: ${unverifiedSquare.getString()}")
             verifiedSquares.add(verifiedSquare)
         }
         executeHit(transaction, game, verifiedSquares, game.idlePlayer(), data)
     }
+
 
     /**
      * Shows the state of the player's or enemy's fleet
@@ -62,6 +65,7 @@ class InGameServices(private val data: Data) {
     fun fleetState(token: String?, fleet: Fleet) = doService(data) { transaction ->
         val playerId = computePlayer(transaction, token, data).id
         val game = computeGame(transaction, fleet.gameId, data)
+        checkPlayerInGame(game, playerId)
         if (fleet.myFleet == null)
             throw AppException("Fleet not specified", AppExceptionStatus.BAD_REQUEST)
         if (fleet.myFleet)

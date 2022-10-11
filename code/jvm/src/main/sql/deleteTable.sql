@@ -4,8 +4,6 @@ delete from lobby;
 
 delete from ship;
 
-delete from ship_type;
-
 delete from hit;
 
 delete from game;

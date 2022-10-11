@@ -45,8 +45,8 @@ class AuthenticatedServicesTests {
     @Test
     fun enter_lobby() {
         val token = "fiona"
-        val enterLobbyInput = EnterLobbyInput(10, 10, 1)
-        val expectedOutput = EnterLobbyOutput(true)
+        val enterLobbyInput = EnterLobbyInput("beginner")
+        val expectedOutput = EnterLobbyOutput(false, 3)
         val actualOutput = services.enterLobby(token, enterLobbyInput)
         assertEquals(expectedOutput, actualOutput)
     }
@@ -54,7 +54,7 @@ class AuthenticatedServicesTests {
     @Test
     fun enter_lobby_without_token() {
         val token = ""
-        val enterLobbyInput = EnterLobbyInput(10, 10, 1)
+        val enterLobbyInput = EnterLobbyInput("beginner")
         val exception = assertThrows<AppException> {
             services.enterLobby(token, enterLobbyInput)
         }
@@ -65,7 +65,7 @@ class AuthenticatedServicesTests {
     @Test
     fun enter_lobby_with_invalid_token() {
         val token = "nope"
-        val enterLobbyInput = EnterLobbyInput(10, 10, 1)
+        val enterLobbyInput = EnterLobbyInput("beginner")
         val exception = assertThrows<AppException> {
             services.enterLobby(token, enterLobbyInput)
         }
@@ -73,58 +73,4 @@ class AuthenticatedServicesTests {
         assertEquals(AppExceptionStatus.UNAUTHORIZED, exception.status)
     }
 
-    @Test
-    fun enter_lobby_with_player_already_in_a_game() {
-        val token = "123"
-        val enterLobbyInput = EnterLobbyInput(10, 10, 1)
-        val exception = assertThrows<AppException> {
-            services.enterLobby(token, enterLobbyInput)
-        }
-        assertEquals("Player already in a game", exception.message)
-        assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
-    }
-
-    @Test
-    fun enter_lobby_with_player_already_in_lobby() {
-        val token = "homem-queque"
-        val enterLobbyInput = EnterLobbyInput(10, 10, 1)
-        val exception = assertThrows<AppException> {
-            services.enterLobby(token, enterLobbyInput)
-        }
-        assertEquals("Player already in lobby", exception.message)
-        assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
-    }
-
-    @Test
-    fun enter_lobby_with_invalid_board_width() {
-        val token = "fiona"
-        val enterLobbyInput = EnterLobbyInput(5, 10, 1)
-        val exception = assertThrows<AppException> {
-            services.enterLobby(token, enterLobbyInput)
-        }
-        assertEquals("Invalid board width", exception.message)
-        assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
-    }
-
-    @Test
-    fun enter_lobby_with_invalid_board_height() {
-        val token = "fiona"
-        val enterLobbyInput = EnterLobbyInput(10, 5, 1)
-        val exception = assertThrows<AppException> {
-            services.enterLobby(token, enterLobbyInput)
-        }
-        assertEquals("Invalid board height", exception.message)
-        assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
-    }
-
-    @Test
-    fun enter_lobby_with_invalid_hits_per_round() {
-        val token = "fiona"
-        val enterLobbyInput = EnterLobbyInput(10, 10, -1)
-        val exception = assertThrows<AppException> {
-            services.enterLobby(token, enterLobbyInput)
-        }
-        assertEquals("Invalid hits per round", exception.message)
-        assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
-    }
 }

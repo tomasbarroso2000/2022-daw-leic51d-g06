@@ -3,12 +3,19 @@ package pt.isel.leic.daw.explodingbattleships.data.mem
 import pt.isel.leic.daw.explodingbattleships.data.GamesData
 import pt.isel.leic.daw.explodingbattleships.data.Transaction
 import pt.isel.leic.daw.explodingbattleships.data.comp.utils.MockData
+import pt.isel.leic.daw.explodingbattleships.data.comp.utils.StoredGame
 import pt.isel.leic.daw.explodingbattleships.data.comp.utils.toGame
 import pt.isel.leic.daw.explodingbattleships.domain.Game
 import pt.isel.leic.daw.explodingbattleships.domain.VerifiedSquare
 import pt.isel.leic.daw.explodingbattleships.domain.toVerifiedSquare
 
 class GamesDataMem(private val mockData: MockData) : GamesData {
+    override fun createGame(transaction: Transaction, gameType: String, player1: Int, player2: Int): Int {
+        val id = mockData.games.maxOf { it.id } + 1
+        mockData.games.add(StoredGame(id, gameType, "layout_definition", player1, player2, player1, null))
+        return id
+    }
+
     override fun getNumberOfPlayedGames(transaction: Transaction): Int = mockData.games.size
 
     override fun getGameState(transaction: Transaction, gameId: Int): String? =

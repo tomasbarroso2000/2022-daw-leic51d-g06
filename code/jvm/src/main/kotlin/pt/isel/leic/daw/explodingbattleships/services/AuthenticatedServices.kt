@@ -2,14 +2,7 @@ package pt.isel.leic.daw.explodingbattleships.services
 
 import pt.isel.leic.daw.explodingbattleships.data.Data
 import pt.isel.leic.daw.explodingbattleships.domain.EnterLobbyInput
-import pt.isel.leic.daw.explodingbattleships.services.utils.AppException
-import pt.isel.leic.daw.explodingbattleships.services.utils.AppExceptionStatus
-import pt.isel.leic.daw.explodingbattleships.services.utils.BOARD_MIN_HEIGHT
-import pt.isel.leic.daw.explodingbattleships.services.utils.BOARD_MIN_WIDTH
-import pt.isel.leic.daw.explodingbattleships.services.utils.computePlayer
-import pt.isel.leic.daw.explodingbattleships.services.utils.doService
-import pt.isel.leic.daw.explodingbattleships.services.utils.isPlayerInAGame
-import pt.isel.leic.daw.explodingbattleships.services.utils.isPlayerInLobby
+import pt.isel.leic.daw.explodingbattleships.services.utils.*
 
 /**
  * Section of services that requires authentication
@@ -33,16 +26,8 @@ class AuthenticatedServices(private val data: Data) {
      */
     fun enterLobby(token: String?, lobbyInput: EnterLobbyInput) = doService(data) { transaction ->
         val playerId = computePlayer(transaction, token, data).id
-        if (isPlayerInAGame(transaction, playerId, data))
-            throw AppException("Player already in a game", AppExceptionStatus.BAD_REQUEST)
-        if (isPlayerInLobby(transaction, playerId, data))
-            throw AppException("Player already in lobby", AppExceptionStatus.BAD_REQUEST)
-        if (lobbyInput.width == null || lobbyInput.width < BOARD_MIN_WIDTH)
-            throw AppException("Invalid board width", AppExceptionStatus.BAD_REQUEST)
-        if (lobbyInput.height == null || lobbyInput.height < BOARD_MIN_HEIGHT)
-            throw AppException("Invalid board height", AppExceptionStatus.BAD_REQUEST)
-        if (lobbyInput.hitsPerRound == null || lobbyInput.hitsPerRound <= 0)
-            throw AppException("Invalid hits per round", AppExceptionStatus.BAD_REQUEST)
-        data.playersData.enterLobby(transaction, playerId, lobbyInput.width, lobbyInput.height, lobbyInput.hitsPerRound)
+        if (lobbyInput.gameType == null || isGameTypeInvalid(lobbyInput.gameType))
+            throw AppException("Invalid game type", AppExceptionStatus.BAD_REQUEST)
+        enterLobbyOrCreateGame(transaction, playerId, lobbyInput.gameType, data)
     }
 }

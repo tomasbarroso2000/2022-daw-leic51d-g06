@@ -129,7 +129,9 @@ class InGameDataDb : InGameData {
         }
 
 
-    /** WIP
+    /**
+     * WIP
+     */
     override fun destroyShip(transaction: Transaction, gameId: Int, playerId: Int, firstSquare: VerifiedSquare) : Boolean =
         (transaction as TransactionDataDb).withHandle { handle ->
             handle.createUpdate(

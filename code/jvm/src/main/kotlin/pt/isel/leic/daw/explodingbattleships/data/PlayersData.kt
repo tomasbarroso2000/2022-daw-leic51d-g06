@@ -1,10 +1,7 @@
 package pt.isel.leic.daw.explodingbattleships.data
 
-import pt.isel.leic.daw.explodingbattleships.domain.EnterLobbyOutput
-import pt.isel.leic.daw.explodingbattleships.domain.ListOfData
-import pt.isel.leic.daw.explodingbattleships.domain.Player
-import pt.isel.leic.daw.explodingbattleships.domain.PlayerOutput
-import pt.isel.leic.daw.explodingbattleships.domain.TokenOutput
+import pt.isel.leic.daw.explodingbattleships.domain.*
+import java.time.Instant
 
 interface PlayersData {
     fun getPlayerFromToken(transaction: Transaction, token: String): Player?
@@ -17,5 +14,9 @@ interface PlayersData {
 
     fun isPlayerInLobby(transaction: Transaction, playerId: Int): Boolean
 
-    fun enterLobby(transaction: Transaction, playerId: Int, width: Int, height: Int, hitsPerRound: Int): EnterLobbyOutput
+    fun enterLobby(transaction: Transaction, playerId: Int, gameType: String): EnterLobbyOutput
+
+    fun searchLobbies(transaction: Transaction, gameType: String): List<Lobby>
+
+    fun removeLobby(transaction: Transaction, playerId: Int, gameType: String, enterTime: Instant): Boolean
 }

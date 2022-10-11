@@ -4,6 +4,8 @@ import pt.isel.leic.daw.explodingbattleships.domain.Game
 import pt.isel.leic.daw.explodingbattleships.domain.VerifiedSquare
 
 interface GamesData {
+    fun createGame(transaction: Transaction, gameType: String, player1: Int, player2: Int): Int
+
     fun getNumberOfPlayedGames(transaction: Transaction): Int
 
     fun getGameState(transaction: Transaction, gameId: Int): String?

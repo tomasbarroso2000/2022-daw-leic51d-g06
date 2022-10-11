@@ -8,6 +8,21 @@ import pt.isel.leic.daw.explodingbattleships.domain.VerifiedSquare
 import pt.isel.leic.daw.explodingbattleships.domain.toVerifiedSquare
 
 class GamesDataDb : GamesData {
+    override fun createGame(transaction: Transaction, gameType: String, player1: Int, player2: Int): Int =
+        (transaction as TransactionDataDb).withHandle { handle ->
+            handle.createUpdate(
+                """
+                insert into game (type, state, player1, player2, curr_player, deadline)
+                values (:gameType, 'layout_definition', :player1, :player2, :player1, null)
+                """
+            )
+                .bind("gameType", gameType)
+                .bind("player1", player1)
+                .bind("player2", player2)
+                .executeAndReturnGeneratedKeys()
+                .mapTo<Int>()
+                .first()
+        }
     override fun getNumberOfPlayedGames(transaction: Transaction): Int =
         (transaction as TransactionDataDb).withHandle { handle ->
             handle.createQuery("select count(*) from game").mapTo<Int>().first()

@@ -7,12 +7,7 @@ import pt.isel.leic.daw.explodingbattleships.data.comp.utils.StoredHit
 import pt.isel.leic.daw.explodingbattleships.data.comp.utils.StoredShip
 import pt.isel.leic.daw.explodingbattleships.data.comp.utils.toShipState
 import pt.isel.leic.daw.explodingbattleships.data.comp.utils.toVerifiedShip
-import pt.isel.leic.daw.explodingbattleships.domain.LayoutOutcome
-import pt.isel.leic.daw.explodingbattleships.domain.LayoutOutcomeStatus
-import pt.isel.leic.daw.explodingbattleships.domain.ShipState
-import pt.isel.leic.daw.explodingbattleships.domain.VerifiedShip
-import pt.isel.leic.daw.explodingbattleships.domain.VerifiedSquare
-import pt.isel.leic.daw.explodingbattleships.domain.getSquares
+import pt.isel.leic.daw.explodingbattleships.domain.*
 import java.sql.Timestamp
 import java.time.Instant
 
@@ -92,4 +87,32 @@ class InGameDataMem(private val mockData: MockData) : InGameData {
             .ships
             .filter { it.game == gameId && it.player == playerId }
             .map { it.toShipState() }
+
+    override fun getNumOfHits(
+        transaction: Transaction,
+        shipFirstSquare: VerifiedSquare,
+        gameId: Int,
+        playerId: Int
+    ): Int {
+        mockData.ships.find { it.game == gameId && it.player == playerId && it.firstSquare.toVerifiedSquare() == shipFirstSquare }?. let {
+            return it.nOfHits
+        }
+        return -1
+    }
+
+    override fun destroyShip(
+        transaction: Transaction,
+        gameId: Int,
+        playerId: Int,
+        firstSquare: VerifiedSquare
+    ): Boolean {
+        mockData.ships
+            .find { it.game == gameId && it.player == playerId && it.firstSquare.toVerifiedSquare() == firstSquare }
+            ?.let { ship ->
+                mockData.ships.remove(ship)
+                val newShip = ship.copy(destroyed = true)
+                return mockData.ships.add(newShip)
+            }
+        return false
+    }
 }

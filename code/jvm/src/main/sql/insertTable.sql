@@ -11,11 +11,5 @@ insert into token (token_ver, player) values
 insert into game (id, width, height, hits_per_round, state, player1, player2, curr_player) values
     (1, 10, 10, 1, 'shooting', 1, 2, 1);
 
-insert into ship_type values
-    ('carrier', 5),
-    ('battleship', 4),
-    ('submarine', 3),
-    ('cruiser', 3),
-    ('destroyer', 2);
 
 commit transaction;

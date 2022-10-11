@@ -4,11 +4,8 @@ import org.jdbi.v3.core.kotlin.mapTo
 import pt.isel.leic.daw.explodingbattleships.data.PlayersData
 import pt.isel.leic.daw.explodingbattleships.data.Transaction
 import pt.isel.leic.daw.explodingbattleships.data.comp.utils.getHasMoreAndProcessList
-import pt.isel.leic.daw.explodingbattleships.domain.EnterLobbyOutput
-import pt.isel.leic.daw.explodingbattleships.domain.ListOfData
-import pt.isel.leic.daw.explodingbattleships.domain.Player
-import pt.isel.leic.daw.explodingbattleships.domain.PlayerOutput
-import pt.isel.leic.daw.explodingbattleships.domain.TokenOutput
+import pt.isel.leic.daw.explodingbattleships.domain.*
+import java.time.Instant
 import java.util.UUID
 
 class PlayersDataDb : PlayersData {
@@ -59,15 +56,28 @@ class PlayersDataDb : PlayersData {
                 .mapTo<Boolean>().first()
         }
 
-    override fun enterLobby(transaction: Transaction, playerId: Int, width: Int, height: Int, hitsPerRound: Int): EnterLobbyOutput =
-        // return whether a game was started or whether the player is waiting for a match
+    override fun enterLobby(transaction: Transaction, playerId: Int, gameType: String): EnterLobbyOutput =
         (transaction as TransactionDataDb).withHandle { handle ->
-            handle.createUpdate("insert into lobby values (:playerId, :width, :height, :hitsPerRound)")
+            handle.createUpdate("insert into lobby values (:playerId, :gameType, now())")
                 .bind("playerId", playerId)
-                .bind("width", width)
-                .bind("height", height)
-                .bind("hitsPerRound", hitsPerRound)
+                .bind("gameType", gameType)
                 .execute()
-            EnterLobbyOutput(true)
+            EnterLobbyOutput(true, null)
+        }
+
+    override fun searchLobbies(transaction: Transaction, gameType: String): List<Lobby> =
+        (transaction as TransactionDataDb).withHandle { handle ->
+            handle.createQuery("select * from lobby where game_type = :gameType order by enter_time asc")
+                .bind("gameType", gameType)
+                .mapTo<Lobby>().list()
+        }
+
+    override fun removeLobby(transaction: Transaction, playerId: Int, gameType: String, enterTime: Instant) =
+        (transaction as TransactionDataDb).withHandle { handle ->
+            handle.createUpdate("delete from lobby where player = :playerId game_type = :gameType and enter_time = :enterTime")
+                .bind("playerId", playerId)
+                .bind("gameType", gameType)
+                .bind("enterTime", enterTime)
+                .execute() == 1
         }
 }

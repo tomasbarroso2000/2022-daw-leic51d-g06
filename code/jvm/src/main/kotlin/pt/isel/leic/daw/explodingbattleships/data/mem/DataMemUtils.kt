@@ -1,12 +1,12 @@
 package pt.isel.leic.daw.explodingbattleships.data.comp.utils
 
-import pt.isel.leic.daw.explodingbattleships.domain.Game
-import pt.isel.leic.daw.explodingbattleships.domain.Player
-import pt.isel.leic.daw.explodingbattleships.domain.ShipState
-import pt.isel.leic.daw.explodingbattleships.domain.VerifiedShip
-import pt.isel.leic.daw.explodingbattleships.domain.toVerifiedSquare
+import pt.isel.leic.daw.explodingbattleships.domain.*
+import pt.isel.leic.daw.explodingbattleships.services.utils.AppException
+import pt.isel.leic.daw.explodingbattleships.services.utils.toGameType
 import java.sql.Timestamp
 import java.time.Instant
+import java.time.temporal.ChronoUnit
+import java.time.temporal.TemporalAmount
 
 /**
  * To be thrown by the DataMem module when an error is detected
@@ -54,17 +54,21 @@ data class StoredPlayer(
 
 data class StoredGame(
     val id: Int,
-    val gameWidth: Int,
-    val gameHeight: Int,
-    val hitsPerRound: Int,
+    val type: String,
     val state: String,
     val player1: Int,
     val player2: Int,
-    val currPlayer: Int
+    val currPlayer: Int,
+    val deadline: Instant?
 )
 
-fun StoredGame.toGame() =
-    Game(id, gameWidth, gameHeight, hitsPerRound, state, player1, player2, currPlayer)
+fun StoredGame.toGame(): Game {
+    val time: Int = type.toGameType()?.shootingTimeInSecs ?: 0
+    return Game(
+        id, type, state, player1, player2, currPlayer,
+        Instant.ofEpochSecond(time.toLong())
+    )
+}
 
 data class StoredToken(
     val tokenVer: String,
@@ -98,9 +102,8 @@ data class StoredHit(
 
 data class StoredLobby(
     val player: Int,
-    val width: Int,
-    val height: Int,
-    val hitsPerRound: Int
+    val gameType: String,
+    val enterTime: Instant
 )
 
 data class MockData(
@@ -113,8 +116,8 @@ data class MockData(
         StoredPlayer(6, "Fiona", "iloveshrek@gmail.com", 10, 123)
     ),
     val games: MutableSet<StoredGame> = mutableSetOf(
-        StoredGame(1, 10, 10, 1, "layout_definition", 1, 2, 1),
-        StoredGame(2, 10, 10, 2, "shooting", 5, 6, 5)
+        StoredGame(1, "beginner", "layout_definition", 1, 2, 1, Instant.ofEpochSecond(20)),
+        StoredGame(2, "experienced", "shooting", 5, 6, 5, Instant.ofEpochSecond(20))
     ),
     val tokens: MutableSet<StoredToken> = mutableSetOf(
         StoredToken("123", 1),
@@ -154,7 +157,7 @@ data class MockData(
         StoredHit("f1", Timestamp.from(Instant.now()), 6, 2)
     ),
     val lobby: MutableSet<StoredLobby> = mutableSetOf(
-        StoredLobby(4, 10, 10, 1)
+        StoredLobby(4, "beginner", Instant.now())
     )
 )
 
