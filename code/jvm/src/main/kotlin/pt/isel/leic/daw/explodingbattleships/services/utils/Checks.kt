@@ -46,6 +46,7 @@ fun checkShipLayout(gameTypeName: String, ships: List<UnverifiedShip>): List<Ver
             "horizontal" -> validateShipSquares(verifiedShip, gameType.boardSize, occupiedSquares, VerifiedSquare::right)
             else -> throw AppException("Invalid orientation for ${verifiedShip.name}", AppExceptionStatus.BAD_REQUEST)
         }
+        verifiedShips.add(verifiedShip)
     }
     return verifiedShips
 }

@@ -22,13 +22,14 @@ class InGameDataDb : InGameData {
     ): LayoutOutcome =
         (transaction as TransactionDataDb).withHandle { handle ->
             ships.forEach { ship ->
-                handle.createUpdate("insert into ship values (:square, 0, false, :orientation, :playerId, :gameId, :type)")
-                    .bind("square", ship.firstSquare.getString())
+                println(handle.createUpdate("insert into ship values (:firstSquare, :name, :size, 0, false, :orientation, :playerId, :gameId)")
+                    .bind("firstSquare", ship.firstSquare.getString())
+                    .bind("name", ship.name)
+                    .bind("size", 5) // sad
                     .bind("orientation", ship.orientation)
                     .bind("playerId", playerId)
                     .bind("gameId", gameId)
-                    .bind("type", ship.name.lowercase())
-                    .execute()
+                    .execute())
             }
             val isEnemyDone =
                 handle.createQuery("select exists (select * from ship where game = :gameId and player <> :playerId)")
@@ -53,7 +54,7 @@ class InGameDataDb : InGameData {
     ): Map<VerifiedShip, Set<VerifiedSquare>> =
         (transaction as TransactionDataDb).withHandle { handle ->
             handle.createQuery(
-                "select ship_type.type_name name, first_square, orientation from ship join ship_type on ship.ship_type = ship_type.type_name " +
+                "select name, first_square, orientation from ship " +
                     "where game = :gameId and player = :playerId"
             )
                 .bind("gameId", gameId)

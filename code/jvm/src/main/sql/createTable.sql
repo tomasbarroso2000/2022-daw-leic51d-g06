@@ -20,7 +20,7 @@ create table if not exists game(
     player1 integer not null references player(id),
     player2 integer not null references player(id),
     curr_player integer references player(id) check (curr_player = player1 or curr_player = player2),
-    deadline timestamp
+    deadline interval
 );
 
 create table if not exists hit(
@@ -33,11 +33,11 @@ create table if not exists hit(
 
 create table if not exists ship(
    first_square varchar(5) check (first_square ~ '[a-z][0-9]+'),
-   ship_name varchar(20) check (ship_name in ('carrier', 'battleship', 'cruiser', 'submarine', 'destroyer')),
-   ship_size integer,
+   name varchar(20) not null check (name in ('carrier', 'battleship', 'cruiser', 'submarine', 'destroyer')),
+   size integer not null check (size > 0),
    n_of_hits integer check (n_of_hits >= 0),
    destroyed bool not null,
-   orientation varchar(50) check (orientation in ('vertical', 'horizontal')),
+   orientation varchar(50) not null check (orientation in ('vertical', 'horizontal')),
    player integer references player(id),
    game integer references game(id),
    primary key (first_square, player, game)
