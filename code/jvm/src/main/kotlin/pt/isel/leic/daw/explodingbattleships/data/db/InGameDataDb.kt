@@ -117,4 +117,28 @@ class InGameDataDb : InGameData {
                 .bind("playerId", playerId)
                 .mapTo<ShipState>().list()
         }
+
+    override fun getNumOfHits(transaction: Transaction, shipFirstSquare: VerifiedSquare, gameId: Int, playerId: Int): Int =
+        (transaction as TransactionDataDb).withHandle { handle ->
+            handle.createQuery("select n_of_hits from ship where first_square = :shipFirstSquare and game = :gameId and player = :playerId")
+                .bind("shipFirstSquare", shipFirstSquare)
+                .bind("gameId", gameId)
+                .bind("player", playerId)
+                .mapTo<Int>()
+                .first()
+        }
+
+
+    /** WIP
+    override fun destroyShip(transaction: Transaction, gameId: Int, playerId: Int, firstSquare: VerifiedSquare) : Boolean =
+        (transaction as TransactionDataDb).withHandle { handle ->
+            handle.createUpdate(
+                "update ship set destroyed = true " +
+                        "where game = :gameId and player = :playerId and first_square = :firstSquare"
+            )
+                .bind("gameId", gameId)
+                .bind("playerId", playerId)
+                .bind("firstSquare", firstSquare)
+                .execute() == 1
+        }
 }

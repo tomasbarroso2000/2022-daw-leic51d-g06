@@ -25,17 +25,25 @@ fun checkLimitAndSkip(limit: Int, skip: Int) {
     checkOrThrow(skip < 0, "Invalid skip")
 }
 
-fun checkShipLayout(ships: List<UnverifiedShip>, width: Int, height: Int): List<VerifiedShip> {
-    checkOrThrow(ships.size != 5, "Can only place 5 ships")
-    checkOrThrow(!shipsValid(ships), "Invalid ship list")
+fun checkShipLayout(gameTypeName: String, ships: List<UnverifiedShip>): List<VerifiedShip> {
+    val gameType = GameType.values().find { it.name == gameTypeName }
+        ?: throw AppException("Game type not registered")
+    checkOrThrow(
+        ships.size != gameType.fleetComposition.size,
+        "Can only place ${gameType.fleetComposition.size} ships"
+    )
+    checkOrThrow(
+        !shipsValid(gameType, ships),
+        "Invalid ship list for ${gameType.name} game"
+    )
     val occupiedSquares = mutableSetOf<VerifiedSquare?>()
     val verifiedShips = mutableListOf<VerifiedShip>()
     ships.forEach { unverifiedShip ->
         val verifiedShip = unverifiedShip.toVerifiedShipOrNull()
             ?: throw AppException("Invalid ship", AppExceptionStatus.BAD_REQUEST)
         when (verifiedShip.orientation.lowercase()) {
-            "vertical" -> validateShipSquares(verifiedShip, width, height, occupiedSquares, VerifiedSquare::down)
-            "horizontal" -> validateShipSquares(verifiedShip, width, height, occupiedSquares, VerifiedSquare::right)
+            "vertical" -> validateShipSquares(verifiedShip, gameType.boardSize, occupiedSquares, VerifiedSquare::down)
+            "horizontal" -> validateShipSquares(verifiedShip, gameType.boardSize, occupiedSquares, VerifiedSquare::right)
             else -> throw AppException("Invalid orientation for ${verifiedShip.name}", AppExceptionStatus.BAD_REQUEST)
         }
     }
@@ -44,11 +52,12 @@ fun checkShipLayout(ships: List<UnverifiedShip>, width: Int, height: Int): List<
 
 /**
  * Checks if a list of ships is a valid one
+ * @param gameType the type of game
  * @param ships the list of ships
  * @return true if the list is valid
  */
-private fun shipsValid(ships: List<UnverifiedShip>) =
-    ships.map { it.name }.containsAll(ShipType.values().map { it.shipName })
+private fun shipsValid(gameType: GameType, ships: List<UnverifiedShip>) =
+    ships.map { it.name }.containsAll(gameType.fleetComposition.map { it.name })
 
 /**
  * Checks if a square is within a board
@@ -56,9 +65,9 @@ private fun shipsValid(ships: List<UnverifiedShip>) =
  * @param width the width of the board
  * @param height the height of the board
  */
-fun squareInBoard(square: VerifiedSquare, width: Int, height: Int): Boolean {
-    val lastRow = 'a' + height - 1
-    val lastColumn = 1 + width - 1
+fun squareInBoard(square: VerifiedSquare, boardSize: Int): Boolean {
+    val lastRow = 'a' + boardSize - 1
+    val lastColumn = 1 + boardSize - 1
     if (square.row !in 'a'..lastRow) return false
     if (square.column !in 1..lastColumn) return false
     return true
@@ -72,11 +81,11 @@ fun squareInBoard(square: VerifiedSquare, width: Int, height: Int): Boolean {
  * @param occupiedSquares the occupied squares
  * @param nextSquare the function to calculate the next square
  */
-private fun validateShipSquares(ship: VerifiedShip, width: Int, height: Int, occupiedSquares: MutableSet<VerifiedSquare?>, nextSquare: NextSquare) {
+private fun validateShipSquares(ship: VerifiedShip, boardSize: Int, occupiedSquares: MutableSet<VerifiedSquare?>, nextSquare: NextSquare) {
     val shipSize = ship.getSize()
     var currentSquare = ship.firstSquare
     for (i in 0 until shipSize) {
-        checkOrThrow(!squareInBoard(currentSquare, width, height), "Invalid square on ${currentSquare.getString()}")
+        checkOrThrow(!squareInBoard(currentSquare, boardSize), "Invalid square on ${currentSquare.getString()}")
         checkOrThrow(occupiedSquares.contains(currentSquare), "Square already occupied on ${currentSquare.getString()}")
         occupiedSquares.add(currentSquare)
         currentSquare = currentSquare.nextSquare()

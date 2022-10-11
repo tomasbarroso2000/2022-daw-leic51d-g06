@@ -1,14 +1,15 @@
 package pt.isel.leic.daw.explodingbattleships.domain
 
+import java.time.Instant
+
 data class Game(
     val id: Int,
-    val width: Int,
-    val height: Int,
-    val hitsPerRound: Int,
+    val type: String,
     val state: String,
     val player1: Int,
     val player2: Int,
-    val currPlayer: Int
+    val currPlayer: Int,
+    val deadline: Instant
 )
 
 fun Game.idlePlayer() = if (currPlayer == player1) player2 else player1

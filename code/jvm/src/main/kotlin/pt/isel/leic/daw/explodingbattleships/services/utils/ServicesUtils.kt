@@ -2,10 +2,7 @@ package pt.isel.leic.daw.explodingbattleships.services.utils
 
 import pt.isel.leic.daw.explodingbattleships.data.Data
 import pt.isel.leic.daw.explodingbattleships.data.Transaction
-import pt.isel.leic.daw.explodingbattleships.domain.Game
-import pt.isel.leic.daw.explodingbattleships.domain.HitOutcome
-import pt.isel.leic.daw.explodingbattleships.domain.VerifiedSquare
-import pt.isel.leic.daw.explodingbattleships.domain.idlePlayer
+import pt.isel.leic.daw.explodingbattleships.domain.*
 import java.util.regex.Pattern
 
 const val BOARD_MIN_HEIGHT = 10
@@ -120,4 +117,22 @@ fun executeHit(transaction: Transaction, game: Game, verifiedSquares: List<Verif
     if (!data.gamesData.changeCurrPlayer(transaction, game.id, game.idlePlayer()))
         throw AppException("Unsuccessful hit")
     return hitOutcomeList
+}
+
+/**
+ *  Get the number of hits of a ship
+ *  @param transaction the current transaction
+ */
+fun getNumberOfHits(transaction: Transaction, gameId: Int, playerId: Int, verifiedShip: VerifiedShip, data: Data): Int =
+    data.inGameData.getNumOfHits(transaction, verifiedShip.firstSquare, gameId, playerId)
+
+
+/**
+ * WIP
+ */
+fun maybeDestroyShip(transaction: Transaction, playerId: Int, gameId: Int, ship: VerifiedShip, data: Data) {
+    val shipSize = ship.getSize()
+    val nOfHits = getNumberOfHits(transaction, gameId, playerId, ship, data)
+    if (shipSize == nOfHits)
+        data.inGameData.destroyShip(transaction, gameId, playerId, ship.firstSquare)
 }

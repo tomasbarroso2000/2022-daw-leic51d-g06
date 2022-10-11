@@ -1,25 +1,8 @@
 package pt.isel.leic.daw.explodingbattleships.services
 
 import pt.isel.leic.daw.explodingbattleships.data.Data
-import pt.isel.leic.daw.explodingbattleships.domain.Hits
-import pt.isel.leic.daw.explodingbattleships.domain.Layout
-import pt.isel.leic.daw.explodingbattleships.domain.VerifiedSquare
-import pt.isel.leic.daw.explodingbattleships.domain.getString
-import pt.isel.leic.daw.explodingbattleships.domain.idlePlayer
-import pt.isel.leic.daw.explodingbattleships.domain.otherPlayer
-import pt.isel.leic.daw.explodingbattleships.domain.toVerifiedSquareOrNull
-import pt.isel.leic.daw.explodingbattleships.services.utils.AppException
-import pt.isel.leic.daw.explodingbattleships.services.utils.AppExceptionStatus
-import pt.isel.leic.daw.explodingbattleships.services.utils.checkCurrentPlayer
-import pt.isel.leic.daw.explodingbattleships.services.utils.checkGameState
-import pt.isel.leic.daw.explodingbattleships.services.utils.checkOrThrow
-import pt.isel.leic.daw.explodingbattleships.services.utils.checkPlayerInGame
-import pt.isel.leic.daw.explodingbattleships.services.utils.checkShipLayout
-import pt.isel.leic.daw.explodingbattleships.services.utils.computePlayer
-import pt.isel.leic.daw.explodingbattleships.services.utils.doService
-import pt.isel.leic.daw.explodingbattleships.services.utils.executeHit
-import pt.isel.leic.daw.explodingbattleships.services.utils.getPlayerGameOrThrow
-import pt.isel.leic.daw.explodingbattleships.services.utils.squareInBoard
+import pt.isel.leic.daw.explodingbattleships.domain.*
+import pt.isel.leic.daw.explodingbattleships.services.utils.*
 
 /**
  * Section of services that relates to in-game actions
@@ -33,12 +16,12 @@ class InGameServices(private val data: Data) {
      */
     fun defineLayout(token: String?, layout: Layout) = doService(data) { transaction ->
         val playerId = computePlayer(transaction, token, data).id
-        val game = getPlayerGameOrThrow(transaction, playerId, data)
+        val game = computeGame(transaction, layout.gameId, data)
         checkPlayerInGame(game, playerId)
         checkGameState(game.state, "layout_definition")
         if (layout.ships == null)
             throw AppException("No ships provided", AppExceptionStatus.BAD_REQUEST)
-        val verifiedShips = checkShipLayout(layout.ships, game.width, game.height)
+        val verifiedShips = checkShipLayout(game.type, layout.ships)
         data.inGameData.defineLayout(transaction, game.id, playerId, verifiedShips)
     }
 
@@ -50,7 +33,7 @@ class InGameServices(private val data: Data) {
      */
     fun sendHits(token: String?, hits: Hits) = doService(data) { transaction ->
         val playerId = computePlayer(transaction, token, data).id
-        val game = getPlayerGameOrThrow(transaction, playerId, data)
+        val game = computeGame(transaction, hits.gameId, data)
         checkPlayerInGame(game, playerId)
         checkCurrentPlayer(game, playerId)
         checkGameState(game.state, "shooting")
@@ -73,15 +56,18 @@ class InGameServices(private val data: Data) {
     /**
      * Shows the state of the player's or enemy's fleet
      * @param token the user token
-     * @param isPlayer represents if it is the player or enemy fleet
+     * @param fleet represents the fleet that is being requested
      * @return the state of every ship
      */
-    fun fleetState(token: String?, isPlayer: Boolean) = doService(data) { transaction ->
+    fun fleetState(token: String?, fleet: Fleet) = doService(data) { transaction ->
         val playerId = computePlayer(transaction, token, data).id
-        val game = getPlayerGameOrThrow(transaction, playerId, data)
-        if (isPlayer)
+        val game = computeGame(transaction, fleet.gameId, data)
+        if (fleet.myFleet == null)
+            throw AppException("Fleet not specified", AppExceptionStatus.BAD_REQUEST)
+        if (fleet.myFleet)
             data.inGameData.fleetState(transaction, game.id, playerId)
         else
             data.inGameData.fleetState(transaction, game.id, game.otherPlayer(playerId))
     }
+
 }

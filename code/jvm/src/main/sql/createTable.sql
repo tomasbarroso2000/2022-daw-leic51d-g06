@@ -15,13 +15,12 @@ create table if not exists token(
 
 create table if not exists game(
     id serial primary key,
-    width integer not null check (width >= 10),
-    height integer not null check (height >= 10),
-    hits_per_round integer not null check (hits_per_round >= 1),
+    type varchar(20) not null check (type in ('beginner', 'experienced', 'expert')),
     state varchar(20) not null check (state in ('layout_definition', 'shooting', 'completed')),
     player1 integer not null references player(id),
     player2 integer not null references player(id),
-    curr_player integer references player(id) check (curr_player = player1 or curr_player = player2)
+    curr_player integer references player(id) check (curr_player = player1 or curr_player = player2),
+    deadline timestamp
 );
 
 create table if not exists hit(
