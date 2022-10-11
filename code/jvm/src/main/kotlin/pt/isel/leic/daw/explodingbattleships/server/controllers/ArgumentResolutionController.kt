@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest
 import javax.validation.Valid
 import javax.validation.constraints.Min
 import javax.validation.constraints.Size
+import javax.websocket.server.PathParam
 
 /*
  * Parameter binding examples
@@ -84,4 +85,6 @@ class ArgumentResolutionController {
         @PathVariable bid: String,
         req: HttpServletRequest
     ) = "handler7 with aid=$aid and bid=$bid"
+
+
 }
