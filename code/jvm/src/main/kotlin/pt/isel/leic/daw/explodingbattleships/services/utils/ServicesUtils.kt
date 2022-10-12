@@ -125,18 +125,15 @@ fun getNumberOfHits(transaction: Transaction, gameId: Int, playerId: Int, verifi
 
 
 /**
- * Checks if a ship
+ * Checks if a ship was destroyed this turn or not
  */
 fun maybeDestroyShip(transaction: Transaction, playerId: Int, gameId: Int, ship: VerifiedShip, data: Data): Boolean {
-    val shipSize = ship.getSize()
-    println("shipSize = $shipSize")
     val nOfHits = getNumberOfHits(transaction, gameId, playerId, ship, data)
-    println("nOfHits = $nOfHits")
-    if (shipSize == nOfHits)
-        if (data.inGameData.destroyShip(transaction, gameId, playerId, ship.firstSquare))
-            return true
-        else
+    if (ship.size == nOfHits) {
+        if (!data.inGameData.destroyShip(transaction, gameId, playerId, ship.firstSquare))
             throw AppException("Error destroying ship")
+        return true
+    }
     return false
 }
 

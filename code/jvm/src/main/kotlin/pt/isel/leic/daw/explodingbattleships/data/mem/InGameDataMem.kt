@@ -22,7 +22,7 @@ class InGameDataMem(private val mockData: MockData) : InGameData {
             val storedShip = StoredShip(
                 ship.firstSquare.toString(),
                 ship.name.lowercase(),
-                ship.size,
+                ship.size, //ERROR
                 0,
                 false,
                 ship.orientation,

@@ -87,7 +87,7 @@ data class StoredShip(
 )
 
 fun StoredShip.toShipState() = ShipState(name, destroyed)
-fun StoredShip.toVerifiedShip() = VerifiedShip(name, firstSquare.toVerifiedSquare(), orientation)
+fun StoredShip.toVerifiedShip() = VerifiedShip(name, firstSquare.toVerifiedSquare(), orientation, size)
 
 
 data class StoredHit(
@@ -114,7 +114,8 @@ data class MockData(
     ),
     val games: MutableSet<StoredGame> = mutableSetOf(
         StoredGame(1, "beginner", "layout_definition", 1, 2, 1, Instant.ofEpochSecond(20)),
-        StoredGame(2, "experienced", "shooting", 5, 6, 5, Instant.ofEpochSecond(20))
+        StoredGame(2, "experienced", "shooting", 5, 6, 5, Instant.ofEpochSecond(20)),
+        StoredGame(3, "beginner", "layout_definition", 1, 2, 1, Instant.ofEpochSecond(20))
     ),
     val tokens: MutableSet<StoredToken> = mutableSetOf(
         StoredToken("123", 1),

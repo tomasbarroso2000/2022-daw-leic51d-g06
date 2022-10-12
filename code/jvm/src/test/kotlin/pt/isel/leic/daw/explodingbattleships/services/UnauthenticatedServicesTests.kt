@@ -14,7 +14,7 @@ class UnauthenticatedServicesTests {
     @Test
     fun get_number_of_played_games() {
         val number = services.getNumberOfPlayedGames()
-        assertEquals(2, number)
+        assertEquals(3, number)
     }
 
     @Test

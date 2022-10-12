@@ -1,17 +1,10 @@
 package pt.isel.leic.daw.explodingbattleships.domain
 
-enum class ShipType(val shipName: String, val size: Int) {
-    CARRIER("carrier", 5),
-    BATTLESHIP("battleship", 4),
-    CRUISER("cruiser", 3),
-    SUBMARINE("submarine", 3),
-    DESTROYER("destroyer", 2)
-}
-
 data class ShipFromDb(
     val name: String,
     val firstSquare: String,
     val orientation: String,
+    val size: Int
 )
 
 data class ShipState(
@@ -19,7 +12,8 @@ data class ShipState(
     val destroyed: Boolean
 )
 
-fun ShipFromDb.toVerifiedShip() = VerifiedShip(name, firstSquare.toVerifiedSquare(), orientation)
+fun ShipFromDb.toVerifiedShip() =
+    VerifiedShip(name, firstSquare.toVerifiedSquare(), orientation, size)
 
 interface Ship {
     val name: String?
@@ -33,22 +27,22 @@ data class UnverifiedShip(
     override val orientation: String?,
 ) : Ship
 
-fun UnverifiedShip.toVerifiedShipOrNull(): VerifiedShip? {
+fun UnverifiedShip.toVerifiedShipOrNull(gameType: GameType): VerifiedShip? {
     name ?: return null
     val verifiedFirstSquare = firstSquare?.toVerifiedSquareOrNull() ?: return null
     orientation ?: return null
-    return VerifiedShip(name, verifiedFirstSquare, orientation)
+    return VerifiedShip(name, verifiedFirstSquare, orientation, gameType.getShipSize(name))
 }
 
 data class VerifiedShip(
     override val name: String,
     override val firstSquare: VerifiedSquare,
     override val orientation: String,
+    val size: Int
 ) : Ship
 
 fun VerifiedShip.getSquares(): Set<VerifiedSquare> {
     val squares = mutableSetOf<VerifiedSquare>()
-    val size = getSize()
     var currentSquare = firstSquare
     when (orientation.lowercase()) {
         "vertical" -> for (i in 0 until size) {
@@ -64,5 +58,4 @@ fun VerifiedShip.getSquares(): Set<VerifiedSquare> {
     return squares
 }
 
-fun Ship.getSize() = ShipType.values().find { it.shipName == name }?.size
-    ?: throw IllegalArgumentException("No ship found with the name $name")
+

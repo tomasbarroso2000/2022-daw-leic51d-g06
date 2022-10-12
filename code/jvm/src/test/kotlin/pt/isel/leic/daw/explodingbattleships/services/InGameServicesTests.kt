@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import pt.isel.leic.daw.explodingbattleships.data.mem.DataMem
 import pt.isel.leic.daw.explodingbattleships.domain.*
+import pt.isel.leic.daw.explodingbattleships.server.BAD_REQUEST
 import pt.isel.leic.daw.explodingbattleships.services.utils.AppException
 import pt.isel.leic.daw.explodingbattleships.services.utils.AppExceptionStatus
 
@@ -17,7 +18,7 @@ class InGameServicesTests {
     fun define_layout() {
         val token = "123"
         val layout = Layout(
-            1,
+            3,
             listOf(
                 UnverifiedShip("carrier", UnverifiedSquare('a', 1), "horizontal"),
                 UnverifiedShip("battleship", UnverifiedSquare('b', 1), "vertical"),
@@ -26,10 +27,9 @@ class InGameServicesTests {
                 UnverifiedShip("destroyer", UnverifiedSquare('d', 2), "vertical")
             )
         )
-        val expectedLayoutOutcome = LayoutOutcome(LayoutOutcomeStatus.STARTED)
+        val expectedLayoutOutcome = LayoutOutcome(LayoutOutcomeStatus.WAITING)
         val actualLayoutOutcome = services.defineLayout(token, layout)
         assertEquals(expectedLayoutOutcome, actualLayoutOutcome)
-        // call to fleet state to check if the ships were correctly placed
         assertTrue(
             services.fleetState(token, Fleet(1, true))
                 .containsAll(
@@ -108,7 +108,7 @@ class InGameServicesTests {
     fun define_layout_with_invalid_orientation() {
         val token = "123"
         val layout = Layout(
-            1,
+            3,
             listOf(
                 UnverifiedShip("carrier", UnverifiedSquare('a', 1), "horizontal"),
                 UnverifiedShip("battleship", UnverifiedSquare('b', 1), "vertical"),
@@ -128,7 +128,7 @@ class InGameServicesTests {
     fun define_layout_with_invalid_ship() {
         val token = "123"
         val layout = Layout(
-            1,
+            3,
             listOf(
                 UnverifiedShip("carrier", UnverifiedSquare('a', 1), "horizontal"),
                 UnverifiedShip("battleship", UnverifiedSquare('b', 1), "vertical"),
@@ -146,7 +146,22 @@ class InGameServicesTests {
 
     @Test
     fun define_layout_of_layout_already_defined() {
-        TODO()
+        val token = "123"
+        val layout = Layout(
+            1,
+            listOf(
+                UnverifiedShip("carrier", UnverifiedSquare('a', 1), "horizontal"),
+                UnverifiedShip("battleship", UnverifiedSquare('b', 1), "vertical"),
+                UnverifiedShip("submarine", UnverifiedSquare('b', 2), "horizontal"),
+                UnverifiedShip("cruiser", UnverifiedSquare('c', 2), "horizontal"),
+                UnverifiedShip("destroyer", UnverifiedSquare('d', 2), "vertical")
+            )
+        )
+        val exception = assertThrows<AppException> {
+            services.defineLayout(token, layout)
+        }
+        assertEquals("Layout already defined", exception.message)
+        assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
     }
 
     @Test

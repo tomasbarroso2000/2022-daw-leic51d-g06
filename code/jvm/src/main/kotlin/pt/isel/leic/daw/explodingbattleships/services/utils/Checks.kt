@@ -39,7 +39,7 @@ fun checkShipLayout(gameTypeName: String, ships: List<UnverifiedShip>): List<Ver
     val occupiedSquares = mutableSetOf<VerifiedSquare?>()
     val verifiedShips = mutableListOf<VerifiedShip>()
     ships.forEach { unverifiedShip ->
-        val verifiedShip = unverifiedShip.toVerifiedShipOrNull()
+        val verifiedShip = unverifiedShip.toVerifiedShipOrNull(gameType)
             ?: throw AppException("Invalid ship", AppExceptionStatus.BAD_REQUEST)
         when (verifiedShip.orientation.lowercase()) {
             "vertical" -> validateShipSquares(verifiedShip, gameType.boardSize, occupiedSquares, VerifiedSquare::down)
@@ -63,8 +63,7 @@ private fun shipsValid(gameType: GameType, ships: List<UnverifiedShip>) =
 /**
  * Checks if a square is within a board
  * @param square the square in question
- * @param width the width of the board
- * @param height the height of the board
+ * @param boardSize the size of the board
  */
 fun squareInBoard(square: VerifiedSquare, boardSize: Int): Boolean {
     val lastRow = 'a' + boardSize - 1
@@ -76,16 +75,13 @@ fun squareInBoard(square: VerifiedSquare, boardSize: Int): Boolean {
 
 /**
  * Validates the squares of a [UnverifiedShip]
- * @param ship the [UnverifiedShip]
- * @param width the width of the board
- * @param height the height of the board
+ * @param ship the ship in question
  * @param occupiedSquares the occupied squares
  * @param nextSquare the function to calculate the next square
  */
 private fun validateShipSquares(ship: VerifiedShip, boardSize: Int, occupiedSquares: MutableSet<VerifiedSquare?>, nextSquare: NextSquare) {
-    val shipSize = ship.getSize()
     var currentSquare = ship.firstSquare
-    for (i in 0 until shipSize) {
+    for (i in 0 until ship.size) {
         checkOrThrow(!squareInBoard(currentSquare, boardSize), "Invalid square on ${currentSquare.getString()}")
         checkOrThrow(occupiedSquares.contains(currentSquare), "Square already occupied on ${currentSquare.getString()}")
         occupiedSquares.add(currentSquare)

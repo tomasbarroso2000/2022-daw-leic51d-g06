@@ -25,7 +25,7 @@ class InGameDataDb : InGameData {
                 println(handle.createUpdate("insert into ship values (:firstSquare, :name, :size, 0, false, :orientation, :playerId, :gameId)")
                     .bind("firstSquare", ship.firstSquare.getString())
                     .bind("name", ship.name)
-                    .bind("size", 5) // sad
+                    .bind("size", ship.size)
                     .bind("orientation", ship.orientation)
                     .bind("playerId", playerId)
                     .bind("gameId", gameId)
@@ -54,7 +54,7 @@ class InGameDataDb : InGameData {
     ): Map<VerifiedShip, Set<VerifiedSquare>> =
         (transaction as TransactionDataDb).withHandle { handle ->
             handle.createQuery(
-                "select name, first_square, orientation from ship " +
+                "select name, first_square, orientation, size from ship " +
                     "where game = :gameId and player = :playerId"
             )
                 .bind("gameId", gameId)

@@ -46,7 +46,7 @@ class AuthenticatedServicesTests {
     fun enter_lobby() {
         val token = "fiona"
         val enterLobbyInput = EnterLobbyInput("beginner")
-        val expectedOutput = EnterLobbyOutput(false, 3)
+        val expectedOutput = EnterLobbyOutput(false, 4)
         val actualOutput = services.enterLobby(token, enterLobbyInput)
         assertEquals(expectedOutput, actualOutput)
     }
