@@ -77,21 +77,18 @@ data class StoredToken(
 
 data class StoredShip(
     val firstSquare: String,
+    val name: String,
+    val size: Int,
     val nOfHits: Int,
     val destroyed: Boolean,
     val orientation: String,
     val player: Int,
-    val game: Int,
-    val shipType: String
+    val game: Int
 )
 
-fun StoredShip.toShipState() = ShipState(shipType, destroyed)
-fun StoredShip.toVerifiedShip() = VerifiedShip(shipType, firstSquare.toVerifiedSquare(), orientation)
+fun StoredShip.toShipState() = ShipState(name, destroyed)
+fun StoredShip.toVerifiedShip() = VerifiedShip(name, firstSquare.toVerifiedSquare(), orientation)
 
-data class StoredShipType(
-    val typeName: String,
-    val shipSize: Int
-)
 
 data class StoredHit(
     val square: String,
@@ -128,31 +125,25 @@ data class MockData(
         StoredToken("shrekinho", 6)
     ),
     val ships: MutableSet<StoredShip> = mutableSetOf(
-        StoredShip("a1", 0, false, "horizontal", 1, 1, "carrier"),
-        StoredShip("b1", 0, false, "vertical", 1, 1, "battleship"),
-        StoredShip("c2", 0, false, "horizontal", 1, 1, "cruiser"),
-        StoredShip("b2", 0, false, "horizontal", 1, 1, "submarine"),
-        StoredShip("d2", 0, false, "vertical", 1, 1, "destroyer"),
+        StoredShip("a1", "carrier", 5, 0, false, "horizontal", 1, 1),
+        StoredShip("b1", "battleship", 4, 0, false, "vertical", 1, 1),
+        StoredShip("c2", "cruiser", 3, 0, false, "horizontal", 1, 1),
+        StoredShip("b2", "submarine", 3, 0, false, "horizontal", 1, 1),
+        StoredShip("d2", "destroyer", 2, 0, false, "vertical", 1, 1),
 
-        StoredShip("a1", 0, false, "horizontal", 2, 1, "carrier"),
-        StoredShip("b1", 0, false, "vertical", 2, 1, "battleship"),
-        StoredShip("c2", 0, false, "horizontal", 2, 1, "cruiser"),
-        StoredShip("b2", 3, true, "horizontal", 2, 1, "submarine"),
-        StoredShip("d2", 2, true, "vertical", 2, 1, "destroyer"),
+        StoredShip("a1", "carrier", 5, 0, false, "horizontal", 2, 1),
+        StoredShip("b1", "battleship", 5, 0, false, "vertical", 2, 1),
+        StoredShip("c2", "cruiser", 3, 0, false, "horizontal",2, 1),
+        StoredShip("b2", "submarine", 3, 3, true, "horizontal", 2, 1),
+        StoredShip("d2", "destroyer", 2, 2, true, "vertical", 2, 1),
 
-        StoredShip("a1", 0, false, "horizontal", 6, 2, "carrier"),
-        StoredShip("b1", 0, false, "vertical", 6, 2, "battleship"),
-        StoredShip("c2", 0, false, "horizontal", 6, 2, "cruiser"),
-        StoredShip("b2", 0, false, "horizontal", 6, 2, "submarine"),
-        StoredShip("d2", 0, false, "vertical", 6, 2, "destroyer")
+        StoredShip("a1", "carrier", 5, 0, false, "horizontal", 6, 2),
+        StoredShip("b1", "battleship", 4, 0, false, "vertical", 6, 2),
+        StoredShip("c2", "cruiser", 3, 0, false, "horizontal", 6, 2),
+        StoredShip("b2", "submarine", 3, 0, false, "horizontal", 6, 2),
+        StoredShip("d2", "destroyer", 2, 0, false, "vertical", 6, 2)
     ),
-    val shipTypes: MutableSet<StoredShipType> = mutableSetOf(
-        StoredShipType("carrier", 5),
-        StoredShipType("battleship", 4),
-        StoredShipType("cruiser", 3),
-        StoredShipType("submarine", 3),
-        StoredShipType("destroyer", 2)
-    ),
+
     val hits: MutableSet<StoredHit> = mutableSetOf(
         StoredHit("f1", Timestamp.from(Instant.now()), 6, 2)
     ),

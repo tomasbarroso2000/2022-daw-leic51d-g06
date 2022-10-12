@@ -1,6 +1,7 @@
 package pt.isel.leic.daw.explodingbattleships.services
 
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import pt.isel.leic.daw.explodingbattleships.data.mem.DataMem
@@ -28,6 +29,19 @@ class InGameServicesTests {
         val expectedLayoutOutcome = LayoutOutcome(LayoutOutcomeStatus.STARTED)
         val actualLayoutOutcome = services.defineLayout(token, layout)
         assertEquals(expectedLayoutOutcome, actualLayoutOutcome)
+        // call to fleet state to check if the ships were correctly placed
+        assertTrue(
+            services.fleetState(token, Fleet(1, true))
+                .containsAll(
+                    listOf(
+                        ShipState("carrier", false),
+                        ShipState("battleship", false),
+                        ShipState("submarine", false),
+                        ShipState("cruiser", false),
+                        ShipState("destroyer", false)
+                    )
+                )
+        )
     }
 
     @Test
@@ -128,6 +142,11 @@ class InGameServicesTests {
         }
         assertEquals("Invalid ship list for BEGINNER game", exception.message)
         assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
+    }
+
+    @Test
+    fun define_layout_of_layout_already_defined() {
+        TODO()
     }
 
     @Test

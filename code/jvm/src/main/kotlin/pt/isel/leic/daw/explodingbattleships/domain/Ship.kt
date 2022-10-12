@@ -15,7 +15,7 @@ data class ShipFromDb(
 )
 
 data class ShipState(
-    val shipType: String,
+    val name: String,
     val destroyed: Boolean
 )
 

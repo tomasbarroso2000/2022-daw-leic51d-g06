@@ -101,7 +101,7 @@ fun executeHit(transaction: Transaction, game: Game, verifiedSquares: List<Verif
             throw AppException("Unsuccessful hit")
         val entry = shipsSquares.entries.find { it.value.contains(square) }
         if (entry != null) {
-            if (!data.inGameData.updateNumOfHits(transaction, game.id, playerId, entry.key.name))
+            if (!data.inGameData.updateNumOfHits(transaction, game.id, playerId, entry.key.firstSquare.getString()))
                 throw AppException("Unsuccessful hit")
             val destroyed = maybeDestroyShip(transaction, playerId, game.id, entry.key, data)
             if (destroyed) hitOutcomeList.add(HitOutcome(square, true, entry.key.name))

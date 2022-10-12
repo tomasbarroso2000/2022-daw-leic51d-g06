@@ -80,16 +80,16 @@ class InGameDataDb : InGameData {
         transaction: Transaction,
         gameId: Int,
         playerId: Int,
-        shipType: String
+        firstSquare: String
     ): Boolean =
         (transaction as TransactionDataDb).withHandle { handle ->
             handle.createUpdate(
                 "update ship set n_of_hits = n_of_hits + 1 " +
-                    "where game = :gameId and player = :playerId and ship_type = :name"
+                    "where game = :gameId and player = :playerId and first_square = :firstSquare"
             )
                 .bind("gameId", gameId)
                 .bind("playerId", playerId)
-                .bind("name", shipType)
+                .bind("firstSquare", firstSquare)
                 .execute() == 1
         }
 
@@ -97,23 +97,23 @@ class InGameDataDb : InGameData {
         transaction: Transaction,
         gameId: Int,
         playerId: Int,
-        shipType: String
+        firstSquare: String
     ): Boolean =
         (transaction as TransactionDataDb).withHandle { handle ->
             handle
                 .createQuery(
                     "select destroyed from ship " +
-                        "where game = :gameId and player = :playerId and ship_type = :name"
+                        "where game = :gameId and player = :playerId and first_square = :firstSquare"
                 )
                 .bind("gameId", gameId)
                 .bind("playerId", playerId)
-                .bind("name", shipType)
+                .bind("firstSquare", firstSquare)
                 .mapTo<Boolean>().first()
         }
 
     override fun fleetState(transaction: Transaction, gameId: Int, playerId: Int): List<ShipState> =
         (transaction as TransactionDataDb).withHandle { handle ->
-            handle.createQuery("select ship_type, destroyed from ship where game = :gameId and player = :playerId")
+            handle.createQuery("select name, destroyed from ship where game = :gameId and player = :playerId")
                 .bind("gameId", gameId)
                 .bind("playerId", playerId)
                 .mapTo<ShipState>().list()
@@ -143,5 +143,13 @@ class InGameDataDb : InGameData {
                 .bind("playerId", playerId)
                 .bind("firstSquare", firstSquare)
                 .execute() == 1
+        }
+
+    override fun hasShips(transaction: Transaction, playerId: Int, gameId: Int) =
+        (transaction as TransactionDataDb).withHandle { handle ->
+            handle.createQuery("select exists (select * from ship where game = :gameId and player = :playerId)")
+                .bind("gameId", gameId)
+                .bind("playerId", playerId)
+                .mapTo<Boolean>().first()
         }
 }

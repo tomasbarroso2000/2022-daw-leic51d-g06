@@ -23,6 +23,9 @@ class InGameServices(private val data: Data) {
         checkGameState(game.state, "layout_definition")
         if (layout.ships == null)
             throw AppException("No ships provided", AppExceptionStatus.BAD_REQUEST)
+        // verificar se o jogador ja submeteu um layout
+        if (data.inGameData.hasShips(transaction, playerId, game.id))
+            throw AppException("Already defined layout")
         val verifiedShips = checkShipLayout(game.type, layout.ships)
         data.inGameData.defineLayout(transaction, game.id, playerId, verifiedShips)
     }
