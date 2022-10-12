@@ -122,9 +122,9 @@ class InGameDataDb : InGameData {
     override fun getNumOfHits(transaction: Transaction, shipFirstSquare: VerifiedSquare, gameId: Int, playerId: Int): Int =
         (transaction as TransactionDataDb).withHandle { handle ->
             handle.createQuery("select n_of_hits from ship where first_square = :shipFirstSquare and game = :gameId and player = :playerId")
-                .bind("shipFirstSquare", shipFirstSquare)
+                .bind("shipFirstSquare", shipFirstSquare.getString())
                 .bind("gameId", gameId)
-                .bind("player", playerId)
+                .bind("playerId", playerId)
                 .mapTo<Int>()
                 .first()
         }
@@ -141,11 +141,11 @@ class InGameDataDb : InGameData {
             )
                 .bind("gameId", gameId)
                 .bind("playerId", playerId)
-                .bind("firstSquare", firstSquare)
+                .bind("firstSquare", firstSquare.getString())
                 .execute() == 1
         }
 
-    override fun hasShips(transaction: Transaction, playerId: Int, gameId: Int) =
+    override fun hasShips(transaction: Transaction, playerId: Int, gameId: Int): Boolean =
         (transaction as TransactionDataDb).withHandle { handle ->
             handle.createQuery("select exists (select * from ship where game = :gameId and player = :playerId)")
                 .bind("gameId", gameId)

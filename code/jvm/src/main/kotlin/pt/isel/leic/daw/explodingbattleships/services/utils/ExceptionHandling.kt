@@ -1,5 +1,6 @@
 package pt.isel.leic.daw.explodingbattleships.services.utils
 
+import org.jdbi.v3.core.JdbiException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import pt.isel.leic.daw.explodingbattleships.data.comp.utils.DataException
@@ -46,16 +47,28 @@ enum class AppExceptionStatus {
  */
 fun handleDataError(error: Exception): Exception {
     return when (error) {
-        is SQLException -> {
-            handleSQLException(error)
-        }
-        is DataException -> {
-            AppException(error.message, AppExceptionStatus.BAD_REQUEST)
-        }
+        is JdbiException -> handleJdbiException(error)
+        is DataException -> AppException(error.message, AppExceptionStatus.BAD_REQUEST)
         else -> {
             logger.warn(error.message)
             error
         }
+    }
+}
+
+/**
+ * Transforms a Jdbi exception into a new [Exception]
+ * for it to be interpreted by the WebApi module
+ * @param error the [SQLException] that was thrown
+ * @return the new [Exception]
+ */
+fun handleJdbiException(error: JdbiException): Exception {
+    val cause = error.cause
+    return if (cause is SQLException) {
+        handleSQLException(cause)
+    } else {
+        logger.warn(error.message)
+        error
     }
 }
 
@@ -65,7 +78,7 @@ fun handleDataError(error: Exception): Exception {
  * @param error the [SQLException] that was thrown
  * @return the new [AppException]
  */
-fun handleSQLException(error: SQLException): Exception {
+fun handleSQLException(error: SQLException): AppException {
     return when {
         isUniqueViolation(error) -> {
             AppException(buildUniqueViolationMessage(error.message), AppExceptionStatus.BAD_REQUEST)

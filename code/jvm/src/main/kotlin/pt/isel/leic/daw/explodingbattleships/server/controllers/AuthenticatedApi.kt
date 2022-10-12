@@ -3,6 +3,7 @@ package pt.isel.leic.daw.explodingbattleships.server.controllers
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -32,7 +33,7 @@ class AuthenticatedApi(private val services: Services) {
             .body(services.authenticatedServices.getPlayerInfo(token))
     }
 
-    @GetMapping(ENTER_LOBBY)
+    @PostMapping(ENTER_LOBBY)
     fun handlerEnterLobby(
         request: HttpServletRequest,
         @Valid @RequestBody input: EnterLobbyInput

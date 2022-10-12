@@ -6,6 +6,77 @@
 	},
 	"item": [
 		{
+			"name": "create player",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "number of played games",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}games/total",
+					"host": [
+						"{{BASE_URL}}games"
+					],
+					"path": [
+						"total"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "game state",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}games/state/1",
+					"host": [
+						"{{BASE_URL}}games"
+					],
+					"path": [
+						"state",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "rankings",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}rankings",
+					"host": [
+						"{{BASE_URL}}rankings"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "system info",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}",
+					"host": [
+						"{{BASE_URL}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "define layout",
 			"request": {
 				"auth": {
@@ -72,6 +143,127 @@
 					],
 					"path": [
 						"hit"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "player fleet state",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "123",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}games/fleet/player/1",
+					"host": [
+						"{{BASE_URL}}games"
+					],
+					"path": [
+						"fleet",
+						"player",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "enemy fleet state",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "321",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}games/fleet/enemy/1",
+					"host": [
+						"{{BASE_URL}}games"
+					],
+					"path": [
+						"fleet",
+						"enemy",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "player info",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "123",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}player/info",
+					"host": [
+						"{{BASE_URL}}player"
+					],
+					"path": [
+						"info"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "enter lobby",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "321",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"game-type\": \"beginner\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BASE_URL}}lobby/enter",
+					"host": [
+						"{{BASE_URL}}lobby"
+					],
+					"path": [
+						"enter"
 					]
 				}
 			},
