@@ -5,7 +5,6 @@ import org.jdbi.v3.core.kotlin.KotlinPlugin
 import org.postgresql.ds.PGSimpleDataSource
 import java.sql.Timestamp
 import java.time.Instant
-//import java.sql.DateInterval
 
 val jdbiObject = getJdbi()
 
@@ -38,10 +37,10 @@ fun <T> getHasMoreAndProcessList(receivedList: List<T>, finalList: MutableList<T
     return false
 }
 
-fun Timestamp.toInstant() = Instant.ofEpochSecond(time)
+fun Timestamp.toInstant(): Instant = Instant.ofEpochSecond(time)
 
-//fun Instant.toTimestamp() =
+fun Instant.toTimestamp(): Timestamp = Timestamp.from(this)
 
-/*fun Interval.toInstant() {
+/*fun Interval.toInstant(): Instant {
 
 }*/
