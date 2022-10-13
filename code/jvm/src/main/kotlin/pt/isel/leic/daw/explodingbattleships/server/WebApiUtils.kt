@@ -44,8 +44,8 @@ fun handleError(error: Exception): ResponseEntity<ErrorResponse> {
         onAppException(error)
     else
         makeResponse(
-            BAD_REQUEST,
-            ErrorResponse("Check the format of the request body")
+            INTERNAL_SERVER_ERROR,
+            ErrorResponse("Something went wrong")
         )
 }
 

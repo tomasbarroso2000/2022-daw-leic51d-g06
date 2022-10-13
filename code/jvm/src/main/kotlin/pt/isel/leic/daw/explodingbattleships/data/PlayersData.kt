@@ -10,7 +10,7 @@ interface PlayersData {
 
     fun createToken(transaction: Transaction, playerId: Int): TokenOutput
 
-    fun getRankings(transaction: Transaction, limit: Int, skip: Int): ListOfData<Player>
+    fun getRankings(transaction: Transaction, limit: Int, skip: Int): Rankings
 
     fun isPlayerInLobby(transaction: Transaction, playerId: Int): Boolean
 

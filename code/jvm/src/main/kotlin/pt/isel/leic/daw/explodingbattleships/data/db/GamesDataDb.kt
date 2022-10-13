@@ -3,18 +3,14 @@ package pt.isel.leic.daw.explodingbattleships.data.db
 import org.jdbi.v3.core.kotlin.mapTo
 import pt.isel.leic.daw.explodingbattleships.data.GamesData
 import pt.isel.leic.daw.explodingbattleships.data.Transaction
-import pt.isel.leic.daw.explodingbattleships.domain.Game
-import pt.isel.leic.daw.explodingbattleships.domain.VerifiedSquare
-import pt.isel.leic.daw.explodingbattleships.domain.toVerifiedSquare
+import pt.isel.leic.daw.explodingbattleships.domain.*
 
 class GamesDataDb : GamesData {
     override fun createGame(transaction: Transaction, gameType: String, player1: Int, player2: Int): Int =
         (transaction as TransactionDataDb).withHandle { handle ->
             handle.createUpdate(
-                """
-                insert into game (type, state, player1, player2, curr_player, deadline)
-                values (:gameType, 'layout_definition', :player1, :player2, :player1, null)
-                """
+                " insert into game (type, state, player1, player2, curr_player, deadline) " +
+                        "values (:gameType, 'layout_definition', :player1, :player2, :player1, null)"
             )
                 .bind("gameType", gameType)
                 .bind("player1", player1)
@@ -23,16 +19,17 @@ class GamesDataDb : GamesData {
                 .mapTo<Int>()
                 .first()
         }
-    override fun getNumberOfPlayedGames(transaction: Transaction): Int =
+    override fun getNumberOfPlayedGames(transaction: Transaction) =
         (transaction as TransactionDataDb).withHandle { handle ->
-            handle.createQuery("select count(*) from game").mapTo<Int>().first()
+            val nr = handle.createQuery("select count(*) from game").mapTo<Int>().first()
+            NumberOfPlayedGames(nr)
         }
 
-    override fun getGameState(transaction: Transaction, gameId: Int): String? =
+    override fun getGameState(transaction: Transaction, gameId: Int) =
         (transaction as TransactionDataDb).withHandle { handle ->
             handle.createQuery("select state from game where id = :id")
                 .bind("id", gameId)
-                .mapTo<String>().firstOrNull()
+                .mapTo<String>().firstOrNull()?.let { GameState(it) }
         }
 
     override fun getGame(transaction: Transaction, gameId: Int): Game? =

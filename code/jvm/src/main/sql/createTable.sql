@@ -23,6 +23,21 @@ create table if not exists game(
     deadline interval
 );
 
+create table if not exists game_type(
+    name varchar(25) primary key,
+    board_size integer not null,
+    shots_per_round integer not null,
+    layout_def_time_in_secs integer not null,
+    shooting_time_in_secs integer not null
+);
+
+create table if not exists ship_type(
+    name varchar(25),
+    size integer check (size > 0),
+    game_type varchar(25) references game_type(name),
+    primary key (name, game_type)
+);
+
 create table if not exists hit(
     square varchar(5) check (square ~ '[a-z][0-9]+'),
     hit_timestamp timestamp,

@@ -1,12 +1,9 @@
-package pt.isel.leic.daw.explodingbattleships.data.comp.utils
+package pt.isel.leic.daw.explodingbattleships.data.mem
 
 import pt.isel.leic.daw.explodingbattleships.domain.*
-import pt.isel.leic.daw.explodingbattleships.services.utils.AppException
 import pt.isel.leic.daw.explodingbattleships.services.utils.toGameType
 import java.sql.Timestamp
 import java.time.Instant
-import java.time.temporal.ChronoUnit
-import java.time.temporal.TemporalAmount
 
 /**
  * To be thrown by the DataMem module when an error is detected

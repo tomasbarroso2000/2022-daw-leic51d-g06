@@ -1,12 +1,10 @@
 package pt.isel.leic.daw.explodingbattleships.services
 
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import pt.isel.leic.daw.explodingbattleships.data.mem.DataMem
 import pt.isel.leic.daw.explodingbattleships.domain.*
-import pt.isel.leic.daw.explodingbattleships.server.BAD_REQUEST
 import pt.isel.leic.daw.explodingbattleships.services.utils.AppException
 import pt.isel.leic.daw.explodingbattleships.services.utils.AppExceptionStatus
 
@@ -30,18 +28,7 @@ class InGameServicesTests {
         val expectedLayoutOutcome = LayoutOutcome(LayoutOutcomeStatus.WAITING)
         val actualLayoutOutcome = services.defineLayout(token, layout)
         assertEquals(expectedLayoutOutcome, actualLayoutOutcome)
-        assertTrue(
-            services.fleetState(token, Fleet(1, true))
-                .containsAll(
-                    listOf(
-                        ShipState("carrier", false),
-                        ShipState("battleship", false),
-                        ShipState("submarine", false),
-                        ShipState("cruiser", false),
-                        ShipState("destroyer", false)
-                    )
-                )
-        )
+        assertEquals(5, data.mockData.ships.filter { it.game == 3 && it.player == 1 }.size)
     }
 
     @Test
@@ -174,12 +161,16 @@ class InGameServicesTests {
                 UnverifiedSquare('e', 2)
             )
         )
-        val expectedHitsOutcome = listOf(
-            HitOutcome(VerifiedSquare('d', 2), true),
-            HitOutcome(VerifiedSquare('e', 2), true, "destroyer")
+        val expectedHitsOutcome = HitsOutcome(
+            listOf(
+                HitOutcome(VerifiedSquare('d', 2), true),
+                HitOutcome(VerifiedSquare('e', 2), true, "destroyer")
+            ),
+            false
         )
         val actualHitsOutcome = services.sendHits(token, hits)
         assertEquals(expectedHitsOutcome, actualHitsOutcome)
+        assertEquals(3, data.mockData.hits.filter { it.game == 2 && it.player == 6 }.size)
     }
 
     @Test

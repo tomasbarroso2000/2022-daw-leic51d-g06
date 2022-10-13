@@ -3,15 +3,7 @@ package pt.isel.leic.daw.explodingbattleships.data.db
 import org.jdbi.v3.core.kotlin.mapTo
 import pt.isel.leic.daw.explodingbattleships.data.InGameData
 import pt.isel.leic.daw.explodingbattleships.data.Transaction
-import pt.isel.leic.daw.explodingbattleships.domain.LayoutOutcome
-import pt.isel.leic.daw.explodingbattleships.domain.LayoutOutcomeStatus
-import pt.isel.leic.daw.explodingbattleships.domain.ShipFromDb
-import pt.isel.leic.daw.explodingbattleships.domain.ShipState
-import pt.isel.leic.daw.explodingbattleships.domain.VerifiedShip
-import pt.isel.leic.daw.explodingbattleships.domain.VerifiedSquare
-import pt.isel.leic.daw.explodingbattleships.domain.getSquares
-import pt.isel.leic.daw.explodingbattleships.domain.getString
-import pt.isel.leic.daw.explodingbattleships.domain.toVerifiedShip
+import pt.isel.leic.daw.explodingbattleships.domain.*
 
 class InGameDataDb : InGameData {
     override fun defineLayout(
@@ -151,5 +143,12 @@ class InGameDataDb : InGameData {
                 .bind("gameId", gameId)
                 .bind("playerId", playerId)
                 .mapTo<Boolean>().first()
+        }
+
+    override fun setGameStateCompleted(transaction: Transaction, gameId: Int): Boolean =
+        (transaction as TransactionDataDb).withHandle { handle ->
+            handle.createUpdate("update game set state = 'completed' where id = :gameId")
+                .bind("gameId", gameId)
+                .execute() == 1
         }
 }

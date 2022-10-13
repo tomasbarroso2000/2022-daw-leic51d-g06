@@ -3,7 +3,6 @@ package pt.isel.leic.daw.explodingbattleships.data.db
 import org.jdbi.v3.core.kotlin.mapTo
 import pt.isel.leic.daw.explodingbattleships.data.PlayersData
 import pt.isel.leic.daw.explodingbattleships.data.Transaction
-import pt.isel.leic.daw.explodingbattleships.data.comp.utils.getHasMoreAndProcessList
 import pt.isel.leic.daw.explodingbattleships.domain.*
 import java.time.Instant
 import java.util.UUID
@@ -37,7 +36,7 @@ class PlayersDataDb : PlayersData {
             TokenOutput(token)
         }
 
-    override fun getRankings(transaction: Transaction, limit: Int, skip: Int): ListOfData<Player> =
+    override fun getRankings(transaction: Transaction, limit: Int, skip: Int): Rankings =
         (transaction as TransactionDataDb).withHandle { handle ->
             val foundPlayers =
                 handle.createQuery("select id, name, score from player order by score desc offset :skip limit :limit")
@@ -46,7 +45,7 @@ class PlayersDataDb : PlayersData {
                     .mapTo<Player>().list()
             val players = mutableListOf<Player>()
             val hasMore = getHasMoreAndProcessList(foundPlayers, players, limit)
-            ListOfData(players, hasMore)
+            Rankings(ListOfData(players, hasMore))
         }
 
     override fun isPlayerInLobby(transaction: Transaction, playerId: Int): Boolean =

@@ -2,15 +2,9 @@ package pt.isel.leic.daw.explodingbattleships.data.mem
 
 import pt.isel.leic.daw.explodingbattleships.data.InGameData
 import pt.isel.leic.daw.explodingbattleships.data.Transaction
-import pt.isel.leic.daw.explodingbattleships.data.comp.utils.MockData
-import pt.isel.leic.daw.explodingbattleships.data.comp.utils.StoredHit
-import pt.isel.leic.daw.explodingbattleships.data.comp.utils.StoredShip
-import pt.isel.leic.daw.explodingbattleships.data.comp.utils.toShipState
-import pt.isel.leic.daw.explodingbattleships.data.comp.utils.toVerifiedShip
 import pt.isel.leic.daw.explodingbattleships.domain.*
 import java.sql.Timestamp
 import java.time.Instant
-
 class InGameDataMem(private val mockData: MockData) : InGameData {
     override fun defineLayout(
         transaction: Transaction,
@@ -119,4 +113,15 @@ class InGameDataMem(private val mockData: MockData) : InGameData {
 
     override fun hasShips(transaction: Transaction, playerId: Int, gameId: Int) =
         mockData.ships.any { it.game == gameId && it.player == playerId }
+
+    override fun setGameStateCompleted(transaction: Transaction, gameId: Int): Boolean {
+        val storedGame = mockData.games.find { it.id == gameId }
+        if (storedGame != null) {
+            mockData.games.remove(storedGame)
+            mockData.games.add(storedGame.copy(state = "completed"))
+            return true
+        }
+        return false
+    }
 }
+

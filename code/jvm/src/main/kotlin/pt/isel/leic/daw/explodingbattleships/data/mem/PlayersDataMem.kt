@@ -2,10 +2,8 @@ package pt.isel.leic.daw.explodingbattleships.data.mem
 
 import pt.isel.leic.daw.explodingbattleships.data.PlayersData
 import pt.isel.leic.daw.explodingbattleships.data.Transaction
-import pt.isel.leic.daw.explodingbattleships.data.comp.utils.*
 import pt.isel.leic.daw.explodingbattleships.domain.*
 import java.time.Instant
-import java.time.temporal.ChronoUnit
 import java.util.UUID
 
 class PlayersDataMem(private val mockData: MockData) : PlayersData {
@@ -32,9 +30,9 @@ class PlayersDataMem(private val mockData: MockData) : PlayersData {
         return TokenOutput(token)
     }
 
-    override fun getRankings(transaction: Transaction, limit: Int, skip: Int): ListOfData<Player> {
+    override fun getRankings(transaction: Transaction, limit: Int, skip: Int): Rankings {
         val players = mockData.players.map { it.toPlayer() }.sortedBy { it.score }.reversed()
-        return ListOfData(getSublist(players, limit, skip), hasMore(players.size, limit, skip))
+        return Rankings(ListOfData(getSublist(players, limit, skip), hasMore(players.size, limit, skip)))
     }
 
     override fun isPlayerInLobby(transaction: Transaction, playerId: Int): Boolean =

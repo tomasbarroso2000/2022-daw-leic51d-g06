@@ -9,7 +9,7 @@ import pt.isel.leic.daw.explodingbattleships.domain.*
  * @param undesiredCondition the undesired condition
  * @param errorMessage the error message to be thrown
  */
-fun checkOrThrow(undesiredCondition: Boolean, errorMessage: String) {
+fun checkOrThrowBadRequest(undesiredCondition: Boolean, errorMessage: String) {
     if (undesiredCondition)
         throw AppException(errorMessage, AppExceptionStatus.BAD_REQUEST)
 }
@@ -21,18 +21,29 @@ fun checkOrThrow(undesiredCondition: Boolean, errorMessage: String) {
  * @param skip the given skip
  */
 fun checkLimitAndSkip(limit: Int, skip: Int) {
-    checkOrThrow(limit <= 0, "Invalid limit")
-    checkOrThrow(skip < 0, "Invalid skip")
+    checkOrThrowBadRequest(limit <= 0, "Invalid limit")
+    checkOrThrowBadRequest(skip < 0, "Invalid skip")
+}
+
+/**
+ * Checks if a password is valid and
+ * throws an exception if it is not
+ * @param password the password
+ */
+fun checkPasswordValid(password: String) {
+    checkOrThrowBadRequest(!password.any { it.isDigit() }, "Password doesn't contain numbers")
+    checkOrThrowBadRequest(!password.any { it.isUpperCase() }, "Password doesn't contain uppercase letters")
+    checkOrThrowBadRequest(!password.any { it.isLowerCase() }, "Password doesn't contain lowercase letters")
 }
 
 fun checkShipLayout(gameTypeName: String, ships: List<UnverifiedShip>): List<VerifiedShip> {
     val gameType = gameTypeName.toGameType()
         ?: throw AppException("Game type not registered")
-    checkOrThrow(
+    checkOrThrowBadRequest(
         ships.size != gameType.fleetComposition.size,
         "Can only place ${gameType.fleetComposition.size} ships"
     )
-    checkOrThrow(
+    checkOrThrowBadRequest(
         !shipsValid(gameType, ships),
         "Invalid ship list for ${gameType.name} game"
     )
@@ -82,8 +93,8 @@ fun squareInBoard(square: VerifiedSquare, boardSize: Int): Boolean {
 private fun validateShipSquares(ship: VerifiedShip, boardSize: Int, occupiedSquares: MutableSet<VerifiedSquare?>, nextSquare: NextSquare) {
     var currentSquare = ship.firstSquare
     for (i in 0 until ship.size) {
-        checkOrThrow(!squareInBoard(currentSquare, boardSize), "Invalid square on ${currentSquare.getString()}")
-        checkOrThrow(occupiedSquares.contains(currentSquare), "Square already occupied on ${currentSquare.getString()}")
+        checkOrThrowBadRequest(!squareInBoard(currentSquare, boardSize), "Invalid square on ${currentSquare.getString()}")
+        checkOrThrowBadRequest(occupiedSquares.contains(currentSquare), "Square already occupied on ${currentSquare.getString()}")
         occupiedSquares.add(currentSquare)
         currentSquare = currentSquare.nextSquare()
     }
@@ -111,10 +122,10 @@ fun computeGame(transaction: Transaction, gameId: Int?, data: Data): Game {
 }
 
 fun checkGameState(gameState: String, state: String) =
-    checkOrThrow(gameState != state, "Invalid game state")
+    checkOrThrowBadRequest(gameState != state, "Invalid game state")
 
 fun checkPlayerInGame(game: Game, playerId: Int) =
-    checkOrThrow(game.player1 != playerId && game.player2 != playerId, "Player not in game")
+    checkOrThrowBadRequest(game.player1 != playerId && game.player2 != playerId, "Player not in game")
 
 fun checkCurrentPlayer(game: Game, playerId: Int) =
-    checkOrThrow(game.currPlayer != playerId, "Not your turn")
+    checkOrThrowBadRequest(game.currPlayer != playerId, "Not your turn")

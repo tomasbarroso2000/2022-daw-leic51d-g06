@@ -93,7 +93,7 @@ fun isPlayerInLobby(transaction: Transaction, playerId: Int, data: Data): Boolea
  * @param data the data module to be used
  * @return a list with the hits outcome
  */
-fun executeHit(transaction: Transaction, game: Game, verifiedSquares: List<VerifiedSquare>, playerId: Int, data: Data): List<HitOutcome> {
+fun executeHit(transaction: Transaction, game: Game, verifiedSquares: List<VerifiedSquare>, playerId: Int, data: Data): HitsOutcome {
     val shipsSquares = data.inGameData.getShipAndSquares(transaction, game.id, playerId)
     val hitOutcomeList = mutableListOf<HitOutcome>()
     verifiedSquares.forEach { square ->
@@ -111,9 +111,11 @@ fun executeHit(transaction: Transaction, game: Game, verifiedSquares: List<Verif
         }
     }
     // verify win condition
+    if (winConditionDetection(transaction, game.id, playerId, data))
+        return HitsOutcome(hitOutcomeList, true)
     if (!data.gamesData.changeCurrPlayer(transaction, game.id, game.idlePlayer()))
         throw AppException("Unsuccessful hit")
-    return hitOutcomeList
+    return HitsOutcome(hitOutcomeList, false)
 }
 
 /**
@@ -136,6 +138,13 @@ fun maybeDestroyShip(transaction: Transaction, playerId: Int, gameId: Int, ship:
     }
     return false
 }
+
+/**
+ * Checks if player won
+ */
+fun winConditionDetection(transaction: Transaction, gameId: Int, playerId: Int, data: Data): Boolean =
+    data.inGameData.fleetState(transaction, gameId, playerId).all { it.destroyed == true }
+
 
 /**
  * Checks if a game type exists in the system

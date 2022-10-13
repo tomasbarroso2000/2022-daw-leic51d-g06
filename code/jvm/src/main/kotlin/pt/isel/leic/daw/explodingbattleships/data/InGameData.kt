@@ -1,9 +1,6 @@
 package pt.isel.leic.daw.explodingbattleships.data
 
-import pt.isel.leic.daw.explodingbattleships.domain.LayoutOutcome
-import pt.isel.leic.daw.explodingbattleships.domain.ShipState
-import pt.isel.leic.daw.explodingbattleships.domain.VerifiedShip
-import pt.isel.leic.daw.explodingbattleships.domain.VerifiedSquare
+import pt.isel.leic.daw.explodingbattleships.domain.*
 
 interface InGameData {
     fun defineLayout(transaction: Transaction, gameId: Int, playerId: Int, ships: List<VerifiedShip>): LayoutOutcome
@@ -23,4 +20,6 @@ interface InGameData {
     fun destroyShip(transaction: Transaction, gameId: Int, playerId: Int, firstSquare: VerifiedSquare): Boolean
 
     fun hasShips(transaction: Transaction, playerId: Int, gameId: Int): Boolean
+
+    fun setGameStateCompleted(transaction: Transaction, gameId: Int): Boolean
 }

@@ -2,15 +2,8 @@ package pt.isel.leic.daw.explodingbattleships.services
 
 import org.springframework.stereotype.Component
 import pt.isel.leic.daw.explodingbattleships.data.Data
-import pt.isel.leic.daw.explodingbattleships.data.comp.utils.isPasswordInvalid
-import pt.isel.leic.daw.explodingbattleships.domain.ListOfData
-import pt.isel.leic.daw.explodingbattleships.domain.Player
-import pt.isel.leic.daw.explodingbattleships.domain.PlayerInput
-import pt.isel.leic.daw.explodingbattleships.domain.SystemInfo
-import pt.isel.leic.daw.explodingbattleships.services.utils.AppException
-import pt.isel.leic.daw.explodingbattleships.services.utils.AppExceptionStatus
-import pt.isel.leic.daw.explodingbattleships.services.utils.checkLimitAndSkip
-import pt.isel.leic.daw.explodingbattleships.services.utils.doService
+import pt.isel.leic.daw.explodingbattleships.domain.*
+import pt.isel.leic.daw.explodingbattleships.services.utils.*
 
 /**
  * Section of services that don't require authentication
@@ -27,8 +20,9 @@ class UnauthenticatedServices(private val data: Data) {
             throw AppException("Invalid name", AppExceptionStatus.BAD_REQUEST)
         if (playerInput.email.isNullOrBlank())
             throw AppException("Invalid email", AppExceptionStatus.BAD_REQUEST)
-        if (playerInput.password == null || playerInput.password.isPasswordInvalid())
+        if (playerInput.password.isNullOrBlank())
             throw AppException("Invalid password", AppExceptionStatus.BAD_REQUEST)
+        checkPasswordValid(playerInput.password)
         data.playersData.createPlayer(it, playerInput.name, playerInput.email, playerInput.password.hashCode())
     }
 
@@ -58,7 +52,7 @@ class UnauthenticatedServices(private val data: Data) {
      * @param skip the skip value of the list
      * @return a [ListOfData] with the players sorted by score
      */
-    fun getRankings(limit: Int, skip: Int): ListOfData<Player> = doService(data) { transaction ->
+    fun getRankings(limit: Int, skip: Int): Rankings = doService(data) { transaction ->
         checkLimitAndSkip(limit, skip)
         data.playersData.getRankings(transaction, limit, skip)
     }

@@ -7,3 +7,8 @@ data class HitOutcome(
     val hit: Boolean,
     val destroyedShip: String? = null
 )
+
+data class HitsOutcome(
+    val hitsOutcome: List<HitOutcome>,
+    val win: Boolean
+)

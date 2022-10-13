@@ -2,12 +2,7 @@ package pt.isel.leic.daw.explodingbattleships.data.mem
 
 import pt.isel.leic.daw.explodingbattleships.data.GamesData
 import pt.isel.leic.daw.explodingbattleships.data.Transaction
-import pt.isel.leic.daw.explodingbattleships.data.comp.utils.MockData
-import pt.isel.leic.daw.explodingbattleships.data.comp.utils.StoredGame
-import pt.isel.leic.daw.explodingbattleships.data.comp.utils.toGame
-import pt.isel.leic.daw.explodingbattleships.domain.Game
-import pt.isel.leic.daw.explodingbattleships.domain.VerifiedSquare
-import pt.isel.leic.daw.explodingbattleships.domain.toVerifiedSquare
+import pt.isel.leic.daw.explodingbattleships.domain.*
 
 class GamesDataMem(private val mockData: MockData) : GamesData {
     override fun createGame(transaction: Transaction, gameType: String, player1: Int, player2: Int): Int {
@@ -16,10 +11,11 @@ class GamesDataMem(private val mockData: MockData) : GamesData {
         return id
     }
 
-    override fun getNumberOfPlayedGames(transaction: Transaction): Int = mockData.games.size
+    override fun getNumberOfPlayedGames(transaction: Transaction) =
+        NumberOfPlayedGames(mockData.games.size)
 
-    override fun getGameState(transaction: Transaction, gameId: Int): String? =
-        mockData.games.find { it.id == gameId }?.state
+    override fun getGameState(transaction: Transaction, gameId: Int) =
+        mockData.games.find { it.id == gameId }?.state?.let { GameState(it) }
 
     override fun getGame(transaction: Transaction, gameId: Int): Game? =
         mockData.games.find { it.id == gameId }?.toGame()

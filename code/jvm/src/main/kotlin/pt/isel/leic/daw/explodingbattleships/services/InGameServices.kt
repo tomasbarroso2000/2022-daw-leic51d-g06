@@ -52,11 +52,17 @@ class InGameServices(private val data: Data) {
         hits.squares.forEach { unverifiedSquare ->
             val verifiedSquare = unverifiedSquare.toVerifiedSquareOrNull()
                 ?: throw AppException("Invalid square: ${unverifiedSquare.getString()}", AppExceptionStatus.BAD_REQUEST)
-            checkOrThrow(!squareInBoard(verifiedSquare, gameType.boardSize), "Invalid square: ${unverifiedSquare.getString()}")
-            checkOrThrow(hitSquares.contains(verifiedSquare), "Square already hit: ${unverifiedSquare.getString()}")
+            checkOrThrowBadRequest(!squareInBoard(verifiedSquare, gameType.boardSize), "Invalid square: ${unverifiedSquare.getString()}")
+            checkOrThrowBadRequest(hitSquares.contains(verifiedSquare), "Square already hit: ${unverifiedSquare.getString()}")
             verifiedSquares.add(verifiedSquare)
         }
-        executeHit(transaction, game, verifiedSquares, game.idlePlayer(), data)
+        val hitsOutcome = executeHit(transaction, game, verifiedSquares, game.idlePlayer(), data)
+        if (hitsOutcome.win) {
+            data.inGameData.setGameStateCompleted(transaction, game.id)
+            hitsOutcome
+        } else {
+            hitsOutcome
+        }
     }
 
 

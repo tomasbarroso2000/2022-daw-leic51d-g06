@@ -1,4 +1,4 @@
-package pt.isel.leic.daw.explodingbattleships.data.comp.utils
+package pt.isel.leic.daw.explodingbattleships.data
 
-fun String.isPasswordInvalid(): Boolean =
-    !any { it.isDigit() } || !any { it.isUpperCase() }
+import pt.isel.leic.daw.explodingbattleships.services.utils.AppException
+import pt.isel.leic.daw.explodingbattleships.services.utils.AppExceptionStatus
