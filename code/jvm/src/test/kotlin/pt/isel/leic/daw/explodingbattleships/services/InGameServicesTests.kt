@@ -325,6 +325,27 @@ class InGameServicesTests {
     }
 
     @Test
+    fun send_hits_and_win_the_game() {
+        val token = "fiona"
+        val hits = Hits(
+            4,
+            listOf(
+                UnverifiedSquare('a', 1),
+                UnverifiedSquare('b', 1)
+            )
+        )
+        val expectedHitsOutcome = HitsOutcome(
+            listOf(
+                HitOutcome(VerifiedSquare('a', 1), true, null),
+                HitOutcome(VerifiedSquare('b', 1), true, "destroyer")
+            ),
+            true
+        )
+        val actualHitsOutcome = services.sendHits(token, hits)
+        assertEquals(expectedHitsOutcome, actualHitsOutcome)
+    }
+
+    @Test
     fun player_fleet_state() {
         val token = "123"
         val expectedFleet = listOf(
