@@ -10,15 +10,13 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import pt.isel.leic.daw.explodingbattleships.domain.PlayerInput
-import pt.isel.leic.daw.explodingbattleships.http.CREATED
-import pt.isel.leic.daw.explodingbattleships.http.OK
-import pt.isel.leic.daw.explodingbattleships.http.Uris
+import pt.isel.leic.daw.explodingbattleships.http.*
 import pt.isel.leic.daw.explodingbattleships.http.Uris.BASE_PATH
 import pt.isel.leic.daw.explodingbattleships.http.Uris.CREATE_PLAYER
 import pt.isel.leic.daw.explodingbattleships.http.Uris.GAME_STATE
 import pt.isel.leic.daw.explodingbattleships.http.Uris.NUMBER_OF_PLAYED_GAMES
 import pt.isel.leic.daw.explodingbattleships.http.Uris.RANKINGS
-import pt.isel.leic.daw.explodingbattleships.http.doApiTask
+import pt.isel.leic.daw.explodingbattleships.infra.siren
 import pt.isel.leic.daw.explodingbattleships.services.Services
 import javax.validation.Valid
 
@@ -76,6 +74,11 @@ class UnauthenticatedApi(private val services: Services) {
         ResponseEntity
             .status(OK)
             .contentType(MediaType.APPLICATION_JSON)
-            .body(services.unauthenticatedServices.getSystemInfo())
+            .body(
+                siren(services.unauthenticatedServices.getSystemInfo()){
+                    link(Uris.home(), Rels.SELF)
+                    link(Uris.home(), Rels.HOME)
+                }
+            )
     }
 }

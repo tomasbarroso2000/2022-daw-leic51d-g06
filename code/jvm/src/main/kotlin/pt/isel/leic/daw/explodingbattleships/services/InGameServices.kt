@@ -12,34 +12,32 @@ import pt.isel.leic.daw.explodingbattleships.services.utils.*
 class InGameServices(private val data: Data) {
     /**
      * Defines a layout for a player in a game
-     * @param token the player's token
+     * @param player the player
      * @param layout the player's chosen layout
      * @return true if successful
      */
-    fun defineLayout(token: String?, layout: Layout) = doService(data) { transaction ->
-        val playerId = computePlayer(transaction, token, data).id
+    fun defineLayout(player: Player, layout: Layout) = doService(data) { transaction ->
         val game = computeGame(transaction, layout.gameId, data)
-        checkPlayerInGame(game, playerId)
+        checkPlayerInGame(game, player.id)
         checkGameState(game.state, "layout_definition")
         if (layout.ships == null)
             throw AppException("No ships provided", AppExceptionStatus.BAD_REQUEST)
-        if (data.inGameData.hasShips(transaction, playerId, game.id))
+        if (data.inGameData.hasShips(transaction, player.id, game.id))
             throw AppException("Layout already defined", AppExceptionStatus.BAD_REQUEST)
         val verifiedShips = checkShipLayout(game.type, layout.ships)
-        data.inGameData.defineLayout(transaction, game.id, playerId, verifiedShips)
+        data.inGameData.defineLayout(transaction, game.id, player.id, verifiedShips)
     }
 
     /**
      * Sends the hits the user has thrown in his turn
-     * @param token the user's token
+     * @param player the player
      * @param hits the hits to be sent
      * @return every hit's outcome
      */
-    fun sendHits(token: String?, hits: Hits) = doService(data) { transaction ->
-        val playerId = computePlayer(transaction, token, data).id
+    fun sendHits(player: Player, hits: Hits) = doService(data) { transaction ->
         val game = computeGame(transaction, hits.gameId, data)
-        checkPlayerInGame(game, playerId)
-        checkCurrentPlayer(game, playerId)
+        checkPlayerInGame(game, player.id)
+        checkCurrentPlayer(game, player.id)
         checkGameState(game.state, "shooting")
         val gameType = game.type.toGameType()
             ?: throw AppException("Game type not registered")
@@ -68,20 +66,19 @@ class InGameServices(private val data: Data) {
 
     /**
      * Shows the state of the player's or enemy's fleet
-     * @param token the user token
+     * @param player the player
      * @param fleet represents the fleet that is being requested
      * @return the state of every ship
      */
-    fun fleetState(token: String?, fleet: Fleet) = doService(data) { transaction ->
-        val playerId = computePlayer(transaction, token, data).id
+    fun fleetState(player: Player, fleet: Fleet) = doService(data) { transaction ->
         val game = computeGame(transaction, fleet.gameId, data)
-        checkPlayerInGame(game, playerId)
+        checkPlayerInGame(game, player.id)
         if (fleet.myFleet == null)
             throw AppException("Fleet not specified", AppExceptionStatus.BAD_REQUEST)
         if (fleet.myFleet)
-            data.inGameData.fleetState(transaction, game.id, playerId)
+            data.inGameData.fleetState(transaction, game.id, player.id)
         else
-            data.inGameData.fleetState(transaction, game.id, game.otherPlayer(playerId))
+            data.inGameData.fleetState(transaction, game.id, game.otherPlayer(player.id))
     }
 
 }

@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*
 import pt.isel.leic.daw.explodingbattleships.domain.Fleet
 import pt.isel.leic.daw.explodingbattleships.domain.Hits
 import pt.isel.leic.daw.explodingbattleships.domain.Layout
+import pt.isel.leic.daw.explodingbattleships.domain.Player
 import pt.isel.leic.daw.explodingbattleships.http.CREATED
 import pt.isel.leic.daw.explodingbattleships.http.OK
 import pt.isel.leic.daw.explodingbattleships.http.Uris.BASE_PATH
@@ -26,51 +27,47 @@ class InGameApi(private val services: Services) {
 
     @PostMapping(DEFINE_LAYOUT)
     fun handlerDefineLayout(
-        request: HttpServletRequest,
+        player: Player,
         @Valid @RequestBody input: Layout,
     ) = doApiTask {
-        val token = request.token
         ResponseEntity
             .status(CREATED)
             .contentType(MediaType.APPLICATION_JSON)
-            .body(services.inGameServices.defineLayout(token, input))
+            .body(services.inGameServices.defineLayout(player, input))
     }
 
     @PostMapping(SEND_HITS)
     fun handlerSendHits(
-        request: HttpServletRequest,
+        player: Player,
         @Valid @RequestBody input: Hits,
     ) = doApiTask {
-        val token = request.token
         ResponseEntity
             .status(CREATED)
             .contentType(MediaType.APPLICATION_JSON)
-            .body(services.inGameServices.sendHits(token, input))
+            .body(services.inGameServices.sendHits(player, input))
     }
 
     @GetMapping(PLAYER_FLEET_STATE)
     fun handlePlayerFleetState(
-        request: HttpServletRequest,
+        player: Player,
         @PathVariable gameId: Int,
     ) = doApiTask {
-        val token = request.token
         val input = Fleet(gameId, true)
         ResponseEntity
             .status(OK)
             .contentType(MediaType.APPLICATION_JSON)
-            .body(services.inGameServices.fleetState(token, input))
+            .body(services.inGameServices.fleetState(player, input))
     }
 
     @GetMapping(ENEMY_FLEET_STATE)
     fun handlerEnemyFleetState(
-        request: HttpServletRequest,
+        player: Player,
         @PathVariable gameId: Int,
     ) = doApiTask {
-        val token = request.token
         val input = Fleet(gameId, false)
         ResponseEntity
             .status(OK)
             .contentType(MediaType.APPLICATION_JSON)
-            .body(services.inGameServices.fleetState(token, input))
+            .body(services.inGameServices.fleetState(player, input))
     }
 }

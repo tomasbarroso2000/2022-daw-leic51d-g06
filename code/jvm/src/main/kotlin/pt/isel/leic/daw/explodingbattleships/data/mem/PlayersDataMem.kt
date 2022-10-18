@@ -7,7 +7,7 @@ import java.time.Instant
 import java.util.UUID
 
 class PlayersDataMem(private val mockData: MockData) : PlayersData {
-    override fun getPlayerFromToken(transaction: Transaction, token: String): PlayerOutputModel? {
+    override fun getPlayerFromToken(transaction: Transaction, token: String): Player? {
         val playerId =
             mockData
                 .tokens
@@ -15,7 +15,7 @@ class PlayersDataMem(private val mockData: MockData) : PlayersData {
         return mockData
             .players
             .find { player -> player.id == playerId }
-            ?.let { PlayerOutputModel(it.id, it.name, it.score) }
+            ?.let { Player(it.id, it.name, it.score) }
     }
 
     override fun createPlayer(transaction: Transaction, name: String, email: String, password: Int): PlayerOutput {

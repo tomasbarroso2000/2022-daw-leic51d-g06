@@ -11,10 +11,5 @@ data class Link(
 data class SystemInfo(
     val name: String = "Exploding Battleships",
     val version: String = "0.0.0",
-    val authors: List<String> = listOf("Leki", "Palmilha", "TBMASTER2000"),
-    val links: List<Link> = listOf(
-        Link("...", "authenticate", false),
-        Link("...", "image", false),
-        Link("...", "user-home", true)
-    )
+    val authors: List<String> = listOf("Leki", "Palmilha", "TBMASTER2000")
 )

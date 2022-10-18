@@ -154,4 +154,4 @@ data class MockData(
     )
 )
 
-fun StoredPlayer.toPlayer() = PlayerOutputModel(id, name, score)
+fun StoredPlayer.toPlayer() = Player(id, name, score)

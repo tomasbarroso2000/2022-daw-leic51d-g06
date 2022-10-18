@@ -107,7 +107,7 @@ private fun validateShipSquares(ship: VerifiedShip, boardSize: Int, occupiedSqua
  * @param data the [Data] module
  * @return the player
  */
-fun computePlayer(transaction: Transaction, token: String?, data: Data): PlayerOutputModel {
+fun computePlayer(transaction: Transaction, token: String?, data: Data): Player {
     if (token.isNullOrBlank())
         throw AppException("No token provided", AppExceptionStatus.UNAUTHORIZED)
     return data.playersData.getPlayerFromToken(transaction, token)

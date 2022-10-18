@@ -8,11 +8,11 @@ import java.time.Instant
 import java.util.UUID
 
 class PlayersDataDb : PlayersData {
-    override fun getPlayerFromToken(transaction: Transaction, token: String): PlayerOutputModel? =
+    override fun getPlayerFromToken(transaction: Transaction, token: String): Player? =
         (transaction as TransactionDataDb).withHandle { handle ->
             handle.select("select id, name, score from token join player on player = id where token_ver = :token")
                 .bind("token", token)
-                .mapTo<PlayerOutputModel>().firstOrNull()
+                .mapTo<Player>().firstOrNull()
         }
 
     override fun createPlayer(transaction: Transaction, name: String, email: String, password: Int): PlayerOutput =
@@ -42,8 +42,8 @@ class PlayersDataDb : PlayersData {
                 handle.createQuery("select id, name, score from player order by score desc offset :skip limit :limit")
                     .bind("skip", skip)
                     .bind("limit", limit + 1)
-                    .mapTo<PlayerOutputModel>().list()
-            val players = mutableListOf<PlayerOutputModel>()
+                    .mapTo<Player>().list()
+            val players = mutableListOf<Player>()
             val hasMore = getHasMoreAndProcessList(foundPlayers, players, limit)
             Rankings(ListOfData(players, hasMore))
         }

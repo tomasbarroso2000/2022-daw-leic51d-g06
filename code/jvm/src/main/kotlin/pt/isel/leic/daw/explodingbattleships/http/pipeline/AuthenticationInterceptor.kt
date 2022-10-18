@@ -4,7 +4,9 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.springframework.web.method.HandlerMethod
 import org.springframework.web.servlet.HandlerInterceptor
-import pt.isel.leic.daw.explodingbattleships.domain.PlayerOutputModel
+import pt.isel.leic.daw.explodingbattleships.domain.Player
+import pt.isel.leic.daw.explodingbattleships.http.doApiTask
+import pt.isel.leic.daw.explodingbattleships.http.handleError
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
@@ -14,17 +16,16 @@ class AuthenticationInterceptor(
 ) : HandlerInterceptor {
 
     override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
-        if (handler is HandlerMethod && handler.methodParameters.any { it.parameterType == PlayerOutputModel::class.java }) {
+        if (handler is HandlerMethod && handler.methodParameters.any { it.parameterType == Player::class.java }) {
             // enforce authentication
-            val player = authorizationHeaderProcessor.process(request.getHeader(NAME_AUTHORIZATION_HEADER))
-            return if (player == null) {
-                response.status = 401
-                response.addHeader(NAME_WWW_AUTHENTICATE_HEADER, AuthorizationHeaderProcessor.SCHEME)
-                response.outputStream
-                false
-            } else {
+            return try {
+                val player = authorizationHeaderProcessor.process(request.getHeader(NAME_AUTHORIZATION_HEADER))
                 UserArgumentResolver.addPlayerTo(player, request)
                 true
+            } catch (err: Exception) {
+                response.status = 401
+                response.addHeader(NAME_WWW_AUTHENTICATE_HEADER, AuthorizationHeaderProcessor.SCHEME)
+                false
             }
         }
         return true

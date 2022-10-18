@@ -99,3 +99,13 @@ val HttpServletRequest.token: String?
         }
         return null
     }
+
+fun getTokenFromAuthorization(authorization: String?): String? {
+    if (authorization != null) {
+        val authData = authorization.trim().split(' ')
+        if (authData[0].lowercase() == "bearer") {
+            return authData[1]
+        }
+    }
+    return null
+}
