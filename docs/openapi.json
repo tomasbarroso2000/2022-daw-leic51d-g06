@@ -1,0 +1,305 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Exploding Battleships",
+    "description": "Battleships Game",
+    "termsOfService": "http://swagger.io/terms/",
+    "version": "1.0.0"
+  },
+  "tags": [
+    {
+      "name": "Authenticated",
+      "description": "Requests only available for authenticated users"
+    },
+    {
+      "name": "Unauthenticated",
+      "description": "Requests available for unauthenticated users"
+    },
+    {
+      "name": "In Game",
+      "description": "Requests available in game"
+    }
+  ],
+  "paths": {
+    "/api/player/info": {
+      "get": {
+        "tags": [
+          "Authenticated"
+        ],
+        "summary": "See the player info",
+        "description": "See the player's id, name and score",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully got the user info",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserInfo"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/lobby/enter": {
+      "post": {
+        "tags": [
+          "Authenticated"
+        ],
+        "summary": "Place a player in a lobby",
+        "description": "Places a player in a lobby or in a game if that is already a player waiting for a game with the same properties",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "game-type",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EnterLobby"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully placed a player in a lobby or in a game",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnterLobby"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid game type",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/players": {
+      "post": {
+        "tags": [
+          "Unauthenticated"
+        ],
+        "summary": "Create a new user",
+        "description": "Creates a new user with the respective name, email and password",
+        "requestBody": {
+          "description": "input",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewUser"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully created the new user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewUser"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/games/total": {
+      "get": {
+        "tags": [
+          "Unauthenticated"
+        ],
+        "summary": "Get the number of played games",
+        "description": "Get the total number of played games",
+        "responses": {
+          "200": {
+            "description": "Succesfully got the total number of played games",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NumberOfPlayedGames"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    },
+    "schemas": {
+      "AppError": {
+        "type": "object",
+        "description": "Application error",
+        "required": [
+          "errorCode",
+          "errorMessage"
+        ],
+        "properties": {
+          "errorCode": {
+            "type": "integer",
+            "example": 1003
+          },
+          "errorMessage": {
+            "type": "string",
+            "example": "Something went wrong"
+          }
+        }
+      },
+      "UserInfo": {
+        "type": "object",
+        "description": "Id, name and score of the user",
+        "required": [
+          "id",
+          "name",
+          "score"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "Fiona"
+          },
+          "score": {
+            "type": "integer",
+            "example": 1
+          }
+        }
+      },
+      "EnterLobby": {
+        "type": "object",
+        "description": "waitingForGame or gameId",
+        "required": [
+          "waiting for game"
+        ],
+        "properties": {
+          "waitingForGame": {
+            "type": "boolean",
+            "example": true
+          },
+          "gameId": {
+            "type": "integer",
+            "example": 1
+          }
+        }
+      },
+      "NewUser": {
+        "type": "object",
+        "description": "Name, email and password of new user",
+        "required": [
+          "name",
+          "email",
+          "password"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Fiona"
+          },
+          "email": {
+            "type": "string",
+            "example": "iloveshrek@gmail.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "shrekinho"
+          }
+        }
+      },
+      "NumberOfPlayedGames": {
+        "type": "object",
+        "description": "the total of played games",
+        "required": [
+          "number"
+        ],
+        "properties": {
+          "number": {
+            "type": "integer",
+            "example": 1
+          }
+        }
+      }
+    }
+  }
+}
