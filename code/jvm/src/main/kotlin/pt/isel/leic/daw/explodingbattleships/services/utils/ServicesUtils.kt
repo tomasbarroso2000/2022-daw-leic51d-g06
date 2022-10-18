@@ -111,7 +111,6 @@ fun executeHit(transaction: Transaction, game: Game, verifiedSquares: List<Verif
             hitOutcomeList.add(HitOutcome(square, false))
         }
     }
-    // verify win condition
     if (winConditionDetection(transaction, game.id, playerId, data))
         return HitsOutcome(hitOutcomeList, true)
     if (!data.gamesData.changeCurrPlayer(transaction, game.id, game.idlePlayer()))

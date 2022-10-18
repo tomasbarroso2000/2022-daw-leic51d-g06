@@ -12,16 +12,13 @@ class AuthorizationHeaderProcessor(
 ) {
 
     fun process(authorizationValue: String?): Player? {
-        if (authorizationValue == null) {
+        if (authorizationValue == null)
             return null
-        }
         val parts = authorizationValue.trim().split(" ")
-        if (parts.size != 2) {
+        if (parts.size != 2)
             return null
-        }
-        if (parts[0].lowercase() != SCHEME) {
+        if (parts[0].lowercase() != SCHEME)
             return null
-        }
         return try {
             services.authenticatedServices.getPlayerInfo(parts[1])
         } catch (e: AppException) {
