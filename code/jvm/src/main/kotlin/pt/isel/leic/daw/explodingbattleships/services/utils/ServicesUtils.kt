@@ -3,6 +3,7 @@ package pt.isel.leic.daw.explodingbattleships.services.utils
 import pt.isel.leic.daw.explodingbattleships.data.Data
 import pt.isel.leic.daw.explodingbattleships.data.Transaction
 import pt.isel.leic.daw.explodingbattleships.domain.*
+import java.time.Duration
 import java.util.regex.Pattern
 
 /**
@@ -165,7 +166,11 @@ fun enterLobbyOrCreateGame(transaction: Transaction, playerId: Int, gameType: St
     val matchingLobby = data.playersData.searchLobbies(transaction, gameType).firstOrNull()
     if (matchingLobby != null) {
         data.playersData.removeLobby(transaction, matchingLobby.player, matchingLobby.gameType, matchingLobby.enterTime)
-        return data.gamesData.createGame(transaction, gameType, playerId, matchingLobby.player)
+        val deadline = matchingLobby.gameType.toGameType()?.shootingTimeInSecs.let {
+            if (it == null) Duration.ofSeconds(0)
+            else Duration.ofSeconds(it.toLong())
+        }
+        return data.gamesData.createGame(transaction, gameType, playerId, matchingLobby.player, deadline)
             .let { EnterLobbyOutput(false, it) }
     }
     return data.playersData.enterLobby(transaction, playerId, gameType)

@@ -1,4 +1,4 @@
-package pt.isel.leic.daw.explodingbattleships.server
+package pt.isel.leic.daw.explodingbattleships.http
 
 import org.springframework.http.ResponseEntity
 import pt.isel.leic.daw.explodingbattleships.services.utils.AppException

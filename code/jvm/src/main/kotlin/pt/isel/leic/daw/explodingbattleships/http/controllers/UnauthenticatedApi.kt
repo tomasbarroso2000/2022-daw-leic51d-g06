@@ -1,4 +1,4 @@
-package pt.isel.leic.daw.explodingbattleships.server.controllers
+package pt.isel.leic.daw.explodingbattleships.http.controllers
 
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -10,19 +10,24 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import pt.isel.leic.daw.explodingbattleships.domain.PlayerInput
-import pt.isel.leic.daw.explodingbattleships.domain.PlayerOutput
-import pt.isel.leic.daw.explodingbattleships.server.CREATED
-import pt.isel.leic.daw.explodingbattleships.server.OK
-import pt.isel.leic.daw.explodingbattleships.server.doApiTask
+import pt.isel.leic.daw.explodingbattleships.http.CREATED
+import pt.isel.leic.daw.explodingbattleships.http.OK
+import pt.isel.leic.daw.explodingbattleships.http.Uris
+import pt.isel.leic.daw.explodingbattleships.http.Uris.BASE_PATH
+import pt.isel.leic.daw.explodingbattleships.http.Uris.CREATE_PLAYER
+import pt.isel.leic.daw.explodingbattleships.http.Uris.GAME_STATE
+import pt.isel.leic.daw.explodingbattleships.http.Uris.NUMBER_OF_PLAYED_GAMES
+import pt.isel.leic.daw.explodingbattleships.http.Uris.RANKINGS
+import pt.isel.leic.daw.explodingbattleships.http.doApiTask
 import pt.isel.leic.daw.explodingbattleships.services.Services
 import javax.validation.Valid
 
-const val BASE_PATH = "/battleships/"
+/*const val BASE_PATH = "/battleships/"
 
 const val CREATE_PLAYER = "players"
 const val RANKINGS = "rankings"
 const val NUMBER_OF_PLAYED_GAMES = "games/total"
-const val GAME_STATE = "games/state/{gameId}"
+const val GAME_STATE = "games/state/{gameId}"*/
 
 @RestController
 @RequestMapping(BASE_PATH)

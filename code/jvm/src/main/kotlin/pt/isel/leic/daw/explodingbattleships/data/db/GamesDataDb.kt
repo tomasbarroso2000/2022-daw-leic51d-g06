@@ -4,17 +4,25 @@ import org.jdbi.v3.core.kotlin.mapTo
 import pt.isel.leic.daw.explodingbattleships.data.GamesData
 import pt.isel.leic.daw.explodingbattleships.data.Transaction
 import pt.isel.leic.daw.explodingbattleships.domain.*
+import java.time.Duration
 
 class GamesDataDb : GamesData {
-    override fun createGame(transaction: Transaction, gameType: String, player1: Int, player2: Int): Int =
+    override fun createGame(
+        transaction: Transaction,
+        gameType: String,
+        player1: Int,
+        player2: Int,
+        deadline: Duration
+    ): Int =
         (transaction as TransactionDataDb).withHandle { handle ->
             handle.createUpdate(
                 " insert into game (type, state, player1, player2, curr_player, deadline) " +
-                        "values (:gameType, 'layout_definition', :player1, :player2, :player1, null)"
+                        "values (:gameType, 'layout_definition', :player1, :player2, :player1, :deadline)"
             )
                 .bind("gameType", gameType)
                 .bind("player1", player1)
                 .bind("player2", player2)
+                .bind("deadline", deadline)
                 .executeAndReturnGeneratedKeys()
                 .mapTo<Int>()
                 .first()

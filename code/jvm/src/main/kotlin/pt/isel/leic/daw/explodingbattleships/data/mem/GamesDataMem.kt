@@ -3,11 +3,18 @@ package pt.isel.leic.daw.explodingbattleships.data.mem
 import pt.isel.leic.daw.explodingbattleships.data.GamesData
 import pt.isel.leic.daw.explodingbattleships.data.Transaction
 import pt.isel.leic.daw.explodingbattleships.domain.*
+import java.time.Duration
 
 class GamesDataMem(private val mockData: MockData) : GamesData {
-    override fun createGame(transaction: Transaction, gameType: String, player1: Int, player2: Int): Int {
+    override fun createGame(
+        transaction: Transaction,
+        gameType: String,
+        player1: Int,
+        player2: Int,
+        deadline: Duration
+    ): Int {
         val id = mockData.games.maxOf { it.id } + 1
-        mockData.games.add(StoredGame(id, gameType, "layout_definition", player1, player2, player1, null))
+        mockData.games.add(StoredGame(id, gameType, "layout_definition", player1, player2, player1, deadline))
         return id
     }
 

@@ -1,5 +1,6 @@
 package pt.isel.leic.daw.explodingbattleships.domain
 
+import java.time.Duration
 import java.time.Instant
 
 data class Game(
@@ -9,7 +10,7 @@ data class Game(
     val player1: Int,
     val player2: Int,
     val currPlayer: Int,
-    val deadline: Instant
+    val deadline: Duration
 )
 
 fun Game.idlePlayer() = if (currPlayer == player1) player2 else player1

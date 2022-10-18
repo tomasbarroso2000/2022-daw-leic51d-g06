@@ -39,12 +39,6 @@ class PlayersDataMem(private val mockData: MockData) : PlayersData {
         mockData.lobby.any { it.player == playerId }
 
     override fun enterLobby(transaction: Transaction, playerId: Int, gameType: String): EnterLobbyOutput {
-        mockData.lobby.find { it.gameType == gameType }?.let {
-            val id = mockData.games.last().id + 1
-            mockData.games.add(StoredGame(id, gameType, "layout_definition", it.player, playerId, it.player, Instant.ofEpochSecond(20000)))
-            mockData.lobby.remove(it)
-            return EnterLobbyOutput(false, 25)
-        }
         mockData.lobby.add(StoredLobby(playerId, gameType, Instant.now()))
         return EnterLobbyOutput(true, null)
     }

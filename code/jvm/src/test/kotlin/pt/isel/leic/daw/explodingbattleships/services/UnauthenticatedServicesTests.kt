@@ -144,8 +144,8 @@ class UnauthenticatedServicesTests {
     @Test
     fun get_rankings() {
         val rankings = services.getRankings(10, 0)
-        assertEquals(4, rankings.list.list[0].id)
-        assertEquals(3, rankings.list.list[1].id)
+        assertEquals(4, rankings.rankings.list[0].id)
+        assertEquals(3, rankings.rankings.list[1].id)
     }
 
     @Test

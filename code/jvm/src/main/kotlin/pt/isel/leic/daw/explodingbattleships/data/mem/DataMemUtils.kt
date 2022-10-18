@@ -3,6 +3,7 @@ package pt.isel.leic.daw.explodingbattleships.data.mem
 import pt.isel.leic.daw.explodingbattleships.domain.*
 import pt.isel.leic.daw.explodingbattleships.services.utils.toGameType
 import java.sql.Timestamp
+import java.time.Duration
 import java.time.Instant
 
 /**
@@ -56,14 +57,14 @@ data class StoredGame(
     val player1: Int,
     val player2: Int,
     val currPlayer: Int,
-    val deadline: Instant?
+    val deadline: Duration?
 )
 
 fun StoredGame.toGame(): Game {
     val time: Int = type.toGameType()?.shootingTimeInSecs ?: 0
     return Game(
         id, type, state, player1, player2, currPlayer,
-        Instant.ofEpochSecond(time.toLong())
+        Duration.ofSeconds(time.toLong())
     )
 }
 
@@ -110,10 +111,10 @@ data class MockData(
         StoredPlayer(6, "Fiona", "iloveshrek@gmail.com", 10, 123)
     ),
     val games: MutableSet<StoredGame> = mutableSetOf(
-        StoredGame(1, "beginner", "layout_definition", 1, 2, 1, Instant.ofEpochSecond(20)),
-        StoredGame(2, "experienced", "shooting", 5, 6, 5, Instant.ofEpochSecond(20)),
-        StoredGame(3, "beginner", "layout_definition", 1, 2, 1, Instant.ofEpochSecond(20)),
-        StoredGame(4, "experienced", "shooting", 3, 4, 3, Instant.ofEpochSecond(20))
+        StoredGame(1, "beginner", "layout_definition", 1, 2, 1, Duration.ofSeconds(20)),
+        StoredGame(2, "experienced", "shooting", 5, 6, 5, Duration.ofSeconds(20)),
+        StoredGame(3, "beginner", "layout_definition", 1, 2, 1, Duration.ofSeconds(20)),
+        StoredGame(4, "experienced", "shooting", 3, 4, 3, Duration.ofSeconds(20))
     ),
     val tokens: MutableSet<StoredToken> = mutableSetOf(
         StoredToken("123", 1),

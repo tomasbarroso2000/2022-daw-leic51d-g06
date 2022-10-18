@@ -1,4 +1,4 @@
-package pt.isel.leic.daw.explodingbattleships.server.controllers
+package pt.isel.leic.daw.explodingbattleships.http.controllers
 
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -8,9 +8,11 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import pt.isel.leic.daw.explodingbattleships.domain.EnterLobbyInput
-import pt.isel.leic.daw.explodingbattleships.server.OK
-import pt.isel.leic.daw.explodingbattleships.server.token
-import pt.isel.leic.daw.explodingbattleships.server.doApiTask
+import pt.isel.leic.daw.explodingbattleships.domain.Player
+import pt.isel.leic.daw.explodingbattleships.http.OK
+import pt.isel.leic.daw.explodingbattleships.http.Uris.BASE_PATH
+import pt.isel.leic.daw.explodingbattleships.http.token
+import pt.isel.leic.daw.explodingbattleships.http.doApiTask
 import pt.isel.leic.daw.explodingbattleships.services.Services
 import javax.servlet.http.HttpServletRequest
 import javax.validation.Valid
@@ -24,13 +26,12 @@ class AuthenticatedApi(private val services: Services) {
 
     @GetMapping(PLAYER_INFO)
     fun handlerPlayerInfo(
-        request: HttpServletRequest
+        player: Player
     ) = doApiTask {
-        val token = request.token
         ResponseEntity
             .status(OK)
             .contentType(MediaType.APPLICATION_JSON)
-            .body(services.authenticatedServices.getPlayerInfo(token))
+            .body(player)
     }
 
     @PostMapping(ENTER_LOBBY)
