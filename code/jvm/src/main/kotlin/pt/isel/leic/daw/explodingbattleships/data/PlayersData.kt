@@ -4,7 +4,7 @@ import pt.isel.leic.daw.explodingbattleships.domain.*
 import java.time.Instant
 
 interface PlayersData {
-    fun getPlayerFromToken(transaction: Transaction, token: String): Player?
+    fun getPlayerFromToken(transaction: Transaction, token: String): PlayerOutputModel?
 
     fun createPlayer(transaction: Transaction, name: String, email: String, password: Int): PlayerOutput
 

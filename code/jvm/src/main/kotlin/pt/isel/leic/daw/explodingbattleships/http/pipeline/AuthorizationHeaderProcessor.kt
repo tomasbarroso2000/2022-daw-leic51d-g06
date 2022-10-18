@@ -2,7 +2,7 @@ package pt.isel.leic.daw.explodingbattleships.http.pipeline
 
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
-import pt.isel.leic.daw.explodingbattleships.domain.Player
+import pt.isel.leic.daw.explodingbattleships.domain.PlayerOutputModel
 import pt.isel.leic.daw.explodingbattleships.services.Services
 import pt.isel.leic.daw.explodingbattleships.services.utils.AppException
 
@@ -11,7 +11,7 @@ class AuthorizationHeaderProcessor(
     val services: Services
 ) {
 
-    fun process(authorizationValue: String?): Player? {
+    fun process(authorizationValue: String?): PlayerOutputModel? {
         if (authorizationValue == null) {
             return null
         }

@@ -6,7 +6,7 @@ import org.junit.jupiter.api.assertThrows
 import pt.isel.leic.daw.explodingbattleships.data.mem.DataMem
 import pt.isel.leic.daw.explodingbattleships.domain.EnterLobbyInput
 import pt.isel.leic.daw.explodingbattleships.domain.EnterLobbyOutput
-import pt.isel.leic.daw.explodingbattleships.domain.Player
+import pt.isel.leic.daw.explodingbattleships.domain.PlayerOutputModel
 import pt.isel.leic.daw.explodingbattleships.services.utils.AppException
 import pt.isel.leic.daw.explodingbattleships.services.utils.AppExceptionStatus
 
@@ -17,7 +17,7 @@ class AuthenticatedServicesTests {
     @Test
     fun get_player_info() {
         val token = "123"
-        val expectedPlayer = Player(1, "Leki", 420)
+        val expectedPlayer = PlayerOutputModel(1, "Leki", 420)
         val actualPlayer = services.getPlayerInfo(token)
         assertEquals(expectedPlayer, actualPlayer)
     }

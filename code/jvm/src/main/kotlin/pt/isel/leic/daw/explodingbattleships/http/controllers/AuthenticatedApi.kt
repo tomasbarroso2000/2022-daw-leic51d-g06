@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import pt.isel.leic.daw.explodingbattleships.domain.EnterLobbyInput
-import pt.isel.leic.daw.explodingbattleships.domain.Player
+import pt.isel.leic.daw.explodingbattleships.domain.PlayerOutputModel
 import pt.isel.leic.daw.explodingbattleships.http.OK
 import pt.isel.leic.daw.explodingbattleships.http.Uris.BASE_PATH
 import pt.isel.leic.daw.explodingbattleships.http.token
@@ -26,7 +26,7 @@ class AuthenticatedApi(private val services: Services) {
 
     @GetMapping(PLAYER_INFO)
     fun handlerPlayerInfo(
-        player: Player
+        player: PlayerOutputModel
     ) = doApiTask {
         ResponseEntity
             .status(OK)
