@@ -10,7 +10,7 @@ data class EnterLobbyOutput(
 )
 
 data class Lobby(
-    val player: Int,
+    val playerId: Int,
     val gameType: String,
     val enterTime: Instant
 )

@@ -3,7 +3,7 @@ package pt.isel.leic.daw.explodingbattleships.services.utils
 import pt.isel.leic.daw.explodingbattleships.data.Data
 import pt.isel.leic.daw.explodingbattleships.data.Transaction
 import pt.isel.leic.daw.explodingbattleships.domain.*
-import java.time.Duration
+import pt.isel.leic.daw.explodingbattleships.http.onAppException
 import java.time.Instant
 import java.util.regex.Pattern
 
@@ -144,7 +144,7 @@ fun maybeDestroyShip(transaction: Transaction, playerId: Int, gameId: Int, ship:
  * Checks if player won
  */
 fun winConditionDetection(transaction: Transaction, gameId: Int, playerId: Int, data: Data): Boolean =
-    data.inGameData.fleetState(transaction, gameId, playerId).all { it.destroyed == true }
+    data.inGameData.fleetState(transaction, gameId, playerId).all { it.destroyed }
 
 
 /**
@@ -164,9 +164,13 @@ fun isGameTypeInvalid(gameType: String) = gameType.toGameType() == null
  */
 fun enterLobbyOrCreateGame(transaction: Transaction, playerId: Int, gameType: String, data: Data): EnterLobbyOutput {
     val matchingLobby = data.playersData.searchLobbies(transaction, gameType).firstOrNull()
+    println(matchingLobby)
+    if ( matchingLobby?.playerId == playerId)
+        throw AppException("Player already in lobby")
     if (matchingLobby != null) {
-        data.playersData.removeLobby(transaction, matchingLobby.player, matchingLobby.gameType, matchingLobby.enterTime)
-        return data.gamesData.createGame(transaction, gameType, playerId, matchingLobby.player, Instant.now())
+        println("inside if")
+        data.playersData.removeLobby(transaction, matchingLobby.playerId, matchingLobby.gameType, matchingLobby.enterTime)
+        return data.gamesData.createGame(transaction, gameType, playerId, matchingLobby.playerId, Instant.now())
             .let { EnterLobbyOutput(false, it) }
     }
     return data.playersData.enterLobby(transaction, playerId, gameType)

@@ -27,7 +27,6 @@ class AuthenticatedServices(private val data: Data) {
      * @return a [EnterLobbyOutput] representing if the player was placed in queue
      */
     fun enterLobby(player: Player, lobbyInput: EnterLobbyInput) = doService(data) { transaction ->
-        println(lobbyInput.gameType)
         if (lobbyInput.gameType == null || isGameTypeInvalid(lobbyInput.gameType))
             throw AppException("Invalid game type", AppExceptionStatus.BAD_REQUEST)
         enterLobbyOrCreateGame(transaction, player.id, lobbyInput.gameType, data)
