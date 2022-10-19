@@ -1,273 +1,292 @@
 {
 	"info": {
-		"_postman_id": "c6bc6fa0-46b6-43a2-9560-797f262b8d81",
+		"_postman_id": "b94262ed-2771-4e93-97b8-0c40345135b5",
 		"name": "ExplodingBattleships",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "18405597"
 	},
 	"item": [
 		{
-			"name": "create player",
-			"request": {
-				"method": "GET",
-				"header": []
-			},
-			"response": []
-		},
-		{
-			"name": "number of played games",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{BASE_URL}}games/total",
-					"host": [
-						"{{BASE_URL}}games"
-					],
-					"path": [
-						"total"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "game state",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{BASE_URL}}games/state/1",
-					"host": [
-						"{{BASE_URL}}games"
-					],
-					"path": [
-						"state",
-						"1"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "rankings",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{BASE_URL}}rankings",
-					"host": [
-						"{{BASE_URL}}rankings"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "system info",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{BASE_URL}}",
-					"host": [
-						"{{BASE_URL}}"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "define layout",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "123",
-							"type": "string"
+			"name": "Unauthenticated",
+			"item": [
+				{
+					"name": "create player",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": ""
 						}
-					]
+					},
+					"response": []
 				},
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"game-id\": 1,\r\n    \"ships\": [\r\n        {\r\n            \"name\": \"carrier\",\r\n            \"first-square\": {\r\n                \"row\": \"a\", \r\n                \"column\": 1\r\n            },\r\n            \"orientation\": \"horizontal\"\r\n        },\r\n        {\r\n            \"name\": \"battleship\",\r\n            \"first-square\": {\r\n                \"row\": \"b\", \r\n                \"column\": 1\r\n            },\r\n            \"orientation\": \"vertical\"\r\n        },\r\n        {\r\n            \"name\": \"submarine\",\r\n            \"first-square\": {\r\n                \"row\": \"b\", \r\n                \"column\": 2\r\n            },\r\n            \"orientation\": \"horizontal\"\r\n        },\r\n        {\r\n            \"name\": \"cruiser\",\r\n            \"first-square\": {\r\n                \"row\": \"c\", \r\n                \"column\": 2\r\n            },\r\n            \"orientation\": \"horizontal\"\r\n        },\r\n        {\r\n            \"name\": \"destroyer\",\r\n            \"first-square\": {\r\n                \"row\": \"d\", \r\n                \"column\": 2\r\n            },\r\n            \"orientation\": \"vertical\"\r\n        }\r\n    ]\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "number of played games",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}games/total",
+							"host": [
+								"{{BASE_URL}}games"
+							],
+							"path": [
+								"total"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "{{BASE_URL}}games/layout",
-					"host": [
-						"{{BASE_URL}}games"
-					],
-					"path": [
-						"layout"
-					]
+				{
+					"name": "game state",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}games/state/1",
+							"host": [
+								"{{BASE_URL}}games"
+							],
+							"path": [
+								"state",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "rankings",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}rankings",
+							"host": [
+								"{{BASE_URL}}rankings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "system info",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}",
+							"host": [
+								"{{BASE_URL}}"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "send hits",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "123",
-							"type": "string"
+			"name": "Authenticated",
+			"item": [
+				{
+					"name": "player info",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "123",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}player/info",
+							"host": [
+								"{{BASE_URL}}player"
+							],
+							"path": [
+								"info"
+							]
 						}
-					]
+					},
+					"response": []
 				},
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"game-id\": 2,\r\n    \"squares\": [\r\n        {\r\n            \"row\": \"a\",\r\n            \"column\": 1\r\n        },\r\n        {\r\n            \"row\": \"b\",\r\n            \"column\": 1\r\n        }\r\n    ]\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "enter lobby",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "321",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"game-type\": \"beginner\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}lobby/enter",
+							"host": [
+								"{{BASE_URL}}lobby"
+							],
+							"path": [
+								"enter"
+							]
 						}
-					}
-				},
-				"url": {
-					"raw": "{{BASE_URL}}games/hit",
-					"host": [
-						"{{BASE_URL}}games"
-					],
-					"path": [
-						"hit"
-					]
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "player fleet state",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "123",
-							"type": "string"
+			"name": "InGame",
+			"item": [
+				{
+					"name": "send hits",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "123",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"game-id\": 2,\r\n    \"squares\": [\r\n        {\r\n            \"row\": \"a\",\r\n            \"column\": 1\r\n        },\r\n        {\r\n            \"row\": \"b\",\r\n            \"column\": 1\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}games/hit",
+							"host": [
+								"{{BASE_URL}}games"
+							],
+							"path": [
+								"hit"
+							]
 						}
-					]
+					},
+					"response": []
 				},
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{BASE_URL}}games/fleet/player/1",
-					"host": [
-						"{{BASE_URL}}games"
-					],
-					"path": [
-						"fleet",
-						"player",
-						"1"
-					]
+				{
+					"name": "define layout",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "123",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"game-id\": 1,\r\n    \"ships\": [\r\n        {\r\n            \"name\": \"carrier\",\r\n            \"first-square\": {\r\n                \"row\": \"a\", \r\n                \"column\": 1\r\n            },\r\n            \"orientation\": \"horizontal\"\r\n        },\r\n        {\r\n            \"name\": \"battleship\",\r\n            \"first-square\": {\r\n                \"row\": \"b\", \r\n                \"column\": 1\r\n            },\r\n            \"orientation\": \"vertical\"\r\n        },\r\n        {\r\n            \"name\": \"submarine\",\r\n            \"first-square\": {\r\n                \"row\": \"b\", \r\n                \"column\": 2\r\n            },\r\n            \"orientation\": \"horizontal\"\r\n        },\r\n        {\r\n            \"name\": \"cruiser\",\r\n            \"first-square\": {\r\n                \"row\": \"c\", \r\n                \"column\": 2\r\n            },\r\n            \"orientation\": \"horizontal\"\r\n        },\r\n        {\r\n            \"name\": \"destroyer\",\r\n            \"first-square\": {\r\n                \"row\": \"d\", \r\n                \"column\": 2\r\n            },\r\n            \"orientation\": \"vertical\"\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}games/layout",
+							"host": [
+								"{{BASE_URL}}games"
+							],
+							"path": [
+								"layout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "player fleet state",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "123",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}games/fleet/player/1",
+							"host": [
+								"{{BASE_URL}}games"
+							],
+							"path": [
+								"fleet",
+								"player",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "enemy fleet state",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "321",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}games/fleet/enemy/1",
+							"host": [
+								"{{BASE_URL}}games"
+							],
+							"path": [
+								"fleet",
+								"enemy",
+								"1"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
-		},
-		{
-			"name": "enemy fleet state",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "321",
-							"type": "string"
-						}
-					]
-				},
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{BASE_URL}}games/fleet/enemy/1",
-					"host": [
-						"{{BASE_URL}}games"
-					],
-					"path": [
-						"fleet",
-						"enemy",
-						"1"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "player info",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "123",
-							"type": "string"
-						}
-					]
-				},
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{BASE_URL}}player/info",
-					"host": [
-						"{{BASE_URL}}player"
-					],
-					"path": [
-						"info"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "enter lobby",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "321",
-							"type": "string"
-						}
-					]
-				},
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"game-type\": \"beginner\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{BASE_URL}}lobby/enter",
-					"host": [
-						"{{BASE_URL}}lobby"
-					],
-					"path": [
-						"enter"
-					]
-				}
-			},
-			"response": []
+			]
 		}
 	]
 }

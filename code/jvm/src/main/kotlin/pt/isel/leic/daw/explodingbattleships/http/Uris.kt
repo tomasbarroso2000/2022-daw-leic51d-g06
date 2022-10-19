@@ -33,12 +33,12 @@ object Uris {
     //in-game
     fun sendHits(): URI = URI(SEND_HITS)
     fun defineLayout(): URI = URI(DEFINE_LAYOUT)
-    fun playerFleetState(game: Game): URI = UriTemplate(PLAYER_FLEET_STATE).expand(game.id)
-    fun enemyFleetState(game: Game): URI = UriTemplate(ENEMY_FLEET_STATE).expand(game.id)
+    fun playerFleetState(gameId: Int): URI = UriTemplate(PLAYER_FLEET_STATE).expand(gameId)
+    fun enemyFleetState(gameId: Int): URI = UriTemplate(ENEMY_FLEET_STATE).expand(gameId)
 
     //unauthenticated
     fun createPlayer(): URI = URI(CREATE_PLAYER)
     fun rankings(): URI = URI(RANKINGS)
     fun numberOfPlayedGames(): URI = URI(NUMBER_OF_PLAYED_GAMES)
-    fun gameState(game: Game): URI = UriTemplate(GAME_STATE).expand(game.id)
+    fun gameState(gameId: Int): URI = UriTemplate(GAME_STATE).expand(gameId)
 }

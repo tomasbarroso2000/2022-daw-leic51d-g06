@@ -20,7 +20,7 @@ create table if not exists game(
     player1 integer not null references player(id),
     player2 integer not null references player(id),
     curr_player integer references player(id) check (curr_player = player1 or curr_player = player2),
-    deadline interval
+    started_at timestamp
 );
 
 create table if not exists game_type(

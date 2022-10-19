@@ -9,9 +9,9 @@ insert into token (token_ver, player) values
     ('123', 1),
     ('321', 2);
 
-insert into game (type, state, player1, player2, curr_player, deadline) values
-    ('beginner', 'layout_definition', 1, 2, 1, interval '20 seconds'),
-    ('experienced', 'shooting', 1, 2, 1, interval '20 seconds');
+insert into game (type, state, player1, player2, curr_player, started_at) values
+    ('beginner', 'layout_definition', 1, 2, 1, now()),
+    ('experienced', 'shooting', 1, 2, 1, now());
 
 
 commit transaction;

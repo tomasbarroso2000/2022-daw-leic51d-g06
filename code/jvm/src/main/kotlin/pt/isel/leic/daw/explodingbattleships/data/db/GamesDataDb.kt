@@ -5,6 +5,7 @@ import pt.isel.leic.daw.explodingbattleships.data.GamesData
 import pt.isel.leic.daw.explodingbattleships.data.Transaction
 import pt.isel.leic.daw.explodingbattleships.domain.*
 import java.time.Duration
+import java.time.Instant
 
 class GamesDataDb : GamesData {
     override fun createGame(
@@ -12,7 +13,7 @@ class GamesDataDb : GamesData {
         gameType: String,
         player1: Int,
         player2: Int,
-        deadline: Duration
+        startedAt: Instant
     ): Int =
         (transaction as TransactionDataDb).withHandle { handle ->
             handle.createUpdate(
@@ -22,7 +23,7 @@ class GamesDataDb : GamesData {
                 .bind("gameType", gameType)
                 .bind("player1", player1)
                 .bind("player2", player2)
-                .bind("deadline", deadline)
+                .bind("deadline", startedAt)
                 .executeAndReturnGeneratedKeys()
                 .mapTo<Int>()
                 .first()

@@ -4,6 +4,7 @@ import pt.isel.leic.daw.explodingbattleships.data.Data
 import pt.isel.leic.daw.explodingbattleships.data.Transaction
 import pt.isel.leic.daw.explodingbattleships.domain.*
 import java.time.Duration
+import java.time.Instant
 import java.util.regex.Pattern
 
 /**
@@ -151,7 +152,7 @@ fun winConditionDetection(transaction: Transaction, gameId: Int, playerId: Int, 
  * @param gameType the game type name
  * @return true if the game type exists
  */
-fun isGameTypeInvalid(gameType: String) = !GameType.values().map { it.name }.contains(gameType.uppercase())
+fun isGameTypeInvalid(gameType: String) = gameType.toGameType() == null
 
 /**
  * Inserts in lobby or creates a game
@@ -165,11 +166,7 @@ fun enterLobbyOrCreateGame(transaction: Transaction, playerId: Int, gameType: St
     val matchingLobby = data.playersData.searchLobbies(transaction, gameType).firstOrNull()
     if (matchingLobby != null) {
         data.playersData.removeLobby(transaction, matchingLobby.player, matchingLobby.gameType, matchingLobby.enterTime)
-        val deadline = matchingLobby.gameType.toGameType()?.shootingTimeInSecs.let {
-            if (it == null) Duration.ofSeconds(0)
-            else Duration.ofSeconds(it.toLong())
-        }
-        return data.gamesData.createGame(transaction, gameType, playerId, matchingLobby.player, deadline)
+        return data.gamesData.createGame(transaction, gameType, playerId, matchingLobby.player, Instant.now())
             .let { EnterLobbyOutput(false, it) }
     }
     return data.playersData.enterLobby(transaction, playerId, gameType)

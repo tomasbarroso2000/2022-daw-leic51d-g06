@@ -38,7 +38,12 @@ class UnauthenticatedApi(private val services: Services) {
         ResponseEntity
             .status(CREATED)
             .contentType(MediaType.APPLICATION_JSON)
-            .body(services.unauthenticatedServices.createPlayer(input))
+            .body(
+                siren(services.unauthenticatedServices.createPlayer(input)) {
+                    link(Uris.createPlayer(), Rels.SELF)
+                    link(Uris.home(), Rels.HOME)
+                }
+            )
     }
 
     @GetMapping(NUMBER_OF_PLAYED_GAMES)
@@ -47,7 +52,12 @@ class UnauthenticatedApi(private val services: Services) {
             ResponseEntity
                 .status(OK)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(services.unauthenticatedServices.getNumberOfPlayedGames())
+                .body(
+                    siren(services.unauthenticatedServices.getNumberOfPlayedGames()) {
+                        link(Uris.numberOfPlayedGames(), Rels.SELF)
+                        link(Uris.home(), Rels.HOME)
+                    }
+                )
         }
 
     @GetMapping(GAME_STATE)
@@ -55,18 +65,28 @@ class UnauthenticatedApi(private val services: Services) {
         doApiTask { ResponseEntity
             .status(OK)
             .contentType(MediaType.APPLICATION_JSON)
-            .body(services.unauthenticatedServices.getGameState(gameId))
+            .body(
+                siren(services.unauthenticatedServices.getGameState(gameId)) {
+                    link(Uris.gameState(gameId), Rels.SELF)
+                    link(Uris.home(), Rels.HOME)
+                }
+            )
         }
 
     @GetMapping(RANKINGS)
     fun handlerRankings(
         @RequestParam(required = false, defaultValue = "10") limit: Int,
-        @RequestParam(required = false, defaultValue = "0") skip: Int = 0,
+        @RequestParam(required = false, defaultValue = "0") skip: Int,
     ) = doApiTask {
         ResponseEntity
             .status(OK)
             .contentType(MediaType.APPLICATION_JSON)
-            .body(services.unauthenticatedServices.getRankings(limit, skip))
+            .body(
+                siren(services.unauthenticatedServices.getRankings(limit, skip)) {
+                    link(Uris.rankings(), Rels.SELF)
+                    link(Uris.home(), Rels.HOME)
+                }
+            )
     }
 
     @GetMapping

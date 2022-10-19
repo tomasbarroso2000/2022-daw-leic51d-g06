@@ -57,14 +57,13 @@ data class StoredGame(
     val player1: Int,
     val player2: Int,
     val currPlayer: Int,
-    val deadline: Duration?
+    val startedAt: Instant
 )
 
 fun StoredGame.toGame(): Game {
-    val time: Int = type.toGameType()?.shootingTimeInSecs ?: 0
+    //val time: Int = type.toGameType()?.shootingTimeInSecs ?: 0
     return Game(
-        id, type, state, player1, player2, currPlayer,
-        Duration.ofSeconds(time.toLong())
+        id, type, state, player1, player2, currPlayer, startedAt
     )
 }
 
@@ -111,10 +110,10 @@ data class MockData(
         StoredPlayer(6, "Fiona", "iloveshrek@gmail.com", 10, 123)
     ),
     val games: MutableSet<StoredGame> = mutableSetOf(
-        StoredGame(1, "beginner", "layout_definition", 1, 2, 1, Duration.ofSeconds(20)),
-        StoredGame(2, "experienced", "shooting", 5, 6, 5, Duration.ofSeconds(20)),
-        StoredGame(3, "beginner", "layout_definition", 1, 2, 1, Duration.ofSeconds(20)),
-        StoredGame(4, "experienced", "shooting", 3, 4, 3, Duration.ofSeconds(20))
+        StoredGame(1, "beginner", "layout_definition", 1, 2, 1, Instant.now()),
+        StoredGame(2, "experienced", "shooting", 5, 6, 5, Instant.now()),
+        StoredGame(3, "beginner", "layout_definition", 1, 2, 1, Instant.now()),
+        StoredGame(4, "experienced", "shooting", 3, 4, 3, Instant.now())
     ),
     val tokens: MutableSet<StoredToken> = mutableSetOf(
         StoredToken("123", 1),

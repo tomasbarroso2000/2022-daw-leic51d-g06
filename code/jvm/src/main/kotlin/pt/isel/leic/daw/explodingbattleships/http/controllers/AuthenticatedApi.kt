@@ -9,10 +9,9 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import pt.isel.leic.daw.explodingbattleships.domain.EnterLobbyInput
 import pt.isel.leic.daw.explodingbattleships.domain.Player
-import pt.isel.leic.daw.explodingbattleships.http.OK
+import pt.isel.leic.daw.explodingbattleships.http.*
 import pt.isel.leic.daw.explodingbattleships.http.Uris.BASE_PATH
-import pt.isel.leic.daw.explodingbattleships.http.token
-import pt.isel.leic.daw.explodingbattleships.http.doApiTask
+import pt.isel.leic.daw.explodingbattleships.infra.siren
 import pt.isel.leic.daw.explodingbattleships.services.Services
 import javax.servlet.http.HttpServletRequest
 import javax.validation.Valid
@@ -31,7 +30,12 @@ class AuthenticatedApi(private val services: Services) {
         ResponseEntity
             .status(OK)
             .contentType(MediaType.APPLICATION_JSON)
-            .body(player)
+            .body(
+                siren(player) {
+                    link(Uris.playerInfo(), Rels.SELF)
+                    link(Uris.home(), Rels.HOME)
+                }
+            )
     }
 
     @PostMapping(ENTER_LOBBY)
@@ -42,6 +46,11 @@ class AuthenticatedApi(private val services: Services) {
         ResponseEntity
             .status(OK)
             .contentType(MediaType.APPLICATION_JSON)
-            .body(services.authenticatedServices.enterLobby(player, input))
+            .body(
+                siren(services.authenticatedServices.enterLobby(player, input)) {
+                    link(Uris.enterLobby(), Rels.SELF)
+                    link(Uris.home(), Rels.HOME)
+                }
+            )
     }
 }

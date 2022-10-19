@@ -4,6 +4,7 @@ import pt.isel.leic.daw.explodingbattleships.data.GamesData
 import pt.isel.leic.daw.explodingbattleships.data.Transaction
 import pt.isel.leic.daw.explodingbattleships.domain.*
 import java.time.Duration
+import java.time.Instant
 
 class GamesDataMem(private val mockData: MockData) : GamesData {
     override fun createGame(
@@ -11,10 +12,10 @@ class GamesDataMem(private val mockData: MockData) : GamesData {
         gameType: String,
         player1: Int,
         player2: Int,
-        deadline: Duration
+        startedAt: Instant
     ): Int {
         val id = mockData.games.maxOf { it.id } + 1
-        mockData.games.add(StoredGame(id, gameType, "layout_definition", player1, player2, player1, deadline))
+        mockData.games.add(StoredGame(id, gameType, "layout_definition", player1, player2, player1, startedAt))
         return id
     }
 

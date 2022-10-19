@@ -4,10 +4,10 @@ import pt.isel.leic.daw.explodingbattleships.domain.Game
 import pt.isel.leic.daw.explodingbattleships.domain.GameState
 import pt.isel.leic.daw.explodingbattleships.domain.NumberOfPlayedGames
 import pt.isel.leic.daw.explodingbattleships.domain.VerifiedSquare
-import java.time.Duration
+import java.time.Instant
 
 interface GamesData {
-    fun createGame(transaction: Transaction, gameType: String, player1: Int, player2: Int, deadline: Duration): Int
+    fun createGame(transaction: Transaction, gameType: String, player1: Int, player2: Int, startedAt: Instant): Int
 
     fun getNumberOfPlayedGames(transaction: Transaction): NumberOfPlayedGames
 

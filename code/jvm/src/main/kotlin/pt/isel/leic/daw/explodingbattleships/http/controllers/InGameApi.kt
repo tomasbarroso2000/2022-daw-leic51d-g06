@@ -7,11 +7,9 @@ import pt.isel.leic.daw.explodingbattleships.domain.Fleet
 import pt.isel.leic.daw.explodingbattleships.domain.Hits
 import pt.isel.leic.daw.explodingbattleships.domain.Layout
 import pt.isel.leic.daw.explodingbattleships.domain.Player
-import pt.isel.leic.daw.explodingbattleships.http.CREATED
-import pt.isel.leic.daw.explodingbattleships.http.OK
+import pt.isel.leic.daw.explodingbattleships.http.*
 import pt.isel.leic.daw.explodingbattleships.http.Uris.BASE_PATH
-import pt.isel.leic.daw.explodingbattleships.http.doApiTask
-import pt.isel.leic.daw.explodingbattleships.http.token
+import pt.isel.leic.daw.explodingbattleships.infra.siren
 import pt.isel.leic.daw.explodingbattleships.services.Services
 import javax.servlet.http.HttpServletRequest
 import javax.validation.Valid
@@ -33,7 +31,12 @@ class InGameApi(private val services: Services) {
         ResponseEntity
             .status(CREATED)
             .contentType(MediaType.APPLICATION_JSON)
-            .body(services.inGameServices.defineLayout(player, input))
+            .body(
+                siren(services.inGameServices.defineLayout(player, input)) {
+                    link(Uris.defineLayout(), Rels.SELF)
+                    link(Uris.home(), Rels.HOME)
+                }
+            )
     }
 
     @PostMapping(SEND_HITS)
@@ -44,7 +47,12 @@ class InGameApi(private val services: Services) {
         ResponseEntity
             .status(CREATED)
             .contentType(MediaType.APPLICATION_JSON)
-            .body(services.inGameServices.sendHits(player, input))
+            .body(
+                siren(services.inGameServices.sendHits(player, input)) {
+                    link(Uris.sendHits(), Rels.SELF)
+                    link(Uris.home(), Rels.HOME)
+                }
+            )
     }
 
     @GetMapping(PLAYER_FLEET_STATE)
@@ -56,7 +64,12 @@ class InGameApi(private val services: Services) {
         ResponseEntity
             .status(OK)
             .contentType(MediaType.APPLICATION_JSON)
-            .body(services.inGameServices.fleetState(player, input))
+            .body(
+                siren(services.inGameServices.fleetState(player, input)) {
+                    link(Uris.playerFleetState(gameId), Rels.SELF)
+                    link(Uris.home(), Rels.HOME)
+                }
+            )
     }
 
     @GetMapping(ENEMY_FLEET_STATE)
@@ -68,6 +81,11 @@ class InGameApi(private val services: Services) {
         ResponseEntity
             .status(OK)
             .contentType(MediaType.APPLICATION_JSON)
-            .body(services.inGameServices.fleetState(player, input))
+            .body(
+                siren(services.inGameServices.fleetState(player, input)) {
+                    link(Uris.enemyFleetState(gameId), Rels.SELF)
+                    link(Uris.home(), Rels.HOME)
+                }
+            )
     }
 }
