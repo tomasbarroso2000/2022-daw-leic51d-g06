@@ -26,7 +26,7 @@ class InGameServicesTests {
             )
         )
         val expectedLayoutOutcome = LayoutOutcome(LayoutOutcomeStatus.WAITING)
-        val actualLayoutOutcome = services.defineLayout(token, layout)
+        val actualLayoutOutcome = services.sendLayout(token, layout)
         assertEquals(expectedLayoutOutcome, actualLayoutOutcome)
         assertEquals(5, data.mockData.ships.filter { it.game == 3 && it.player == 1 }.size)
     }
@@ -45,7 +45,7 @@ class InGameServicesTests {
             )
         )
         val exception = assertThrows<AppException> {
-            services.defineLayout(token, layout)
+            services.sendLayout(token, layout)
         }
         assertEquals("No token provided", exception.message)
         assertEquals(AppExceptionStatus.UNAUTHORIZED, exception.status)
@@ -65,7 +65,7 @@ class InGameServicesTests {
             )
         )
         val exception = assertThrows<AppException> {
-            services.defineLayout(token, layout)
+            services.sendLayout(token, layout)
         }
         assertEquals("Invalid token", exception.message)
         assertEquals(AppExceptionStatus.UNAUTHORIZED, exception.status)
@@ -85,7 +85,7 @@ class InGameServicesTests {
             )
         )
         val exception = assertThrows<AppException> {
-            services.defineLayout(token, layout)
+            services.sendLayout(token, layout)
         }
         assertEquals("Player not in game", exception.message)
         assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
@@ -105,7 +105,7 @@ class InGameServicesTests {
             )
         )
         val exception = assertThrows<AppException> {
-            services.defineLayout(token, layout)
+            services.sendLayout(token, layout)
         }
         assertEquals("Invalid orientation for submarine", exception.message)
         assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
@@ -125,7 +125,7 @@ class InGameServicesTests {
             )
         )
         val exception = assertThrows<AppException> {
-            services.defineLayout(token, layout)
+            services.sendLayout(token, layout)
         }
         assertEquals("Invalid ship list for BEGINNER game", exception.message)
         assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
@@ -145,7 +145,7 @@ class InGameServicesTests {
             )
         )
         val exception = assertThrows<AppException> {
-            services.defineLayout(token, layout)
+            services.sendLayout(token, layout)
         }
         assertEquals("Layout already defined", exception.message)
         assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)

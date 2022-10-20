@@ -11,12 +11,13 @@ import pt.isel.leic.daw.explodingbattleships.services.utils.*
 @Component
 class InGameServices(private val data: Data) {
     /**
-     * Defines a layout for a player in a game
+     * Sends a layout for a player in a game and
+     * starts a game if both players have successfully defined their layout
      * @param player the player
      * @param layout the player's chosen layout
      * @return true if successful
      */
-    fun defineLayout(player: Player, layout: Layout) = doService(data) { transaction ->
+    fun sendLayout(player: Player, layout: Layout) = doService(data) { transaction ->
         val game = computeGame(transaction, layout.gameId, data)
         checkPlayerInGame(game, player.id)
         checkGameState(game.state, "layout_definition")
@@ -26,6 +27,10 @@ class InGameServices(private val data: Data) {
             throw AppException("Layout already defined", AppExceptionStatus.BAD_REQUEST)
         val verifiedShips = checkShipLayout(game.type, layout.ships)
         data.inGameData.defineLayout(transaction, game.id, player.id, verifiedShips)
+        if (data.inGameData.checkEnemyDone(transaction, game.id, player.id))
+            data.inGameData.startGame(transaction, game.id, player.id)
+        else
+            LayoutOutcome(LayoutOutcomeStatus.WAITING)
     }
 
     /**

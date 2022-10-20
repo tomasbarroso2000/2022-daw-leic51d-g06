@@ -20,13 +20,6 @@ import pt.isel.leic.daw.explodingbattleships.infra.siren
 import pt.isel.leic.daw.explodingbattleships.services.Services
 import javax.validation.Valid
 
-/*const val BASE_PATH = "/battleships/"
-
-const val CREATE_PLAYER = "players"
-const val RANKINGS = "rankings"
-const val NUMBER_OF_PLAYED_GAMES = "games/total"
-const val GAME_STATE = "games/state/{gameId}"*/
-
 @RestController
 @RequestMapping(BASE_PATH)
 class UnauthenticatedApi(private val services: Services) {
@@ -36,7 +29,7 @@ class UnauthenticatedApi(private val services: Services) {
         @Valid @RequestBody input: PlayerInput
     ) = doApiTask {
         ResponseEntity
-            .status(CREATED)
+            .status(Successes.CREATED)
             .contentType(MediaType.APPLICATION_JSON)
             .body(
                 siren(services.unauthenticatedServices.createPlayer(input)) {
@@ -50,7 +43,7 @@ class UnauthenticatedApi(private val services: Services) {
     fun handlerNrOfPlayedGames() =
         doApiTask {
             ResponseEntity
-                .status(OK)
+                .status(Successes.OK)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(
                     siren(services.unauthenticatedServices.getNumberOfPlayedGames()) {
@@ -63,7 +56,7 @@ class UnauthenticatedApi(private val services: Services) {
     @GetMapping(GAME_STATE)
     fun handlerGameState(@PathVariable gameId: Int) =
         doApiTask { ResponseEntity
-            .status(OK)
+            .status(Successes.OK)
             .contentType(MediaType.APPLICATION_JSON)
             .body(
                 siren(services.unauthenticatedServices.getGameState(gameId)) {
@@ -79,7 +72,7 @@ class UnauthenticatedApi(private val services: Services) {
         @RequestParam(required = false, defaultValue = "0") skip: Int,
     ) = doApiTask {
         ResponseEntity
-            .status(OK)
+            .status(Successes.OK)
             .contentType(MediaType.APPLICATION_JSON)
             .body(
                 siren(services.unauthenticatedServices.getRankings(limit, skip)) {
@@ -92,7 +85,7 @@ class UnauthenticatedApi(private val services: Services) {
     @GetMapping
     fun handlerSystemInfo() = doApiTask {
         ResponseEntity
-            .status(OK)
+            .status(Successes.OK)
             .contentType(MediaType.APPLICATION_JSON)
             .body(
                 siren(services.unauthenticatedServices.getSystemInfo()){

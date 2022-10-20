@@ -9,15 +9,13 @@ import pt.isel.leic.daw.explodingbattleships.domain.Layout
 import pt.isel.leic.daw.explodingbattleships.domain.Player
 import pt.isel.leic.daw.explodingbattleships.http.*
 import pt.isel.leic.daw.explodingbattleships.http.Uris.BASE_PATH
+import pt.isel.leic.daw.explodingbattleships.http.Uris.DEFINE_LAYOUT
+import pt.isel.leic.daw.explodingbattleships.http.Uris.ENEMY_FLEET_STATE
+import pt.isel.leic.daw.explodingbattleships.http.Uris.PLAYER_FLEET_STATE
+import pt.isel.leic.daw.explodingbattleships.http.Uris.SEND_HITS
 import pt.isel.leic.daw.explodingbattleships.infra.siren
 import pt.isel.leic.daw.explodingbattleships.services.Services
-import javax.servlet.http.HttpServletRequest
 import javax.validation.Valid
-
-const val SEND_HITS = "games/hit"
-const val DEFINE_LAYOUT = "games/layout"
-const val PLAYER_FLEET_STATE = "games/fleet/player/{gameId}"
-const val ENEMY_FLEET_STATE = "games/fleet/enemy/{gameId}"
 
 @RestController
 @RequestMapping(BASE_PATH)
@@ -29,10 +27,10 @@ class InGameApi(private val services: Services) {
         @Valid @RequestBody input: Layout,
     ) = doApiTask {
         ResponseEntity
-            .status(CREATED)
+            .status(Successes.CREATED)
             .contentType(MediaType.APPLICATION_JSON)
             .body(
-                siren(services.inGameServices.defineLayout(player, input)) {
+                siren(services.inGameServices.sendLayout(player, input)) {
                     link(Uris.defineLayout(), Rels.SELF)
                     link(Uris.home(), Rels.HOME)
                 }
@@ -45,7 +43,7 @@ class InGameApi(private val services: Services) {
         @Valid @RequestBody input: Hits,
     ) = doApiTask {
         ResponseEntity
-            .status(CREATED)
+            .status(Successes.CREATED)
             .contentType(MediaType.APPLICATION_JSON)
             .body(
                 siren(services.inGameServices.sendHits(player, input)) {
@@ -62,7 +60,7 @@ class InGameApi(private val services: Services) {
     ) = doApiTask {
         val input = Fleet(gameId, true)
         ResponseEntity
-            .status(OK)
+            .status(Successes.OK)
             .contentType(MediaType.APPLICATION_JSON)
             .body(
                 siren(services.inGameServices.fleetState(player, input)) {
@@ -79,7 +77,7 @@ class InGameApi(private val services: Services) {
     ) = doApiTask {
         val input = Fleet(gameId, false)
         ResponseEntity
-            .status(OK)
+            .status(Successes.OK)
             .contentType(MediaType.APPLICATION_JSON)
             .body(
                 siren(services.inGameServices.fleetState(player, input)) {

@@ -5,13 +5,14 @@ import pt.isel.leic.daw.explodingbattleships.data.Transaction
 import pt.isel.leic.daw.explodingbattleships.domain.*
 import java.sql.Timestamp
 import java.time.Instant
+
 class InGameDataMem(private val mockData: MockData) : InGameData {
     override fun defineLayout(
         transaction: Transaction,
         gameId: Int,
         playerId: Int,
         ships: List<VerifiedShip>
-    ): LayoutOutcome {
+    ): Boolean {
         ships.forEach { ship ->
             val storedShip = StoredShip(
                 ship.firstSquare.toString(),
@@ -26,10 +27,17 @@ class InGameDataMem(private val mockData: MockData) : InGameData {
             mockData.ships.add(storedShip)
         }
 
+    }
+
+    override fun checkEnemyDone(transaction: Transaction, gameId: Int, playerId: Int): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun startGame(transaction: Transaction, gameId: Int, playerId: Int): LayoutOutcome {
         return if (mockData.ships.any { it.game == gameId && it.player != playerId }) {
             mockData.games.find { it.id == gameId }?.let { game ->
                 mockData.games.remove(game)
-                val newGame = game.copy(state = "shooting")
+                val newGame = game.copy(state = "shooting", startedAt = Instant.now())
                 mockData.games.add(newGame)
             }
             LayoutOutcome(LayoutOutcomeStatus.STARTED)

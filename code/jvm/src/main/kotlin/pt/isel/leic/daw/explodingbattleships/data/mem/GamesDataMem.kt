@@ -3,7 +3,6 @@ package pt.isel.leic.daw.explodingbattleships.data.mem
 import pt.isel.leic.daw.explodingbattleships.data.GamesData
 import pt.isel.leic.daw.explodingbattleships.data.Transaction
 import pt.isel.leic.daw.explodingbattleships.domain.*
-import java.time.Duration
 import java.time.Instant
 
 class GamesDataMem(private val mockData: MockData) : GamesData {
@@ -39,7 +38,7 @@ class GamesDataMem(private val mockData: MockData) : GamesData {
     override fun changeCurrPlayer(transaction: Transaction, gameId: Int, newCurrPlayer: Int): Boolean {
         mockData.games.find { it.id == gameId }?.let { game ->
             mockData.games.remove(game)
-            val newGame = game.copy(currPlayer = newCurrPlayer)
+            val newGame = game.copy(currPlayer = newCurrPlayer, startedAt = Instant.now())
             return mockData.games.add(newGame)
         }
         return false

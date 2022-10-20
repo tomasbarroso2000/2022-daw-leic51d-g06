@@ -11,13 +11,11 @@ import pt.isel.leic.daw.explodingbattleships.domain.EnterLobbyInput
 import pt.isel.leic.daw.explodingbattleships.domain.Player
 import pt.isel.leic.daw.explodingbattleships.http.*
 import pt.isel.leic.daw.explodingbattleships.http.Uris.BASE_PATH
+import pt.isel.leic.daw.explodingbattleships.http.Uris.ENTER_LOBBY
+import pt.isel.leic.daw.explodingbattleships.http.Uris.PLAYER_INFO
 import pt.isel.leic.daw.explodingbattleships.infra.siren
 import pt.isel.leic.daw.explodingbattleships.services.Services
-import javax.servlet.http.HttpServletRequest
 import javax.validation.Valid
-
-const val PLAYER_INFO = "player/info"
-const val ENTER_LOBBY = "lobby/enter"
 
 @RestController
 @RequestMapping(BASE_PATH)
@@ -28,7 +26,7 @@ class AuthenticatedApi(private val services: Services) {
         player: Player
     ) = doApiTask {
         ResponseEntity
-            .status(OK)
+            .status(Successes.OK)
             .contentType(MediaType.APPLICATION_JSON)
             .body(
                 siren(player) {
@@ -44,7 +42,7 @@ class AuthenticatedApi(private val services: Services) {
         @Valid @RequestBody input: EnterLobbyInput
     ) = doApiTask {
         ResponseEntity
-            .status(OK)
+            .status(Successes.OK)
             .contentType(MediaType.APPLICATION_JSON)
             .body(
                 siren(services.authenticatedServices.enterLobby(player, input)) {

@@ -63,7 +63,7 @@ class GamesDataDb : GamesData {
 
     override fun changeCurrPlayer(transaction: Transaction, gameId: Int, newCurrPlayer: Int): Boolean =
         (transaction as TransactionDataDb).withHandle { handle ->
-            handle.createUpdate("update game set curr_player = :newCurrPlayer where id = :gameId")
+            handle.createUpdate("update game set curr_player = :newCurrPlayer and started_at = now() where id = :gameId")
                 .bind("newCurrPlayer", newCurrPlayer)
                 .bind("gameId", gameId)
                 .execute() == 1

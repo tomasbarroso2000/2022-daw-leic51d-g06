@@ -4,20 +4,7 @@ import org.springframework.http.ResponseEntity
 import pt.isel.leic.daw.explodingbattleships.services.utils.AppException
 import pt.isel.leic.daw.explodingbattleships.services.utils.AppExceptionStatus
 import javax.servlet.http.HttpServletRequest
-
-const val OK = 200
-const val CREATED = 201
-const val ACCEPTED = 202
-
-const val MOVED_PERMANENTLY = 301
-const val NOT_MODIFIED = 304
-
-const val BAD_REQUEST = 400
-const val UNAUTHORIZED = 401
-const val FORBIDDEN = 403
-const val NOT_FOUND = 404
-const val INTERNAL_SERVER_ERROR = 500
-const val NOT_IMPLEMENTED = 501
+import pt.isel.leic.daw.explodingbattleships.infra.siren
 
 /**
  * Calls a task using the same try-catch block
@@ -32,7 +19,13 @@ fun doApiTask(task: () -> ResponseEntity<*>): ResponseEntity<*> {
     }
 }
 
-data class ErrorResponse(val msg: String)
+data class ErrorResponse(
+    val type: String = "",
+    val title: String,
+    val status: Int,
+    val detail: String = "",
+    val instance: String = ""
+)
 
 /**
  * Handles the errors caught in the Web-Api
@@ -44,8 +37,8 @@ fun handleError(error: Exception): ResponseEntity<ErrorResponse> {
         onAppException(error)
     else
         makeResponse(
-            INTERNAL_SERVER_ERROR,
-            ErrorResponse("Something went wrong")
+            Errors.INTERNAL_SERVER_ERROR,
+            ErrorResponse(title = "Something went wrong", status = Errors.INTERNAL_SERVER_ERROR)
         )
 }
 
@@ -57,7 +50,7 @@ fun handleError(error: Exception): ResponseEntity<ErrorResponse> {
 fun <T> makeResponse(statusCode: Int, body: T) =
     ResponseEntity
         .status(statusCode)
-        .header("content-type", "application/json")
+        .header("content-type", "application/problem+json")
         .body(body)
 
 /**
@@ -70,16 +63,16 @@ fun onAppException(error: AppException): ResponseEntity<ErrorResponse> {
     val message = error.message ?: "¯\\_(ツ)_/¯"
     return when (error.status) {
         AppExceptionStatus.UNAUTHORIZED -> makeResponse(
-            UNAUTHORIZED, ErrorResponse(message)
+            Errors.UNAUTHORIZED, ErrorResponse(title = message, status = Errors.UNAUTHORIZED)
         )
         AppExceptionStatus.BAD_REQUEST -> makeResponse(
-            BAD_REQUEST,ErrorResponse(message)
+            Errors.BAD_REQUEST, ErrorResponse(title = message, status = Errors.BAD_REQUEST)
         )
         AppExceptionStatus.NOT_FOUND -> makeResponse(
-            NOT_FOUND, ErrorResponse(message)
+            Errors.NOT_FOUND, ErrorResponse(title = message, status = Errors.NOT_FOUND)
         )
         AppExceptionStatus.INTERNAL -> makeResponse(
-            INTERNAL_SERVER_ERROR, ErrorResponse(message)
+            Errors.INTERNAL_SERVER_ERROR, ErrorResponse(title = message, status = Errors.INTERNAL_SERVER_ERROR)
         )
     }
 }

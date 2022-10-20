@@ -3,7 +3,11 @@ package pt.isel.leic.daw.explodingbattleships.data
 import pt.isel.leic.daw.explodingbattleships.domain.*
 
 interface InGameData {
-    fun defineLayout(transaction: Transaction, gameId: Int, playerId: Int, ships: List<VerifiedShip>): LayoutOutcome
+    fun defineLayout(transaction: Transaction, gameId: Int, playerId: Int, ships: List<VerifiedShip>): Boolean
+
+    fun checkEnemyDone(transaction: Transaction, gameId:Int, playerId: Int): Boolean
+
+    fun startGame(transaction: Transaction, gameId: Int, playerId: Int): LayoutOutcome
 
     fun getShipAndSquares(transaction: Transaction, gameId: Int, playerId: Int): Map<VerifiedShip, Set<VerifiedSquare>>
 

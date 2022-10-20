@@ -12,32 +12,37 @@ class InGameDataDb : InGameData {
         gameId: Int,
         playerId: Int,
         ships: List<VerifiedShip>
-    ): LayoutOutcome =
+    ): Boolean =
         (transaction as TransactionDataDb).withHandle { handle ->
             ships.forEach { ship ->
-                handle.createUpdate("insert into ship values (:firstSquare, :name, :size, 0, false, :orientation, :playerId, :gameId)")
+                if (handle.createUpdate("insert into ship values (:firstSquare, :name, :size, 0, false, :orientation, :playerId, :gameId)")
                     .bind("firstSquare", ship.firstSquare.getString())
                     .bind("name", ship.name)
                     .bind("size", ship.size)
                     .bind("orientation", ship.orientation)
                     .bind("playerId", playerId)
                     .bind("gameId", gameId)
-                    .execute()
+                    .execute() != 1
+                ) return@withHandle false
             }
-            val isEnemyDone =
-                handle.createQuery("select exists (select * from ship where game = :gameId and player <> :playerId)")
-                    .bind("gameId", gameId)
-                    .bind("playerId", playerId)
-                    .mapTo<Boolean>().first()
-            if (isEnemyDone) {
-                handle.createUpdate("update game set state = 'shooting' where id = :gameId")
-                    .bind("gameId", gameId)
-                    .execute()
-                LayoutOutcome(LayoutOutcomeStatus.STARTED)
-            }
-            else {
-                LayoutOutcome(LayoutOutcomeStatus.WAITING)
-            }
+            return@withHandle true
+        }
+
+    override fun checkEnemyDone(transaction: Transaction, gameId: Int, playerId: Int): Boolean =
+        (transaction as TransactionDataDb).withHandle { handle ->
+            handle.createQuery("select exists (select * from ship where game = :gameId and player <> :playerId)")
+                .bind("gameId", gameId)
+                .bind("playerId", playerId)
+                .mapTo<Boolean>()
+                .first() == true
+        }
+
+    fun startGame(transaction: Transaction, gameId: Int, playerId: Int): LayoutOutcome =
+        (transaction as TransactionDataDb).withHandle { handle ->
+            handle.createUpdate("update game set state = 'shooting' and started_at = now() where id = :gameId")
+                .bind("gameId", gameId)
+                .execute()
+            LayoutOutcome(LayoutOutcomeStatus.STARTED)
         }
 
     override fun getShipAndSquares(
