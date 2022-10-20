@@ -64,10 +64,11 @@ class PlayersDataDb : PlayersData {
             EnterLobbyOutput(true, null)
         }
 
-    override fun searchLobbies(transaction: Transaction, gameType: String): List<Lobby> =
+    override fun searchLobbies(transaction: Transaction, gameType: String, playerId: Int): List<Lobby> =
         (transaction as TransactionDataDb).withHandle { handle ->
-            handle.createQuery("select * from lobby where game_type = :gameType order by enter_time asc")
+            handle.createQuery("select * from lobby where game_type = :gameType and player <> :playerId order by enter_time asc")
                 .bind("gameType", gameType)
+                .bind("playerId", playerId)
                 .mapTo<Lobby>().list()
         }
 

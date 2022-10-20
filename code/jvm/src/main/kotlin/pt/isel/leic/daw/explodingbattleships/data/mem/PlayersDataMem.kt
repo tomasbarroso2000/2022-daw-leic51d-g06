@@ -43,11 +43,13 @@ class PlayersDataMem(private val mockData: MockData) : PlayersData {
         return EnterLobbyOutput(true, null)
     }
 
-    override fun searchLobbies(transaction: Transaction, gameType: String): List<Lobby> {
+    override fun searchLobbies(transaction: Transaction, gameType: String, playerId: Int): List<Lobby> {
         val sameTypeLobbies = mutableListOf<Lobby>()
         mockData.lobby
-            .filter { it.gameType == gameType }
+            .filter { it.gameType == gameType && it.player != playerId}
+            .sortedBy { it.enterTime }
             .forEach { sameTypeLobbies.add(Lobby(it.player, it.gameType, it.enterTime)) }
+
         return sameTypeLobbies
     }
 

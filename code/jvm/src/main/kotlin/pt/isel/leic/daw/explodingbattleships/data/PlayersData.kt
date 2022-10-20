@@ -16,7 +16,7 @@ interface PlayersData {
 
     fun enterLobby(transaction: Transaction, playerId: Int, gameType: String): EnterLobbyOutput
 
-    fun searchLobbies(transaction: Transaction, gameType: String): List<Lobby>
+    fun searchLobbies(transaction: Transaction, gameType: String, playerId: Int): List<Lobby>
 
     fun removeLobby(transaction: Transaction, playerId: Int, gameType: String, enterTime: Instant): Boolean
 }

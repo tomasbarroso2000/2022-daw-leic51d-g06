@@ -3,7 +3,6 @@ package pt.isel.leic.daw.explodingbattleships.services.utils
 import pt.isel.leic.daw.explodingbattleships.data.Data
 import pt.isel.leic.daw.explodingbattleships.data.Transaction
 import pt.isel.leic.daw.explodingbattleships.domain.*
-import pt.isel.leic.daw.explodingbattleships.http.onAppException
 import java.time.Instant
 import java.util.regex.Pattern
 
@@ -163,14 +162,10 @@ fun isGameTypeInvalid(gameType: String) = gameType.toGameType() == null
  * @return information about whether the player was placed in the lobby or a game was started
  */
 fun enterLobbyOrCreateGame(transaction: Transaction, playerId: Int, gameType: String, data: Data): EnterLobbyOutput {
-    val matchingLobby = data.playersData.searchLobbies(transaction, gameType).firstOrNull()
-    println(matchingLobby)
-    if ( matchingLobby?.playerId == playerId)
-        throw AppException("Player already in lobby")
+    val matchingLobby = data.playersData.searchLobbies(transaction, gameType, playerId).firstOrNull()
     if (matchingLobby != null) {
-        println("inside if")
-        data.playersData.removeLobby(transaction, matchingLobby.playerId, matchingLobby.gameType, matchingLobby.enterTime)
-        return data.gamesData.createGame(transaction, gameType, playerId, matchingLobby.playerId, Instant.now())
+        data.playersData.removeLobby(transaction, matchingLobby.player, matchingLobby.gameType, matchingLobby.enterTime)
+        return data.gamesData.createGame(transaction, gameType, playerId, matchingLobby.player, Instant.now())
             .let { EnterLobbyOutput(false, it) }
     }
     return data.playersData.enterLobby(transaction, playerId, gameType)
