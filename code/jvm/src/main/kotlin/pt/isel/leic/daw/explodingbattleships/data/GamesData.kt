@@ -7,7 +7,7 @@ import pt.isel.leic.daw.explodingbattleships.domain.VerifiedSquare
 import java.time.Instant
 
 interface GamesData {
-    fun createGame(transaction: Transaction, gameType: String, player1: Int, player2: Int, startedAt: Instant): Int
+    fun createGame(transaction: Transaction, gameType: String, player1: Int, player2: Int): Int
 
     fun getNumberOfPlayedGames(transaction: Transaction): NumberOfPlayedGames
 

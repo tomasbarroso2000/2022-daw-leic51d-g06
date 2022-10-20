@@ -165,7 +165,7 @@ fun enterLobbyOrCreateGame(transaction: Transaction, playerId: Int, gameType: St
     val matchingLobby = data.playersData.searchLobbies(transaction, gameType, playerId).firstOrNull()
     if (matchingLobby != null) {
         data.playersData.removeLobby(transaction, matchingLobby.player, matchingLobby.gameType, matchingLobby.enterTime)
-        return data.gamesData.createGame(transaction, gameType, playerId, matchingLobby.player, Instant.now())
+        return data.gamesData.createGame(transaction, gameType, playerId, matchingLobby.player)
             .let { EnterLobbyOutput(false, it) }
     }
     return data.playersData.enterLobby(transaction, playerId, gameType)

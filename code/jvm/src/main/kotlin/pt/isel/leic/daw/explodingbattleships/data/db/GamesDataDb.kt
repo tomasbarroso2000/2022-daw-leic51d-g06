@@ -12,18 +12,16 @@ class GamesDataDb : GamesData {
         transaction: Transaction,
         gameType: String,
         player1: Int,
-        player2: Int,
-        startedAt: Instant
+        player2: Int
     ): Int =
         (transaction as TransactionDataDb).withHandle { handle ->
             handle.createUpdate(
-                " insert into game (type, state, player1, player2, curr_player, deadline) " +
-                        "values (:gameType, 'layout_definition', :player1, :player2, :player1, :deadline)"
+                " insert into game (type, state, player1, player2, curr_player, started_at) " +
+                        "values (:gameType, 'layout_definition', :player1, :player2, :player1, now())"
             )
                 .bind("gameType", gameType)
                 .bind("player1", player1)
                 .bind("player2", player2)
-                .bind("deadline", startedAt)
                 .executeAndReturnGeneratedKeys()
                 .mapTo<Int>()
                 .first()

@@ -11,11 +11,10 @@ class GamesDataMem(private val mockData: MockData) : GamesData {
         transaction: Transaction,
         gameType: String,
         player1: Int,
-        player2: Int,
-        startedAt: Instant
+        player2: Int
     ): Int {
         val id = mockData.games.maxOf { it.id } + 1
-        mockData.games.add(StoredGame(id, gameType, "layout_definition", player1, player2, player1, startedAt))
+        mockData.games.add(StoredGame(id, gameType, "layout_definition", player1, player2, player1, Instant.now()))
         return id
     }
 

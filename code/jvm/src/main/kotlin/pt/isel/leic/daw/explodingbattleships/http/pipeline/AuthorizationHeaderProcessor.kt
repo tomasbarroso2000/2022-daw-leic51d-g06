@@ -14,7 +14,6 @@ class AuthorizationHeaderProcessor(
 
     fun process(authorizationValue: String?): Player {
         val token = getTokenFromAuthorization(authorizationValue)
-        println(token)
         return services.authenticatedServices.getPlayerInfo(token)
     }
 

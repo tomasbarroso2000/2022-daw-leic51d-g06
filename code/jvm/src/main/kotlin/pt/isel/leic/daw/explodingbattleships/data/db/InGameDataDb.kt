@@ -15,14 +15,14 @@ class InGameDataDb : InGameData {
     ): LayoutOutcome =
         (transaction as TransactionDataDb).withHandle { handle ->
             ships.forEach { ship ->
-                println(handle.createUpdate("insert into ship values (:firstSquare, :name, :size, 0, false, :orientation, :playerId, :gameId)")
+                handle.createUpdate("insert into ship values (:firstSquare, :name, :size, 0, false, :orientation, :playerId, :gameId)")
                     .bind("firstSquare", ship.firstSquare.getString())
                     .bind("name", ship.name)
                     .bind("size", ship.size)
                     .bind("orientation", ship.orientation)
                     .bind("playerId", playerId)
                     .bind("gameId", gameId)
-                    .execute())
+                    .execute()
             }
             val isEnemyDone =
                 handle.createQuery("select exists (select * from ship where game = :gameId and player <> :playerId)")
