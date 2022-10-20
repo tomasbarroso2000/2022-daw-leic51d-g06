@@ -12,21 +12,20 @@ class InGameDataDb : InGameData {
         gameId: Int,
         playerId: Int,
         ships: List<VerifiedShip>
-    ): Boolean =
+    ) {
         (transaction as TransactionDataDb).withHandle { handle ->
             ships.forEach { ship ->
-                if (handle.createUpdate("insert into ship values (:firstSquare, :name, :size, 0, false, :orientation, :playerId, :gameId)")
-                    .bind("firstSquare", ship.firstSquare.getString())
-                    .bind("name", ship.name)
-                    .bind("size", ship.size)
-                    .bind("orientation", ship.orientation)
-                    .bind("playerId", playerId)
-                    .bind("gameId", gameId)
-                    .execute() != 1
-                ) return@withHandle false
+                handle.createUpdate("insert into ship values (:firstSquare, :name, :size, 0, false, :orientation, :playerId, :gameId)")
+                        .bind("firstSquare", ship.firstSquare.getString())
+                        .bind("name", ship.name)
+                        .bind("size", ship.size)
+                        .bind("orientation", ship.orientation)
+                        .bind("playerId", playerId)
+                        .bind("gameId", gameId)
+                        .execute()
             }
-            return@withHandle true
         }
+    }
 
     override fun checkEnemyDone(transaction: Transaction, gameId: Int, playerId: Int): Boolean =
         (transaction as TransactionDataDb).withHandle { handle ->
@@ -34,16 +33,16 @@ class InGameDataDb : InGameData {
                 .bind("gameId", gameId)
                 .bind("playerId", playerId)
                 .mapTo<Boolean>()
-                .first() == true
+                .first()
         }
 
-    fun startGame(transaction: Transaction, gameId: Int, playerId: Int): LayoutOutcome =
+    override fun startGame(transaction: Transaction, gameId: Int) {
         (transaction as TransactionDataDb).withHandle { handle ->
-            handle.createUpdate("update game set state = 'shooting' and started_at = now() where id = :gameId")
+            handle.createUpdate("update game set state = 'shooting', started_at = now() where id = :gameId")
                 .bind("gameId", gameId)
                 .execute()
-            LayoutOutcome(LayoutOutcomeStatus.STARTED)
         }
+    }
 
     override fun getShipAndSquares(
         transaction: Transaction,
@@ -64,32 +63,36 @@ class InGameDataDb : InGameData {
         transaction: Transaction,
         square: VerifiedSquare,
         gameId: Int,
-        playerId: Int
-    ): Boolean =
+        playerId: Int,
+        onShip: Boolean
+    ) {
         (transaction as TransactionDataDb).withHandle { handle ->
-            handle.createUpdate("insert into hit values (:square, now(), :playerId, :gameId)")
+            handle.createUpdate("insert into hit values (:square, now(), :onShip, :playerId, :gameId)")
                 .bind("square", square.getString())
+                .bind("onShip", onShip)
                 .bind("playerId", playerId)
                 .bind("gameId", gameId)
-                .execute() == 1
+                .execute()
         }
+    }
 
     override fun updateNumOfHits(
         transaction: Transaction,
         gameId: Int,
         playerId: Int,
         firstSquare: String
-    ): Boolean =
+    ) {
         (transaction as TransactionDataDb).withHandle { handle ->
             handle.createUpdate(
                 "update ship set n_of_hits = n_of_hits + 1 " +
-                    "where game = :gameId and player = :playerId and first_square = :firstSquare"
+                        "where game = :gameId and player = :playerId and first_square = :firstSquare"
             )
                 .bind("gameId", gameId)
                 .bind("playerId", playerId)
                 .bind("firstSquare", firstSquare)
-                .execute() == 1
+                .execute()
         }
+    }
 
     override fun isShipDestroyed(
         transaction: Transaction,
@@ -128,7 +131,7 @@ class InGameDataDb : InGameData {
         }
 
 
-    override fun destroyShip(transaction: Transaction, gameId: Int, playerId: Int, firstSquare: VerifiedSquare) : Boolean =
+    override fun destroyShip(transaction: Transaction, gameId: Int, playerId: Int, firstSquare: VerifiedSquare) {
         (transaction as TransactionDataDb).withHandle { handle ->
             handle.createUpdate(
                 "update ship set destroyed = true " +
@@ -137,8 +140,9 @@ class InGameDataDb : InGameData {
                 .bind("gameId", gameId)
                 .bind("playerId", playerId)
                 .bind("firstSquare", firstSquare.getString())
-                .execute() == 1
+                .execute()
         }
+    }
 
     override fun hasShips(transaction: Transaction, playerId: Int, gameId: Int): Boolean =
         (transaction as TransactionDataDb).withHandle { handle ->
@@ -148,10 +152,11 @@ class InGameDataDb : InGameData {
                 .mapTo<Boolean>().first()
         }
 
-    override fun setGameStateCompleted(transaction: Transaction, gameId: Int): Boolean =
+    override fun setGameStateCompleted(transaction: Transaction, gameId: Int) {
         (transaction as TransactionDataDb).withHandle { handle ->
             handle.createUpdate("update game set state = 'completed' where id = :gameId")
                 .bind("gameId", gameId)
-                .execute() == 1
+                .execute()
         }
+    }
 }

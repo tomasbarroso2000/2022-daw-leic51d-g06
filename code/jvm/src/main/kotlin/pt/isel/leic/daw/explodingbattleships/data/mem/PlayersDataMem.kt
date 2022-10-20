@@ -54,10 +54,9 @@ class PlayersDataMem(private val mockData: MockData) : PlayersData {
     }
 
 
-    override fun removeLobby(transaction: Transaction, playerId: Int, gameType: String, enterTime: Instant): Boolean {
+    override fun removeLobby(transaction: Transaction, playerId: Int, gameType: String, enterTime: Instant) {
         mockData.lobby.find { it.gameType == gameType && it.player == playerId }?.let {
-            return mockData.lobby.remove(it)
+            mockData.lobby.remove(it)
         }
-        return false
     }
 }

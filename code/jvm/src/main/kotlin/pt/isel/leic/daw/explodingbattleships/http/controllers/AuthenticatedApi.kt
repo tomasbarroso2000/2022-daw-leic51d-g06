@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import pt.isel.leic.daw.explodingbattleships.domain.EnterLobbyInput
+import pt.isel.leic.daw.explodingbattleships.domain.EnterLobbyOutput
 import pt.isel.leic.daw.explodingbattleships.domain.Player
 import pt.isel.leic.daw.explodingbattleships.http.*
 import pt.isel.leic.daw.explodingbattleships.http.Uris.BASE_PATH
@@ -32,6 +33,7 @@ class AuthenticatedApi(private val services: Services) {
                 siren(player) {
                     link(Uris.playerInfo(), Rels.SELF)
                     link(Uris.home(), Rels.HOME)
+                    clazz("PlayerOutputModel")
                 }
             )
     }
@@ -48,6 +50,7 @@ class AuthenticatedApi(private val services: Services) {
                 siren(services.authenticatedServices.enterLobby(player, input)) {
                     link(Uris.enterLobby(), Rels.SELF)
                     link(Uris.home(), Rels.HOME)
+                    clazz("EnterLobbyOutput")
                 }
             )
     }

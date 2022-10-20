@@ -72,12 +72,13 @@ class PlayersDataDb : PlayersData {
                 .mapTo<Lobby>().list()
         }
 
-    override fun removeLobby(transaction: Transaction, playerId: Int, gameType: String, enterTime: Instant) =
+    override fun removeLobby(transaction: Transaction, playerId: Int, gameType: String, enterTime: Instant) {
         (transaction as TransactionDataDb).withHandle { handle ->
             handle.createUpdate("delete from lobby where player = :playerId and game_type = :gameType and enter_time = :enterTime")
                 .bind("playerId", playerId)
                 .bind("gameType", gameType)
                 .bind("enterTime", enterTime)
-                .execute() == 1
+                .execute()
         }
+    }
 }

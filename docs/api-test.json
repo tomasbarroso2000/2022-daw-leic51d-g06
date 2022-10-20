@@ -12,10 +12,22 @@
 				{
 					"name": "create player",
 					"request": {
-						"method": "GET",
+						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Fiona\",\n    \"email\": \"iloveshrek@gmail.com\",\n    \"password\": \"Shrekinho1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": ""
+							"raw": "{{BASE_URL}}players",
+							"host": [
+								"{{BASE_URL}}players"
+							]
 						}
 					},
 					"response": []
@@ -123,7 +135,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "321",
+									"value": "123",
 									"type": "string"
 								}
 							]
@@ -200,7 +212,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "123",
+									"value": "321",
 									"type": "string"
 								}
 							]

@@ -33,6 +33,7 @@ class InGameApi(private val services: Services) {
                 siren(services.inGameServices.sendLayout(player, input)) {
                     link(Uris.defineLayout(), Rels.SELF)
                     link(Uris.home(), Rels.HOME)
+                    clazz("LayoutOutput")
                 }
             )
     }
@@ -49,6 +50,7 @@ class InGameApi(private val services: Services) {
                 siren(services.inGameServices.sendHits(player, input)) {
                     link(Uris.sendHits(), Rels.SELF)
                     link(Uris.home(), Rels.HOME)
+                    clazz("HitsOutcome")
                 }
             )
     }
@@ -66,6 +68,7 @@ class InGameApi(private val services: Services) {
                 siren(services.inGameServices.fleetState(player, input)) {
                     link(Uris.playerFleetState(gameId), Rels.SELF)
                     link(Uris.home(), Rels.HOME)
+                    clazz("List<ShipState>")
                 }
             )
     }
@@ -83,6 +86,7 @@ class InGameApi(private val services: Services) {
                 siren(services.inGameServices.fleetState(player, input)) {
                     link(Uris.enemyFleetState(gameId), Rels.SELF)
                     link(Uris.home(), Rels.HOME)
+                    clazz("List<ShipState>")
                 }
             )
     }

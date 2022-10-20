@@ -90,6 +90,7 @@ fun StoredShip.toVerifiedShip() = VerifiedShip(name, firstSquare.toVerifiedSquar
 data class StoredHit(
     val square: String,
     val hitTimestamp: Timestamp,
+    val onShip: Boolean,
     val player: Int,
     val game: Int
 )
@@ -146,7 +147,7 @@ data class MockData(
     ),
 
     val hits: MutableSet<StoredHit> = mutableSetOf(
-        StoredHit("f1", Timestamp.from(Instant.now()), 6, 2)
+        StoredHit("f1", Timestamp.from(Instant.now()), false,6, 2)
     ),
     val lobby: MutableSet<StoredLobby> = mutableSetOf(
         StoredLobby(4, "beginner", Instant.now())

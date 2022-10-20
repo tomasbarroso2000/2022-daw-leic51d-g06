@@ -17,7 +17,7 @@ object Errors {
 }
 
 object Successes {
-    // Successfull Responses
+    // Successful Responses
     const val OK = 200
     const val CREATED = 201
     const val ACCEPTED = 202

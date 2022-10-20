@@ -19,5 +19,5 @@ interface GamesData {
 
     fun getPlayerGame(transaction: Transaction, playerId: Int): Game?
 
-    fun changeCurrPlayer(transaction: Transaction, gameId: Int, newCurrPlayer: Int): Boolean
+    fun changeCurrPlayer(transaction: Transaction, gameId: Int, newCurrPlayer: Int)
 }

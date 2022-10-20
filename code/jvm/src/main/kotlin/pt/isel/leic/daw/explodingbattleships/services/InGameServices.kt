@@ -27,8 +27,11 @@ class InGameServices(private val data: Data) {
             throw AppException("Layout already defined", AppExceptionStatus.BAD_REQUEST)
         val verifiedShips = checkShipLayout(game.type, layout.ships)
         data.inGameData.defineLayout(transaction, game.id, player.id, verifiedShips)
-        if (data.inGameData.checkEnemyDone(transaction, game.id, player.id))
-            data.inGameData.startGame(transaction, game.id, player.id)
+        if (data.inGameData.checkEnemyDone(transaction, game.id, player.id)) {
+            println("enemy done")
+            data.inGameData.startGame(transaction, game.id)
+            LayoutOutcome(LayoutOutcomeStatus.STARTED)
+        }
         else
             LayoutOutcome(LayoutOutcomeStatus.WAITING)
     }

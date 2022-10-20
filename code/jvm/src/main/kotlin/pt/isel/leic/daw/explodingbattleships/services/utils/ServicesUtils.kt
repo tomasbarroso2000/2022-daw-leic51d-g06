@@ -98,23 +98,21 @@ fun executeHit(transaction: Transaction, game: Game, verifiedSquares: List<Verif
     val shipsSquares = data.inGameData.getShipAndSquares(transaction, game.id, playerId)
     val hitOutcomeList = mutableListOf<HitOutcome>()
     verifiedSquares.forEach { square ->
-        if (!data.inGameData.createHit(transaction, square, game.id, playerId))
-            throw AppException("Unsuccessful hit")
         val entry = shipsSquares.entries.find { it.value.contains(square) }
         if (entry != null) {
-            if (!data.inGameData.updateNumOfHits(transaction, game.id, playerId, entry.key.firstSquare.getString()))
-                throw AppException("Unsuccessful hit")
+            data.inGameData.createHit(transaction, square, game.id, playerId, true)
+            data.inGameData.updateNumOfHits(transaction, game.id, playerId, entry.key.firstSquare.getString())
             val destroyed = maybeDestroyShip(transaction, playerId, game.id, entry.key, data)
             if (destroyed) hitOutcomeList.add(HitOutcome(square, true, entry.key.name))
             else hitOutcomeList.add(HitOutcome(square, true))
         } else {
+            data.inGameData.createHit(transaction, square, game.id, playerId, false)
             hitOutcomeList.add(HitOutcome(square, false))
         }
     }
     if (winConditionDetection(transaction, game.id, playerId, data))
         return HitsOutcome(hitOutcomeList, true)
-    if (!data.gamesData.changeCurrPlayer(transaction, game.id, game.idlePlayer()))
-        throw AppException("Unsuccessful hit")
+    data.gamesData.changeCurrPlayer(transaction, game.id, game.idlePlayer())
     return HitsOutcome(hitOutcomeList, false)
 }
 
@@ -132,8 +130,7 @@ fun getNumberOfHits(transaction: Transaction, gameId: Int, playerId: Int, verifi
 fun maybeDestroyShip(transaction: Transaction, playerId: Int, gameId: Int, ship: VerifiedShip, data: Data): Boolean {
     val nOfHits = getNumberOfHits(transaction, gameId, playerId, ship, data)
     if (ship.size == nOfHits) {
-        if (!data.inGameData.destroyShip(transaction, gameId, playerId, ship.firstSquare))
-            throw AppException("Error destroying ship")
+        data.inGameData.destroyShip(transaction, gameId, playerId, ship.firstSquare)
         return true
     }
     return false

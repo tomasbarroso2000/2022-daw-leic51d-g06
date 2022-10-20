@@ -35,6 +35,7 @@ class UnauthenticatedApi(private val services: Services) {
                 siren(services.unauthenticatedServices.createPlayer(input)) {
                     link(Uris.createPlayer(), Rels.SELF)
                     link(Uris.home(), Rels.HOME)
+                    clazz("PlayerOutput")
                 }
             )
     }
@@ -49,6 +50,7 @@ class UnauthenticatedApi(private val services: Services) {
                     siren(services.unauthenticatedServices.getNumberOfPlayedGames()) {
                         link(Uris.numberOfPlayedGames(), Rels.SELF)
                         link(Uris.home(), Rels.HOME)
+                        clazz("NumberOfPlayedGames")
                     }
                 )
         }
@@ -62,6 +64,7 @@ class UnauthenticatedApi(private val services: Services) {
                 siren(services.unauthenticatedServices.getGameState(gameId)) {
                     link(Uris.gameState(gameId), Rels.SELF)
                     link(Uris.home(), Rels.HOME)
+                    clazz("GameState")
                 }
             )
         }
@@ -78,6 +81,7 @@ class UnauthenticatedApi(private val services: Services) {
                 siren(services.unauthenticatedServices.getRankings(limit, skip)) {
                     link(Uris.rankings(), Rels.SELF)
                     link(Uris.home(), Rels.HOME)
+                    clazz("Rankings")
                 }
             )
     }
@@ -91,6 +95,7 @@ class UnauthenticatedApi(private val services: Services) {
                 siren(services.unauthenticatedServices.getSystemInfo()){
                     link(Uris.home(), Rels.SELF)
                     link(Uris.home(), Rels.HOME)
+                    clazz("SystemInfo")
                 }
             )
     }

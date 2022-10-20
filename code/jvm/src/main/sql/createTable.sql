@@ -40,7 +40,8 @@ create table if not exists ship_type(
 
 create table if not exists hit(
     square varchar(5) check (square ~ '[a-z][0-9]+'),
-    hit_timestamp timestamp,
+    hit_timestamp timestamp not null,
+    on_ship bool not null,
     player integer references player(id),
     game integer references game(id),
     primary key (square, player, game)
