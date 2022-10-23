@@ -2,18 +2,15 @@ package pt.isel.leic.daw.explodingbattleships.services
 
 
 import org.springframework.stereotype.Component
-import org.springframework.stereotype.Service
 import pt.isel.leic.daw.explodingbattleships.data.Data
 
 /**
  * Represents the services module of the app
- * @property inGameServices the in-game section
- * @property authenticatedServices the authentication-protected section
- * @property unauthenticatedServices the unprotected section
+ * @property usersServices the users section
+ * @property gamesServices the games section
  */
 @Component
 class Services(val data: Data) {
-    val inGameServices = InGameServices(data)
-    val authenticatedServices = AuthenticatedServices(data)
-    val unauthenticatedServices = UnauthenticatedServices(data)
+    val usersServices = UsersServices(data)
+    val gamesServices = GamesServices(data)
 }

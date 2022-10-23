@@ -1,15 +1,19 @@
 begin transaction;
 
-drop table if exists lobby;
+drop table if exists lobbies;
 
-drop table if exists ship;
+drop table if exists ship_types;
 
-drop table if exists hit;
+drop table if exists ships;
 
-drop table if exists game;
+drop table if exists hits;
 
-drop table if exists token;
+drop table if exists game_types;
 
-drop table if exists player;
+drop table if exists games;
+
+drop table if exists tokens;
+
+drop table if exists users;
 
 commit transaction;

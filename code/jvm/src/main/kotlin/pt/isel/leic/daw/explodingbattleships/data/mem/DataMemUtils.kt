@@ -1,9 +1,7 @@
 package pt.isel.leic.daw.explodingbattleships.data.mem
 
 import pt.isel.leic.daw.explodingbattleships.domain.*
-import pt.isel.leic.daw.explodingbattleships.services.utils.toGameType
 import java.sql.Timestamp
-import java.time.Duration
 import java.time.Instant
 
 /**
@@ -154,4 +152,4 @@ data class MockData(
     )
 )
 
-fun StoredPlayer.toPlayer() = Player(id, name, score)
+fun StoredPlayer.toPlayer() = User(id, name, score)

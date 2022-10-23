@@ -1,15 +1,19 @@
 begin transaction;
 
-delete from lobby;
+delete from lobbies;
 
-delete from ship;
+delete from ship_types;
 
-delete from hit;
+delete from ships;
 
-delete from game;
+delete from hits;
 
-delete from token;
+delete from game_types;
 
-delete from player;
+delete from games;
+
+delete from tokens;
+
+delete from users;
 
 commit transaction;

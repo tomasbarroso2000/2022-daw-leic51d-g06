@@ -4,9 +4,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.springframework.web.method.HandlerMethod
 import org.springframework.web.servlet.HandlerInterceptor
-import pt.isel.leic.daw.explodingbattleships.domain.Player
-import pt.isel.leic.daw.explodingbattleships.http.doApiTask
-import pt.isel.leic.daw.explodingbattleships.http.handleError
+import pt.isel.leic.daw.explodingbattleships.domain.User
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
@@ -16,7 +14,7 @@ class AuthenticationInterceptor(
 ) : HandlerInterceptor {
 
     override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
-        if (handler is HandlerMethod && handler.methodParameters.any { it.parameterType == Player::class.java }) {
+        if (handler is HandlerMethod && handler.methodParameters.any { it.parameterType == User::class.java }) {
             // enforce authentication
             return try {
                 val player = authorizationHeaderProcessor.process(request.getHeader(NAME_AUTHORIZATION_HEADER))

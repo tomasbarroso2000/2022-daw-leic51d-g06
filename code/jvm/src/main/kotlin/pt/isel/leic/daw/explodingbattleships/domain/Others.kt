@@ -7,9 +7,3 @@ data class Link(
     val rel: String,
     val requiresAuth: Boolean
 )
-
-data class SystemInfo(
-    val name: String = "Exploding Battleships",
-    val version: String = "0.0.0",
-    val authors: List<String> = listOf("Leki", "Palmilha", "TBMASTER2000")
-)

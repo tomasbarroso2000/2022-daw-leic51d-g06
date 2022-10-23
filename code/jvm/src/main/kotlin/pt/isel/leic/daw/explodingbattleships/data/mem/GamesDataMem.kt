@@ -42,4 +42,20 @@ class GamesDataMem(private val mockData: MockData) : GamesData {
             mockData.games.add(newGame)
         }
     }
+
+    override fun setGameToShooting(transaction: Transaction, gameId: Int) {
+        mockData.games.find { it.id == gameId }?.let { game ->
+            mockData.games.remove(game)
+            val newGame = game.copy(state = "shooting", startedAt = Instant.now())
+            mockData.games.add(newGame)
+        }
+    }
+
+    override fun setGameStateCompleted(transaction: Transaction, gameId: Int) {
+        val storedGame = mockData.games.find { it.id == gameId }
+        if (storedGame != null) {
+            mockData.games.remove(storedGame)
+            mockData.games.add(storedGame.copy(state = "completed"))
+        }
+    }
 }

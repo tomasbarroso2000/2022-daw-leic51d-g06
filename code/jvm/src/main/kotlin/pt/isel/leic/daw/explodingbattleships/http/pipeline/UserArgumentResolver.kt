@@ -6,13 +6,13 @@ import org.springframework.web.bind.support.WebDataBinderFactory
 import org.springframework.web.context.request.NativeWebRequest
 import org.springframework.web.method.support.HandlerMethodArgumentResolver
 import org.springframework.web.method.support.ModelAndViewContainer
-import pt.isel.leic.daw.explodingbattleships.domain.Player
+import pt.isel.leic.daw.explodingbattleships.domain.User
 import javax.servlet.http.HttpServletRequest
 
 @Component
 class UserArgumentResolver : HandlerMethodArgumentResolver {
 
-    override fun supportsParameter(parameter: MethodParameter) = parameter.parameterType == Player::class.java
+    override fun supportsParameter(parameter: MethodParameter) = parameter.parameterType == User::class.java
 
     override fun resolveArgument(
         parameter: MethodParameter,
@@ -28,13 +28,13 @@ class UserArgumentResolver : HandlerMethodArgumentResolver {
     companion object {
         private const val KEY = "UserArgumentResolver"
 
-        fun addPlayerTo(player: Player, request: HttpServletRequest) {
+        fun addPlayerTo(player: User, request: HttpServletRequest) {
             return request.setAttribute(KEY, player)
         }
 
-        fun getPlayerFrom(request: HttpServletRequest): Player? {
+        fun getPlayerFrom(request: HttpServletRequest): User? {
             return request.getAttribute(KEY)?.let {
-                it as? Player
+                it as? User
             }
         }
     }

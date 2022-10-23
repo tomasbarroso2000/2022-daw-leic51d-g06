@@ -1,9 +1,11 @@
 package pt.isel.leic.daw.explodingbattleships.data
 
 interface Data {
-    val inGameData: InGameData
+    val usersData: UsersData
     val gamesData: GamesData
-    val playersData: PlayersData
+    val lobbiesData: LobbiesData
+    val shipsData: ShipsData
+    val hitsData: HitsData
 
     fun getTransaction(): Transaction
 }

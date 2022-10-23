@@ -3,7 +3,6 @@ package pt.isel.leic.daw.explodingbattleships.services.utils
 import pt.isel.leic.daw.explodingbattleships.data.Data
 import pt.isel.leic.daw.explodingbattleships.data.Transaction
 import pt.isel.leic.daw.explodingbattleships.domain.*
-import java.time.Instant
 import java.util.regex.Pattern
 
 /**
@@ -82,7 +81,7 @@ fun isPlayerInAGame(transaction: Transaction, playerId: Int, data: Data): Boolea
  * @return true if the player is already in a lobby
  */
 fun isPlayerInLobby(transaction: Transaction, playerId: Int, data: Data): Boolean =
-    data.playersData.isPlayerInLobby(transaction, playerId)
+    data.lobbiesData.isPlayerInLobby(transaction, playerId)
 
 /**
  * Responsible for executing the hit, producing a list with the hits outcome
@@ -95,18 +94,18 @@ fun isPlayerInLobby(transaction: Transaction, playerId: Int, data: Data): Boolea
  * @return a list with the hits outcome
  */
 fun executeHit(transaction: Transaction, game: Game, verifiedSquares: List<VerifiedSquare>, playerId: Int, data: Data): HitsOutcome {
-    val shipsSquares = data.inGameData.getShipAndSquares(transaction, game.id, playerId)
+    val shipsSquares = data.shipsData.getShipsAndSquares(transaction, game.id, playerId)
     val hitOutcomeList = mutableListOf<HitOutcome>()
     verifiedSquares.forEach { square ->
         val entry = shipsSquares.entries.find { it.value.contains(square) }
         if (entry != null) {
-            data.inGameData.createHit(transaction, square, game.id, playerId, true)
-            data.inGameData.updateNumOfHits(transaction, game.id, playerId, entry.key.firstSquare.getString())
+            data.hitsData.createHit(transaction, square, game.id, playerId, true)
+            data.shipsData.updateNumOfHits(transaction, game.id, playerId, entry.key.firstSquare.getString())
             val destroyed = maybeDestroyShip(transaction, playerId, game.id, entry.key, data)
             if (destroyed) hitOutcomeList.add(HitOutcome(square, true, entry.key.name))
             else hitOutcomeList.add(HitOutcome(square, true))
         } else {
-            data.inGameData.createHit(transaction, square, game.id, playerId, false)
+            data.hitsData.createHit(transaction, square, game.id, playerId, false)
             hitOutcomeList.add(HitOutcome(square, false))
         }
     }
@@ -121,7 +120,7 @@ fun executeHit(transaction: Transaction, game: Game, verifiedSquares: List<Verif
  *  @param transaction the current transaction
  */
 fun getNumberOfHits(transaction: Transaction, gameId: Int, playerId: Int, verifiedShip: VerifiedShip, data: Data): Int =
-    data.inGameData.getNumOfHits(transaction, verifiedShip.firstSquare, gameId, playerId)
+    data.shipsData.getNumOfHits(transaction, verifiedShip.firstSquare, gameId, playerId)
 
 
 /**
@@ -130,7 +129,7 @@ fun getNumberOfHits(transaction: Transaction, gameId: Int, playerId: Int, verifi
 fun maybeDestroyShip(transaction: Transaction, playerId: Int, gameId: Int, ship: VerifiedShip, data: Data): Boolean {
     val nOfHits = getNumberOfHits(transaction, gameId, playerId, ship, data)
     if (ship.size == nOfHits) {
-        data.inGameData.destroyShip(transaction, gameId, playerId, ship.firstSquare)
+        data.shipsData.destroyShip(transaction, gameId, playerId, ship.firstSquare)
         return true
     }
     return false
@@ -140,7 +139,7 @@ fun maybeDestroyShip(transaction: Transaction, playerId: Int, gameId: Int, ship:
  * Checks if player won
  */
 fun winConditionDetection(transaction: Transaction, gameId: Int, playerId: Int, data: Data): Boolean =
-    data.inGameData.fleetState(transaction, gameId, playerId).all { it.destroyed }
+    data.shipsData.fleetState(transaction, gameId, playerId).all { it.destroyed }
 
 
 /**
@@ -159,13 +158,13 @@ fun isGameTypeInvalid(gameType: String) = gameType.toGameType() == null
  * @return information about whether the player was placed in the lobby or a game was started
  */
 fun enterLobbyOrCreateGame(transaction: Transaction, playerId: Int, gameType: String, data: Data): EnterLobbyOutput {
-    val matchingLobby = data.playersData.searchLobbies(transaction, gameType, playerId).firstOrNull()
+    val matchingLobby = data.lobbiesData.searchLobbies(transaction, gameType, playerId).firstOrNull()
     if (matchingLobby != null) {
-        data.playersData.removeLobby(transaction, matchingLobby.player, matchingLobby.gameType, matchingLobby.enterTime)
+        data.lobbiesData.removeLobby(transaction, matchingLobby.player, matchingLobby.gameType, matchingLobby.enterTime)
         return data.gamesData.createGame(transaction, gameType, playerId, matchingLobby.player)
             .let { EnterLobbyOutput(false, it) }
     }
-    return data.playersData.enterLobby(transaction, playerId, gameType)
+    return data.lobbiesData.enterLobby(transaction, playerId, gameType)
 }
 
 fun String.toGameType() = GameType.values().find { it.name == this.uppercase() }

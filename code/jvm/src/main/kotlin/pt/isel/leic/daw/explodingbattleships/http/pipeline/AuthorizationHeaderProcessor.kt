@@ -2,19 +2,18 @@ package pt.isel.leic.daw.explodingbattleships.http.pipeline
 
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
-import pt.isel.leic.daw.explodingbattleships.domain.Player
+import pt.isel.leic.daw.explodingbattleships.domain.User
 import pt.isel.leic.daw.explodingbattleships.http.getTokenFromAuthorization
 import pt.isel.leic.daw.explodingbattleships.services.Services
-import pt.isel.leic.daw.explodingbattleships.services.utils.AppException
 
 @Component
 class AuthorizationHeaderProcessor(
     val services: Services
 ) {
 
-    fun process(authorizationValue: String?): Player {
+    fun process(authorizationValue: String?): User {
         val token = getTokenFromAuthorization(authorizationValue)
-        return services.authenticatedServices.getPlayerInfo(token)
+        return services.usersServices.getPlayerInfo(token)
     }
 
     companion object {

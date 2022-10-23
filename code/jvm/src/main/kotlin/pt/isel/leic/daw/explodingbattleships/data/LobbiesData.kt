@@ -1,17 +1,10 @@
 package pt.isel.leic.daw.explodingbattleships.data
 
-import pt.isel.leic.daw.explodingbattleships.domain.*
+import pt.isel.leic.daw.explodingbattleships.domain.EnterLobbyOutput
+import pt.isel.leic.daw.explodingbattleships.domain.Lobby
 import java.time.Instant
 
-interface PlayersData {
-    fun getPlayerFromToken(transaction: Transaction, token: String): Player?
-
-    fun createPlayer(transaction: Transaction, name: String, email: String, password: Int): PlayerOutput
-
-    fun createToken(transaction: Transaction, playerId: Int): TokenOutput
-
-    fun getRankings(transaction: Transaction, limit: Int, skip: Int): Rankings
-
+interface LobbiesData {
     fun isPlayerInLobby(transaction: Transaction, playerId: Int): Boolean
 
     fun enterLobby(transaction: Transaction, playerId: Int, gameType: String): EnterLobbyOutput

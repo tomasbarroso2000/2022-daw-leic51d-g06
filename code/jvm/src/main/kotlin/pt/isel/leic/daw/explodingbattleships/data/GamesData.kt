@@ -20,4 +20,8 @@ interface GamesData {
     fun getPlayerGame(transaction: Transaction, playerId: Int): Game?
 
     fun changeCurrPlayer(transaction: Transaction, gameId: Int, newCurrPlayer: Int)
+
+    fun setGameToShooting(transaction: Transaction, gameId: Int)
+
+    fun setGameStateCompleted(transaction: Transaction, gameId: Int)
 }
