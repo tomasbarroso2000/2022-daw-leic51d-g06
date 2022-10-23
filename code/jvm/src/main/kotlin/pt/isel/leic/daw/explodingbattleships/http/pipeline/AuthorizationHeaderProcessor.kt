@@ -4,16 +4,16 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import pt.isel.leic.daw.explodingbattleships.domain.User
 import pt.isel.leic.daw.explodingbattleships.http.getTokenFromAuthorization
-import pt.isel.leic.daw.explodingbattleships.services.Services
+import pt.isel.leic.daw.explodingbattleships.services.UsersServices
 
 @Component
 class AuthorizationHeaderProcessor(
-    val services: Services
+    val services: UsersServices
 ) {
 
     fun process(authorizationValue: String?): User {
         val token = getTokenFromAuthorization(authorizationValue)
-        return services.usersServices.getPlayerInfo(token)
+        return services.getPlayerInfo(token)
     }
 
     companion object {

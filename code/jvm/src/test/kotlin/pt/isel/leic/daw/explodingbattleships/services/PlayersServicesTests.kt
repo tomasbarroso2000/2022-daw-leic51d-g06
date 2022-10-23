@@ -10,7 +10,7 @@ import pt.isel.leic.daw.explodingbattleships.services.utils.AppExceptionStatus
 
 class PlayersServicesTests {
     private val data = DataMem()
-    private val services = Services(data).usersServices
+    private val services = UsersServices(data)
 
     @Test
     fun create_player() {
@@ -20,9 +20,9 @@ class PlayersServicesTests {
             "OneLoveCasaPia6"
         )
         val expectedOutput = UserOutput(7)
-        val actualOutput = services.createUser(playerInput)
+        val actualOutput = services.createUser(playerInput.name, playerInput.email, playerInput.password)
         Assertions.assertEquals(expectedOutput, actualOutput)
-        Assertions.assertTrue(data.mockData.players.any { it.id == 7 })
+        Assertions.assertTrue(data.mockData.users.any { it.id == 7 })
     }
 
     @Test
@@ -33,7 +33,7 @@ class PlayersServicesTests {
             "OneLoveCasaPia6"
         )
         val exception = assertThrows<AppException> {
-            services.createUser(playerInput)
+            services.createUser(playerInput.name, playerInput.email, playerInput.password)
         }
         Assertions.assertEquals("Invalid name", exception.message)
         Assertions.assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
@@ -47,7 +47,7 @@ class PlayersServicesTests {
             "OneLoveCasaPia6"
         )
         val exception = assertThrows<AppException> {
-            services.createUser(playerInput)
+            services.createUser(playerInput.name, playerInput.email, playerInput.password)
         }
         Assertions.assertEquals("Invalid email", exception.message)
         Assertions.assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
@@ -61,7 +61,7 @@ class PlayersServicesTests {
             ""
         )
         val exception = assertThrows<AppException> {
-            services.createUser(playerInput)
+            services.createUser(playerInput.name, playerInput.email, playerInput.password)
         }
         Assertions.assertEquals("Invalid password", exception.message)
         Assertions.assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
@@ -75,7 +75,7 @@ class PlayersServicesTests {
             "casaPia"
         )
         val exception = assertThrows<AppException> {
-            services.createUser(playerInput)
+            services.createUser(playerInput.name, playerInput.email, playerInput.password)
         }
         Assertions.assertEquals("Password doesn't contain numbers", exception.message)
         Assertions.assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
@@ -89,7 +89,7 @@ class PlayersServicesTests {
             "casapia6"
         )
         val exception = assertThrows<AppException> {
-            services.createUser(playerInput)
+            services.createUser(playerInput.name, playerInput.email, playerInput.password)
         }
         Assertions.assertEquals("Password doesn't contain uppercase letters", exception.message)
         Assertions.assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
@@ -103,7 +103,7 @@ class PlayersServicesTests {
             "CASAPIA6"
         )
         val exception = assertThrows<AppException> {
-            services.createUser(playerInput)
+            services.createUser(playerInput.name, playerInput.email, playerInput.password)
         }
         Assertions.assertEquals("Password doesn't contain lowercase letters", exception.message)
         Assertions.assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
@@ -112,7 +112,7 @@ class PlayersServicesTests {
     @Test
     fun get_player_info() {
         val token = "123"
-        val expectedPlayer = User(1, "Leki", 420)
+        val expectedPlayer = User(1, "Leki", "leki@yes.com", 420, 123)
         val actualPlayer = services.getPlayerInfo(token)
         Assertions.assertEquals(expectedPlayer, actualPlayer)
     }
@@ -140,8 +140,8 @@ class PlayersServicesTests {
     @Test
     fun get_rankings() {
         val rankings = services.getRankings(10, 0)
-        Assertions.assertEquals(4, rankings.rankings.list[0].id)
-        Assertions.assertEquals(3, rankings.rankings.list[1].id)
+        Assertions.assertEquals(4, rankings.list[0].id)
+        Assertions.assertEquals(3, rankings.list[1].id)
     }
 
     @Test
@@ -164,10 +164,10 @@ class PlayersServicesTests {
 
     @Test
     fun enter_lobby() {
-        val player = User(3, "LordFarquaad", 510)
-        val enterLobbyInput = EnterLobbyInput("beginner")
+        val userId = 3
+        val input = EnterLobbyInput("beginner")
         val expectedOutput = EnterLobbyOutput(false, data.mockData.games.size + 1)
-        val actualOutput = services.enterLobby(player, enterLobbyInput)
+        val actualOutput = services.enterLobby(userId, input.gameType)
         Assertions.assertEquals(expectedOutput, actualOutput)
     }
 }

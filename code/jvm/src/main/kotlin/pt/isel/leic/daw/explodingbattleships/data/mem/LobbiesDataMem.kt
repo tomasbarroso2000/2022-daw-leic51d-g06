@@ -7,9 +7,6 @@ import pt.isel.leic.daw.explodingbattleships.domain.Lobby
 import java.time.Instant
 
 class LobbiesDataMem(private val mockData: MockData) : LobbiesData {
-    override fun isPlayerInLobby(transaction: Transaction, playerId: Int): Boolean =
-        mockData.lobby.any { it.player == playerId }
-
     override fun enterLobby(transaction: Transaction, playerId: Int, gameType: String): EnterLobbyOutput {
         mockData.lobby.add(StoredLobby(playerId, gameType, Instant.now()))
         return EnterLobbyOutput(true, null)

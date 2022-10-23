@@ -10,18 +10,18 @@ import pt.isel.leic.daw.explodingbattleships.services.utils.AppExceptionStatus
 
 class GamesServicesTests {
     private val data = DataMem()
-    private val services = Services(data).gamesServices
+    private val services = GamesServices(data)
 
     @Test
     fun get_number_of_played_games() {
         val number = services.getNumberOfPlayedGames()
-        Assertions.assertEquals(data.mockData.games.size, number.number)
+        Assertions.assertEquals(data.mockData.games.size, number)
     }
 
     @Test
     fun get_game_state() {
         val state = services.getGameState(1)
-        Assertions.assertEquals("layout_definition", state.state)
+        Assertions.assertEquals("layout_definition", state)
     }
 
     @Test
@@ -45,7 +45,7 @@ class GamesServicesTests {
 
     @Test
     fun define_layout() {
-        val player = User(1, "Leki", 420)
+        val userId = 1
         val layout = Layout(
             3,
             listOf(
@@ -57,14 +57,14 @@ class GamesServicesTests {
             )
         )
         val expectedLayoutOutcome = LayoutOutcome(LayoutOutcomeStatus.WAITING)
-        val actualLayoutOutcome = services.sendLayout(player, layout)
+        val actualLayoutOutcome = services.sendLayout(userId, layout.gameId, layout.ships)
         Assertions.assertEquals(expectedLayoutOutcome, actualLayoutOutcome)
         Assertions.assertEquals(5, data.mockData.ships.filter { it.game == 3 && it.player == 1 }.size)
     }
 
     @Test
     fun define_layout_with_player_not_in_a_game() {
-        val player = User(1, "Leki", 420)
+        val userId = 1
         val layout = Layout(
             2,
             listOf(
@@ -76,7 +76,7 @@ class GamesServicesTests {
             )
         )
         val exception = assertThrows<AppException> {
-            services.sendLayout(player, layout)
+            services.sendLayout(userId, layout.gameId, layout.ships)
         }
         Assertions.assertEquals("Player not in game", exception.message)
         Assertions.assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
@@ -84,7 +84,7 @@ class GamesServicesTests {
 
     @Test
     fun define_layout_with_invalid_orientation() {
-        val player = User(1, "Leki", 420)
+        val userId = 1
         val layout = Layout(
             3,
             listOf(
@@ -96,7 +96,7 @@ class GamesServicesTests {
             )
         )
         val exception = assertThrows<AppException> {
-            services.sendLayout(player, layout)
+            services.sendLayout(userId, layout.gameId, layout.ships)
         }
         Assertions.assertEquals("Invalid orientation for submarine", exception.message)
         Assertions.assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
@@ -104,7 +104,7 @@ class GamesServicesTests {
 
     @Test
     fun define_layout_with_invalid_ship() {
-        val player = User(1, "Leki", 420)
+        val userId = 1
         val layout = Layout(
             3,
             listOf(
@@ -116,7 +116,7 @@ class GamesServicesTests {
             )
         )
         val exception = assertThrows<AppException> {
-            services.sendLayout(player, layout)
+            services.sendLayout(userId, layout.gameId, layout.ships)
         }
         Assertions.assertEquals("Invalid ship list for BEGINNER game", exception.message)
         Assertions.assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
@@ -124,7 +124,7 @@ class GamesServicesTests {
 
     @Test
     fun define_layout_of_layout_already_defined() {
-        val player = User(1, "Leki", 420)
+        val userId = 1
         val layout = Layout(
             1,
             listOf(
@@ -136,7 +136,7 @@ class GamesServicesTests {
             )
         )
         val exception = assertThrows<AppException> {
-            services.sendLayout(player, layout)
+            services.sendLayout(userId, layout.gameId, layout.ships)
         }
         Assertions.assertEquals("Layout already defined", exception.message)
         Assertions.assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
@@ -144,7 +144,7 @@ class GamesServicesTests {
 
     @Test
     fun send_hits() {
-        val player = User(5, "Shrek", 10)
+        val userId = 5
         val hits = Hits(
             2,
             listOf(
@@ -159,14 +159,14 @@ class GamesServicesTests {
             ),
             false
         )
-        val actualHitsOutcome = services.sendHits(player, hits)
+        val actualHitsOutcome = services.sendHits(userId, hits.gameId, hits.squares)
         Assertions.assertEquals(expectedHitsOutcome, actualHitsOutcome)
         Assertions.assertEquals(3, data.mockData.hits.filter { it.game == 2 && it.player == 6 }.size)
     }
 
     @Test
     fun send_hits_with_player_not_in_a_game() {
-        val player = User(3, "LordFarquaad", 510)
+        val useriD = 3
         val hits = Hits(
             2,
             listOf(
@@ -175,7 +175,7 @@ class GamesServicesTests {
             )
         )
         val exception = assertThrows<AppException> {
-            services.sendHits(player, hits)
+            services.sendHits(useriD, hits.gameId, hits.squares)
         }
         Assertions.assertEquals("Player not in game", exception.message)
         Assertions.assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
@@ -183,7 +183,7 @@ class GamesServicesTests {
 
     @Test
     fun send_hits_with_player_not_current() {
-        val player = User(6, "Fiona", 10)
+        val userId = 6
         val hits = Hits(
             2,
             listOf(
@@ -192,7 +192,7 @@ class GamesServicesTests {
             )
         )
         val exception = assertThrows<AppException> {
-            services.sendHits(player, hits)
+            services.sendHits(userId, hits.gameId, hits.squares)
         }
         Assertions.assertEquals("Not your turn", exception.message)
         Assertions.assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
@@ -200,10 +200,10 @@ class GamesServicesTests {
 
     @Test
     fun send_hits_with_no_squares() {
-        val player = User(5, "Shrek", 10)
+        val userId = 5
         val hits = Hits(2, listOf())
         val exception = assertThrows<AppException> {
-            services.sendHits(player, hits)
+            services.sendHits(userId, hits.gameId, hits.squares)
         }
         Assertions.assertEquals("No squares provided", exception.message)
         Assertions.assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
@@ -211,7 +211,7 @@ class GamesServicesTests {
 
     @Test
     fun send_hits_with_invalid_amount_of_hits() {
-        val player = User(5, "Shrek", 10)
+        val userId = 5
         val hits = Hits(
             2,
             listOf(
@@ -224,7 +224,7 @@ class GamesServicesTests {
             )
         )
         val exception = assertThrows<AppException> {
-            services.sendHits(player, hits)
+            services.sendHits(userId, hits.gameId, hits.squares)
         }
         Assertions.assertEquals("Invalid amount of hits", exception.message)
         Assertions.assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
@@ -232,7 +232,7 @@ class GamesServicesTests {
 
     @Test
     fun send_hits_with_invalid_square() {
-        val player = User(5, "Shrek", 10)
+        val userId = 5
         val hits = Hits(
             2,
             listOf(
@@ -241,7 +241,7 @@ class GamesServicesTests {
             )
         )
         val exception = assertThrows<AppException> {
-            services.sendHits(player, hits)
+            services.sendHits(userId, hits.gameId, hits.squares)
         }
         Assertions.assertEquals("Invalid square: null2", exception.message)
         Assertions.assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
@@ -249,7 +249,7 @@ class GamesServicesTests {
 
     @Test
     fun send_hits_with_square_not_in_board() {
-        val player = User(5, "Shrek", 10)
+        val userId = 5
         val hits = Hits(
             2,
             listOf(
@@ -258,7 +258,7 @@ class GamesServicesTests {
             )
         )
         val exception = assertThrows<AppException> {
-            services.sendHits(player, hits)
+            services.sendHits(userId, hits.gameId, hits.squares)
         }
         Assertions.assertEquals("Invalid square: z2", exception.message)
         Assertions.assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
@@ -266,7 +266,7 @@ class GamesServicesTests {
 
     @Test
     fun send_hits_with_square_already_hit() {
-        val player = User(5, "Shrek", 10)
+        val userId = 5
         val hits = Hits(
             2,
             listOf(
@@ -275,7 +275,7 @@ class GamesServicesTests {
             )
         )
         val exception = assertThrows<AppException> {
-            services.sendHits(player, hits)
+            services.sendHits(userId, hits.gameId, hits.squares)
         }
         Assertions.assertEquals("Square already hit: f1", exception.message)
         Assertions.assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
@@ -283,7 +283,7 @@ class GamesServicesTests {
 
     @Test
     fun send_hits_and_win_the_game() {
-        val player = User(3, "LordFarquaad", 510)
+        val userId = 3
         val hits = Hits(
             4,
             listOf(
@@ -298,13 +298,13 @@ class GamesServicesTests {
             ),
             true
         )
-        val actualHitsOutcome = services.sendHits(player, hits)
+        val actualHitsOutcome = services.sendHits(userId, hits.gameId, hits.squares)
         Assertions.assertEquals(expectedHitsOutcome, actualHitsOutcome)
     }
 
     @Test
     fun player_fleet_state() {
-        val player = User(1, "Leki", 420)
+        val userId = 1
         val expectedFleet = listOf(
             ShipState("carrier", false),
             ShipState("battleship", false),
@@ -312,15 +312,15 @@ class GamesServicesTests {
             ShipState("submarine", false),
             ShipState("destroyer", false)
         )
-        val actualFleet = services.fleetState(player, Fleet(1, true))
+        val actualFleet = services.fleetState(userId, 1, true)
         Assertions.assertEquals(expectedFleet, actualFleet)
     }
 
     @Test
     fun player_fleet_state_with_player_not_in_a_game() {
-        val player = User(3, "LordFarquaad", 510)
+        val userId = 3
         val exception = assertThrows<AppException> {
-            services.fleetState(player, Fleet(1, true))
+            services.fleetState(userId, 1, true)
         }
         Assertions.assertEquals("Player not in game", exception.message)
         Assertions.assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
@@ -328,7 +328,7 @@ class GamesServicesTests {
 
     @Test
     fun enemy_fleet_state() {
-        val player = User(1, "Leki", 420)
+        val userId = 1
         val expectedFleet = listOf(
             ShipState("carrier", false),
             ShipState("battleship", false),
@@ -336,15 +336,15 @@ class GamesServicesTests {
             ShipState("submarine", true),
             ShipState("destroyer", true)
         )
-        val actualFleet = services.fleetState(player, Fleet(1, false))
+        val actualFleet = services.fleetState(userId,1, false)
         Assertions.assertEquals(expectedFleet, actualFleet)
     }
 
     @Test
     fun enemy_fleet_state_with_player_not_in_a_game() {
-        val player = User(3, "LordFarquaad", 510)
+        val userId = 3
         val exception = assertThrows<AppException> {
-            services.fleetState(player, Fleet(1, false))
+            services.fleetState(userId,1, false)
         }
         Assertions.assertEquals("Player not in game", exception.message)
         Assertions.assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)

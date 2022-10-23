@@ -5,8 +5,6 @@ import pt.isel.leic.daw.explodingbattleships.domain.Lobby
 import java.time.Instant
 
 interface LobbiesData {
-    fun isPlayerInLobby(transaction: Transaction, playerId: Int): Boolean
-
     fun enterLobby(transaction: Transaction, playerId: Int, gameType: String): EnterLobbyOutput
 
     fun searchLobbies(transaction: Transaction, gameType: String, playerId: Int): List<Lobby>

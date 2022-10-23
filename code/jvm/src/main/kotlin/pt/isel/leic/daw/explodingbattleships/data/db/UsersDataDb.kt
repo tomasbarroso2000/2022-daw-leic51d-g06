@@ -4,14 +4,20 @@ import org.jdbi.v3.core.kotlin.mapTo
 import pt.isel.leic.daw.explodingbattleships.data.UsersData
 import pt.isel.leic.daw.explodingbattleships.data.Transaction
 import pt.isel.leic.daw.explodingbattleships.domain.*
-import java.time.Instant
 import java.util.UUID
 
 class UsersDataDb : UsersData {
     override fun getUserFromToken(transaction: Transaction, token: String): User? =
         (transaction as TransactionDataDb).withHandle { handle ->
-            handle.select("select id, name, score from tokens join users on user_id = id where token_ver = :token")
+            handle.select("select id, name, email, score, password_ver from tokens join users on user_id = id where token_ver = :token")
                 .bind("token", token)
+                .mapTo<User>().firstOrNull()
+        }
+
+    override fun getUserFromEmail(transaction: Transaction, email: String): User? =
+        (transaction as TransactionDataDb).withHandle { handle ->
+            handle.select("select * from users where email = :email")
+                .bind("email", email)
                 .mapTo<User>().firstOrNull()
         }
 
@@ -26,26 +32,26 @@ class UsersDataDb : UsersData {
                 .first().let { UserOutput(it) }
         }
 
-    override fun createToken(transaction: Transaction, playerId: Int): TokenOutput =
+    override fun createToken(transaction: Transaction, userId: Int): String =
         (transaction as TransactionDataDb).withHandle { handle ->
             val token = UUID.randomUUID().toString()
-            handle.createUpdate("insert into tokens values (:token, :playerId)")
+            handle.createUpdate("insert into tokens values (:token, :userId)")
                 .bind("token", token)
-                .bind("playerId", playerId)
+                .bind("userId", userId)
                 .execute()
-            TokenOutput(token)
+            token
         }
 
-    override fun getRankings(transaction: Transaction, limit: Int, skip: Int): Rankings =
+    override fun getRankings(transaction: Transaction, limit: Int, skip: Int): DataList<Ranking> =
         (transaction as TransactionDataDb).withHandle { handle ->
-            val foundPlayers =
+            val foundRankings =
                 handle.createQuery("select id, name, score from users order by score desc offset :skip limit :limit")
                     .bind("skip", skip)
                     .bind("limit", limit + 1)
-                    .mapTo<User>().list()
-            val players = mutableListOf<User>()
-            val hasMore = getHasMoreAndProcessList(foundPlayers, players, limit)
-            Rankings(ListOfData(players, hasMore))
+                    .mapTo<Ranking>().list()
+            val rankings = mutableListOf<Ranking>()
+            val hasMore = getHasMoreAndProcessList(foundRankings, rankings, limit)
+            DataList(rankings, hasMore)
         }
 }
 

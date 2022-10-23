@@ -8,13 +8,6 @@ import pt.isel.leic.daw.explodingbattleships.domain.Lobby
 import java.time.Instant
 
 class LobbiesDataDb: LobbiesData {
-    override fun isPlayerInLobby(transaction: Transaction, playerId: Int): Boolean  =
-        (transaction as TransactionDataDb).withHandle { handle ->
-            handle.createQuery("select exists (select * from lobbies where player = :playerId)")
-                .bind("playerId", playerId)
-                .mapTo<Boolean>().first()
-        }
-
     override fun enterLobby(transaction: Transaction, playerId: Int, gameType: String): EnterLobbyOutput =
         (transaction as TransactionDataDb).withHandle { handle ->
             handle.createUpdate("insert into lobbies values (:playerId, :gameType, now())")

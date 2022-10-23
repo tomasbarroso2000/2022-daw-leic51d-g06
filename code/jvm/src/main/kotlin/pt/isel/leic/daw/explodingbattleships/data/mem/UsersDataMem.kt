@@ -7,30 +7,33 @@ import java.util.UUID
 
 class UsersDataMem(private val mockData: MockData) : UsersData {
     override fun getUserFromToken(transaction: Transaction, token: String): User? {
-        val playerId =
+        val userId =
             mockData
                 .tokens
-                .find { it.tokenVer == token }?.player
+                .find { it.tokenVer == token }?.userId
         return mockData
-            .players
-            .find { player -> player.id == playerId }
-            ?.let { User(it.id, it.name, it.score) }
+            .users
+            .find { player -> player.id == userId }
+            ?.toUser()
     }
 
+    override fun getUserFromEmail(transaction: Transaction, email: String): User? =
+        mockData.users.find { it.email == email }?.toUser()
+
     override fun createUser(transaction: Transaction, name: String, email: String, password: Int): UserOutput {
-        val id = mockData.players.maxOf { it.id } + 1
-        mockData.players.add(StoredPlayer(id, name, email, 0, password))
+        val id = mockData.users.maxOf { it.id } + 1
+        mockData.users.add(StoredUser(id, name, email, 0, password))
         return UserOutput(id)
     }
 
-    override fun createToken(transaction: Transaction, playerId: Int): TokenOutput {
+    override fun createToken(transaction: Transaction, userId: Int): String {
         val token = UUID.randomUUID().toString()
-        mockData.tokens.add(StoredToken(token, playerId))
-        return TokenOutput(token)
+        mockData.tokens.add(StoredToken(token, userId))
+        return token
     }
 
-    override fun getRankings(transaction: Transaction, limit: Int, skip: Int): Rankings {
-        val players = mockData.players.map { it.toPlayer() }.sortedBy { it.score }.reversed()
-        return Rankings(ListOfData(getSublist(players, limit, skip), hasMore(players.size, limit, skip)))
+    override fun getRankings(transaction: Transaction, limit: Int, skip: Int): DataList<Ranking> {
+        val rankings = mockData.users.map { it.toRanking() }.sortedBy { it.score }.reversed()
+        return DataList(getSublist(rankings, limit, skip), hasMore(rankings.size, limit, skip))
     }
 }

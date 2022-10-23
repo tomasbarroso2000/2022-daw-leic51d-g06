@@ -13,43 +13,63 @@ import pt.isel.leic.daw.explodingbattleships.http.Uris.Users.CREATE
 import pt.isel.leic.daw.explodingbattleships.http.Uris.Users.ENTER_LOBBY
 import pt.isel.leic.daw.explodingbattleships.http.Uris.Users.HOME
 import pt.isel.leic.daw.explodingbattleships.http.Uris.Users.RANKINGS
+import pt.isel.leic.daw.explodingbattleships.http.Uris.Users.TOKEN
 import pt.isel.leic.daw.explodingbattleships.http.doApiTask
+import pt.isel.leic.daw.explodingbattleships.http.models.*
 import pt.isel.leic.daw.explodingbattleships.infra.siren
-import pt.isel.leic.daw.explodingbattleships.services.Services
+import pt.isel.leic.daw.explodingbattleships.services.UsersServices
 import javax.validation.Valid
 
 @RestController
 @RequestMapping(Uris.BASE_PATH)
-class UsersController(private val services: Services) {
+class UsersController(private val services: UsersServices) {
+
+    @GetMapping(HOME)
+    fun getPlayerHome(
+        user: User
+    ) = doApiTask {
+        ResponseEntity
+            .status(Successes.OK)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(
+                siren(UserOutputModel(user.id, user.name, user.email, user.score)) {
+                    link(Uris.Users.home(), Rels.SELF)
+                    link(Uris.home(), Rels.HOME)
+                    clazz("UserOutputModel")
+                }
+            )
+    }
 
     @PostMapping(CREATE)
     fun createUser(
         @Valid @RequestBody input: UserInput
     ) = doApiTask {
+        val res = services.createUser(input.name, input.email, input.password)
         ResponseEntity
             .status(Successes.CREATED)
             .contentType(MediaType.APPLICATION_JSON)
             .body(
-                siren(services.usersServices.createUser(input)) {
-                    link(Uris.Users.createPlayer(), Rels.SELF)
+                siren(UserCreationOutputModel(res.id)) {
+                    link(Uris.Users.createUser(), Rels.SELF)
                     link(Uris.home(), Rels.HOME)
                     clazz("UserOutput")
                 }
             )
     }
 
-    @GetMapping(HOME)
-    fun getPlayerHome(
-        player: User
+    @PostMapping(TOKEN)
+    fun createToken(
+        @Valid @RequestBody input: UserTokenInputModel
     ) = doApiTask {
+        val res = services.createToken(input.email, input.password)
         ResponseEntity
-            .status(Successes.OK)
+            .status(Successes.CREATED)
             .contentType(MediaType.APPLICATION_JSON)
             .body(
-                siren(player) {
-                    link(Uris.Users.home(), Rels.SELF)
+                siren(UserTokenOutputModel(res)) {
+                    link(Uris.Users.createToken(), Rels.SELF)
                     link(Uris.home(), Rels.HOME)
-                    clazz("PlayerOutputModel")
+                    clazz("UserTokenOutputModel")
                 }
             )
     }
@@ -59,11 +79,12 @@ class UsersController(private val services: Services) {
         @RequestParam(required = false, defaultValue = "10") limit: Int,
         @RequestParam(required = false, defaultValue = "0") skip: Int,
     ) = doApiTask {
+        val res = services.getRankings(limit, skip)
         ResponseEntity
             .status(Successes.OK)
             .contentType(MediaType.APPLICATION_JSON)
             .body(
-                siren(services.usersServices.getRankings(limit, skip)) {
+                siren(RankingsOutputModel(res)) {
                     link(Uris.Users.rankings(), Rels.SELF)
                     link(Uris.home(), Rels.HOME)
                     clazz("Rankings")
@@ -76,11 +97,12 @@ class UsersController(private val services: Services) {
         player: User,
         @Valid @RequestBody input: EnterLobbyInput
     ) = doApiTask {
+        val res = services.enterLobby(player.id, input.gameType)
         ResponseEntity
             .status(Successes.OK)
             .contentType(MediaType.APPLICATION_JSON)
             .body(
-                siren(services.usersServices.enterLobby(player, input)) {
+                siren(EnterLobbyOutputModel(res.waitingForGame, res.gameId)) {
                     link(Uris.Users.enterLobby(), Rels.SELF)
                     link(Uris.home(), Rels.HOME)
                     clazz("EnterLobbyOutput")

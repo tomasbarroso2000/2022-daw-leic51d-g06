@@ -18,22 +18,16 @@ class GamesDataMem(private val mockData: MockData) : GamesData {
     }
 
     override fun getNumberOfPlayedGames(transaction: Transaction) =
-        NumberOfPlayedGames(mockData.games.size)
+        mockData.games.size
 
     override fun getGameState(transaction: Transaction, gameId: Int) =
-        mockData.games.find { it.id == gameId }?.state?.let { GameState(it) }
+        mockData.games.find { it.id == gameId }?.state
 
     override fun getGame(transaction: Transaction, gameId: Int): Game? =
         mockData.games.find { it.id == gameId }?.toGame()
 
     override fun getHitSquares(transaction: Transaction, gameId: Int, playerId: Int): List<VerifiedSquare> =
         mockData.hits.filter { it.game == gameId && it.player == playerId }.map { it.square.toVerifiedSquare() }
-
-    override fun getPlayerGame(transaction: Transaction, playerId: Int): Game? =
-        mockData
-            .games
-            .filter { (it.player1 == playerId || it.player2 == playerId) && it.state != "completed" }
-            .map { it.toGame() }.firstOrNull()
 
     override fun changeCurrPlayer(transaction: Transaction, gameId: Int, newCurrPlayer: Int) {
         mockData.games.find { it.id == gameId }?.let { game ->

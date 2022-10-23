@@ -53,37 +53,6 @@ fun isEmailValid(email: String): Boolean {
 }
 
 /**
- * Returns the game the player is playing
- * @param transaction the current transaction
- * @param playerId the player id
- * @param data the data module to be used
- * @return the game that the player is playing
- */
-fun getPlayerGameOrThrow(transaction: Transaction, playerId: Int, data: Data): Game =
-    data.gamesData.getPlayerGame(transaction, playerId)
-        ?: throw AppException("Player not in a game", AppExceptionStatus.BAD_REQUEST)
-
-/**
- * Returns whether the player is in a game or not
- * @param transaction the current transaction
- * @param playerId the player id
- * @param data the data module to be used
- * @return true if the player is in a game
- */
-fun isPlayerInAGame(transaction: Transaction, playerId: Int, data: Data): Boolean =
-    data.gamesData.getPlayerGame(transaction, playerId) != null
-
-/**
- * Returns whether the player is already in a lobby
- * @param transaction the current transaction
- * @param playerId the player id
- * @param data the data module to be used
- * @return true if the player is already in a lobby
- */
-fun isPlayerInLobby(transaction: Transaction, playerId: Int, data: Data): Boolean =
-    data.lobbiesData.isPlayerInLobby(transaction, playerId)
-
-/**
  * Responsible for executing the hit, producing a list with the hits outcome
  * and if any ship was destroyed
  * @param transaction the current transaction

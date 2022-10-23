@@ -9,15 +9,13 @@ import java.time.Instant
 interface GamesData {
     fun createGame(transaction: Transaction, gameType: String, player1: Int, player2: Int): Int
 
-    fun getNumberOfPlayedGames(transaction: Transaction): NumberOfPlayedGames
+    fun getNumberOfPlayedGames(transaction: Transaction): Int
 
-    fun getGameState(transaction: Transaction, gameId: Int): GameState?
+    fun getGameState(transaction: Transaction, gameId: Int): String?
 
     fun getGame(transaction: Transaction, gameId: Int): Game?
 
     fun getHitSquares(transaction: Transaction, gameId: Int, playerId: Int): List<VerifiedSquare>
-
-    fun getPlayerGame(transaction: Transaction, playerId: Int): Game?
 
     fun changeCurrPlayer(transaction: Transaction, gameId: Int, newCurrPlayer: Int)
 

@@ -26,17 +26,16 @@ class GamesDataDb : GamesData {
                 .mapTo<Int>()
                 .first()
         }
-    override fun getNumberOfPlayedGames(transaction: Transaction) =
+    override fun getNumberOfPlayedGames(transaction: Transaction): Int =
         (transaction as TransactionDataDb).withHandle { handle ->
-            val nr = handle.createQuery("select count(*) from games").mapTo<Int>().first()
-            NumberOfPlayedGames(nr)
+            handle.createQuery("select count(*) from games").mapTo<Int>().first()
         }
 
-    override fun getGameState(transaction: Transaction, gameId: Int) =
+    override fun getGameState(transaction: Transaction, gameId: Int): String? =
         (transaction as TransactionDataDb).withHandle { handle ->
             handle.createQuery("select state from games where id = :id")
                 .bind("id", gameId)
-                .mapTo<String>().firstOrNull()?.let { GameState(it) }
+                .mapTo<String>().firstOrNull()
         }
 
     override fun getGame(transaction: Transaction, gameId: Int): Game? =
@@ -52,13 +51,6 @@ class GamesDataDb : GamesData {
                 .bind("gameId", gameId)
                 .bind("playerId", playerId)
                 .mapTo<String>().list().map { it.toVerifiedSquare() }
-        }
-
-    override fun getPlayerGame(transaction: Transaction, playerId: Int): Game? =
-        (transaction as TransactionDataDb).withHandle { handle ->
-            handle.createQuery("select * from games where (player1 = :playerId or player2 = :playerId) and state <> 'completed'")
-                .bind("playerId", playerId)
-                .mapTo<Game>().firstOrNull()
         }
 
     override fun changeCurrPlayer(transaction: Transaction, gameId: Int, newCurrPlayer: Int) {

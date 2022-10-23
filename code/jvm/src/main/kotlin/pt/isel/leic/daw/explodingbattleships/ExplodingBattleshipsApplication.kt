@@ -1,8 +1,5 @@
 package pt.isel.leic.daw.explodingbattleships
 
-import org.jdbi.v3.core.Jdbi
-import org.jdbi.v3.core.kotlin.KotlinPlugin
-import org.postgresql.ds.PGSimpleDataSource
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Bean
@@ -13,11 +10,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import pt.isel.leic.daw.explodingbattleships.http.pipeline.UserArgumentResolver
 import pt.isel.leic.daw.explodingbattleships.http.pipeline.AuthenticationInterceptor
-import pt.isel.leic.daw.explodingbattleships.services.Services
 import pt.isel.leic.daw.explodingbattleships.utils.Sha256TokenEncoder
 
 @SpringBootApplication
-class ExplodingBattleshipsApplication(val services: Services) : WebMvcConfigurer {
+class ExplodingBattleshipsApplication : WebMvcConfigurer {
 
     @Bean
     fun passwordEncoder() = BCryptPasswordEncoder()

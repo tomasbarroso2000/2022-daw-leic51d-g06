@@ -40,7 +40,7 @@ fun <T> getSublist(list: List<T>, limit: Int, skip: Int): List<T> {
  */
 fun hasMore(count: Int, limit: Int, skip: Int) = count > skip + limit
 
-data class StoredPlayer(
+data class StoredUser(
     val id: Int,
     val name: String,
     val email: String,
@@ -67,7 +67,7 @@ fun StoredGame.toGame(): Game {
 
 data class StoredToken(
     val tokenVer: String,
-    val player: Int
+    val userId: Int
 )
 
 data class StoredShip(
@@ -100,13 +100,13 @@ data class StoredLobby(
 )
 
 data class MockData(
-    val players: MutableSet<StoredPlayer> = mutableSetOf(
-        StoredPlayer(1, "Leki", "leki@yes.com", 420, 123),
-        StoredPlayer(2, "Daizer", "daizer@daizer.daizer", 500, 123),
-        StoredPlayer(3, "LordFarquaad", "farquaad@buebuelonge.com", 510, 123),
-        StoredPlayer(4, "GingerbreadMan", "ginger@buebuelonge.com", 520, 123),
-        StoredPlayer(5, "Shrek", "ilovefiona@pantano.com", 10, 123),
-        StoredPlayer(6, "Fiona", "iloveshrek@gmail.com", 10, 123)
+    val users: MutableSet<StoredUser> = mutableSetOf(
+        StoredUser(1, "Leki", "leki@yes.com", 420, 123),
+        StoredUser(2, "Daizer", "daizer@daizer.daizer", 500, 123),
+        StoredUser(3, "LordFarquaad", "farquaad@buebuelonge.com", 510, 123),
+        StoredUser(4, "GingerbreadMan", "ginger@buebuelonge.com", 520, 123),
+        StoredUser(5, "Shrek", "ilovefiona@pantano.com", 10, 123),
+        StoredUser(6, "Fiona", "iloveshrek@gmail.com", 10, 123)
     ),
     val games: MutableSet<StoredGame> = mutableSetOf(
         StoredGame(1, "beginner", "layout_definition", 1, 2, 1, Instant.now()),
@@ -152,4 +152,5 @@ data class MockData(
     )
 )
 
-fun StoredPlayer.toPlayer() = User(id, name, score)
+fun StoredUser.toUser() = User(id, name, email, score, passwordVer)
+fun StoredUser.toRanking() = Ranking(id, name, score)
