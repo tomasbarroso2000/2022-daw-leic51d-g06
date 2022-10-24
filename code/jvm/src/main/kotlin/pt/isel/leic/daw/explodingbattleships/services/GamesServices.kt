@@ -8,6 +8,10 @@ import pt.isel.leic.daw.explodingbattleships.services.utils.*
 @Component
 class GamesServices(private val data: Data) {
 
+    fun getGame(userId: Int, gameId: Int) = doService(data) {
+
+    }
+
     /**
      * Gets the number of games registered
      * @return the number of games

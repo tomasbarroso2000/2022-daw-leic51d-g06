@@ -33,3 +33,10 @@ data class GameOutputModel(
     val hits: List<Square>,
     val misses: List<Square>
 )
+
+data class FullGameInfo(
+    val game: Game,
+    val takenHits: List<Hits>,
+    val fleet: List<Ship>,
+    val enemySunkFleet: List<Ship>,
+)
