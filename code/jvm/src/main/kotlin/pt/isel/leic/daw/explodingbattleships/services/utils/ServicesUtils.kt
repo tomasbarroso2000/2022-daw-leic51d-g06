@@ -57,19 +57,19 @@ fun isEmailValid(email: String): Boolean {
  * and if any ship was destroyed
  * @param transaction the current transaction
  * @param game the current game
- * @param verifiedSquares the squares that will be hit
+ * @param squares the squares that will be hit
  * @param playerId the player id
  * @param data the data module to be used
  * @return a list with the hits outcome
  */
-fun executeHit(transaction: Transaction, game: Game, verifiedSquares: List<VerifiedSquare>, playerId: Int, data: Data): HitsOutcome {
+fun executeHit(transaction: Transaction, game: Game, squares: List<Square>, playerId: Int, data: Data): HitsOutcome {
     val shipsSquares = data.shipsData.getShipsAndSquares(transaction, game.id, playerId)
     val hitOutcomeList = mutableListOf<HitOutcome>()
-    verifiedSquares.forEach { square ->
+    squares.forEach { square ->
         val entry = shipsSquares.entries.find { it.value.contains(square) }
         if (entry != null) {
             data.hitsData.createHit(transaction, square, game.id, playerId, true)
-            data.shipsData.updateNumOfHits(transaction, game.id, playerId, entry.key.firstSquare.getString())
+            data.shipsData.updateNumOfHits(transaction, game.id, playerId, entry.key.firstSquare)
             val destroyed = maybeDestroyShip(transaction, playerId, game.id, entry.key, data)
             if (destroyed) hitOutcomeList.add(HitOutcome(square, true, entry.key.name))
             else hitOutcomeList.add(HitOutcome(square, true))
@@ -85,18 +85,10 @@ fun executeHit(transaction: Transaction, game: Game, verifiedSquares: List<Verif
 }
 
 /**
- *  Get the number of hits of a ship
- *  @param transaction the current transaction
- */
-fun getNumberOfHits(transaction: Transaction, gameId: Int, playerId: Int, verifiedShip: VerifiedShip, data: Data): Int =
-    data.shipsData.getNumOfHits(transaction, verifiedShip.firstSquare, gameId, playerId)
-
-
-/**
  * Checks if a ship was destroyed this turn or not
  */
-fun maybeDestroyShip(transaction: Transaction, playerId: Int, gameId: Int, ship: VerifiedShip, data: Data): Boolean {
-    val nOfHits = getNumberOfHits(transaction, gameId, playerId, ship, data)
+fun maybeDestroyShip(transaction: Transaction, playerId: Int, gameId: Int, ship: Ship, data: Data): Boolean {
+    val nOfHits = data.shipsData.getShip(transaction, ship.firstSquare, gameId, playerId)?.nOfHits
     if (ship.size == nOfHits) {
         data.shipsData.destroyShip(transaction, gameId, playerId, ship.firstSquare)
         return true
@@ -108,7 +100,7 @@ fun maybeDestroyShip(transaction: Transaction, playerId: Int, gameId: Int, ship:
  * Checks if player won
  */
 fun winConditionDetection(transaction: Transaction, gameId: Int, playerId: Int, data: Data): Boolean =
-    data.shipsData.fleetState(transaction, gameId, playerId).all { it.destroyed }
+    data.shipsData.getFleet(transaction, gameId, playerId).all { it.destroyed }
 
 
 /**
@@ -116,7 +108,7 @@ fun winConditionDetection(transaction: Transaction, gameId: Int, playerId: Int, 
  * @param gameType the game type name
  * @return true if the game type exists
  */
-fun isGameTypeInvalid(gameType: String) = gameType.toGameType() == null
+fun isGameTypeInvalid(gameType: String) = gameType.toGameTypeOrNull() == null
 
 /**
  * Inserts in lobby or creates a game
@@ -136,4 +128,6 @@ fun enterLobbyOrCreateGame(transaction: Transaction, playerId: Int, gameType: St
     return data.lobbiesData.enterLobby(transaction, playerId, gameType)
 }
 
-fun String.toGameType() = GameType.values().find { it.name == this.uppercase() }
+fun String.toGameTypeOrNull() = GameType.values().find { it.name == this.uppercase() }
+fun String.toGameTypeOrThrow() = toGameTypeOrNull() ?: throw IllegalArgumentException("Invalid game type")
+

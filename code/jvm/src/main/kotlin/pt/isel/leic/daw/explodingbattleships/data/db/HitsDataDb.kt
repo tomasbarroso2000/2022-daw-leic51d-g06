@@ -4,13 +4,13 @@ import org.jdbi.v3.core.kotlin.mapTo
 import pt.isel.leic.daw.explodingbattleships.data.HitsData
 import pt.isel.leic.daw.explodingbattleships.data.Transaction
 import pt.isel.leic.daw.explodingbattleships.domain.Hit
-import pt.isel.leic.daw.explodingbattleships.domain.VerifiedSquare
+import pt.isel.leic.daw.explodingbattleships.domain.Square
 import pt.isel.leic.daw.explodingbattleships.domain.getString
 
 class HitsDataDb: HitsData {
     override fun createHit(
         transaction: Transaction,
-        square: VerifiedSquare,
+        square: Square,
         gameId: Int,
         playerId: Int,
         onShip: Boolean

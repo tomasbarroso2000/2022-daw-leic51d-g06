@@ -14,12 +14,12 @@ class PlayersServicesTests {
 
     @Test
     fun create_player() {
-        val playerInput = UserInput(
+        val playerInput = UserInputModel(
             "aleixo",
             "aleixo@casapia.pt",
             "OneLoveCasaPia6"
         )
-        val expectedOutput = UserOutput(7)
+        val expectedOutput = UserOutputModel(7)
         val actualOutput = services.createUser(playerInput.name, playerInput.email, playerInput.password)
         Assertions.assertEquals(expectedOutput, actualOutput)
         Assertions.assertTrue(data.mockData.users.any { it.id == 7 })
@@ -27,7 +27,7 @@ class PlayersServicesTests {
 
     @Test
     fun create_player_with_invalid_name() {
-        val playerInput = UserInput(
+        val playerInput = UserInputModel(
             "",
             "aleixo@casapia.pt",
             "OneLoveCasaPia6"
@@ -41,7 +41,7 @@ class PlayersServicesTests {
 
     @Test
     fun create_player_with_invalid_email() {
-        val playerInput = UserInput(
+        val playerInput = UserInputModel(
             "aleixo",
             "",
             "OneLoveCasaPia6"
@@ -55,7 +55,7 @@ class PlayersServicesTests {
 
     @Test
     fun create_player_with_invalid_password() {
-        val playerInput = UserInput(
+        val playerInput = UserInputModel(
             "aleixo",
             "aleixo@casapia.pt",
             ""
@@ -69,7 +69,7 @@ class PlayersServicesTests {
 
     @Test
     fun create_player_with_password_without_numbers() {
-        val playerInput = UserInput(
+        val playerInput = UserInputModel(
             "aleixo",
             "aleixo@casapia.pt",
             "casaPia"
@@ -83,7 +83,7 @@ class PlayersServicesTests {
 
     @Test
     fun create_player_with_password_without_uppercase_letters() {
-        val playerInput = UserInput(
+        val playerInput = UserInputModel(
             "aleixo",
             "aleixo@casapia.pt",
             "casapia6"
@@ -97,7 +97,7 @@ class PlayersServicesTests {
 
     @Test
     fun create_player_with_password_without_lowerscase_letters() {
-        val playerInput = UserInput(
+        val playerInput = UserInputModel(
             "aleixo",
             "aleixo@casapia.pt",
             "CASAPIA6"

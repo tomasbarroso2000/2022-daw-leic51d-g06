@@ -3,22 +3,21 @@ package pt.isel.leic.daw.explodingbattleships.data.mem
 import pt.isel.leic.daw.explodingbattleships.data.HitsData
 import pt.isel.leic.daw.explodingbattleships.data.Transaction
 import pt.isel.leic.daw.explodingbattleships.domain.Hit
-import pt.isel.leic.daw.explodingbattleships.domain.VerifiedSquare
-import java.sql.Timestamp
+import pt.isel.leic.daw.explodingbattleships.domain.Square
 import java.time.Instant
 
 class HitsDataMem(private val mockData: MockData) : HitsData {
     override fun createHit(
         transaction: Transaction,
-        square: VerifiedSquare,
+        square: Square,
         gameId: Int,
         playerId: Int,
         onShip: Boolean
     ) {
         mockData.hits.add(
-            StoredHit(
+            Hit(
                 square.toString(),
-                Timestamp.from(Instant.now()),
+                Instant.now(),
                 onShip,
                 playerId,
                 gameId
@@ -27,8 +26,5 @@ class HitsDataMem(private val mockData: MockData) : HitsData {
     }
 
     override fun getHits(transaction: Transaction, gameId: Int, userId: Int): List<Hit> =
-        mockData
-            .hits
-            .filter { it.game == gameId && it.player == userId }
-            .map { it.toHit() }
+        mockData.hits.filter { it.game == gameId && it.player == userId }
 }

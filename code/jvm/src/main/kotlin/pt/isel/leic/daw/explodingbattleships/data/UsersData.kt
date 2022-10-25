@@ -7,7 +7,7 @@ interface UsersData {
 
     fun getUserFromEmail(transaction: Transaction, email: String): User?
 
-    fun createUser(transaction: Transaction, name: String, email: String, password: Int): UserOutput
+    fun createUser(transaction: Transaction, name: String, email: String, password: Int): Int
 
     fun createToken(transaction: Transaction, userId: Int): String
 

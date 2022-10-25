@@ -13,7 +13,7 @@ class GamesDataMem(private val mockData: MockData) : GamesData {
         player2: Int
     ): Int {
         val id = mockData.games.maxOf { it.id } + 1
-        mockData.games.add(StoredGame(id, gameType, "layout_definition", player1, player2, player1, Instant.now()))
+        mockData.games.add(Game(id, gameType, "layout_definition", player1, player2, player1, Instant.now()))
         return id
     }
 
@@ -24,10 +24,7 @@ class GamesDataMem(private val mockData: MockData) : GamesData {
         mockData.games.find { it.id == gameId }?.state
 
     override fun getGame(transaction: Transaction, gameId: Int): Game? =
-        mockData.games.find { it.id == gameId }?.toGame()
-
-    override fun getHitSquares(transaction: Transaction, gameId: Int, playerId: Int): List<VerifiedSquare> =
-        mockData.hits.filter { it.game == gameId && it.player == playerId }.map { it.square.toVerifiedSquare() }
+        mockData.games.find { it.id == gameId }
 
     override fun changeCurrPlayer(transaction: Transaction, gameId: Int, newCurrPlayer: Int) {
         mockData.games.find { it.id == gameId }?.let { game ->

@@ -8,7 +8,7 @@ import java.time.Instant
 
 class LobbiesDataMem(private val mockData: MockData) : LobbiesData {
     override fun enterLobby(transaction: Transaction, playerId: Int, gameType: String): EnterLobbyOutput {
-        mockData.lobby.add(StoredLobby(playerId, gameType, Instant.now()))
+        mockData.lobby.add(Lobby(playerId, gameType, Instant.now()))
         return EnterLobbyOutput(true, null)
     }
 

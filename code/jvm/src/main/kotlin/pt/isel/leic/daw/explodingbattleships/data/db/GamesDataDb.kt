@@ -4,8 +4,6 @@ import org.jdbi.v3.core.kotlin.mapTo
 import pt.isel.leic.daw.explodingbattleships.data.GamesData
 import pt.isel.leic.daw.explodingbattleships.data.Transaction
 import pt.isel.leic.daw.explodingbattleships.domain.*
-import java.time.Duration
-import java.time.Instant
 
 class GamesDataDb : GamesData {
     override fun createGame(
@@ -45,13 +43,6 @@ class GamesDataDb : GamesData {
                 .mapTo<Game>().firstOrNull()
         }
 
-    override fun getHitSquares(transaction: Transaction, gameId: Int, playerId: Int): List<VerifiedSquare> =
-        (transaction as TransactionDataDb).withHandle { handle ->
-            handle.createQuery("select square from hits where game = :gameId and player = :playerId")
-                .bind("gameId", gameId)
-                .bind("playerId", playerId)
-                .mapTo<String>().list().map { it.toVerifiedSquare() }
-        }
 
     override fun changeCurrPlayer(transaction: Transaction, gameId: Int, newCurrPlayer: Int) {
         (transaction as TransactionDataDb).withHandle { handle ->

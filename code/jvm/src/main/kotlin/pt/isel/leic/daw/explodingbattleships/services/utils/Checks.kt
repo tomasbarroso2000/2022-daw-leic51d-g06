@@ -36,8 +36,8 @@ fun checkPasswordValid(password: String) {
     checkOrThrowBadRequest(!password.any { it.isLowerCase() }, "Password doesn't contain lowercase letters")
 }
 
-fun checkShipLayout(gameTypeName: String, ships: List<UnverifiedShip>): List<VerifiedShip> {
-    val gameType = gameTypeName.toGameType()
+fun checkShipLayout(userId: Int, game: Game, ships: List<ShipCreationInfo>): List<Ship> {
+    val gameType = game.type.toGameTypeOrNull()
         ?: throw AppException("Game type not registered")
     checkOrThrowBadRequest(
         ships.size != gameType.fleetComposition.size,
@@ -47,14 +47,14 @@ fun checkShipLayout(gameTypeName: String, ships: List<UnverifiedShip>): List<Ver
         !shipsValid(gameType, ships),
         "Invalid ship list for ${gameType.name} game"
     )
-    val occupiedSquares = mutableSetOf<VerifiedSquare?>()
-    val verifiedShips = mutableListOf<VerifiedShip>()
+    val occupiedSquares = mutableSetOf<Square?>()
+    val verifiedShips = mutableListOf<Ship>()
     ships.forEach { unverifiedShip ->
-        val verifiedShip = unverifiedShip.toVerifiedShipOrNull(gameType)
+        val verifiedShip = unverifiedShip.toShipOrNull(userId, game.id, gameType)
             ?: throw AppException("Invalid ship", AppExceptionStatus.BAD_REQUEST)
         when (verifiedShip.orientation.lowercase()) {
-            "vertical" -> validateShipSquares(verifiedShip, gameType.boardSize, occupiedSquares, VerifiedSquare::down)
-            "horizontal" -> validateShipSquares(verifiedShip, gameType.boardSize, occupiedSquares, VerifiedSquare::right)
+            "vertical" -> validateShipSquares(verifiedShip, gameType.boardSize, occupiedSquares, Square::down)
+            "horizontal" -> validateShipSquares(verifiedShip, gameType.boardSize, occupiedSquares, Square::right)
             else -> throw AppException("Invalid orientation for ${verifiedShip.name}", AppExceptionStatus.BAD_REQUEST)
         }
         verifiedShips.add(verifiedShip)
@@ -68,7 +68,7 @@ fun checkShipLayout(gameTypeName: String, ships: List<UnverifiedShip>): List<Ver
  * @param ships the list of ships
  * @return true if the list is valid
  */
-private fun shipsValid(gameType: GameType, ships: List<UnverifiedShip>) =
+private fun shipsValid(gameType: GameType, ships: List<ShipCreationInfo>) =
     ships.map { it.name }.containsAll(gameType.fleetComposition.map { it.name })
 
 /**
@@ -76,7 +76,7 @@ private fun shipsValid(gameType: GameType, ships: List<UnverifiedShip>) =
  * @param square the square in question
  * @param boardSize the size of the board
  */
-fun squareInBoard(square: VerifiedSquare, boardSize: Int): Boolean {
+fun squareInBoard(square: Square, boardSize: Int): Boolean {
     val lastRow = 'a' + boardSize - 1
     val lastColumn = 1 + boardSize - 1
     if (square.row !in 'a'..lastRow) return false
@@ -90,11 +90,12 @@ fun squareInBoard(square: VerifiedSquare, boardSize: Int): Boolean {
  * @param occupiedSquares the occupied squares
  * @param nextSquare the function to calculate the next square
  */
-private fun validateShipSquares(ship: VerifiedShip, boardSize: Int, occupiedSquares: MutableSet<VerifiedSquare?>, nextSquare: NextSquare) {
-    var currentSquare = ship.firstSquare
+private fun validateShipSquares(ship: Ship, boardSize: Int, occupiedSquares: MutableSet<Square?>, nextSquare: NextSquare) {
+    var currentSquare = ship.firstSquare.toSquareOrNull()
+        ?: throw AppException("Invalid first square: ${ship.firstSquare}")
     for (i in 0 until ship.size) {
-        checkOrThrowBadRequest(!squareInBoard(currentSquare, boardSize), "Invalid square on ${currentSquare.getString()}")
-        checkOrThrowBadRequest(occupiedSquares.contains(currentSquare), "Square already occupied on ${currentSquare.getString()}")
+        checkOrThrowBadRequest(!squareInBoard(currentSquare, boardSize), "Invalid square: ${currentSquare.getString()}")
+        checkOrThrowBadRequest(occupiedSquares.contains(currentSquare), "Square already occupied: ${currentSquare.getString()}")
         occupiedSquares.add(currentSquare)
         currentSquare = currentSquare.nextSquare()
     }
@@ -114,8 +115,8 @@ fun computePlayer(transaction: Transaction, token: String?, data: Data): User {
         ?: throw AppException("Invalid token", AppExceptionStatus.UNAUTHORIZED)
 }
 
-fun computeGame(transaction: Transaction, gameId: Int?, data: Data): Game {
-    if (gameId == null || gameId <= 0)
+fun computeGame(transaction: Transaction, gameId: Int, data: Data): Game {
+    if (gameId <= 0)
         throw AppException("Invalid gameId", AppExceptionStatus.BAD_REQUEST)
     return data.gamesData.getGame(transaction, gameId)
         ?: throw AppException("Game does not exist", AppExceptionStatus.NOT_FOUND)

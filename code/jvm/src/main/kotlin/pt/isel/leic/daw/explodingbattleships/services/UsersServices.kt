@@ -13,12 +13,12 @@ class UsersServices(private val data: Data) {
      * @param userInput the player information
      * @return the output of the player creation with the new player's id
      */
-    fun createUser(name: String?, email: String?, password: String?) = doService(data) {transaction ->
-        if (name.isNullOrBlank())
+    fun createUser(name: String, email: String, password: String) = doService(data) {transaction ->
+        if (name.isBlank())
             throw AppException("Invalid name", AppExceptionStatus.BAD_REQUEST)
-        if (email.isNullOrBlank())
+        if (email.isBlank())
             throw AppException("Invalid email", AppExceptionStatus.BAD_REQUEST)
-        if (password.isNullOrBlank())
+        if (password.isBlank())
             throw AppException("Invalid password", AppExceptionStatus.BAD_REQUEST)
         checkPasswordValid(password)
         data.usersData.createUser(transaction, name, email, password.hashCode())
@@ -27,10 +27,10 @@ class UsersServices(private val data: Data) {
     /**
      * Creates a token
      */
-    fun createToken(email: String?, password: String?) = doService(data) { transaction ->
-        if (email.isNullOrBlank())
+    fun createToken(email: String, password: String) = doService(data) { transaction ->
+        if (email.isBlank())
             throw AppException("Invalid email", AppExceptionStatus.BAD_REQUEST)
-        if (password.isNullOrBlank())
+        if (password.isBlank())
             throw AppException("Invalid password", AppExceptionStatus.BAD_REQUEST)
         val user = data.usersData.getUserFromEmail(transaction, email)
             ?: throw AppException("")
@@ -64,8 +64,8 @@ class UsersServices(private val data: Data) {
      * @param lobbyInput the characteristics of the game the user wants to play
      * @return a [EnterLobbyOutput] representing if the player was placed in queue
      */
-    fun enterLobby(userId: Int, gameType: String?) = doService(data) { transaction ->
-        if (gameType == null || isGameTypeInvalid(gameType))
+    fun enterLobby(userId: Int, gameType: String) = doService(data) { transaction ->
+        if (isGameTypeInvalid(gameType))
             throw AppException("Invalid game type", AppExceptionStatus.BAD_REQUEST)
         enterLobbyOrCreateGame(transaction, userId, gameType, data)
     }

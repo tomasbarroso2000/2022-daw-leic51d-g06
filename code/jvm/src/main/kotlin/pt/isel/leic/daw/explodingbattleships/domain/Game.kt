@@ -21,8 +21,11 @@ fun Game.otherPlayer(playerId: Int) =
 
 data class FullGameInfo(
     val game: Game,
-    val playerFleet: List<ShipDto>,
-    val takenHits: List<Hit>,
-    val enemyFleet: List<ShipDto>,
-    val sentHits: List<Hit>
+    val opponent: Int,
+    val playing: Boolean,
+    val playerFleet: List<Ship>,
+    val takenHits: List<Square>,
+    val enemySunkFleet: List<Ship>,
+    val hits: List<Square>,
+    val misses: List<Square>
 )

@@ -7,13 +7,3 @@ data class User(
     val score: Int,
     val passwordVer: Int
 ) // potentially add profile pic
-
-data class UserInput(
-    val name: String?,
-    val email: String?,
-    val password: String?
-)
-
-data class UserOutput(
-    val id: Int
-)

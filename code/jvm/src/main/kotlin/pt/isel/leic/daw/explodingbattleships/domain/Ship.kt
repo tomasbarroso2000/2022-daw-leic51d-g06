@@ -1,10 +1,14 @@
 package pt.isel.leic.daw.explodingbattleships.domain
 
-data class ShipFromDb(
-    val name: String,
+data class Ship(
     val firstSquare: String,
+    val name: String,
+    val size: Int,
+    val nOfHits: Int,
+    val destroyed: Boolean,
     val orientation: String,
-    val size: Int
+    val player: Int,
+    val game: Int
 )
 
 data class ShipState(
@@ -12,37 +16,23 @@ data class ShipState(
     val destroyed: Boolean
 )
 
-fun ShipFromDb.toVerifiedShip() =
-    VerifiedShip(name, firstSquare.toVerifiedSquare(), orientation, size)
+fun Ship.toShipState() = ShipState(name, destroyed)
 
-interface Ship {
-    val name: String?
-    val firstSquare: Square?
-    val orientation: String?
+data class ShipCreationInfo(
+    val name: String,
+    val firstSquare: Square,
+    val orientation: String
+)
+
+fun ShipCreationInfo.toShipOrNull(userId: Int, gameId: Int, gameType: GameType): Ship? {
+    val shipSpec = gameType.fleetComposition.find { it.name.lowercase() == name.lowercase()}
+        ?: return null
+    return Ship(firstSquare.getString(), name, shipSpec.size, 0, false, orientation, userId, gameId)
 }
 
-data class UnverifiedShip(
-    override val name: String?,
-    override val firstSquare: UnverifiedSquare?,
-    override val orientation: String?,
-) : Ship
-
-fun UnverifiedShip.toVerifiedShipOrNull(gameType: GameType): VerifiedShip? {
-    name ?: return null
-    val verifiedFirstSquare = firstSquare?.toVerifiedSquareOrNull() ?: return null
-    orientation ?: return null
-    return VerifiedShip(name, verifiedFirstSquare, orientation, gameType.getShipSize(name))
-}
-
-data class VerifiedShip(
-    override val name: String,
-    override val firstSquare: VerifiedSquare,
-    override val orientation: String,
-    val size: Int
-) : Ship
-
-fun VerifiedShip.getSquares(): Set<VerifiedSquare> {
-    val squares = mutableSetOf<VerifiedSquare>()
+fun Ship.getSquares(): Set<Square> {
+    val firstSquare = this.firstSquare.toSquareOrNull() ?: throw IllegalArgumentException("Invalid square")
+    val squares = mutableSetOf<Square>()
     var currentSquare = firstSquare
     when (orientation.lowercase()) {
         "vertical" -> for (i in 0 until size) {
@@ -53,20 +43,9 @@ fun VerifiedShip.getSquares(): Set<VerifiedSquare> {
             squares.add(currentSquare)
             currentSquare = currentSquare.right()
         }
-        else -> throw throw IllegalArgumentException("Invalid orientation")
+        else -> throw IllegalArgumentException("Invalid orientation")
     }
     return squares
 }
-
-data class ShipDto(
-    val firstSquare: String,
-    val name: String,
-    val size: Int,
-    val nOfHits: Int,
-    val destroyed: Boolean,
-    val orientation: String,
-    val player: Int,
-    val game: Int
-)
 
 

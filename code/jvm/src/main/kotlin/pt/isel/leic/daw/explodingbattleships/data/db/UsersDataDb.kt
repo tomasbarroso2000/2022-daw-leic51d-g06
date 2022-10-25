@@ -21,7 +21,7 @@ class UsersDataDb : UsersData {
                 .mapTo<User>().firstOrNull()
         }
 
-    override fun createUser(transaction: Transaction, name: String, email: String, password: Int): UserOutput =
+    override fun createUser(transaction: Transaction, name: String, email: String, password: Int): Int =
         (transaction as TransactionDataDb).withHandle { handle ->
             handle.createUpdate("insert into users (name, email, score, password_ver) values (:name, :email, 0, :password)")
                 .bind("name", name)
@@ -29,7 +29,7 @@ class UsersDataDb : UsersData {
                 .bind("password", password)
                 .executeAndReturnGeneratedKeys()
                 .mapTo<Int>()
-                .first().let { UserOutput(it) }
+                .first()
         }
 
     override fun createToken(transaction: Transaction, userId: Int): String =

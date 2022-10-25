@@ -2,10 +2,8 @@ package pt.isel.leic.daw.explodingbattleships.domain
 
 import java.time.Instant
 
-data class Hits(val gameId: Int?, val squares: List<UnverifiedSquare>?)
-
 data class HitOutcome(
-    val square: VerifiedSquare,
+    val square: Square,
     val hit: Boolean,
     val destroyedShip: String? = null
 )

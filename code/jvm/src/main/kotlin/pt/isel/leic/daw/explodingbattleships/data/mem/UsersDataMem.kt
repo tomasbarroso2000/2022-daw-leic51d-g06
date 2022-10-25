@@ -14,16 +14,15 @@ class UsersDataMem(private val mockData: MockData) : UsersData {
         return mockData
             .users
             .find { player -> player.id == userId }
-            ?.toUser()
     }
 
     override fun getUserFromEmail(transaction: Transaction, email: String): User? =
-        mockData.users.find { it.email == email }?.toUser()
+        mockData.users.find { it.email == email }
 
-    override fun createUser(transaction: Transaction, name: String, email: String, password: Int): UserOutput {
+    override fun createUser(transaction: Transaction, name: String, email: String, password: Int): Int {
         val id = mockData.users.maxOf { it.id } + 1
-        mockData.users.add(StoredUser(id, name, email, 0, password))
-        return UserOutput(id)
+        mockData.users.add(User(id, name, email, 0, password))
+        return id
     }
 
     override fun createToken(transaction: Transaction, userId: Int): String {

@@ -6,11 +6,11 @@ import pt.isel.leic.daw.explodingbattleships.data.Transaction
 import pt.isel.leic.daw.explodingbattleships.domain.*
 
 class ShipsDataDb: ShipsData {
-    override fun defineLayout(transaction: Transaction, gameId: Int, playerId: Int, ships: List<VerifiedShip>) =
+    override fun defineLayout(transaction: Transaction, gameId: Int, playerId: Int, ships: List<Ship>) =
         (transaction as TransactionDataDb).withHandle { handle ->
             ships.forEach { ship ->
                 handle.createUpdate("insert into ships values (:firstSquare, :name, :size, 0, false, :orientation, :playerId, :gameId)")
-                    .bind("firstSquare", ship.firstSquare.getString())
+                    .bind("firstSquare", ship.firstSquare)
                     .bind("name", ship.name)
                     .bind("size", ship.size)
                     .bind("orientation", ship.orientation)
@@ -33,15 +33,15 @@ class ShipsDataDb: ShipsData {
         transaction: Transaction,
         gameId: Int,
         playerId: Int
-    ): Map<VerifiedShip, Set<VerifiedSquare>> =
+    ): Map<Ship, Set<Square>> =
         (transaction as TransactionDataDb).withHandle { handle ->
             handle.createQuery(
-                "select name, first_square, orientation, size from ships " +
+                "select * from ships " +
                         "where game = :gameId and player = :playerId"
             )
                 .bind("gameId", gameId)
                 .bind("playerId", playerId)
-                .mapTo<ShipFromDb>().list().map { it.toVerifiedShip() }.associateWith { ship -> ship.getSquares() }
+                .mapTo<Ship>().list().associateWith { ship -> ship.getSquares() }
         }
 
     override fun updateNumOfHits(transaction: Transaction, gameId: Int, playerId: Int, firstSquare: String) {
@@ -70,38 +70,30 @@ class ShipsDataDb: ShipsData {
                 .mapTo<Boolean>().first()
         }
 
-    override fun fleetState(transaction: Transaction, gameId: Int, playerId: Int): List<ShipState> =
-        (transaction as TransactionDataDb).withHandle { handle ->
-            handle.createQuery("select name, destroyed from ships where game = :gameId and player = :playerId")
-                .bind("gameId", gameId)
-                .bind("playerId", playerId)
-                .mapTo<ShipState>().list()
-        }
-
-    override fun getFleet(transaction: Transaction, gameId: Int, playerId: Int): List<ShipDto> =
+    override fun getFleet(transaction: Transaction, gameId: Int, playerId: Int): List<Ship> =
         (transaction as TransactionDataDb).withHandle { handle ->
             handle.createQuery("select * from ships where game = :gameId and player = :playerId")
                 .bind("gameId", gameId)
                 .bind("playerId", playerId)
-                .mapTo<ShipDto>().list()
+                .mapTo<Ship>().list()
         }
 
-    override fun getNumOfHits(
+    override fun getShip(
         transaction: Transaction,
-        shipFirstSquare: VerifiedSquare,
+        firstSquare: String,
         gameId: Int,
         playerId: Int
-    ): Int =
+    ): Ship? =
         (transaction as TransactionDataDb).withHandle { handle ->
-            handle.createQuery("select n_of_hits from ships where first_square = :shipFirstSquare and game = :gameId and player = :playerId")
-                .bind("shipFirstSquare", shipFirstSquare.getString())
+            handle.createQuery("select n_of_hits from ships where first_square = :firstSquare and game = :gameId and player = :playerId")
+                .bind("firstSquare", firstSquare)
                 .bind("gameId", gameId)
                 .bind("playerId", playerId)
-                .mapTo<Int>()
-                .first()
+                .mapTo<Ship>()
+                .firstOrNull()
         }
 
-    override fun destroyShip(transaction: Transaction, gameId: Int, playerId: Int, firstSquare: VerifiedSquare): Unit =
+    override fun destroyShip(transaction: Transaction, gameId: Int, playerId: Int, firstSquare: String): Unit =
         (transaction as TransactionDataDb).withHandle { handle ->
             handle.createUpdate(
                 "update ships set destroyed = true " +
@@ -109,7 +101,7 @@ class ShipsDataDb: ShipsData {
             )
                 .bind("gameId", gameId)
                 .bind("playerId", playerId)
-                .bind("firstSquare", firstSquare.getString())
+                .bind("firstSquare", firstSquare)
                 .execute()
         }
 

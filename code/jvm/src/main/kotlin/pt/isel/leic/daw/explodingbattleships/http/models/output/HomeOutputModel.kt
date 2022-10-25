@@ -1,4 +1,4 @@
-package pt.isel.leic.daw.explodingbattleships.http.models
+package pt.isel.leic.daw.explodingbattleships.http.models.output
 
 data class HomeOutputModel(
     val name: String = "Exploding Battleships",

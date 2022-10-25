@@ -4,7 +4,6 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import pt.isel.leic.daw.explodingbattleships.domain.EnterLobbyInput
 import pt.isel.leic.daw.explodingbattleships.domain.User
-import pt.isel.leic.daw.explodingbattleships.domain.UserInput
 import pt.isel.leic.daw.explodingbattleships.http.APPLICATION_SIREN
 import pt.isel.leic.daw.explodingbattleships.http.Rels
 import pt.isel.leic.daw.explodingbattleships.http.Successes
@@ -16,6 +15,9 @@ import pt.isel.leic.daw.explodingbattleships.http.Uris.Users.RANKINGS
 import pt.isel.leic.daw.explodingbattleships.http.Uris.Users.TOKEN
 import pt.isel.leic.daw.explodingbattleships.http.doApiTask
 import pt.isel.leic.daw.explodingbattleships.http.models.*
+import pt.isel.leic.daw.explodingbattleships.http.models.input.UserInputModel
+import pt.isel.leic.daw.explodingbattleships.http.models.input.UserTokenInputModel
+import pt.isel.leic.daw.explodingbattleships.http.models.output.*
 import pt.isel.leic.daw.explodingbattleships.infra.siren
 import pt.isel.leic.daw.explodingbattleships.services.UsersServices
 import javax.validation.Valid
@@ -42,14 +44,14 @@ class UsersController(private val services: UsersServices) {
 
     @PostMapping(CREATE)
     fun createUser(
-        @Valid @RequestBody input: UserInput
+        @Valid @RequestBody input: UserInputModel
     ) = doApiTask {
         val res = services.createUser(input.name, input.email, input.password)
         ResponseEntity
             .status(Successes.CREATED)
             .contentType(APPLICATION_SIREN)
             .body(
-                siren(UserCreationOutputModel(res.id)) {
+                siren(UserCreationOutputModel(res)) {
                     link(Uris.Users.createUser(), Rels.SELF)
                     link(Uris.home(), Rels.HOME)
                     clazz("UserOutput")
@@ -105,7 +107,7 @@ class UsersController(private val services: UsersServices) {
                 siren(EnterLobbyOutputModel(res.waitingForGame, res.gameId)) {
                     link(Uris.Users.enterLobby(), Rels.SELF)
                     link(Uris.home(), Rels.HOME)
-                    clazz("EnterLobbyOutput")
+                    clazz("EnterLobbyOutputModel")
                 }
             )
     }
