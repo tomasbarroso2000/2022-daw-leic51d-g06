@@ -71,8 +71,9 @@ class GamesServices(private val data: Data) {
      * @return the state of the game
      */
     fun getGameState(gameId: Int) = doService(data) { transaction ->
-        if (gameId <= 0)
+        if (gameId <= 0) {
             throw AppException("Invalid gameId", AppExceptionStatus.BAD_REQUEST)
+        }
         data.gamesData.getGameState(transaction, gameId)
             ?: throw AppException("Game does not exist", AppExceptionStatus.NOT_FOUND)
     }
@@ -86,10 +87,11 @@ class GamesServices(private val data: Data) {
     fun fleetState(userId: Int, gameId: Int, myFleet: Boolean) = doService(data) { transaction ->
         val game = computeGame(transaction, gameId, data)
         checkPlayerInGame(game, userId)
-        if (myFleet)
+        if (myFleet) {
             data.shipsData.getFleet(transaction, game.id, userId).map { it.toShipState() }
-        else
+        } else {
             data.shipsData.getFleet(transaction, game.id, game.otherPlayer(userId)).map { it.toShipState() }
+        }
     }
 
     /**
@@ -105,10 +107,12 @@ class GamesServices(private val data: Data) {
         checkGameState(game.state, "shooting")
         val gameType = game.type.toGameTypeOrNull()
             ?: throw AppException("Game type not registered")
-        if (squares.isEmpty())
+        if (squares.isEmpty()) {
             throw AppException("No squares provided", AppExceptionStatus.BAD_REQUEST)
-        if (squares.size > gameType.shotsPerRound)
+        }
+        if (squares.size > gameType.shotsPerRound) {
             throw AppException("Invalid amount of hits", AppExceptionStatus.BAD_REQUEST)
+        }
         val hitSquares = data.hitsData.getHits(transaction, game.id, game.idlePlayer()).map { it.square.toSquareOrThrow() }.toMutableSet()
         val verifiedSquares = mutableListOf<Square>()
         squares.forEach { square ->
@@ -136,15 +140,17 @@ class GamesServices(private val data: Data) {
         val game = computeGame(transaction, gameId, data)
         checkPlayerInGame(game, userId)
         checkGameState(game.state, "layout_definition")
-        if (data.shipsData.hasShips(transaction, userId, game.id))
+        if (data.shipsData.hasShips(transaction, userId, game.id)) {
             throw AppException("Layout already defined", AppExceptionStatus.BAD_REQUEST)
+        }
         val verifiedShips = checkShipLayout(userId, game, ships)
         data.shipsData.defineLayout(transaction, game.id, userId, verifiedShips)
         if (data.shipsData.checkEnemyLayoutDone(transaction, game.id, userId)) {
             println("enemy done")
             data.gamesData.setGameToShooting(transaction, game.id)
             LayoutOutcomeStatus.STARTED
-        } else
+        } else {
             LayoutOutcomeStatus.WAITING
+        }
     }
 }

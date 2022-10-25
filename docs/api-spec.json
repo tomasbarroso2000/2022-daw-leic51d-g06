@@ -1,33 +1,29 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Exploding Battleships",
-    "description": "Battleships Game",
+    "title": "Exploding Battleships API",
+    "description": "A Battleships game API created by TheExplodingKittens",
     "termsOfService": "http://swagger.io/terms/",
     "version": "1.0.0"
   },
   "tags": [
     {
-      "name": "Authenticated",
-      "description": "Requests only available for authenticated users"
+      "name": "Users",
+      "description": "Requests related to users"
     },
     {
       "name": "Unauthenticated",
-      "description": "Requests available for unauthenticated users"
-    },
-    {
-      "name": "In Game",
-      "description": "Requests available in game"
+      "description": "Requests related to games"
     }
   ],
   "paths": {
-    "/api/player/info": {
+    "/api/me": {
       "get": {
         "tags": [
-          "Authenticated"
+          "Users"
         ],
-        "summary": "See the player info",
-        "description": "See the player's id, name and score",
+        "summary": "User home",
+        "description": "User home with the user's information",
         "security": [
           {
             "bearerAuth": []
@@ -67,13 +63,97 @@
         }
       }
     },
-    "/api/lobby/enter": {
+    "/api/users": {
       "post": {
         "tags": [
-          "Authenticated"
+          "Users"
         ],
-        "summary": "Place a player in a lobby",
-        "description": "Places a player in a lobby or in a game if that is already a player waiting for a game with the same properties",
+        "summary": "Create a user",
+        "description": "Create a new user with a name, an email and a password",
+        "requestBody": {
+          "description": "input",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewUser"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully created the new user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewUser"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/token": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Create a token",
+        "description": "Create a token for your user",
+        "requestBody": {
+          "description": "input",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewToken"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully created the new token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewToken"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/lobby": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Enter a lobby",
+        "description": "Enter a lobby or a game if someone is already waiting to play",
         "security": [
           {
             "bearerAuth": []
@@ -124,31 +204,52 @@
         }
       }
     },
-    "/api/players": {
-      "post": {
+    "/api/users/rankings": {
+      "get": {
         "tags": [
-          "Unauthenticated"
+          "Users"
         ],
-        "summary": "Create a new user",
-        "description": "Creates a new user with the respective name, email and password",
-        "requestBody": {
-          "description": "input",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewUser"
-              }
-            }
+        "summary": "Get the rankings",
+        "description": "Get the rankings of users sorted by score",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "The maximum number of results to get",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "example": 10
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "description": "The number of results to skip",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "example": 0
           }
-        },
+        ],
         "responses": {
-          "201": {
-            "description": "Successfully created the new user",
+          "200": {
+            "description": "Successfully placed a player in a lobby or in a game",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/NewUser"
+                  "$ref": "#/components/schemas/EnterLobby"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid game type",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppError"
                 }
               }
             }
@@ -169,7 +270,7 @@
     "/api/games/total": {
       "get": {
         "tags": [
-          "Unauthenticated"
+          "Games"
         ],
         "summary": "Get the number of played games",
         "description": "Get the total number of played games",
@@ -283,7 +384,25 @@
           },
           "password": {
             "type": "string",
-            "example": "shrekinho"
+            "example": "Shrekinho1"
+          }
+        }
+      },
+      "NewToken": {
+        "type": "object",
+        "description": "Email and password of user",
+        "required": [
+          "name",
+          "password"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "iloveshrek@gmail.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "Shrekinho1"
           }
         }
       },

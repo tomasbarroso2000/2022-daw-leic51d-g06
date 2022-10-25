@@ -15,13 +15,13 @@ data class SirenModel<T>(
 
 data class LinkModel(
     val rel: List<String>,
-    val href: String,
+    val href: String
 )
 
 data class EntityModel<T>(
     val properties: T,
     val links: List<LinkModel>,
-    val rel: List<String>,
+    val rel: List<String>
 )
 
 data class ActionModel(
@@ -29,17 +29,17 @@ data class ActionModel(
     val href: String,
     val method: String,
     val type: String,
-    val fields: List<FieldModel>,
+    val fields: List<FieldModel>
 )
 
 data class FieldModel(
     val name: String,
     val type: String,
-    val value: String? = null,
+    val value: String? = null
 )
 
 class SirenBuilderScope<T>(
-    val properties: T,
+    val properties: T
 ) {
     private val links = mutableListOf<LinkModel>()
     private val entities = mutableListOf<EntityModel<*>>()
@@ -77,7 +77,7 @@ class SirenBuilderScope<T>(
 
 class EntityBuilderScope<T>(
     val properties: T,
-    val rel: List<String>,
+    val rel: List<String>
 ) {
     private val links = mutableListOf<LinkModel>()
 
@@ -88,7 +88,7 @@ class EntityBuilderScope<T>(
     fun build(): EntityModel<T> = EntityModel(
         properties = properties,
         links = links,
-        rel = rel,
+        rel = rel
     )
 }
 
@@ -96,7 +96,7 @@ class ActionBuilderScope(
     private val name: String,
     private val href: URI,
     private val method: HttpMethod,
-    private val type: String,
+    private val type: String
 ) {
     private val fields = mutableListOf<FieldModel>()
 

@@ -25,7 +25,7 @@ class ExplodingBattleshipsApplication : WebMvcConfigurer {
 @Configuration
 class PipelineConfigurer(
     val authenticationInterceptor: AuthenticationInterceptor,
-    val playerArgumentResolver: UserArgumentResolver,
+    val playerArgumentResolver: UserArgumentResolver
 ) : WebMvcConfigurer {
 
     override fun addInterceptors(registry: InterceptorRegistry) {

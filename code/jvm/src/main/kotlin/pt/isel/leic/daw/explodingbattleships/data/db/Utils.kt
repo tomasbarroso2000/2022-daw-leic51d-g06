@@ -11,10 +11,11 @@ fun <T> getHasMoreAndProcessList(receivedList: List<T>, finalList: MutableList<T
     var found = 0
     receivedList.forEach {
         found++
-        if (found <= limit)
+        if (found <= limit) {
             finalList.add(it)
-        else
+        } else {
             return true
+        }
     }
     return false
 }

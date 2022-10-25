@@ -97,7 +97,7 @@ class GamesController(private val services: GamesServices) {
     @GetMapping(Uris.Games.PLAYER_FLEET)
     fun getPlayerFleetState(
         user: User,
-        @PathVariable gameId: Int,
+        @PathVariable gameId: Int
     ) = doApiTask {
         val res = services.fleetState(user.id, gameId, true)
         ResponseEntity
@@ -115,7 +115,7 @@ class GamesController(private val services: GamesServices) {
     @GetMapping(Uris.Games.ENEMY_FLEET)
     fun getEnemyFleetState(
         user: User,
-        @PathVariable gameId: Int,
+        @PathVariable gameId: Int
     ) = doApiTask {
         val res = services.fleetState(user.id, gameId, false)
         ResponseEntity
@@ -133,7 +133,9 @@ class GamesController(private val services: GamesServices) {
     @PutMapping(Uris.Games.SEND_HITS)
     fun sendHits(
         user: User,
-        @Valid @RequestBody input: HitsInputModel,
+        @Valid
+        @RequestBody
+        input: HitsInputModel
     ) = doApiTask {
         val res = services.sendHits(user.id, input.gameId, input.squares)
         ResponseEntity
@@ -151,7 +153,9 @@ class GamesController(private val services: GamesServices) {
     @PutMapping(Uris.Games.DEFINE_LAYOUT)
     fun defineLayout(
         user: User,
-        @Valid @RequestBody input: LayoutInputModel,
+        @Valid
+        @RequestBody
+        input: LayoutInputModel
     ) = doApiTask {
         val res = services.sendLayout(user.id, input.gameId, input.ships)
         ResponseEntity

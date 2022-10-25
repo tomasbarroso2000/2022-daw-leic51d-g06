@@ -15,9 +15,13 @@ data class Game(
 fun Game.idlePlayer() = if (currPlayer == player1) player2 else player1
 
 fun Game.otherPlayer(playerId: Int) =
-    if (player1 == playerId) player2
-    else if (player2 == playerId) player1
-    else throw IllegalArgumentException("Player not in game")
+    if (player1 == playerId) {
+        player2
+    } else if (player2 == playerId) {
+        player1
+    } else {
+        throw IllegalArgumentException("Player not in game")
+    }
 
 data class FullGameInfo(
     val game: Game,

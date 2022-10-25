@@ -21,8 +21,9 @@ import java.util.regex.Pattern
  * @param errorMessage the error message to be thrown
  */
 fun checkOrThrowBadRequest(undesiredCondition: Boolean, errorMessage: String) {
-    if (undesiredCondition)
+    if (undesiredCondition) {
         throw AppException(errorMessage, AppExceptionStatus.BAD_REQUEST)
+    }
 }
 
 /**
@@ -131,8 +132,9 @@ private fun validateShipSquares(ship: Ship, boardSize: Int, occupiedSquares: Mut
 }
 
 fun computeGame(transaction: Transaction, gameId: Int, data: Data): Game {
-    if (gameId <= 0)
+    if (gameId <= 0) {
         throw AppException("Invalid game id", AppExceptionStatus.BAD_REQUEST)
+    }
     return data.gamesData.getGame(transaction, gameId)
         ?: throw AppException("Game does not exist", AppExceptionStatus.NOT_FOUND)
 }

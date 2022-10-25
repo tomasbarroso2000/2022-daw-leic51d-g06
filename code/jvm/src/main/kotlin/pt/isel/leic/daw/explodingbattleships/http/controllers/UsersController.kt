@@ -52,7 +52,9 @@ class UsersController(private val services: UsersServices) {
 
     @PostMapping(CREATE)
     fun createUser(
-        @Valid @RequestBody input: UserInputModel
+        @Valid
+        @RequestBody
+        input: UserInputModel
     ) = doApiTask {
         val res = services.createUser(input.name, input.email, input.password)
         ResponseEntity
@@ -69,7 +71,9 @@ class UsersController(private val services: UsersServices) {
 
     @PostMapping(TOKEN)
     fun createToken(
-        @Valid @RequestBody input: UserTokenInputModel
+        @Valid
+        @RequestBody
+        input: UserTokenInputModel
     ) = doApiTask {
         val res = services.createToken(input.email, input.password)
         ResponseEntity
@@ -87,7 +91,7 @@ class UsersController(private val services: UsersServices) {
     @GetMapping(RANKINGS)
     fun getRankings(
         @RequestParam(required = false, defaultValue = "10") limit: Int,
-        @RequestParam(required = false, defaultValue = "0") skip: Int,
+        @RequestParam(required = false, defaultValue = "0") skip: Int
     ) = doApiTask {
         val res = services.getRankings(limit, skip)
         ResponseEntity
@@ -105,7 +109,9 @@ class UsersController(private val services: UsersServices) {
     @PostMapping(ENTER_LOBBY)
     fun enterLobby(
         player: User,
-        @Valid @RequestBody input: LobbyInputModel
+        @Valid
+        @RequestBody
+        input: LobbyInputModel
     ) = doApiTask {
         val res = services.enterLobby(player.id, input.gameType)
         ResponseEntity

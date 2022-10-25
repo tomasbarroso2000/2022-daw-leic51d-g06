@@ -35,13 +35,14 @@ data class ErrorResponse(
  * @return a status response for the user to see
  */
 fun handleError(error: Exception): ResponseEntity<ErrorResponse> {
-    return if (error is AppException)
+    return if (error is AppException) {
         onAppException(error)
-    else
+    } else {
         makeResponse(
             Errors.INTERNAL_SERVER_ERROR,
             ErrorResponse(title = "Something went wrong", status = Errors.INTERNAL_SERVER_ERROR)
         )
+    }
 }
 
 /**
@@ -65,16 +66,20 @@ fun onAppException(error: AppException): ResponseEntity<ErrorResponse> {
     val message = error.message ?: "¯\\_(ツ)_/¯"
     return when (error.status) {
         AppExceptionStatus.UNAUTHORIZED -> makeResponse(
-            Errors.UNAUTHORIZED, ErrorResponse(title = message, status = Errors.UNAUTHORIZED)
+            Errors.UNAUTHORIZED,
+            ErrorResponse(title = message, status = Errors.UNAUTHORIZED)
         )
         AppExceptionStatus.BAD_REQUEST -> makeResponse(
-            Errors.BAD_REQUEST, ErrorResponse(title = message, status = Errors.BAD_REQUEST)
+            Errors.BAD_REQUEST,
+            ErrorResponse(title = message, status = Errors.BAD_REQUEST)
         )
         AppExceptionStatus.NOT_FOUND -> makeResponse(
-            Errors.NOT_FOUND, ErrorResponse(title = message, status = Errors.NOT_FOUND)
+            Errors.NOT_FOUND,
+            ErrorResponse(title = message, status = Errors.NOT_FOUND)
         )
         AppExceptionStatus.INTERNAL -> makeResponse(
-            Errors.INTERNAL_SERVER_ERROR, ErrorResponse(title = message, status = Errors.INTERNAL_SERVER_ERROR)
+            Errors.INTERNAL_SERVER_ERROR,
+            ErrorResponse(title = message, status = Errors.INTERNAL_SERVER_ERROR)
         )
     }
 }

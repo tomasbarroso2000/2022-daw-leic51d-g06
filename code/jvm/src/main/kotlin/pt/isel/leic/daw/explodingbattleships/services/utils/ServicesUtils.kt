@@ -44,8 +44,11 @@ fun <T> doService(data: Data, function: (t: Transaction) -> T): T {
             function(it)
         }
     } catch (error: Exception) {
-        if (error is AppException) throw error
-        else throw handleDataError(error)
+        if (error is AppException) {
+            throw error
+        } else {
+            throw handleDataError(error)
+        }
     }
 }
 
@@ -68,15 +71,19 @@ fun executeHit(transaction: Transaction, game: Game, squares: List<Square>, play
             data.hitsData.createHit(transaction, square, game.id, playerId, true)
             data.shipsData.updateNumOfHits(transaction, game.id, playerId, entry.key.firstSquare)
             val destroyed = maybeDestroyShip(transaction, playerId, game.id, entry.key, data)
-            if (destroyed) hitOutcomeList.add(HitOutcome(square, true, entry.key.name))
-            else hitOutcomeList.add(HitOutcome(square, true))
+            if (destroyed) {
+                hitOutcomeList.add(HitOutcome(square, true, entry.key.name))
+            } else {
+                hitOutcomeList.add(HitOutcome(square, true))
+            }
         } else {
             data.hitsData.createHit(transaction, square, game.id, playerId, false)
             hitOutcomeList.add(HitOutcome(square, false))
         }
     }
-    if (winConditionDetection(transaction, game.id, playerId, data))
+    if (winConditionDetection(transaction, game.id, playerId, data)) {
         return HitsOutcome(hitOutcomeList, true)
+    }
     data.gamesData.changeCurrPlayer(transaction, game.id, game.idlePlayer())
     return HitsOutcome(hitOutcomeList, false)
 }

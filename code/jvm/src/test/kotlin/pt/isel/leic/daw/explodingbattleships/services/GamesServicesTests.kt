@@ -166,7 +166,8 @@ class GamesServicesTests {
             false
         )
         val actualHitsOutcome = services.sendHits(
-            userId, gameId,
+            userId,
+            gameId,
             listOf(
                 Square('d', 2),
                 Square('e', 2)
