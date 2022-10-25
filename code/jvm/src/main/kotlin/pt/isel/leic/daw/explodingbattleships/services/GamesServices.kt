@@ -8,8 +8,14 @@ import pt.isel.leic.daw.explodingbattleships.services.utils.*
 @Component
 class GamesServices(private val data: Data) {
 
-    fun getGame(userId: Int, gameId: Int) = doService(data) {
-
+    fun getGame(userId: Int, gameId: Int) = doService(data) { transaction ->
+        val game = computeGame(transaction, gameId, data)
+        val opponentId = game.otherPlayer(userId)
+        val playerFleet = data.shipsData.getFleet(transaction, game.id, userId)
+        val takenHits = data.hitsData.getHits(transaction, game.id, userId)
+        val enemyFleet = data.shipsData.getFleet(transaction, game.id, opponentId)
+        val sentHits = data.hitsData.getHits(transaction, game.id, opponentId)
+        FullGameInfo(game, playerFleet, takenHits, enemyFleet, sentHits)
     }
 
     /**
@@ -104,9 +110,9 @@ class GamesServices(private val data: Data) {
         if (data.shipsData.checkEnemyLayoutDone(transaction, game.id, userId)) {
             println("enemy done")
             data.gamesData.setGameToShooting(transaction, game.id)
-            LayoutOutcome(LayoutOutcomeStatus.STARTED)
+            LayoutOutcomeStatus.STARTED
         }
         else
-            LayoutOutcome(LayoutOutcomeStatus.WAITING)
+            LayoutOutcomeStatus.WAITING
     }
 }

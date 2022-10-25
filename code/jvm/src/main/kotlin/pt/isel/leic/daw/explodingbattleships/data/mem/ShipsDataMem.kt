@@ -59,6 +59,12 @@ class ShipsDataMem(private val mockData: MockData) : ShipsData {
             .filter { it.game == gameId && it.player == playerId }
             .map { it.toShipState() }
 
+    override fun getFleet(transaction: Transaction, gameId: Int, playerId: Int): List<ShipDto> =
+        mockData
+            .ships
+            .filter { it.game == gameId && it.player == playerId }
+            .map { it.toShip() }
+
     override fun getNumOfHits(
         transaction: Transaction,
         shipFirstSquare: VerifiedSquare,

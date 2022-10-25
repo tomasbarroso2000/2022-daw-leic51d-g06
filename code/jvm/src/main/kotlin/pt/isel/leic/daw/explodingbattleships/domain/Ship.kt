@@ -58,4 +58,15 @@ fun VerifiedShip.getSquares(): Set<VerifiedSquare> {
     return squares
 }
 
+data class ShipDto(
+    val firstSquare: String,
+    val name: String,
+    val size: Int,
+    val nOfHits: Int,
+    val destroyed: Boolean,
+    val orientation: String,
+    val player: Int,
+    val game: Int
+)
+
 

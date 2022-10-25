@@ -83,6 +83,7 @@ data class StoredShip(
 
 fun StoredShip.toShipState() = ShipState(name, destroyed)
 fun StoredShip.toVerifiedShip() = VerifiedShip(name, firstSquare.toVerifiedSquare(), orientation, size)
+fun StoredShip.toShip() = ShipDto(firstSquare, name, size, nOfHits, destroyed, orientation, player, game)
 
 
 data class StoredHit(
@@ -92,6 +93,8 @@ data class StoredHit(
     val player: Int,
     val game: Int
 )
+
+fun StoredHit.toHit() = Hit(square, hitTimestamp, onShip, player, game)
 
 data class StoredLobby(
     val player: Int,

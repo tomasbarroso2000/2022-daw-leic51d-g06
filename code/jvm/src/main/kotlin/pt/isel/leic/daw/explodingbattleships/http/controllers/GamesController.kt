@@ -1,6 +1,6 @@
 package pt.isel.leic.daw.explodingbattleships.http.controllers
 
-import org.springframework.http.MediaType
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import pt.isel.leic.daw.explodingbattleships.domain.Hits
@@ -12,7 +12,10 @@ import pt.isel.leic.daw.explodingbattleships.http.Successes
 import pt.isel.leic.daw.explodingbattleships.http.Uris
 import pt.isel.leic.daw.explodingbattleships.http.doApiTask
 import pt.isel.leic.daw.explodingbattleships.http.models.FleetStateOutputModel
+import pt.isel.leic.daw.explodingbattleships.http.models.GameOutputModel
 import pt.isel.leic.daw.explodingbattleships.http.models.GameStateOutputModel
+import pt.isel.leic.daw.explodingbattleships.http.models.HitsOutputModel
+import pt.isel.leic.daw.explodingbattleships.http.models.LayoutOutputModel
 import pt.isel.leic.daw.explodingbattleships.http.models.NumberOfPlayedGamesOutputModel
 import pt.isel.leic.daw.explodingbattleships.infra.siren
 import pt.isel.leic.daw.explodingbattleships.services.GamesServices
@@ -21,6 +24,41 @@ import javax.validation.Valid
 @RestController
 @RequestMapping(Uris.BASE_PATH)
 class GamesController(private val services: GamesServices) {
+
+    @GetMapping(Uris.Games.GAME_INFO)
+    fun getGameInfo(
+        user: User,
+        @PathVariable gameId: Int
+    ) = doApiTask {
+        val res = services.getGame(user.id, gameId)
+        ResponseEntity
+            .status(HttpStatus.OK)
+            .contentType(APPLICATION_SIREN)
+            .body(
+                siren(
+                    TODO()
+                    /*
+                    GameOutputModel(
+                        res.game.id,
+                        res.game.type,
+                        res.game.state,
+                        1, // opponent
+                        true, // playing
+                        res.game.startedAt,
+                        res.playerFleet,
+                        //res.takenHits.map {it.square },
+                        res.enemyFleet.filter { it.destroyed },
+                        //res.sentHits.filter { it.onShip }.map { it.square },
+                        //res.sentHits.filter { !it.onShip }.map { it.square }
+                    )
+                     */
+                ) {
+                    link(Uris.Games.gameInfo(gameId), Rels.SELF)
+                    link(Uris.home(), Rels.HOME)
+                    clazz("GameOutputModel")
+                }
+            )
+    }
 
     @GetMapping(Uris.Games.NR_OF_GAMES)
     fun getNrOfPlayedGames() =
@@ -95,11 +133,12 @@ class GamesController(private val services: GamesServices) {
         user: User,
         @Valid @RequestBody input: Hits,
     ) = doApiTask {
+        val res = services.sendHits(user.id, input.gameId, input.squares)
         ResponseEntity
             .status(Successes.CREATED)
             .contentType(APPLICATION_SIREN)
             .body(
-                siren(services.sendHits(user.id, input.gameId, input.squares)) {
+                siren(HitsOutputModel(res.hitsOutcome, res.win)) {
                     link(Uris.Games.sendHits(), Rels.SELF)
                     link(Uris.home(), Rels.HOME)
                     clazz("HitsOutcome")
@@ -112,11 +151,12 @@ class GamesController(private val services: GamesServices) {
         user: User,
         @Valid @RequestBody input: Layout,
     ) = doApiTask {
+        val res = services.sendLayout(user.id, input.gameId, input.ships)
         ResponseEntity
             .status(Successes.CREATED)
             .contentType(APPLICATION_SIREN)
             .body(
-                siren(services.sendLayout(user.id, input.gameId, input.ships)) {
+                siren(LayoutOutputModel(res)) {
                     link(Uris.Games.defineLayout(), Rels.SELF)
                     link(Uris.home(), Rels.HOME)
                     clazz("LayoutOutput")

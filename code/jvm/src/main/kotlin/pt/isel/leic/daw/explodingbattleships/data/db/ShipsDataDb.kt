@@ -78,6 +78,14 @@ class ShipsDataDb: ShipsData {
                 .mapTo<ShipState>().list()
         }
 
+    override fun getFleet(transaction: Transaction, gameId: Int, playerId: Int): List<ShipDto> =
+        (transaction as TransactionDataDb).withHandle { handle ->
+            handle.createQuery("select * from ships where game = :gameId and player = :playerId")
+                .bind("gameId", gameId)
+                .bind("playerId", playerId)
+                .mapTo<ShipDto>().list()
+        }
+
     override fun getNumOfHits(
         transaction: Transaction,
         shipFirstSquare: VerifiedSquare,

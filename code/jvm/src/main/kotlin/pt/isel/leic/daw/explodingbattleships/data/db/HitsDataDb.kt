@@ -1,7 +1,9 @@
 package pt.isel.leic.daw.explodingbattleships.data.db
 
+import org.jdbi.v3.core.kotlin.mapTo
 import pt.isel.leic.daw.explodingbattleships.data.HitsData
 import pt.isel.leic.daw.explodingbattleships.data.Transaction
+import pt.isel.leic.daw.explodingbattleships.domain.Hit
 import pt.isel.leic.daw.explodingbattleships.domain.VerifiedSquare
 import pt.isel.leic.daw.explodingbattleships.domain.getString
 
@@ -22,5 +24,13 @@ class HitsDataDb: HitsData {
                 .execute()
         }
     }
+
+    override fun getHits(transaction: Transaction, gameId: Int, userId: Int): List<Hit> =
+        (transaction as TransactionDataDb).withHandle { handle ->
+            handle.createQuery("select * from hits where game = :gameId and player = :playerId")
+                .bind("gameId", gameId)
+                .bind("playerId", userId)
+                .mapTo<Hit>().list()
+        }
 
 }
