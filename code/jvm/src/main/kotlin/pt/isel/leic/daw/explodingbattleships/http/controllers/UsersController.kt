@@ -1,11 +1,11 @@
 package pt.isel.leic.daw.explodingbattleships.http.controllers
 
-import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import pt.isel.leic.daw.explodingbattleships.domain.EnterLobbyInput
 import pt.isel.leic.daw.explodingbattleships.domain.User
 import pt.isel.leic.daw.explodingbattleships.domain.UserInput
+import pt.isel.leic.daw.explodingbattleships.http.APPLICATION_SIREN
 import pt.isel.leic.daw.explodingbattleships.http.Rels
 import pt.isel.leic.daw.explodingbattleships.http.Successes
 import pt.isel.leic.daw.explodingbattleships.http.Uris
@@ -30,7 +30,7 @@ class UsersController(private val services: UsersServices) {
     ) = doApiTask {
         ResponseEntity
             .status(Successes.OK)
-            .contentType(MediaType.APPLICATION_JSON)
+            .contentType(APPLICATION_SIREN)
             .body(
                 siren(UserOutputModel(user.id, user.name, user.email, user.score)) {
                     link(Uris.Users.home(), Rels.SELF)
@@ -47,7 +47,7 @@ class UsersController(private val services: UsersServices) {
         val res = services.createUser(input.name, input.email, input.password)
         ResponseEntity
             .status(Successes.CREATED)
-            .contentType(MediaType.APPLICATION_JSON)
+            .contentType(APPLICATION_SIREN)
             .body(
                 siren(UserCreationOutputModel(res.id)) {
                     link(Uris.Users.createUser(), Rels.SELF)
@@ -64,7 +64,7 @@ class UsersController(private val services: UsersServices) {
         val res = services.createToken(input.email, input.password)
         ResponseEntity
             .status(Successes.CREATED)
-            .contentType(MediaType.APPLICATION_JSON)
+            .contentType(APPLICATION_SIREN)
             .body(
                 siren(UserTokenOutputModel(res)) {
                     link(Uris.Users.createToken(), Rels.SELF)
@@ -82,7 +82,7 @@ class UsersController(private val services: UsersServices) {
         val res = services.getRankings(limit, skip)
         ResponseEntity
             .status(Successes.OK)
-            .contentType(MediaType.APPLICATION_JSON)
+            .contentType(APPLICATION_SIREN)
             .body(
                 siren(RankingsOutputModel(res)) {
                     link(Uris.Users.rankings(), Rels.SELF)
@@ -100,7 +100,7 @@ class UsersController(private val services: UsersServices) {
         val res = services.enterLobby(player.id, input.gameType)
         ResponseEntity
             .status(Successes.OK)
-            .contentType(MediaType.APPLICATION_JSON)
+            .contentType(APPLICATION_SIREN)
             .body(
                 siren(EnterLobbyOutputModel(res.waitingForGame, res.gameId)) {
                     link(Uris.Users.enterLobby(), Rels.SELF)

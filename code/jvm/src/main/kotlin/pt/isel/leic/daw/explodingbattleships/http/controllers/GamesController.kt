@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*
 import pt.isel.leic.daw.explodingbattleships.domain.Hits
 import pt.isel.leic.daw.explodingbattleships.domain.Layout
 import pt.isel.leic.daw.explodingbattleships.domain.User
+import pt.isel.leic.daw.explodingbattleships.http.APPLICATION_SIREN
 import pt.isel.leic.daw.explodingbattleships.http.Rels
 import pt.isel.leic.daw.explodingbattleships.http.Successes
 import pt.isel.leic.daw.explodingbattleships.http.Uris
@@ -27,7 +28,7 @@ class GamesController(private val services: GamesServices) {
             val res = services.getNumberOfPlayedGames()
             ResponseEntity
                 .status(Successes.OK)
-                .contentType(MediaType.APPLICATION_JSON)
+                .contentType(APPLICATION_SIREN)
                 .body(
                     siren(NumberOfPlayedGamesOutputModel(res)) {
                         link(Uris.Games.nrOfGames(), Rels.SELF)
@@ -43,7 +44,7 @@ class GamesController(private val services: GamesServices) {
             val res = services.getGameState(gameId)
             ResponseEntity
             .status(Successes.OK)
-            .contentType(MediaType.APPLICATION_JSON)
+            .contentType(APPLICATION_SIREN)
             .body(
                 siren(GameStateOutputModel(res)) {
                     link(Uris.Games.state(gameId), Rels.SELF)
@@ -61,7 +62,7 @@ class GamesController(private val services: GamesServices) {
         val res = services.fleetState(user.id, gameId, true)
         ResponseEntity
             .status(Successes.OK)
-            .contentType(MediaType.APPLICATION_JSON)
+            .contentType(APPLICATION_SIREN)
             .body(
                 siren(FleetStateOutputModel(res)) {
                     link(Uris.Games.playerFleet(gameId), Rels.SELF)
@@ -79,7 +80,7 @@ class GamesController(private val services: GamesServices) {
         val res = services.fleetState(user.id, gameId, false)
         ResponseEntity
             .status(Successes.OK)
-            .contentType(MediaType.APPLICATION_JSON)
+            .contentType(APPLICATION_SIREN)
             .body(
                 siren(FleetStateOutputModel(res)) {
                     link(Uris.Games.enemyFleet(gameId), Rels.SELF)
@@ -96,7 +97,7 @@ class GamesController(private val services: GamesServices) {
     ) = doApiTask {
         ResponseEntity
             .status(Successes.CREATED)
-            .contentType(MediaType.APPLICATION_JSON)
+            .contentType(APPLICATION_SIREN)
             .body(
                 siren(services.sendHits(user.id, input.gameId, input.squares)) {
                     link(Uris.Games.sendHits(), Rels.SELF)
@@ -113,7 +114,7 @@ class GamesController(private val services: GamesServices) {
     ) = doApiTask {
         ResponseEntity
             .status(Successes.CREATED)
-            .contentType(MediaType.APPLICATION_JSON)
+            .contentType(APPLICATION_SIREN)
             .body(
                 siren(services.sendLayout(user.id, input.gameId, input.ships)) {
                     link(Uris.Games.defineLayout(), Rels.SELF)

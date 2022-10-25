@@ -18,7 +18,7 @@ class HomeController {
     fun getHome() = doApiTask {
         ResponseEntity
             .status(Successes.OK)
-            .contentType(MediaType.APPLICATION_JSON)
+            .contentType(APPLICATION_SIREN)
             .body(
                 siren(HomeOutputModel()){
                     link(Uris.home(), Rels.SELF)
