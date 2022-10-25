@@ -1,6 +1,11 @@
 package pt.isel.leic.daw.explodingbattleships.data.mem
 
-import pt.isel.leic.daw.explodingbattleships.domain.*
+import pt.isel.leic.daw.explodingbattleships.domain.Game
+import pt.isel.leic.daw.explodingbattleships.domain.Hit
+import pt.isel.leic.daw.explodingbattleships.domain.Lobby
+import pt.isel.leic.daw.explodingbattleships.domain.Ranking
+import pt.isel.leic.daw.explodingbattleships.domain.Ship
+import pt.isel.leic.daw.explodingbattleships.domain.User
 import java.time.Instant
 
 /**
@@ -12,7 +17,7 @@ data class DataException(
 ) : Exception()
 
 /**
- * Get a sublist with given limit and skip values
+ * Gets a sublist with given limit and skip values
  * @param list the initial list
  * @param limit the size of the sublist
  * @param skip the first index of the initial list to be considered
@@ -39,14 +44,28 @@ fun <T> getSublist(list: List<T>, limit: Int, skip: Int): List<T> {
  */
 fun hasMore(count: Int, limit: Int, skip: Int) = count > skip + limit
 
-
+/**
+ * Transforms a [User] into a [Ranking]
+ */
 fun User.toRanking() = Ranking(id, name, score)
 
+/**
+ * Represents the tokens stored in memory
+ */
 data class StoredToken(
     val tokenVer: String,
     val userId: Int
 )
 
+/**
+ * The mock data used for tests
+ * @property users the users in memory
+ * @property games the games in memory
+ * @property tokens the tokens in memory
+ * @property ships the ships in memory
+ * @property hits the hits in memory,
+ * @property lobbies the lobbies in memory
+ */
 data class MockData(
     val users: MutableSet<User> = mutableSetOf(
         User(1, "Leki", "leki@yes.com", 420, 123),
@@ -54,7 +73,8 @@ data class MockData(
         User(3, "LordFarquaad", "farquaad@buebuelonge.com", 510, 123),
         User(4, "GingerbreadMan", "ginger@buebuelonge.com", 520, 123),
         User(5, "Shrek", "ilovefiona@pantano.com", 10, 123),
-        User(6, "Fiona", "iloveshrek@gmail.com", 10, 123)
+        User(6, "Fiona", "iloveshrek@gmail.com", 10, 123),
+        User(7, "Burro", "iloveshrekalso@gmail.com", 10, "shrek".hashCode())
     ),
     val games: MutableSet<Game> = mutableSetOf(
         Game(1, "beginner", "layout_definition", 1, 2, 1, Instant.now()),
@@ -79,7 +99,7 @@ data class MockData(
 
         Ship("a1", "carrier", 5, 0, false, "horizontal", 2, 1),
         Ship("b1", "battleship", 5, 0, false, "vertical", 2, 1),
-        Ship("c2", "cruiser", 3, 0, false, "horizontal",2, 1),
+        Ship("c2", "cruiser", 3, 0, false, "horizontal", 2, 1),
         Ship("b2", "submarine", 3, 3, true, "horizontal", 2, 1),
         Ship("d2", "destroyer", 2, 2, true, "vertical", 2, 1),
 
@@ -93,9 +113,9 @@ data class MockData(
     ),
 
     val hits: MutableSet<Hit> = mutableSetOf(
-        Hit("f1", Instant.now(), false,6, 2)
+        Hit("f1", Instant.now(), false, 6, 2)
     ),
-    val lobby: MutableSet<Lobby> = mutableSetOf(
+    val lobbies: MutableSet<Lobby> = mutableSetOf(
         Lobby(4, "beginner", Instant.now())
     )
 )

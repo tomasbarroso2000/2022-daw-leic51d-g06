@@ -5,7 +5,6 @@ import org.springframework.http.ResponseEntity
 import pt.isel.leic.daw.explodingbattleships.services.utils.AppException
 import pt.isel.leic.daw.explodingbattleships.services.utils.AppExceptionStatus
 import javax.servlet.http.HttpServletRequest
-import pt.isel.leic.daw.explodingbattleships.infra.siren
 
 val APPLICATION_SIREN = MediaType.parseMediaType("application/vnd.siren+json")
 

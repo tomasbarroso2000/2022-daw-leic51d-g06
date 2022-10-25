@@ -11,7 +11,7 @@ class TransactionDataDb(private val handle: Handle) : Transaction {
     }
 
     /**
-     * Execute a task using the transaction's connection
+     * Executes a task using the transaction's connection
      * @param function the task that will be executed
      */
     fun <T> withHandle(function: (h: Handle) -> T) = function(handle)

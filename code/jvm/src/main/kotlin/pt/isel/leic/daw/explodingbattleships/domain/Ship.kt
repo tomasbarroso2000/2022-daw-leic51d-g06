@@ -7,8 +7,8 @@ data class Ship(
     val nOfHits: Int,
     val destroyed: Boolean,
     val orientation: String,
-    val player: Int,
-    val game: Int
+    val userId: Int,
+    val gameId: Int
 )
 
 data class ShipState(
@@ -25,7 +25,7 @@ data class ShipCreationInfo(
 )
 
 fun ShipCreationInfo.toShipOrNull(userId: Int, gameId: Int, gameType: GameType): Ship? {
-    val shipSpec = gameType.fleetComposition.find { it.name.lowercase() == name.lowercase()}
+    val shipSpec = gameType.fleetComposition.find { it.name.lowercase() == name.lowercase() }
         ?: return null
     return Ship(firstSquare.getString(), name, shipSpec.size, 0, false, orientation, userId, gameId)
 }
@@ -47,5 +47,3 @@ fun Ship.getSquares(): Set<Square> {
     }
     return squares
 }
-
-

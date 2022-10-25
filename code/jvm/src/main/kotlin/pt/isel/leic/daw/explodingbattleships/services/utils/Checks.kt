@@ -2,7 +2,18 @@ package pt.isel.leic.daw.explodingbattleships.services.utils
 
 import pt.isel.leic.daw.explodingbattleships.data.Data
 import pt.isel.leic.daw.explodingbattleships.data.Transaction
-import pt.isel.leic.daw.explodingbattleships.domain.*
+import pt.isel.leic.daw.explodingbattleships.domain.Game
+import pt.isel.leic.daw.explodingbattleships.domain.GameType
+import pt.isel.leic.daw.explodingbattleships.domain.NextSquare
+import pt.isel.leic.daw.explodingbattleships.domain.Ship
+import pt.isel.leic.daw.explodingbattleships.domain.ShipCreationInfo
+import pt.isel.leic.daw.explodingbattleships.domain.Square
+import pt.isel.leic.daw.explodingbattleships.domain.down
+import pt.isel.leic.daw.explodingbattleships.domain.getString
+import pt.isel.leic.daw.explodingbattleships.domain.right
+import pt.isel.leic.daw.explodingbattleships.domain.toShipOrNull
+import pt.isel.leic.daw.explodingbattleships.domain.toSquareOrNull
+import java.util.regex.Pattern
 
 /**
  * Throws an [AppException] if the undesired condition is verified
@@ -23,6 +34,24 @@ fun checkOrThrowBadRequest(undesiredCondition: Boolean, errorMessage: String) {
 fun checkLimitAndSkip(limit: Int, skip: Int) {
     checkOrThrowBadRequest(limit <= 0, "Invalid limit")
     checkOrThrowBadRequest(skip < 0, "Invalid skip")
+}
+
+/**
+ * Check if the email address is valid
+ */
+fun isEmailValid(email: String): Boolean {
+    return Pattern.compile("^(.+)@(\\S+)$")
+        .matcher(email)
+        .matches()
+}
+
+/**
+ * Checks if an email is valid and
+ * throws an exception if it is not
+ * @param email the email
+ */
+fun checkEmailValid(email: String) {
+    checkOrThrowBadRequest(!isEmailValid(email), "Invalid email format")
 }
 
 /**
@@ -47,7 +76,7 @@ fun checkShipLayout(userId: Int, game: Game, ships: List<ShipCreationInfo>): Lis
         !shipsValid(gameType, ships),
         "Invalid ship list for ${gameType.name} game"
     )
-    val occupiedSquares = mutableSetOf<Square?>()
+    val occupiedSquares = mutableSetOf<Square>()
     val verifiedShips = mutableListOf<Ship>()
     ships.forEach { unverifiedShip ->
         val verifiedShip = unverifiedShip.toShipOrNull(userId, game.id, gameType)
@@ -90,7 +119,7 @@ fun squareInBoard(square: Square, boardSize: Int): Boolean {
  * @param occupiedSquares the occupied squares
  * @param nextSquare the function to calculate the next square
  */
-private fun validateShipSquares(ship: Ship, boardSize: Int, occupiedSquares: MutableSet<Square?>, nextSquare: NextSquare) {
+private fun validateShipSquares(ship: Ship, boardSize: Int, occupiedSquares: MutableSet<Square>, nextSquare: NextSquare) {
     var currentSquare = ship.firstSquare.toSquareOrNull()
         ?: throw AppException("Invalid first square: ${ship.firstSquare}")
     for (i in 0 until ship.size) {
@@ -101,23 +130,9 @@ private fun validateShipSquares(ship: Ship, boardSize: Int, occupiedSquares: Mut
     }
 }
 
-/**
- * Computes a player through a token
- * @param transaction the current transaction
- * @param token the user token
- * @param data the [Data] module
- * @return the player
- */
-fun computePlayer(transaction: Transaction, token: String?, data: Data): User {
-    if (token.isNullOrBlank())
-        throw AppException("No token provided", AppExceptionStatus.UNAUTHORIZED)
-    return data.usersData.getUserFromToken(transaction, token)
-        ?: throw AppException("Invalid token", AppExceptionStatus.UNAUTHORIZED)
-}
-
 fun computeGame(transaction: Transaction, gameId: Int, data: Data): Game {
     if (gameId <= 0)
-        throw AppException("Invalid gameId", AppExceptionStatus.BAD_REQUEST)
+        throw AppException("Invalid game id", AppExceptionStatus.BAD_REQUEST)
     return data.gamesData.getGame(transaction, gameId)
         ?: throw AppException("Game does not exist", AppExceptionStatus.NOT_FOUND)
 }

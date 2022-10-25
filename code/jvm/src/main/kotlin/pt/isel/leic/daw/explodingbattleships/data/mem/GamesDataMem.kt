@@ -2,7 +2,7 @@ package pt.isel.leic.daw.explodingbattleships.data.mem
 
 import pt.isel.leic.daw.explodingbattleships.data.GamesData
 import pt.isel.leic.daw.explodingbattleships.data.Transaction
-import pt.isel.leic.daw.explodingbattleships.domain.*
+import pt.isel.leic.daw.explodingbattleships.domain.Game
 import java.time.Instant
 
 class GamesDataMem(private val mockData: MockData) : GamesData {

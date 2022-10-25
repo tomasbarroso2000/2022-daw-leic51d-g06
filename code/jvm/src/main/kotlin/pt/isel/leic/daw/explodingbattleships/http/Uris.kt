@@ -17,7 +17,7 @@ object Uris {
 
         fun home(): URI = URI(BASE_PATH + HOME)
         fun createUser(): URI = URI(BASE_PATH + CREATE)
-        fun createToken() : URI = URI(BASE_PATH + TOKEN)
+        fun createToken(): URI = URI(BASE_PATH + TOKEN)
         fun enterLobby(): URI = URI(BASE_PATH + ENTER_LOBBY)
         fun rankings(): URI = URI(BASE_PATH + RANKINGS)
     }

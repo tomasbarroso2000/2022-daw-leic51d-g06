@@ -1,7 +1,6 @@
 package pt.isel.leic.daw.explodingbattleships.data
 
 import pt.isel.leic.daw.explodingbattleships.domain.Game
-import pt.isel.leic.daw.explodingbattleships.domain.Square
 
 interface GamesData {
     fun createGame(transaction: Transaction, gameType: String, player1: Int, player2: Int): Int

@@ -2,8 +2,16 @@ package pt.isel.leic.daw.explodingbattleships.services
 
 import org.springframework.stereotype.Component
 import pt.isel.leic.daw.explodingbattleships.data.Data
-import pt.isel.leic.daw.explodingbattleships.domain.*
-import pt.isel.leic.daw.explodingbattleships.services.utils.*
+import pt.isel.leic.daw.explodingbattleships.domain.DataList
+import pt.isel.leic.daw.explodingbattleships.domain.Ranking
+import pt.isel.leic.daw.explodingbattleships.services.utils.AppException
+import pt.isel.leic.daw.explodingbattleships.services.utils.AppExceptionStatus
+import pt.isel.leic.daw.explodingbattleships.services.utils.checkEmailValid
+import pt.isel.leic.daw.explodingbattleships.services.utils.checkLimitAndSkip
+import pt.isel.leic.daw.explodingbattleships.services.utils.checkPasswordValid
+import pt.isel.leic.daw.explodingbattleships.services.utils.doService
+import pt.isel.leic.daw.explodingbattleships.services.utils.enterLobbyOrCreateGame
+import pt.isel.leic.daw.explodingbattleships.services.utils.isGameTypeInvalid
 
 @Component
 class UsersServices(private val data: Data) {
@@ -13,13 +21,14 @@ class UsersServices(private val data: Data) {
      * @param userInput the player information
      * @return the output of the player creation with the new player's id
      */
-    fun createUser(name: String, email: String, password: String) = doService(data) {transaction ->
+    fun createUser(name: String, email: String, password: String) = doService(data) { transaction ->
         if (name.isBlank())
             throw AppException("Invalid name", AppExceptionStatus.BAD_REQUEST)
         if (email.isBlank())
             throw AppException("Invalid email", AppExceptionStatus.BAD_REQUEST)
         if (password.isBlank())
             throw AppException("Invalid password", AppExceptionStatus.BAD_REQUEST)
+        checkEmailValid(email)
         checkPasswordValid(password)
         data.usersData.createUser(transaction, name, email, password.hashCode())
     }
@@ -28,14 +37,9 @@ class UsersServices(private val data: Data) {
      * Creates a token
      */
     fun createToken(email: String, password: String) = doService(data) { transaction ->
-        if (email.isBlank())
-            throw AppException("Invalid email", AppExceptionStatus.BAD_REQUEST)
-        if (password.isBlank())
-            throw AppException("Invalid password", AppExceptionStatus.BAD_REQUEST)
         val user = data.usersData.getUserFromEmail(transaction, email)
-            ?: throw AppException("")
-        if (user.passwordVer != password.hashCode())
-            throw AppException("")
+        if (user == null || user.passwordVer != password.hashCode())
+            throw AppException("Bad credentials", AppExceptionStatus.UNAUTHORIZED)
         data.usersData.createToken(transaction, user.id)
     }
 
@@ -45,7 +49,10 @@ class UsersServices(private val data: Data) {
      * @return the player
      */
     fun getPlayerInfo(token: String?) = doService(data) { transaction ->
-        computePlayer(transaction, token, data)
+        if (token.isNullOrBlank())
+            throw AppException("No token provided", AppExceptionStatus.UNAUTHORIZED)
+        data.usersData.getUserFromToken(transaction, token)
+            ?: throw AppException("Invalid token", AppExceptionStatus.UNAUTHORIZED)
     }
 
     /**

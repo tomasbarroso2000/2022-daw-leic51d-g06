@@ -4,13 +4,19 @@ import org.jdbi.v3.core.Jdbi
 import org.jdbi.v3.core.kotlin.KotlinPlugin
 import org.postgresql.ds.PGSimpleDataSource
 import org.springframework.stereotype.Component
-import pt.isel.leic.daw.explodingbattleships.data.*
+import pt.isel.leic.daw.explodingbattleships.data.Data
 
 @Component
 class DataDb : Data {
 
+    /**
+     * Jdbi object useful for transaction management
+     */
     private val jdbi = getJdbi()
 
+    /**
+     * Obtains a [Jdbi] object
+     */
     private fun getJdbi(): Jdbi {
         val dataSource = PGSimpleDataSource()
         val jdbcDatabaseURL = System.getenv("JDBC_DATABASE_URL")

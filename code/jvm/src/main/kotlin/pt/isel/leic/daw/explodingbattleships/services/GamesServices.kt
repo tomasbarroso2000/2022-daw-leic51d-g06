@@ -2,8 +2,28 @@ package pt.isel.leic.daw.explodingbattleships.services
 
 import org.springframework.stereotype.Component
 import pt.isel.leic.daw.explodingbattleships.data.Data
-import pt.isel.leic.daw.explodingbattleships.domain.*
-import pt.isel.leic.daw.explodingbattleships.services.utils.*
+import pt.isel.leic.daw.explodingbattleships.domain.FullGameInfo
+import pt.isel.leic.daw.explodingbattleships.domain.LayoutOutcomeStatus
+import pt.isel.leic.daw.explodingbattleships.domain.ShipCreationInfo
+import pt.isel.leic.daw.explodingbattleships.domain.Square
+import pt.isel.leic.daw.explodingbattleships.domain.getString
+import pt.isel.leic.daw.explodingbattleships.domain.idlePlayer
+import pt.isel.leic.daw.explodingbattleships.domain.otherPlayer
+import pt.isel.leic.daw.explodingbattleships.domain.toShipState
+import pt.isel.leic.daw.explodingbattleships.domain.toSquareOrThrow
+import pt.isel.leic.daw.explodingbattleships.services.utils.AppException
+import pt.isel.leic.daw.explodingbattleships.services.utils.AppExceptionStatus
+import pt.isel.leic.daw.explodingbattleships.services.utils.checkCurrentPlayer
+import pt.isel.leic.daw.explodingbattleships.services.utils.checkGameState
+import pt.isel.leic.daw.explodingbattleships.services.utils.checkOrThrowBadRequest
+import pt.isel.leic.daw.explodingbattleships.services.utils.checkPlayerInGame
+import pt.isel.leic.daw.explodingbattleships.services.utils.checkShipLayout
+import pt.isel.leic.daw.explodingbattleships.services.utils.computeGame
+import pt.isel.leic.daw.explodingbattleships.services.utils.doService
+import pt.isel.leic.daw.explodingbattleships.services.utils.executeHit
+import pt.isel.leic.daw.explodingbattleships.services.utils.squareInBoard
+import pt.isel.leic.daw.explodingbattleships.services.utils.toGameTypeOrNull
+import pt.isel.leic.daw.explodingbattleships.services.utils.toGameTypeOrThrow
 import java.lang.IllegalArgumentException
 import java.time.Instant
 
@@ -124,8 +144,7 @@ class GamesServices(private val data: Data) {
             println("enemy done")
             data.gamesData.setGameToShooting(transaction, game.id)
             LayoutOutcomeStatus.STARTED
-        }
-        else
+        } else
             LayoutOutcomeStatus.WAITING
     }
 }

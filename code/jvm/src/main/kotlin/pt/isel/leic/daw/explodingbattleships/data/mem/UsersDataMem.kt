@@ -1,8 +1,10 @@
 package pt.isel.leic.daw.explodingbattleships.data.mem
 
-import pt.isel.leic.daw.explodingbattleships.data.UsersData
 import pt.isel.leic.daw.explodingbattleships.data.Transaction
-import pt.isel.leic.daw.explodingbattleships.domain.*
+import pt.isel.leic.daw.explodingbattleships.data.UsersData
+import pt.isel.leic.daw.explodingbattleships.domain.DataList
+import pt.isel.leic.daw.explodingbattleships.domain.Ranking
+import pt.isel.leic.daw.explodingbattleships.domain.User
 import java.util.UUID
 
 class UsersDataMem(private val mockData: MockData) : UsersData {
@@ -20,6 +22,8 @@ class UsersDataMem(private val mockData: MockData) : UsersData {
         mockData.users.find { it.email == email }
 
     override fun createUser(transaction: Transaction, name: String, email: String, password: Int): Int {
+        if (mockData.users.any { it.email == email })
+            throw DataException("Email $email is already in use")
         val id = mockData.users.maxOf { it.id } + 1
         mockData.users.add(User(id, name, email, 0, password))
         return id

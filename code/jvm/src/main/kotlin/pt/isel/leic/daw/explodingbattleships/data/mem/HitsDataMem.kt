@@ -11,7 +11,7 @@ class HitsDataMem(private val mockData: MockData) : HitsData {
         transaction: Transaction,
         square: Square,
         gameId: Int,
-        playerId: Int,
+        userId: Int,
         onShip: Boolean
     ) {
         mockData.hits.add(
@@ -19,12 +19,12 @@ class HitsDataMem(private val mockData: MockData) : HitsData {
                 square.toString(),
                 Instant.now(),
                 onShip,
-                playerId,
+                userId,
                 gameId
             )
         )
     }
 
     override fun getHits(transaction: Transaction, gameId: Int, userId: Int): List<Hit> =
-        mockData.hits.filter { it.game == gameId && it.player == userId }
+        mockData.hits.filter { it.gameId == gameId && it.userId == userId }
 }

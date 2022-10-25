@@ -15,7 +15,8 @@ enum class GameType(
     val fleetComposition: List<ShipSpec>
 ) {
     BEGINNER(
-        10, 1, 60, 60, listOf(
+        10, 1, 60, 60,
+        listOf(
             ShipSpec("carrier", 6),
             ShipSpec("battleship", 5),
             ShipSpec("cruiser", 4),
@@ -24,7 +25,8 @@ enum class GameType(
         )
     ),
     EXPERIENCED(
-        12, 5, 60, 30, listOf(
+        12, 5, 60, 30,
+        listOf(
             ShipSpec("carrier", 5),
             ShipSpec("battleship", 4),
             ShipSpec("cruiser", 3),
@@ -33,7 +35,8 @@ enum class GameType(
         )
     ),
     EXPERT(
-        15, 6, 30, 30, listOf(
+        15, 6, 30, 30,
+        listOf(
             ShipSpec("carrier", 5),
             ShipSpec("battleship", 4),
             ShipSpec("destroyer", 3)

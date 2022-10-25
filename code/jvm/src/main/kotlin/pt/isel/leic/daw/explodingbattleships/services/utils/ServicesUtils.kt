@@ -2,8 +2,14 @@ package pt.isel.leic.daw.explodingbattleships.services.utils
 
 import pt.isel.leic.daw.explodingbattleships.data.Data
 import pt.isel.leic.daw.explodingbattleships.data.Transaction
-import pt.isel.leic.daw.explodingbattleships.domain.*
-import java.util.regex.Pattern
+import pt.isel.leic.daw.explodingbattleships.domain.EnterLobbyOutput
+import pt.isel.leic.daw.explodingbattleships.domain.Game
+import pt.isel.leic.daw.explodingbattleships.domain.GameType
+import pt.isel.leic.daw.explodingbattleships.domain.HitOutcome
+import pt.isel.leic.daw.explodingbattleships.domain.HitsOutcome
+import pt.isel.leic.daw.explodingbattleships.domain.Ship
+import pt.isel.leic.daw.explodingbattleships.domain.Square
+import pt.isel.leic.daw.explodingbattleships.domain.idlePlayer
 
 /**
  * Executes a function within a [Transaction]
@@ -41,15 +47,6 @@ fun <T> doService(data: Data, function: (t: Transaction) -> T): T {
         if (error is AppException) throw error
         else throw handleDataError(error)
     }
-}
-
-/**
- * Check if the email address is valid
- */
-fun isEmailValid(email: String): Boolean {
-    return Pattern.compile("^(.+)@(\\S+)$")
-        .matcher(email)
-        .matches()
 }
 
 /**
@@ -102,7 +99,6 @@ fun maybeDestroyShip(transaction: Transaction, playerId: Int, gameId: Int, ship:
 fun winConditionDetection(transaction: Transaction, gameId: Int, playerId: Int, data: Data): Boolean =
     data.shipsData.getFleet(transaction, gameId, playerId).all { it.destroyed }
 
-
 /**
  * Checks if a game type exists in the system
  * @param gameType the game type name
@@ -121,8 +117,8 @@ fun isGameTypeInvalid(gameType: String) = gameType.toGameTypeOrNull() == null
 fun enterLobbyOrCreateGame(transaction: Transaction, playerId: Int, gameType: String, data: Data): EnterLobbyOutput {
     val matchingLobby = data.lobbiesData.searchLobbies(transaction, gameType, playerId).firstOrNull()
     if (matchingLobby != null) {
-        data.lobbiesData.removeLobby(transaction, matchingLobby.player, matchingLobby.gameType, matchingLobby.enterTime)
-        return data.gamesData.createGame(transaction, gameType, playerId, matchingLobby.player)
+        data.lobbiesData.removeLobby(transaction, matchingLobby.userId, matchingLobby.gameType, matchingLobby.enterTime)
+        return data.gamesData.createGame(transaction, gameType, playerId, matchingLobby.userId)
             .let { EnterLobbyOutput(false, it) }
     }
     return data.lobbiesData.enterLobby(transaction, playerId, gameType)
@@ -130,4 +126,3 @@ fun enterLobbyOrCreateGame(transaction: Transaction, playerId: Int, gameType: St
 
 fun String.toGameTypeOrNull() = GameType.values().find { it.name == this.uppercase() }
 fun String.toGameTypeOrThrow() = toGameTypeOrNull() ?: throw IllegalArgumentException("Invalid game type")
-

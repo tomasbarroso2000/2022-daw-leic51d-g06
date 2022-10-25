@@ -17,6 +17,6 @@ data class Hit(
     val square: String,
     val hitTimestamp: Instant,
     val onShip: Boolean,
-    val player: Int,
-    val game: Int
+    val userId: Int,
+    val gameId: Int
 )

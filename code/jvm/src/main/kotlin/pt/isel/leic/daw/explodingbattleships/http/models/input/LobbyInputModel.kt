@@ -1,5 +1,5 @@
 package pt.isel.leic.daw.explodingbattleships.http.models.input
 
-data class UserOutputModel(
-    val id: Int
+data class LobbyInputModel(
+    val gameType: String
 )

@@ -3,7 +3,7 @@ package pt.isel.leic.daw.explodingbattleships.data.db
 import org.jdbi.v3.core.kotlin.mapTo
 import pt.isel.leic.daw.explodingbattleships.data.GamesData
 import pt.isel.leic.daw.explodingbattleships.data.Transaction
-import pt.isel.leic.daw.explodingbattleships.domain.*
+import pt.isel.leic.daw.explodingbattleships.domain.Game
 
 class GamesDataDb : GamesData {
     override fun createGame(
@@ -15,7 +15,7 @@ class GamesDataDb : GamesData {
         (transaction as TransactionDataDb).withHandle { handle ->
             handle.createUpdate(
                 " insert into games (type, state, player1, player2, curr_player, started_at) " +
-                        "values (:gameType, 'layout_definition', :player1, :player2, :player1, now())"
+                    "values (:gameType, 'layout_definition', :player1, :player2, :player1, now())"
             )
                 .bind("gameType", gameType)
                 .bind("player1", player1)
@@ -43,7 +43,6 @@ class GamesDataDb : GamesData {
                 .mapTo<Game>().firstOrNull()
         }
 
-
     override fun changeCurrPlayer(transaction: Transaction, gameId: Int, newCurrPlayer: Int) {
         (transaction as TransactionDataDb).withHandle { handle ->
             handle.createUpdate("update games set curr_player = :newCurrPlayer, started_at = now() where id = :gameId")
@@ -60,8 +59,6 @@ class GamesDataDb : GamesData {
                 .execute()
         }
     }
-
-
 
     override fun setGameStateCompleted(transaction: Transaction, gameId: Int) {
         (transaction as TransactionDataDb).withHandle { handle ->

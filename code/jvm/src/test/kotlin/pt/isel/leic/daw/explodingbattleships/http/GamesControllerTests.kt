@@ -1,10 +1,9 @@
 package pt.isel.leic.daw.explodingbattleships.http
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.test.web.reactive.server.WebTestClient
-
 
 /**
  *  Only simple tests for now.
@@ -15,7 +14,7 @@ class GamesControllerTests {
     var port: Int = 0
 
     @Test
-    fun canGetNumberOfPlayedGames() {
+    fun can_get_number_of_played_games() {
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
 
         client.get().uri(Uris.Games.nrOfGames())
@@ -24,7 +23,7 @@ class GamesControllerTests {
     }
 
     @Test
-    fun canGetGameState() {
+    fun can_get_game_state() {
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
 
         client.get().uri(Uris.Games.state(1))

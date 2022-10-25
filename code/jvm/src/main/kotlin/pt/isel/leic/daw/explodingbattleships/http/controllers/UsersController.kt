@@ -1,8 +1,12 @@
 package pt.isel.leic.daw.explodingbattleships.http.controllers
 
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
-import pt.isel.leic.daw.explodingbattleships.domain.EnterLobbyInput
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RestController
 import pt.isel.leic.daw.explodingbattleships.domain.User
 import pt.isel.leic.daw.explodingbattleships.http.APPLICATION_SIREN
 import pt.isel.leic.daw.explodingbattleships.http.Rels
@@ -14,10 +18,14 @@ import pt.isel.leic.daw.explodingbattleships.http.Uris.Users.HOME
 import pt.isel.leic.daw.explodingbattleships.http.Uris.Users.RANKINGS
 import pt.isel.leic.daw.explodingbattleships.http.Uris.Users.TOKEN
 import pt.isel.leic.daw.explodingbattleships.http.doApiTask
-import pt.isel.leic.daw.explodingbattleships.http.models.*
+import pt.isel.leic.daw.explodingbattleships.http.models.input.LobbyInputModel
 import pt.isel.leic.daw.explodingbattleships.http.models.input.UserInputModel
 import pt.isel.leic.daw.explodingbattleships.http.models.input.UserTokenInputModel
-import pt.isel.leic.daw.explodingbattleships.http.models.output.*
+import pt.isel.leic.daw.explodingbattleships.http.models.output.LobbyOutputModel
+import pt.isel.leic.daw.explodingbattleships.http.models.output.RankingsOutputModel
+import pt.isel.leic.daw.explodingbattleships.http.models.output.UserCreationOutputModel
+import pt.isel.leic.daw.explodingbattleships.http.models.output.UserOutputModel
+import pt.isel.leic.daw.explodingbattleships.http.models.output.UserTokenOutputModel
 import pt.isel.leic.daw.explodingbattleships.infra.siren
 import pt.isel.leic.daw.explodingbattleships.services.UsersServices
 import javax.validation.Valid
@@ -54,7 +62,7 @@ class UsersController(private val services: UsersServices) {
                 siren(UserCreationOutputModel(res)) {
                     link(Uris.Users.createUser(), Rels.SELF)
                     link(Uris.home(), Rels.HOME)
-                    clazz("UserOutput")
+                    clazz("UserCreationOutputModel")
                 }
             )
     }
@@ -89,7 +97,7 @@ class UsersController(private val services: UsersServices) {
                 siren(RankingsOutputModel(res)) {
                     link(Uris.Users.rankings(), Rels.SELF)
                     link(Uris.home(), Rels.HOME)
-                    clazz("Rankings")
+                    clazz("RankingsOutputModel")
                 }
             )
     }
@@ -97,17 +105,17 @@ class UsersController(private val services: UsersServices) {
     @PostMapping(ENTER_LOBBY)
     fun enterLobby(
         player: User,
-        @Valid @RequestBody input: EnterLobbyInput
+        @Valid @RequestBody input: LobbyInputModel
     ) = doApiTask {
         val res = services.enterLobby(player.id, input.gameType)
         ResponseEntity
             .status(Successes.OK)
             .contentType(APPLICATION_SIREN)
             .body(
-                siren(EnterLobbyOutputModel(res.waitingForGame, res.gameId)) {
+                siren(LobbyOutputModel(res.waitingForGame, res.gameId)) {
                     link(Uris.Users.enterLobby(), Rels.SELF)
                     link(Uris.home(), Rels.HOME)
-                    clazz("EnterLobbyOutputModel")
+                    clazz("LobbyOutputModel")
                 }
             )
     }

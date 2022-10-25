@@ -42,9 +42,9 @@ create table if not exists hits(
     square varchar(5) check (square ~ '[a-z][0-9]+'),
     hit_timestamp timestamp not null,
     on_ship bool not null,
-    player integer references users(id),
-    game integer references games(id),
-    primary key (square, player, game)
+    user_id integer references users(id),
+    game_id integer references games(id),
+    primary key (square, user_id, game_id)
 );
 
 create table if not exists ships(
@@ -54,16 +54,16 @@ create table if not exists ships(
    n_of_hits integer check (n_of_hits >= 0),
    destroyed bool not null,
    orientation varchar(50) not null check (orientation in ('vertical', 'horizontal')),
-   player integer references users(id),
-   game integer references games(id),
-   primary key (first_square, player, game)
+   user_id integer references users(id),
+   game_id integer references games(id),
+   primary key (first_square, user_id, game_id)
 );
 
 create table if not exists lobbies(
-	player integer references users(id),
+	user_id integer references users(id),
 	game_type varchar(20) not null check (game_type in ('beginner', 'experienced', 'advanced')),
 	enter_time timestamp not null,
-	primary key (player, game_type, enter_time)
+	primary key (user_id, game_type, enter_time)
 );
 
 

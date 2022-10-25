@@ -1,6 +1,8 @@
 package pt.isel.leic.daw.explodingbattleships.data
 
-import pt.isel.leic.daw.explodingbattleships.domain.*
+import pt.isel.leic.daw.explodingbattleships.domain.DataList
+import pt.isel.leic.daw.explodingbattleships.domain.Ranking
+import pt.isel.leic.daw.explodingbattleships.domain.User
 
 interface UsersData {
     fun getUserFromToken(transaction: Transaction, token: String): User?

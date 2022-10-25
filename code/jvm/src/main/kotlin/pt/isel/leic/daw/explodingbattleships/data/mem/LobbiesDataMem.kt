@@ -7,24 +7,24 @@ import pt.isel.leic.daw.explodingbattleships.domain.Lobby
 import java.time.Instant
 
 class LobbiesDataMem(private val mockData: MockData) : LobbiesData {
-    override fun enterLobby(transaction: Transaction, playerId: Int, gameType: String): EnterLobbyOutput {
-        mockData.lobby.add(Lobby(playerId, gameType, Instant.now()))
+    override fun enterLobby(transaction: Transaction, userId: Int, gameType: String): EnterLobbyOutput {
+        mockData.lobbies.add(Lobby(userId, gameType, Instant.now()))
         return EnterLobbyOutput(true, null)
     }
 
-    override fun searchLobbies(transaction: Transaction, gameType: String, playerId: Int): List<Lobby> {
+    override fun searchLobbies(transaction: Transaction, gameType: String, userId: Int): List<Lobby> {
         val sameTypeLobbies = mutableListOf<Lobby>()
-        mockData.lobby
-            .filter { it.gameType == gameType && it.player != playerId}
+        mockData.lobbies
+            .filter { it.gameType == gameType && it.userId != userId }
             .sortedBy { it.enterTime }
-            .forEach { sameTypeLobbies.add(Lobby(it.player, it.gameType, it.enterTime)) }
+            .forEach { sameTypeLobbies.add(Lobby(it.userId, it.gameType, it.enterTime)) }
 
         return sameTypeLobbies
     }
 
-    override fun removeLobby(transaction: Transaction, playerId: Int, gameType: String, enterTime: Instant) {
-        mockData.lobby.find { it.gameType == gameType && it.player == playerId }?.let {
-            mockData.lobby.remove(it)
+    override fun removeLobby(transaction: Transaction, userId: Int, gameType: String, enterTime: Instant) {
+        mockData.lobbies.find { it.gameType == gameType && it.userId == userId }?.let {
+            mockData.lobbies.remove(it)
         }
     }
 }

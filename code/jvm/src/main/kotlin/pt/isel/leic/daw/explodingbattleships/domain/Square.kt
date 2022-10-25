@@ -17,7 +17,6 @@ fun Square.right() =
 fun Square.getString() = "$row$column"
 
 fun String.toSquareOrNull() =
-    try { Square(first(), subSequence(1, lastIndex + 1).toString().toInt()) }
-    catch (e: Exception) { null }
+    try { Square(first(), subSequence(1, lastIndex + 1).toString().toInt()) } catch (e: Exception) { null }
 
 fun String.toSquareOrThrow() = this.toSquareOrNull() ?: throw IllegalArgumentException("Invalid Square")

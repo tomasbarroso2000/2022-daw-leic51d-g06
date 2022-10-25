@@ -2,8 +2,12 @@ package pt.isel.leic.daw.explodingbattleships.http.controllers
 
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
-import pt.isel.leic.daw.explodingbattleships.domain.LayoutInputModel
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 import pt.isel.leic.daw.explodingbattleships.domain.User
 import pt.isel.leic.daw.explodingbattleships.http.APPLICATION_SIREN
 import pt.isel.leic.daw.explodingbattleships.http.Rels
@@ -11,6 +15,7 @@ import pt.isel.leic.daw.explodingbattleships.http.Successes
 import pt.isel.leic.daw.explodingbattleships.http.Uris
 import pt.isel.leic.daw.explodingbattleships.http.doApiTask
 import pt.isel.leic.daw.explodingbattleships.http.models.input.HitsInputModel
+import pt.isel.leic.daw.explodingbattleships.http.models.input.LayoutInputModel
 import pt.isel.leic.daw.explodingbattleships.http.models.output.FleetStateOutputModel
 import pt.isel.leic.daw.explodingbattleships.http.models.output.GameOutputModel
 import pt.isel.leic.daw.explodingbattleships.http.models.output.GameStateOutputModel
@@ -68,7 +73,7 @@ class GamesController(private val services: GamesServices) {
                     siren(NumberOfPlayedGamesOutputModel(res)) {
                         link(Uris.Games.nrOfGames(), Rels.SELF)
                         link(Uris.home(), Rels.HOME)
-                        clazz("NumberOfPlayedGames")
+                        clazz("NumberOfPlayedGamesOutputModel")
                     }
                 )
         }
@@ -78,15 +83,15 @@ class GamesController(private val services: GamesServices) {
         doApiTask {
             val res = services.getGameState(gameId)
             ResponseEntity
-            .status(Successes.OK)
-            .contentType(APPLICATION_SIREN)
-            .body(
-                siren(GameStateOutputModel(res)) {
-                    link(Uris.Games.state(gameId), Rels.SELF)
-                    link(Uris.home(), Rels.HOME)
-                    clazz("GameState")
-                }
-            )
+                .status(Successes.OK)
+                .contentType(APPLICATION_SIREN)
+                .body(
+                    siren(GameStateOutputModel(res)) {
+                        link(Uris.Games.state(gameId), Rels.SELF)
+                        link(Uris.home(), Rels.HOME)
+                        clazz("GameStateOutputModel")
+                    }
+                )
         }
 
     @GetMapping(Uris.Games.PLAYER_FLEET)
@@ -156,7 +161,7 @@ class GamesController(private val services: GamesServices) {
                 siren(LayoutOutputModel(res)) {
                     link(Uris.Games.defineLayout(), Rels.SELF)
                     link(Uris.home(), Rels.HOME)
-                    clazz("LayoutOutput")
+                    clazz("LayoutOutputModel")
                 }
             )
     }

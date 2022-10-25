@@ -5,9 +5,9 @@ import pt.isel.leic.daw.explodingbattleships.domain.Lobby
 import java.time.Instant
 
 interface LobbiesData {
-    fun enterLobby(transaction: Transaction, playerId: Int, gameType: String): EnterLobbyOutput
+    fun enterLobby(transaction: Transaction, userId: Int, gameType: String): EnterLobbyOutput
 
-    fun searchLobbies(transaction: Transaction, gameType: String, playerId: Int): List<Lobby>
+    fun searchLobbies(transaction: Transaction, gameType: String, userId: Int): List<Lobby>
 
-    fun removeLobby(transaction: Transaction, playerId: Int, gameType: String, enterTime: Instant)
+    fun removeLobby(transaction: Transaction, userId: Int, gameType: String, enterTime: Instant)
 }

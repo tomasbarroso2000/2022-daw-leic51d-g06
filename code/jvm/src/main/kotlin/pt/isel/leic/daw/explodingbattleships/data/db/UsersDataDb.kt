@@ -1,9 +1,11 @@
 package pt.isel.leic.daw.explodingbattleships.data.db
 
 import org.jdbi.v3.core.kotlin.mapTo
-import pt.isel.leic.daw.explodingbattleships.data.UsersData
 import pt.isel.leic.daw.explodingbattleships.data.Transaction
-import pt.isel.leic.daw.explodingbattleships.domain.*
+import pt.isel.leic.daw.explodingbattleships.data.UsersData
+import pt.isel.leic.daw.explodingbattleships.domain.DataList
+import pt.isel.leic.daw.explodingbattleships.domain.Ranking
+import pt.isel.leic.daw.explodingbattleships.domain.User
 import java.util.UUID
 
 class UsersDataDb : UsersData {
@@ -54,4 +56,3 @@ class UsersDataDb : UsersData {
             DataList(rankings, hasMore)
         }
 }
-

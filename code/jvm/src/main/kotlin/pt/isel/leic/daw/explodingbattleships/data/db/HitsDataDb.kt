@@ -7,19 +7,19 @@ import pt.isel.leic.daw.explodingbattleships.domain.Hit
 import pt.isel.leic.daw.explodingbattleships.domain.Square
 import pt.isel.leic.daw.explodingbattleships.domain.getString
 
-class HitsDataDb: HitsData {
+class HitsDataDb : HitsData {
     override fun createHit(
         transaction: Transaction,
         square: Square,
         gameId: Int,
-        playerId: Int,
+        userId: Int,
         onShip: Boolean
     ) {
         (transaction as TransactionDataDb).withHandle { handle ->
-            handle.createUpdate("insert into hits values (:square, now(), :onShip, :playerId, :gameId)")
+            handle.createUpdate("insert into hits values (:square, now(), :onShip, :userId, :gameId)")
                 .bind("square", square.getString())
                 .bind("onShip", onShip)
-                .bind("playerId", playerId)
+                .bind("userId", userId)
                 .bind("gameId", gameId)
                 .execute()
         }
@@ -27,10 +27,9 @@ class HitsDataDb: HitsData {
 
     override fun getHits(transaction: Transaction, gameId: Int, userId: Int): List<Hit> =
         (transaction as TransactionDataDb).withHandle { handle ->
-            handle.createQuery("select * from hits where game = :gameId and player = :playerId")
+            handle.createQuery("select * from hits where game_id = :gameId and user_id = :userId")
                 .bind("gameId", gameId)
-                .bind("playerId", userId)
+                .bind("userId", userId)
                 .mapTo<Hit>().list()
         }
-
 }

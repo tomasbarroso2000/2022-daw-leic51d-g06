@@ -1,8 +1,12 @@
 package pt.isel.leic.daw.explodingbattleships.data.mem
 
-import pt.isel.leic.daw.explodingbattleships.data.*
+import pt.isel.leic.daw.explodingbattleships.data.Data
 
 class DataMem : Data {
+
+    /**
+     * The mock data used for tests
+     */
     val mockData = MockData()
 
     override val usersData = UsersDataMem(mockData)

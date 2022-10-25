@@ -18,4 +18,3 @@ fun <T> getHasMoreAndProcessList(receivedList: List<T>, finalList: MutableList<T
     }
     return false
 }
-
