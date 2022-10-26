@@ -121,15 +121,22 @@ fun isGameTypeInvalid(gameType: String) = gameType.toGameTypeOrNull() == null
  * @param data the data module to be used
  * @return information about whether the player was placed in the lobby or a game was started
  */
-fun enterLobbyOrCreateGame(transaction: Transaction, playerId: Int, gameType: String, data: Data): EnterLobbyOutput {
+fun enterLobbyOrCreateGame(transaction: Transaction, playerId: Int, gameType: String, data: Data): Int? {
     val matchingLobby = data.lobbiesData.searchLobbies(transaction, gameType, playerId).firstOrNull()
     if (matchingLobby != null) {
         data.lobbiesData.removeLobby(transaction, matchingLobby.userId, matchingLobby.gameType, matchingLobby.enterTime)
         return data.gamesData.createGame(transaction, gameType, playerId, matchingLobby.userId)
-            .let { EnterLobbyOutput(false, it) }
     }
-    return data.lobbiesData.enterLobby(transaction, playerId, gameType)
+    data.lobbiesData.enterLobby(transaction, playerId, gameType)
+    return null
 }
 
+/**
+ * Converts the string to one of the game types or null
+ */
 fun String.toGameTypeOrNull() = GameType.values().find { it.name == this.uppercase() }
+
+/**
+ * Converts the string to a game type or throws an exception
+ */
 fun String.toGameTypeOrThrow() = toGameTypeOrNull() ?: throw IllegalArgumentException("Invalid game type")

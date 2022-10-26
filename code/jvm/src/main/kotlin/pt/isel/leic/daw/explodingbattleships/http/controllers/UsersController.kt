@@ -118,7 +118,7 @@ class UsersController(private val services: UsersServices) {
             .status(Successes.OK)
             .contentType(APPLICATION_SIREN)
             .body(
-                siren(LobbyOutputModel(res.waitingForGame, res.gameId)) {
+                siren(LobbyOutputModel(res == null, res)) {
                     link(Uris.Users.enterLobby(), Rels.SELF)
                     link(Uris.home(), Rels.HOME)
                     clazz("LobbyOutputModel")

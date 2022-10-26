@@ -74,7 +74,6 @@ class UsersServices(private val data: Data) {
     /**
      * Places the user in a lobby or in a game if there is already someone waiting in the lobby with the same game characteristics
      * @param lobbyInput the characteristics of the game the user wants to play
-     * @return a [EnterLobbyOutput] representing if the player was placed in queue
      */
     fun enterLobby(userId: Int, gameType: String) = doService(data) { transaction ->
         if (isGameTypeInvalid(gameType)) {
