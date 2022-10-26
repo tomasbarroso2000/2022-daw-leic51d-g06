@@ -18,7 +18,6 @@ class LobbiesDataMem(private val mockData: MockData) : LobbiesData {
             .filter { it.gameType == gameType && it.userId != userId }
             .sortedBy { it.enterTime }
             .forEach { sameTypeLobbies.add(Lobby(it.userId, it.gameType, it.enterTime)) }
-
         return sameTypeLobbies
     }
 

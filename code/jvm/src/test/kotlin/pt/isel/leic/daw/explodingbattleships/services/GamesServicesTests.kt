@@ -66,7 +66,7 @@ class GamesServicesTests {
     }
 
     @Test
-    fun define_layout() {
+    fun define_layout_waiting() {
         val userId = 1
         val gameId = 3
         val ships = listOf(
@@ -79,7 +79,24 @@ class GamesServicesTests {
         val expectedLayoutOutcome = LayoutOutcomeStatus.WAITING
         val actualLayoutOutcome = services.sendLayout(userId, gameId, ships)
         assertEquals(expectedLayoutOutcome, actualLayoutOutcome)
-        assertEquals(5, data.mockData.ships.filter { it.gameId == 3 && it.userId == 1 }.size)
+        assertEquals(5, data.mockData.ships.filter { it.gameId == gameId && it.userId == userId }.size)
+    }
+
+    @Test
+    fun define_layout_started() {
+        val userId = 7
+        val gameId = 5
+        val ships = listOf(
+            ShipCreationInfo("carrier", Square('a', 1), "horizontal"),
+            ShipCreationInfo("battleship", Square('b', 1), "vertical"),
+            ShipCreationInfo("submarine", Square('b', 2), "horizontal"),
+            ShipCreationInfo("cruiser", Square('c', 2), "horizontal"),
+            ShipCreationInfo("destroyer", Square('d', 2), "vertical")
+        )
+        val expectedLayoutOutcome = LayoutOutcomeStatus.STARTED
+        val actualLayoutOutcome = services.sendLayout(userId, gameId, ships)
+        assertEquals(expectedLayoutOutcome, actualLayoutOutcome)
+        assertEquals(5, data.mockData.ships.filter { it.gameId == gameId && it.userId == userId }.size)
     }
 
     @Test
@@ -179,14 +196,14 @@ class GamesServicesTests {
 
     @Test
     fun send_hits_with_player_not_in_a_game() {
-        val useriD = 3
+        val userId = 3
         val gameId = 2
         val squares = listOf(
             Square('d', 2),
             Square('e', 2)
         )
         val exception = assertThrows<AppException> {
-            services.sendHits(useriD, gameId, squares)
+            services.sendHits(userId, gameId, squares)
         }
         assertEquals("Player not in game", exception.message)
         assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)

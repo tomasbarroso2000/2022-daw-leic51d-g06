@@ -12,8 +12,6 @@ interface ShipsData {
 
     fun updateNumOfHits(transaction: Transaction, gameId: Int, userId: Int, firstSquare: String)
 
-    fun isShipDestroyed(transaction: Transaction, gameId: Int, userId: Int, firstSquare: String): Boolean
-
     fun getFleet(transaction: Transaction, gameId: Int, userId: Int): List<Ship>
 
     fun getShip(transaction: Transaction, firstSquare: String, gameId: Int, userId: Int): Ship?

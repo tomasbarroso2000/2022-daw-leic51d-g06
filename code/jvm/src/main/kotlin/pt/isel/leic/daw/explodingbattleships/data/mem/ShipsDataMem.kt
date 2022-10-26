@@ -37,9 +37,6 @@ class ShipsDataMem(private val mockData: MockData) : ShipsData {
         newStoredShip?.let { mockData.ships.add(it) }
     }
 
-    override fun isShipDestroyed(transaction: Transaction, gameId: Int, userId: Int, firstSquare: String): Boolean =
-        mockData.ships.find { it.gameId == gameId && it.userId == userId && it.firstSquare == firstSquare }?.destroyed ?: false
-
     override fun getFleet(transaction: Transaction, gameId: Int, userId: Int): List<Ship> =
         mockData
             .ships

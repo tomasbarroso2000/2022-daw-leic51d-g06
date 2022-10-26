@@ -80,7 +80,8 @@ data class MockData(
         Game(1, "beginner", "layout_definition", 1, 2, 1, Instant.now()),
         Game(2, "experienced", "shooting", 5, 6, 5, Instant.now()),
         Game(3, "beginner", "layout_definition", 1, 2, 1, Instant.now()),
-        Game(4, "experienced", "shooting", 3, 4, 3, Instant.now())
+        Game(4, "experienced", "shooting", 3, 4, 3, Instant.now()),
+        Game(5, "beginner", "layout_definition", 3,7, 3, Instant.now())
     ),
     val tokens: MutableSet<StoredToken> = mutableSetOf(
         StoredToken("123", 1),
@@ -109,7 +110,13 @@ data class MockData(
         Ship("b2", "submarine", 3, 0, false, "horizontal", 6, 2),
         Ship("d2", "destroyer", 2, 0, false, "vertical", 6, 2),
 
-        Ship("a1", "destroyer", 2, 0, false, "vertical", 4, 4)
+        Ship("a1", "destroyer", 2, 0, false, "vertical", 4, 4),
+
+        Ship("a1", "carrier", 5, 0, false, "horizontal", 3, 5),
+        Ship("b1", "battleship", 4, 0, false, "vertical", 3, 5),
+        Ship("c2", "cruiser", 3, 0, false, "horizontal", 3, 5),
+        Ship("b2", "submarine", 3, 0, false, "horizontal", 3, 5),
+        Ship("d2", "destroyer", 2, 0, false, "vertical", 3, 5)
     ),
 
     val hits: MutableSet<Hit> = mutableSetOf(

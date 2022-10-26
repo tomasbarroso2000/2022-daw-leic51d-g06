@@ -62,6 +62,18 @@ class UsersServicesTests {
     }
 
     @Test
+    fun create_player_with_repeated_email() {
+        val name = "aleixo"
+        val email = "leki@yes.com"
+        val password = "OneLoveCasaPia6"
+        val exception = assertThrows<AppException> {
+            services.createUser(name, email, password)
+        }
+        assertEquals("Email $email is already in use", exception.message)
+        assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
+    }
+
+    @Test
     fun create_player_with_invalid_password() {
         val name = "aleixo"
         val email = "aleixo@casapia.pt"
@@ -180,10 +192,19 @@ class UsersServicesTests {
     }
 
     @Test
-    fun enter_lobby() {
+    fun enter_lobby_start() {
         val userId = 3
         val gameType = "beginner"
         val expectedOutput = EnterLobbyOutput(false, data.mockData.games.size + 1)
+        val actualOutput = services.enterLobby(userId, gameType)
+        assertEquals(expectedOutput, actualOutput)
+    }
+
+    @Test
+    fun enter_lobby_wait() {
+        val userId = 7
+        val gameType = "experienced"
+        val expectedOutput = EnterLobbyOutput(true, null)
         val actualOutput = services.enterLobby(userId, gameType)
         assertEquals(expectedOutput, actualOutput)
     }

@@ -53,6 +53,5 @@ enum class GameType(
     )
 }
 
-fun GameType.getShipSize(shipName: String): Int =
-    fleetComposition.find { it.name == shipName }?.size
-        ?: throw IllegalArgumentException("No ship found with the name $name")
+fun GameType.getShipSizeOrNull(shipName: String): Int? =
+    fleetComposition.find { it.name.lowercase() == shipName.lowercase() }?.size

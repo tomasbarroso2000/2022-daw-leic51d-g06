@@ -56,19 +56,6 @@ class ShipsDataDb : ShipsData {
         }
     }
 
-    override fun isShipDestroyed(transaction: Transaction, gameId: Int, userId: Int, firstSquare: String): Boolean =
-        (transaction as TransactionDataDb).withHandle { handle ->
-            handle
-                .createQuery(
-                    "select destroyed from ships " +
-                        "where game_id = :gameId and user_id = :userId and first_square = :firstSquare"
-                )
-                .bind("gameId", gameId)
-                .bind("userId", userId)
-                .bind("firstSquare", firstSquare)
-                .mapTo<Boolean>().first()
-        }
-
     override fun getFleet(transaction: Transaction, gameId: Int, userId: Int): List<Ship> =
         (transaction as TransactionDataDb).withHandle { handle ->
             handle.createQuery("select * from ships where game_id = :gameId and user_id = :userId")

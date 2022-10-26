@@ -7,22 +7,22 @@ package pt.isel.leic.daw.explodingbattleships.data
  */
 interface Transaction {
     /**
-     * Begin a transaction
+     * Begins a transaction
      */
     fun begin()
 
     /**
-     * Commit a transaction
+     * Commits a transaction
      */
     fun commit()
 
     /**
-     * Rollback a transaction
+     * Rollbacks a transaction
      */
     fun rollback()
 
     /**
-     * Close a connection
+     * Closes a connection
      */
     fun close()
 }
