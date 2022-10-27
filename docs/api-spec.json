@@ -33,9 +33,9 @@
           "200": {
             "description": "Successfully got the user info",
             "content": {
-              "application/json": {
+              "application/vnd.siren+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UserInfo"
+                  "$ref": "#/components/schemas/UserOutputModelSiren"
                 }
               }
             }
@@ -43,9 +43,9 @@
           "400": {
             "description": "Invalid token",
             "content": {
-              "application/json": {
+              "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AppError"
+                  "$ref": "#/components/schemas/ProblemJson"
                 }
               }
             }
@@ -53,9 +53,9 @@
           "500": {
             "description": "Internal server error",
             "content": {
-              "application/json": {
+              "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AppError"
+                  "$ref": "#/components/schemas/ProblemJson"
                 }
               }
             }
@@ -297,6 +297,57 @@
           }
         }
       }
+    },
+    "/api/games/state/{gameId}": {
+      "get": {
+        "tags": [
+          "Games"
+        ],
+        "summary": "Get a game's state",
+        "description": "Get a game's state which might be \"layout_definition\", \"shooting\" or \"completed\"",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "gameId",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Succesfully got the game's state",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GameStateOutputModelSiren"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Game not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemJson"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemJson"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -322,29 +373,6 @@
           "errorMessage": {
             "type": "string",
             "example": "Something went wrong"
-          }
-        }
-      },
-      "UserInfo": {
-        "type": "object",
-        "description": "Id, name and score of the user",
-        "required": [
-          "id",
-          "name",
-          "score"
-        ],
-        "properties": {
-          "id": {
-            "type": "integer",
-            "example": 1
-          },
-          "name": {
-            "type": "string",
-            "example": "Fiona"
-          },
-          "score": {
-            "type": "integer",
-            "example": 1
           }
         }
       },
@@ -416,6 +444,292 @@
           "number": {
             "type": "integer",
             "example": 1
+          }
+        }
+      },
+      "UserOutputModel": {
+        "type": "object",
+        "description": "Id, name and score of the user",
+        "required": [
+          "id",
+          "name",
+          "email",
+          "score"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "Fiona"
+          },
+          "email": {
+            "type": "string",
+            "example": "iloveshrek@gmail.com"
+          },
+          "score": {
+            "type": "integer",
+            "example": 10
+          }
+        }
+      },
+      "UserOutputModelSiren": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Entity"
+          },
+          {
+            "properties": {
+              "class": {
+                "example": [
+                  "UserOutputModel"
+                ]
+              },
+              "properties": {
+                "$ref": "#/components/schemas/UserOutputModel"
+              }
+            }
+          }
+        ]
+      },
+      "GameStateOutputModel": {
+        "type": "object",
+        "description": "Id, name and score of the user",
+        "required": [
+          "state"
+        ],
+        "properties": {
+          "state": {
+            "type": "string",
+            "example": "shooting"
+          }
+        }
+      },
+      "GameStateOutputModelSiren": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Entity"
+          },
+          {
+            "properties": {
+              "class": {
+                "example": [
+                  "UserOutputModel"
+                ]
+              },
+              "properties": {
+                "$ref": "#/components/schemas/GameStateOutputModel"
+              }
+            }
+          }
+        ]
+      },
+      "ProblemJson": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "example": ""
+          },
+          "title": {
+            "type": "string",
+            "example": "Something went wrong"
+          },
+          "status": {
+            "type": "integer",
+            "example": 500
+          },
+          "detail": {
+            "type": "string",
+            "example": ""
+          },
+          "instance": {
+            "type": "string",
+            "example": ""
+          }
+        }
+      },
+      "Entity": {
+        "type": "object",
+        "properties": {
+          "class": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "properties": {
+            "type": "object"
+          },
+          "entities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SubEntity"
+            }
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Action"
+            }
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Link"
+            }
+          }
+        }
+      },
+      "SubEntity": {
+        "type": "object",
+        "properties": {
+          "href": {
+            "type": "string"
+          },
+          "rel": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "class": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "properties": {
+            "type": "object"
+          },
+          "entities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SubEntity"
+            }
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Action"
+            }
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Link"
+            }
+          }
+        }
+      },
+      "Action": {
+        "type": "object",
+        "required": [
+          "name",
+          "href"
+        ],
+        "properties": {
+          "class": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "name": {
+            "type": "string"
+          },
+          "method": {
+            "type": "string"
+          },
+          "href": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Field"
+            }
+          }
+        }
+      },
+      "Field": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "hidden",
+              "text",
+              "search",
+              "tel",
+              "url",
+              "email",
+              "password",
+              "datetime",
+              "date",
+              "month",
+              "week",
+              "time",
+              "datetime-local",
+              "number",
+              "range",
+              "color",
+              "checkbox",
+              "radio",
+              "file"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        }
+      },
+      "Link": {
+        "type": "object",
+        "required": [
+          "rel",
+          "href"
+        ],
+        "properties": {
+          "class": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "title": {
+            "type": "string"
+          },
+          "rel": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "href": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
           }
         }
       }
