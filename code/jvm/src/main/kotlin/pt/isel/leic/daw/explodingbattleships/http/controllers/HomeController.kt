@@ -13,10 +13,16 @@ import pt.isel.leic.daw.explodingbattleships.http.doApiTask
 import pt.isel.leic.daw.explodingbattleships.http.models.output.HomeOutputModel
 import pt.isel.leic.daw.explodingbattleships.infra.siren
 
+/**
+ * The Home controller
+ */
 @RestController
 @RequestMapping(BASE_PATH)
 class HomeController {
 
+    /**
+     * Handles a get request for the home resource
+     */
     @GetMapping
     fun getHome() = doApiTask {
         ResponseEntity

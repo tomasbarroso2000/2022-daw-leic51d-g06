@@ -30,10 +30,17 @@ import pt.isel.leic.daw.explodingbattleships.infra.siren
 import pt.isel.leic.daw.explodingbattleships.services.UsersServices
 import javax.validation.Valid
 
+/**
+ * The Users controller
+ */
 @RestController
 @RequestMapping(Uris.BASE_PATH)
 class UsersController(private val services: UsersServices) {
 
+    /**
+     * Handles a get request for the player home resource
+     * @param user the user that sent the request
+     */
     @GetMapping(HOME)
     fun getPlayerHome(
         user: User
@@ -50,6 +57,10 @@ class UsersController(private val services: UsersServices) {
             )
     }
 
+    /**
+     * Handles a post request for creating a user
+     * @param input the user input model that represents the user's name, email and password
+     */
     @PostMapping(CREATE)
     fun createUser(
         @Valid
@@ -69,6 +80,10 @@ class UsersController(private val services: UsersServices) {
             )
     }
 
+    /**
+     * Handles a post request for creating a token
+     * @param input the user token input model that represents the user's email and password
+     */
     @PostMapping(TOKEN)
     fun createToken(
         @Valid
@@ -88,6 +103,11 @@ class UsersController(private val services: UsersServices) {
             )
     }
 
+    /**
+     * Handles a get request for the rankings
+     * @param limit the last index of the rankings list desired
+     * @param skip the first index of the rankings list desired
+     */
     @GetMapping(RANKINGS)
     fun getRankings(
         @RequestParam(required = false, defaultValue = "10") limit: Int,
@@ -106,6 +126,11 @@ class UsersController(private val services: UsersServices) {
             )
     }
 
+    /**
+     * Handles a post request for entering a lobby
+     * @param player the user that sent the request
+     * @param input the lobby input model that represents the game type the user desires to play
+     */
     @PostMapping(ENTER_LOBBY)
     fun enterLobby(
         player: User,

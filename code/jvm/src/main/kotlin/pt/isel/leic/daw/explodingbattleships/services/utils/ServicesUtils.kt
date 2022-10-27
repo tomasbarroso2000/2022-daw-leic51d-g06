@@ -2,7 +2,6 @@ package pt.isel.leic.daw.explodingbattleships.services.utils
 
 import pt.isel.leic.daw.explodingbattleships.data.Data
 import pt.isel.leic.daw.explodingbattleships.data.Transaction
-import pt.isel.leic.daw.explodingbattleships.domain.EnterLobbyOutput
 import pt.isel.leic.daw.explodingbattleships.domain.Game
 import pt.isel.leic.daw.explodingbattleships.domain.GameType
 import pt.isel.leic.daw.explodingbattleships.domain.HitOutcome

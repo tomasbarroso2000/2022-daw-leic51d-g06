@@ -1,6 +1,5 @@
 package pt.isel.leic.daw.explodingbattleships.data
 
-import pt.isel.leic.daw.explodingbattleships.domain.EnterLobbyOutput
 import pt.isel.leic.daw.explodingbattleships.domain.Lobby
 import java.time.Instant
 

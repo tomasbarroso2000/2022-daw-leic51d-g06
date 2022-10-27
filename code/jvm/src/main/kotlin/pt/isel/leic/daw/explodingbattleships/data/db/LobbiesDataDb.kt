@@ -3,7 +3,6 @@ package pt.isel.leic.daw.explodingbattleships.data.db
 import org.jdbi.v3.core.kotlin.mapTo
 import pt.isel.leic.daw.explodingbattleships.data.LobbiesData
 import pt.isel.leic.daw.explodingbattleships.data.Transaction
-import pt.isel.leic.daw.explodingbattleships.domain.EnterLobbyOutput
 import pt.isel.leic.daw.explodingbattleships.domain.Lobby
 import java.time.Instant
 

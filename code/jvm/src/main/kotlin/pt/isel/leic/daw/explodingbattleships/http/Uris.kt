@@ -3,6 +3,9 @@ package pt.isel.leic.daw.explodingbattleships.http
 import org.springframework.web.util.UriTemplate
 import java.net.URI
 
+/**
+ * All the different Uris needed
+ */
 object Uris {
     const val BASE_PATH = "/api/"
 

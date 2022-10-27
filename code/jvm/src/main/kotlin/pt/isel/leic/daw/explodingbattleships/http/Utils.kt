@@ -21,6 +21,14 @@ fun doApiTask(task: () -> ResponseEntity<*>): ResponseEntity<*> {
     }
 }
 
+/**
+ * Represents an error response
+ * @param type the error type
+ * @param title the error response title
+ * @param status the error status
+ * @param detail the error details
+ * @param instance the error instance
+ */
 data class ErrorResponse(
     val type: String = "",
     val title: String,
@@ -46,7 +54,7 @@ fun handleError(error: Exception): ResponseEntity<ErrorResponse> {
 }
 
 /**
- * Fabricate a response with the given status and response body
+ * Fabricates a response with the given status and response body
  * @param statusCode the status of the [ResponseEntity]
  * @param body the body of the [ResponseEntity]
  */
@@ -85,21 +93,9 @@ fun onAppException(error: AppException): ResponseEntity<ErrorResponse> {
 }
 
 /**
- * Extension function of Request that gets the user token from the Authorization header
+ * Gets the user token from the Authorization header
  * @return the token
  */
-val HttpServletRequest.token: String?
-    get() {
-        val auth = this.getHeader("Authorization")
-        if (auth != null) {
-            val authData = auth.trim().split(' ')
-            if (authData[0] == "Bearer") {
-                return authData[1]
-            }
-        }
-        return null
-    }
-
 fun getTokenFromAuthorization(authorization: String?): String? {
     if (authorization != null) {
         val authData = authorization.trim().split(' ')

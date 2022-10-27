@@ -2,14 +2,12 @@ package pt.isel.leic.daw.explodingbattleships.data.mem
 
 import pt.isel.leic.daw.explodingbattleships.data.LobbiesData
 import pt.isel.leic.daw.explodingbattleships.data.Transaction
-import pt.isel.leic.daw.explodingbattleships.domain.EnterLobbyOutput
 import pt.isel.leic.daw.explodingbattleships.domain.Lobby
 import java.time.Instant
 
 class LobbiesDataMem(private val mockData: MockData) : LobbiesData {
-    override fun enterLobby(transaction: Transaction, userId: Int, gameType: String): EnterLobbyOutput {
+    override fun enterLobby(transaction: Transaction, userId: Int, gameType: String) {
         mockData.lobbies.add(Lobby(userId, gameType, Instant.now()))
-        return EnterLobbyOutput(true, null)
     }
 
     override fun searchLobbies(transaction: Transaction, gameType: String, userId: Int): List<Lobby> {

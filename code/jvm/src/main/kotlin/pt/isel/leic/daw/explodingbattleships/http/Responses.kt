@@ -1,5 +1,8 @@
 package pt.isel.leic.daw.explodingbattleships.http
 
+/**
+ * Represents the possible http errors status
+ */
 object Errors {
     // Redirection Responses
     const val MOVED_PERMANENTLY = 301
@@ -16,6 +19,9 @@ object Errors {
     const val NOT_IMPLEMENTED = 501
 }
 
+/**
+ * Represents the possible http successes status
+ */
 object Successes {
     // Successful Responses
     const val OK = 200

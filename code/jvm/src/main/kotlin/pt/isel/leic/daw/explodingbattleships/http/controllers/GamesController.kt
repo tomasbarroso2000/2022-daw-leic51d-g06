@@ -26,10 +26,18 @@ import pt.isel.leic.daw.explodingbattleships.infra.siren
 import pt.isel.leic.daw.explodingbattleships.services.GamesServices
 import javax.validation.Valid
 
+/**
+ * The games controller
+ */
 @RestController
 @RequestMapping(Uris.BASE_PATH)
 class GamesController(private val services: GamesServices) {
 
+    /**
+     * Handles a get request for the game info
+     * @param user the user that sent the request
+     * @param gameId the game id
+     */
     @GetMapping(Uris.Games.GAME_INFO)
     fun getGameInfo(
         user: User,
@@ -62,6 +70,9 @@ class GamesController(private val services: GamesServices) {
             )
     }
 
+    /**
+     * Handles a get request for the total number of played games
+     */
     @GetMapping(Uris.Games.NR_OF_GAMES)
     fun getNrOfPlayedGames() =
         doApiTask {
@@ -78,6 +89,10 @@ class GamesController(private val services: GamesServices) {
                 )
         }
 
+    /**
+     * Handles a get request for the game state
+     * @param gameId the game id
+     */
     @GetMapping(Uris.Games.STATE)
     fun getGameState(@PathVariable gameId: Int) =
         doApiTask {
@@ -94,6 +109,11 @@ class GamesController(private val services: GamesServices) {
                 )
         }
 
+    /**
+     * Handles a get request for the player fleet state
+     * @param user the user that sent the request
+     * @param gameId the game id
+     */
     @GetMapping(Uris.Games.PLAYER_FLEET)
     fun getPlayerFleetState(
         user: User,
@@ -112,6 +132,11 @@ class GamesController(private val services: GamesServices) {
             )
     }
 
+    /**
+     * Handles a get request for the enemy fleet state
+     * @param user the user that sent the request
+     * @param gameId the game id
+     */
     @GetMapping(Uris.Games.ENEMY_FLEET)
     fun getEnemyFleetState(
         user: User,
@@ -130,6 +155,11 @@ class GamesController(private val services: GamesServices) {
             )
     }
 
+    /**
+     * Handles the put request for sending hits
+     * @param user the user that sent the request
+     * @param input the hit's input model that represents the list of squares hit and the game id
+     */
     @PutMapping(Uris.Games.SEND_HITS)
     fun sendHits(
         user: User,
@@ -150,6 +180,11 @@ class GamesController(private val services: GamesServices) {
             )
     }
 
+    /**
+     * Handles the put request for defining a layout
+     * @param user the user that sent the request
+     * @param input the layout input model that represents the list of ships and the game id
+     */
     @PutMapping(Uris.Games.DEFINE_LAYOUT)
     fun defineLayout(
         user: User,
