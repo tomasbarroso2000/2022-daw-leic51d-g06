@@ -7,5 +7,9 @@ interface Data {
     val shipsData: ShipsData
     val hitsData: HitsData
 
+    /**
+     * Gets a transaction
+     * @return the transaction
+     */
     fun getTransaction(): Transaction
 }

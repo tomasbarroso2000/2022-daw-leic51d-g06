@@ -15,8 +15,19 @@ interface LobbiesData {
 
     /**
      * Searches for lobbies
+     * @param transaction the current transaction
+     * @param gameType the game type
+     * @param userId the user id
+     * @return a list with the corresponding lobbies
      */
     fun searchLobbies(transaction: Transaction, gameType: String, userId: Int): List<Lobby>
 
+    /**
+     * Removes a lobby
+     * @param transaction the current transaction
+     * @param userId the user id
+     * @param gameType the game type
+     * @param enterTime the instant the player entered the lobby
+     */
     fun removeLobby(transaction: Transaction, userId: Int, gameType: String, enterTime: Instant)
 }

@@ -7,7 +7,7 @@ import pt.isel.leic.daw.explodingbattleships.domain.EnterLobbyOutput
 import pt.isel.leic.daw.explodingbattleships.domain.Lobby
 import java.time.Instant
 
-class nLobbiesDataDb : LobbiesData {
+class LobbiesDataDb : LobbiesData {
     override fun enterLobby(transaction: Transaction, userId: Int, gameType: String) {
         (transaction as TransactionDataDb).withHandle { handle ->
             handle.createUpdate("insert into lobbies values (:userId, :gameType, now())")
