@@ -19,7 +19,8 @@ class DataDb : Data {
      */
     private fun getJdbi(): Jdbi {
         val dataSource = PGSimpleDataSource()
-        val jdbcDatabaseURL = System.getenv("JDBC_DATABASE_URL")
+        val jdbcDatabaseURL = System.getenv("POSTGRES_URI")
+            ?: "jdbc:postgresql://localhost:5432/db?user=dbuser&password=changeit"
         dataSource.setURL(jdbcDatabaseURL)
         return Jdbi.create(dataSource).installPlugin(KotlinPlugin())
     }

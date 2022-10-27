@@ -32,7 +32,10 @@ class GamesServices(private val data: Data) {
 
     fun getGame(userId: Int, gameId: Int) = doService(data) { transaction ->
         var game = computeGame(transaction, gameId, data)
-        val isTimeOver = game.startedAt.plusSeconds(game.type.toGameTypeOrThrow().shootingTimeInSecs.toLong()) <= Instant.now()
+        val gameType = game.type.toGameTypeOrThrow()
+        val isTimeOver = game
+            .startedAt
+            .plusSeconds(gameType.shootingTimeInSecs.toLong()) <= Instant.now()
         if (isTimeOver) {
             data.gamesData.changeCurrPlayer(transaction, game.id, game.idlePlayer())
             game = data.gamesData.getGame(transaction, gameId) ?: throw IllegalArgumentException("Get game is null")
@@ -113,7 +116,8 @@ class GamesServices(private val data: Data) {
         if (squares.size > gameType.shotsPerRound) {
             throw AppException("Invalid amount of hits", AppExceptionStatus.BAD_REQUEST)
         }
-        val hitSquares = data.hitsData.getHits(transaction, game.id, game.idlePlayer()).map { it.square.toSquareOrThrow() }.toMutableSet()
+        val hitSquares = data.hitsData.getHits(transaction, game.id, game.idlePlayer())
+            .map { it.square.toSquareOrThrow() }.toMutableSet()
         val verifiedSquares = mutableListOf<Square>()
         squares.forEach { square ->
             checkOrThrowBadRequest(!squareInBoard(square, gameType.boardSize), "Invalid square: ${square.getString()}")

@@ -18,7 +18,10 @@ class LobbiesDataDb : LobbiesData {
 
     override fun searchLobbies(transaction: Transaction, gameType: String, userId: Int): List<Lobby> =
         (transaction as TransactionDataDb).withHandle { handle ->
-            handle.createQuery("select * from lobbies where game_type = :gameType and lobbies.user_id <> :userId order by enter_time asc")
+            handle.createQuery(
+                "select * from lobbies where game_type = :gameType " +
+                    "and lobbies.user_id <> :userId order by enter_time asc"
+            )
                 .bind("gameType", gameType)
                 .bind("userId", userId)
                 .mapTo<Lobby>().list()
@@ -26,7 +29,10 @@ class LobbiesDataDb : LobbiesData {
 
     override fun removeLobby(transaction: Transaction, userId: Int, gameType: String, enterTime: Instant) {
         (transaction as TransactionDataDb).withHandle { handle ->
-            handle.createUpdate("delete from lobbies where user_id = :userId and game_type = :gameType and enter_time = :enterTime")
+            handle.createUpdate(
+                "delete from lobbies where user_id = :userId and " +
+                    "game_type = :gameType and enter_time = :enterTime"
+            )
                 .bind("userId", userId)
                 .bind("gameType", gameType)
                 .bind("enterTime", enterTime)

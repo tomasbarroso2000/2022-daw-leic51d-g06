@@ -58,8 +58,16 @@ tasks.withType<KotlinCompile> {
 tasks.withType<Test> {
     useJUnitPlatform()
     environment(
-        mapOf("JDBC_DATABASE_URL" to "jdbc:postgresql://localhost:5432/db?user=dbuser&password=changeit")
+        mapOf("POSTGRES_URI" to "jdbc:postgresql://localhost:5432/db?user=dbuser&password=changeit")
     )
+}
+
+task<Copy>("extractUberJar") {
+    dependsOn("assemble")
+    // opens the JAR containing everything...
+    from(zipTree("$buildDir/libs/${rootProject.name}-$version.jar"))
+    // ... into the 'build/dependency' folder
+    into("build/dependency")
 }
 
 task<Exec>("dbTestsUp") {
@@ -73,6 +81,11 @@ task<Exec>("dbTestsWait") {
 
 task<Exec>("dbTestsDown") {
     commandLine("docker-compose", "down")
+}
+
+task<Exec>("composeUp") {
+    commandLine("docker-compose", "up", "--build", "--force-recreate")
+    dependsOn("extractUberJar")
 }
 
 // from https://pinterest.github.io/ktlint/install/integrations/#custom-gradle-integration-with-kotlin-dsl

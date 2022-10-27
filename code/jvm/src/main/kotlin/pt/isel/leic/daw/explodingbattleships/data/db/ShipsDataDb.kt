@@ -11,7 +11,10 @@ class ShipsDataDb : ShipsData {
     override fun defineLayout(transaction: Transaction, gameId: Int, userId: Int, ships: List<Ship>) =
         (transaction as TransactionDataDb).withHandle { handle ->
             ships.forEach { ship ->
-                handle.createUpdate("insert into ships values (:firstSquare, :name, :size, 0, false, :orientation, :userId, :gameId)")
+                handle.createUpdate(
+                    "insert into ships values (:firstSquare, :name, " +
+                        ":size, 0, false, :orientation, :userId, :gameId)"
+                )
                     .bind("firstSquare", ship.firstSquare)
                     .bind("name", ship.name)
                     .bind("size", ship.size)

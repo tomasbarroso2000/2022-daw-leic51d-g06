@@ -4,6 +4,7 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import pt.isel.leic.daw.explodingbattleships.services.utils.AppException
 import pt.isel.leic.daw.explodingbattleships.services.utils.AppExceptionStatus
+import pt.isel.leic.daw.explodingbattleships.services.utils.logger
 
 val APPLICATION_SIREN = MediaType.parseMediaType("application/vnd.siren+json")
 
@@ -45,6 +46,7 @@ fun handleError(error: Exception): ResponseEntity<ErrorResponse> {
     return if (error is AppException) {
         onAppException(error)
     } else {
+        logger.warn(error.message)
         makeResponse(
             Errors.INTERNAL_SERVER_ERROR,
             ErrorResponse(title = "Something went wrong", status = Errors.INTERNAL_SERVER_ERROR)

@@ -87,6 +87,7 @@ fun handleSQLException(error: SQLException): AppException {
             AppException(buildCheckViolationMessage(error.message), AppExceptionStatus.BAD_REQUEST)
         }
         else -> {
+            logger.warn(error.message)
             AppException("Something went wrong", AppExceptionStatus.INTERNAL)
         }
     }

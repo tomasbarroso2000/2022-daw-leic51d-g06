@@ -1,4 +1,5 @@
 FROM openjdk:17
+ENV JDBC_DATABASE_URL="jdbc:postgresql://localhost:5432/db?user=dbuser&password=changeit"
 ARG DEPENDENCY=build/dependency
 # first layer with the external libs (i.e. the files that change the least).
 COPY ${DEPENDENCY}/BOOT-INF/lib /app/lib

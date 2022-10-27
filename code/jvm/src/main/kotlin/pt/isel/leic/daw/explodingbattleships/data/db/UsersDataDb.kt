@@ -11,7 +11,10 @@ import java.util.UUID
 class UsersDataDb : UsersData {
     override fun getUserFromToken(transaction: Transaction, token: String): User? =
         (transaction as TransactionDataDb).withHandle { handle ->
-            handle.select("select id, name, email, score, password_ver from tokens join users on user_id = id where token_ver = :token")
+            handle.select(
+                "select id, name, email, score, password_ver from tokens" +
+                    " join users on user_id = id where token_ver = :token"
+            )
                 .bind("token", token)
                 .mapTo<User>().firstOrNull()
         }
@@ -25,7 +28,10 @@ class UsersDataDb : UsersData {
 
     override fun createUser(transaction: Transaction, name: String, email: String, password: Int): Int =
         (transaction as TransactionDataDb).withHandle { handle ->
-            handle.createUpdate("insert into users (name, email, score, password_ver) values (:name, :email, 0, :password)")
+            handle.createUpdate(
+                "insert into users (name, email, score, password_ver)" +
+                    " values (:name, :email, 0, :password)"
+            )
                 .bind("name", name)
                 .bind("email", email)
                 .bind("password", password)

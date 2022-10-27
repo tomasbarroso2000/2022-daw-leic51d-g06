@@ -29,7 +29,9 @@ class ShipsDataMem(private val mockData: MockData) : ShipsData {
             .associateWith { ship -> ship.getSquares() }
 
     override fun updateNumOfHits(transaction: Transaction, gameId: Int, userId: Int, firstSquare: String) {
-        val storedShip = mockData.ships.find { it.gameId == gameId && it.userId == userId && it.firstSquare == firstSquare }
+        val storedShip = mockData
+            .ships
+            .find { it.gameId == gameId && it.userId == userId && it.firstSquare == firstSquare }
         mockData.ships.remove(storedShip)
         val size = mockData.ships.find { it.firstSquare == firstSquare }?.size
         val destroyed = storedShip?.nOfHits?.plus(1) == size

@@ -120,12 +120,23 @@ fun squareInBoard(square: Square, boardSize: Int): Boolean {
  * @param occupiedSquares the occupied squares
  * @param nextSquare the function to calculate the next square
  */
-private fun validateShipSquares(ship: Ship, boardSize: Int, occupiedSquares: MutableSet<Square>, nextSquare: NextSquare) {
+private fun validateShipSquares(
+    ship: Ship,
+    boardSize: Int,
+    occupiedSquares: MutableSet<Square>,
+    nextSquare: NextSquare
+) {
     var currentSquare = ship.firstSquare.toSquareOrNull()
         ?: throw AppException("Invalid first square: ${ship.firstSquare}")
     for (i in 0 until ship.size) {
-        checkOrThrowBadRequest(!squareInBoard(currentSquare, boardSize), "Invalid square: ${currentSquare.getString()}")
-        checkOrThrowBadRequest(occupiedSquares.contains(currentSquare), "Square already occupied: ${currentSquare.getString()}")
+        checkOrThrowBadRequest(
+            !squareInBoard(currentSquare, boardSize),
+            "Invalid square: ${currentSquare.getString()}"
+        )
+        checkOrThrowBadRequest(
+            occupiedSquares.contains(currentSquare),
+            "Square already occupied: ${currentSquare.getString()}"
+        )
         occupiedSquares.add(currentSquare)
         currentSquare = currentSquare.nextSquare()
     }
