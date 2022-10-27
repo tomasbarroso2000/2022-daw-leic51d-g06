@@ -297,6 +297,57 @@
           }
         }
       }
+    },
+    "/api/games/state/{gameId}": {
+      "get": {
+        "tags": [
+          "Games"
+        ],
+        "summary": "Get a game's state",
+        "description": "Get a game's state which might be \"layout_definition\", \"shooting\" or \"completed\"",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "gameId",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Succesfully got the game's state",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GameStateOutputModelSiren"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Game not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemJson"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemJson"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -439,6 +490,39 @@
               },
               "properties": {
                 "$ref": "#/components/schemas/UserOutputModel"
+              }
+            }
+          }
+        ]
+      },
+      "GameStateOutputModel": {
+        "type": "object",
+        "description": "Id, name and score of the user",
+        "required": [
+          "state"
+        ],
+        "properties": {
+          "state": {
+            "type": "string",
+            "example": "shooting"
+          }
+        }
+      },
+      "GameStateOutputModelSiren": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Entity"
+          },
+          {
+            "properties": {
+              "class": {
+                "example": [
+                  "UserOutputModel"
+                ]
+              },
+              "properties": {
+                "$ref": "#/components/schemas/GameStateOutputModel"
               }
             }
           }
