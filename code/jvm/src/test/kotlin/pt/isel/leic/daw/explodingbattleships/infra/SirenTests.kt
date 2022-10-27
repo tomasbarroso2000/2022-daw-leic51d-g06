@@ -18,7 +18,7 @@ class SirenTests {
         )
 
         class PlayerModel(
-            val name: String,
+            val name: String
         )
 
         // and: link relations
@@ -34,7 +34,7 @@ class SirenTests {
         val sirenModel = siren(
             GameModel(
                 name = "the name",
-                description = "the description",
+                description = "the description"
             )
         ) {
             clazz("game")

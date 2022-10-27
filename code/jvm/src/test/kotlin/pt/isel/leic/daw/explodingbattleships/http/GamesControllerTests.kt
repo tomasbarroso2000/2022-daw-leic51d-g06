@@ -15,20 +15,18 @@ class GamesControllerTests {
 
     @Test
     fun can_get_number_of_played_games() {
-        val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
-
-        client.get().uri(Uris.Games.nrOfGames())
+        val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port/api/").build()
+        client.get().uri("games/total")
             .exchange()
             .expectStatus().isOk
     }
 
     @Test
     fun can_get_game_state() {
-        val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
+        val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port/api/").build()
 
-        client.get().uri(Uris.Games.state(1))
+        client.get().uri("games/state/1")
             .exchange()
             .expectStatus().isOk
     }
-
 }
