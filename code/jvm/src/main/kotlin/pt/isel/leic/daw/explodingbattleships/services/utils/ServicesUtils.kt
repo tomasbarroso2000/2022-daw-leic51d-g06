@@ -2,6 +2,7 @@ package pt.isel.leic.daw.explodingbattleships.services.utils
 
 import pt.isel.leic.daw.explodingbattleships.data.Data
 import pt.isel.leic.daw.explodingbattleships.data.Transaction
+import pt.isel.leic.daw.explodingbattleships.domain.EnterLobbyOutcome
 import pt.isel.leic.daw.explodingbattleships.domain.Game
 import pt.isel.leic.daw.explodingbattleships.domain.GameType
 import pt.isel.leic.daw.explodingbattleships.domain.HitOutcome
@@ -120,14 +121,19 @@ fun isGameTypeInvalid(gameType: String) = gameType.toGameTypeOrNull() == null
  * @param data the data module to be used
  * @return information about whether the player was placed in the lobby or a game was started
  */
-fun enterLobbyOrCreateGame(transaction: Transaction, playerId: Int, gameType: String, data: Data): Int? {
+fun enterLobbyOrCreateGame(transaction: Transaction, playerId: Int, gameType: String, data: Data): EnterLobbyOutcome {
     val matchingLobby = data.lobbiesData.searchLobbies(transaction, gameType, playerId).firstOrNull()
     if (matchingLobby != null) {
         data.lobbiesData.removeLobby(transaction, matchingLobby.userId, matchingLobby.gameType, matchingLobby.enterTime)
-        return data.gamesData.createGame(transaction, gameType, playerId, matchingLobby.userId)
+        return EnterLobbyOutcome(
+            false,
+            data.gamesData.createGame(transaction, gameType, playerId, matchingLobby.userId)
+        )
     }
-    data.lobbiesData.enterLobby(transaction, playerId, gameType)
-    return null
+    return EnterLobbyOutcome(
+        true,
+        data.lobbiesData.enterLobby(transaction, playerId, gameType)
+    )
 }
 
 /**

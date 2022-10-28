@@ -60,10 +60,10 @@ create table if not exists ships(
 );
 
 create table if not exists lobbies(
+    id serial primary key,
 	user_id integer references users(id),
 	game_type varchar(20) not null check (game_type in ('beginner', 'experienced', 'advanced')),
-	enter_time timestamp not null,
-	primary key (user_id, game_type, enter_time)
+	enter_time timestamp not null
 );
 
 

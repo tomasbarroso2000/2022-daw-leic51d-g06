@@ -9,8 +9,9 @@ interface LobbiesData {
      * @param transaction the current transaction
      * @param userId the user id
      * @param gameType the game type the user wants to play
+     * @return the lobby id
      */
-    fun enterLobby(transaction: Transaction, userId: Int, gameType: String)
+    fun enterLobby(transaction: Transaction, userId: Int, gameType: String): Int
 
     /**
      * Searches for lobbies

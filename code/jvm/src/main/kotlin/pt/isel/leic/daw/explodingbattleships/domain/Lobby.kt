@@ -9,6 +9,7 @@ import java.time.Instant
  * @property enterTime the instant the user entered the lobby
  */
 data class Lobby(
+    val id: Int,
     val userId: Int,
     val gameType: String,
     val enterTime: Instant

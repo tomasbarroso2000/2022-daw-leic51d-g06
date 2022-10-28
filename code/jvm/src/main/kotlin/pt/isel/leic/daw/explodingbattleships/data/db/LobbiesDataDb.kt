@@ -7,14 +7,15 @@ import pt.isel.leic.daw.explodingbattleships.domain.Lobby
 import java.time.Instant
 
 class LobbiesDataDb : LobbiesData {
-    override fun enterLobby(transaction: Transaction, userId: Int, gameType: String) {
+    override fun enterLobby(transaction: Transaction, userId: Int, gameType: String): Int =
         (transaction as TransactionDataDb).withHandle { handle ->
-            handle.createUpdate("insert into lobbies values (:userId, :gameType, now())")
+            handle.createUpdate("insert into lobbies (user_id, game_type, enter_time) values (:userId, :gameType, now())")
                 .bind("userId", userId)
                 .bind("gameType", gameType)
-                .execute()
+                .executeAndReturnGeneratedKeys()
+                .mapTo<Int>()
+                .first()
         }
-    }
 
     override fun searchLobbies(transaction: Transaction, gameType: String, userId: Int): List<Lobby> =
         (transaction as TransactionDataDb).withHandle { handle ->

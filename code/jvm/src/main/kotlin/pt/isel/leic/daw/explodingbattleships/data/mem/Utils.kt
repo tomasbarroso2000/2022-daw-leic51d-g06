@@ -123,6 +123,6 @@ data class MockData(
         Hit("f1", Instant.now(), false, 6, 2)
     ),
     val lobbies: MutableSet<Lobby> = mutableSetOf(
-        Lobby(4, "beginner", Instant.now())
+        Lobby(1, 4, "beginner", Instant.now())
     )
 )
