@@ -39,6 +39,7 @@ fun checkLimitAndSkip(limit: Int, skip: Int) {
 
 /**
  * Check if the email address is valid
+ * @param email the given email
  */
 fun isEmailValid(email: String): Boolean {
     return Pattern.compile("^(.+)@(\\S+)$")
@@ -49,7 +50,7 @@ fun isEmailValid(email: String): Boolean {
 /**
  * Checks if an email is valid and
  * throws an exception if it is not
- * @param email the email
+ * @param email the given email
  */
 fun checkEmailValid(email: String) {
     checkOrThrowBadRequest(!isEmailValid(email), "Invalid email format")
@@ -58,7 +59,7 @@ fun checkEmailValid(email: String) {
 /**
  * Checks if a password is valid and
  * throws an exception if it is not
- * @param password the password
+ * @param password the given password
  */
 fun checkPasswordValid(password: String) {
     checkOrThrowBadRequest(!password.any { it.isDigit() }, "Password doesn't contain numbers")
@@ -66,6 +67,13 @@ fun checkPasswordValid(password: String) {
     checkOrThrowBadRequest(!password.any { it.isLowerCase() }, "Password doesn't contain lowercase letters")
 }
 
+/**
+ * Checks if a layout is valid and
+ * throws an exception if it is not
+ * @param userId the user id that creates the layout
+ * @param game the game associated with this layout
+ * @param ships the ships associated with this layout
+ */
 fun checkShipLayout(userId: Int, game: Game, ships: List<ShipCreationInfo>): List<Ship> {
     val gameType = game.type.toGameTypeOrNull()
         ?: throw AppException("Game type not registered")
@@ -142,6 +150,12 @@ private fun validateShipSquares(
     }
 }
 
+/**
+ * Gets the game corresponding to the game id
+ * @param transaction the transaction that will be used to obtain the game
+ * @param gameId id of the desired game
+ * @param data specifies what section of data is accessed
+ */
 fun computeGame(transaction: Transaction, gameId: Int, data: Data): Game {
     if (gameId <= 0) {
         throw AppException("Invalid game id", AppExceptionStatus.BAD_REQUEST)
@@ -150,11 +164,29 @@ fun computeGame(transaction: Transaction, gameId: Int, data: Data): Game {
         ?: throw AppException("Game does not exist", AppExceptionStatus.NOT_FOUND)
 }
 
+/**
+ * Checks if a game state is valid and
+ * throws an exception if it is not
+ * @param gameState the current game state
+ * @param state the desired game state
+ */
 fun checkGameState(gameState: String, state: String) =
     checkOrThrowBadRequest(gameState != state, "Invalid game state")
 
+/**
+ * Checks if a player is present in a game
+ * throws an exception if it is not
+ * @param game the given game
+ * @param playerId the player id
+ */
 fun checkPlayerInGame(game: Game, playerId: Int) =
     checkOrThrowBadRequest(game.player1 != playerId && game.player2 != playerId, "Player not in game")
 
+/**
+ * Checks if a player's turn is valid
+ * throws an exception if it is not
+ * @param game the given game
+ * @param playerId the player id
+ */
 fun checkCurrentPlayer(game: Game, playerId: Int) =
     checkOrThrowBadRequest(game.currPlayer != playerId, "Not your turn")
