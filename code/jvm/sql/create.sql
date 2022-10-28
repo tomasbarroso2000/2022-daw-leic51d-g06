@@ -4,7 +4,7 @@ create table if not exists users(
     id serial primary key,
     name varchar(20) not null,
     email  varchar(100) not null unique check (email like '%@%.%'),
-    score integer,
+    score integer not null check(score >= 0),
     password_ver integer not null
 ); -- might add privilege levels later for management purposes
 
