@@ -9,7 +9,9 @@ import java.time.Instant
 class LobbiesDataDb : LobbiesData {
     override fun enterLobby(transaction: Transaction, userId: Int, gameType: String): Int =
         (transaction as TransactionDataDb).withHandle { handle ->
-            handle.createUpdate("insert into lobbies (user_id, game_type, enter_time) values (:userId, :gameType, now())")
+            handle.createUpdate(
+                "insert into lobbies (user_id, game_type, enter_time) values (:userId, :gameType, now())"
+            )
                 .bind("userId", userId)
                 .bind("gameType", gameType)
                 .executeAndReturnGeneratedKeys()

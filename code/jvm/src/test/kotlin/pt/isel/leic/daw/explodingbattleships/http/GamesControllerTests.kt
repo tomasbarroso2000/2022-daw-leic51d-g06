@@ -14,6 +14,24 @@ class GamesControllerTests {
     var port: Int = 0
 
     @Test
+    fun can_get_game_info() {
+        val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port/api/").build()
+        client.get().uri("games/info/1")
+            .header("Authorization", "Bearer 123")
+            .exchange()
+            .expectStatus().isOk
+    }
+
+    @Test
+    fun fails_get_game_info_with_invalid_game_id() {
+        val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port/api/").build()
+        client.get().uri("games/info/abc")
+            .header("Authorization", "Bearer 123")
+            .exchange()
+            .expectStatus().isBadRequest
+    }
+
+    @Test
     fun can_get_number_of_played_games() {
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port/api/").build()
         client.get().uri("games/total")
@@ -26,6 +44,26 @@ class GamesControllerTests {
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port/api/").build()
 
         client.get().uri("games/state/1")
+            .exchange()
+            .expectStatus().isOk
+    }
+
+    @Test
+    fun can_get_player_fleet_state() {
+        val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port/api/").build()
+
+        client.get().uri("games/fleet/player/1")
+            .header("Authorization", "Bearer 123")
+            .exchange()
+            .expectStatus().isOk
+    }
+
+    @Test
+    fun can_get_enemy_fleet_state() {
+        val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port/api/").build()
+
+        client.get().uri("games/fleet/enemy/1")
+            .header("Authorization", "Bearer 123")
             .exchange()
             .expectStatus().isOk
     }

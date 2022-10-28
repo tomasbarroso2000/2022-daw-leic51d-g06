@@ -12,7 +12,6 @@ class LobbiesDataMem(private val mockData: MockData) : LobbiesData {
         return id
     }
 
-
     override fun searchLobbies(transaction: Transaction, gameType: String, userId: Int): List<Lobby> {
         val sameTypeLobbies = mutableListOf<Lobby>()
         mockData.lobbies
