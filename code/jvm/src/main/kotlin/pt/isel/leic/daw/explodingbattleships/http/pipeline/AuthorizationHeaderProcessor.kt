@@ -6,11 +6,19 @@ import pt.isel.leic.daw.explodingbattleships.domain.User
 import pt.isel.leic.daw.explodingbattleships.http.getTokenFromAuthorization
 import pt.isel.leic.daw.explodingbattleships.services.UsersServices
 
+/**
+ * Processes the Header's Authorization using user services
+ */
 @Component
 class AuthorizationHeaderProcessor(
     val services: UsersServices
 ) {
 
+    /**
+     * Gets user from token
+     * @param authorizationValue the token used in the request
+     * @return user
+     */
     fun process(authorizationValue: String?): User {
         val token = getTokenFromAuthorization(authorizationValue)
         return services.getPlayerInfo(token)

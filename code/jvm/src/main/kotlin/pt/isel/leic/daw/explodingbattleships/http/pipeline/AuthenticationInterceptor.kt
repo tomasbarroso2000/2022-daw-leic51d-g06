@@ -8,11 +8,21 @@ import pt.isel.leic.daw.explodingbattleships.domain.User
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
+/**
+ * Intercepts the request and verifies if it's authenticated
+ */
 @Component
 class AuthenticationInterceptor(
     private val authorizationHeaderProcessor: AuthorizationHeaderProcessor
 ) : HandlerInterceptor {
 
+    /**
+     * Process user authentication in request
+     * @param request
+     * @param response
+     * @param handler handler used in the request
+     * @return true if the authentication is valid or if its not needed any for the type of request
+     */
     override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
         if (handler is HandlerMethod && handler.methodParameters.any { it.parameterType == User::class.java }) {
             // enforce authentication

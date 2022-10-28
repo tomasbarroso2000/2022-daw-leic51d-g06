@@ -30,6 +30,12 @@ import java.time.Instant
 @Component
 class GamesServices(private val data: Data) {
 
+    /**
+     * Gets all the information of a game
+     * @param userId the id of the user
+     * @param gameId the id of the game
+     * @return all the information of the game
+     */
     fun getGame(userId: Int, gameId: Int) = doService(data) { transaction ->
         var game = computeGame(transaction, gameId, data)
         val gameType = game.type.toGameTypeOrThrow()
@@ -61,7 +67,7 @@ class GamesServices(private val data: Data) {
     }
 
     /**
-     * Gets the number of games registered
+     * Gets the number of registered games
      * @return the number of games
      */
     fun getNumberOfPlayedGames() = doService(data) { transaction ->
@@ -83,8 +89,9 @@ class GamesServices(private val data: Data) {
 
     /**
      * Shows the state of the player's or enemy's fleet
-     * @param player the player
-     * @param fleet represents the fleet that is being requested
+     * @param userId the player's id
+     * @param gameId the game's id
+     * @param myFleet represents the fleet that is being requested
      * @return the state of every ship
      */
     fun fleetState(userId: Int, gameId: Int, myFleet: Boolean) = doService(data) { transaction ->
@@ -99,8 +106,9 @@ class GamesServices(private val data: Data) {
 
     /**
      * Sends the hits the user has thrown in his turn
-     * @param player the player
-     * @param hits the hits to be sent
+     * @param userId the user's id
+     * @param gameId the game's id
+     * @param squares the list of all the squares hit by the user
      * @return every hit's outcome
      */
     fun sendHits(userId: Int, gameId: Int, squares: List<Square>) = doService(data) { transaction ->
@@ -136,8 +144,9 @@ class GamesServices(private val data: Data) {
     /**
      * Sends a layout for a player in a game and
      * starts a game if both players have successfully defined their layout
-     * @param player the player
-     * @param layout the player's chosen layout
+     * @param userId the user's id
+     * @param gameId the game's id
+     * @param ships a list with all the information regarding the positioning of the ships
      * @return true if successful
      */
     fun sendLayout(userId: Int, gameId: Int, ships: List<ShipCreationInfo>) = doService(data) { transaction ->

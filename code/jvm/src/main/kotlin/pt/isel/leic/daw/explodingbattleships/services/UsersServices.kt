@@ -18,8 +18,10 @@ class UsersServices(private val data: Data) {
 
     /**
      * Creates a user
-     * @param userInput the player information
-     * @return the output of the player creation with the new player's id
+     * @param name the user's name
+     * @param email the user's email
+     * @param password the user's password
+     * @return the output of the user creation which is the new user's id
      */
     fun createUser(name: String, email: String, password: String) = doService(data) { transaction ->
         if (name.isBlank()) {
@@ -38,6 +40,9 @@ class UsersServices(private val data: Data) {
 
     /**
      * Creates a token
+     * @param email the user's email
+     * @param password the user's password
+     * @return the output of the token creation which is the user's token
      */
     fun createToken(email: String, password: String) = doService(data) { transaction ->
         val user = data.usersData.getUserFromEmail(transaction, email)
@@ -48,9 +53,9 @@ class UsersServices(private val data: Data) {
     }
 
     /**
-     * Get the player with the token passed as parameter
+     * Get the user with the token passed as parameter
      * @param token the user's token
-     * @return the player
+     * @return the user
      */
     fun getPlayerInfo(token: String?) = doService(data) { transaction ->
         if (token.isNullOrBlank()) {
@@ -73,7 +78,8 @@ class UsersServices(private val data: Data) {
 
     /**
      * Places the user in a lobby or in a game if there is already someone waiting in the lobby with the same game characteristics
-     * @param lobbyInput the characteristics of the game the user wants to play
+     * @param userId the id of the user that enters the lobby
+     * @param gameType the type of the game the user wants to play
      */
     fun enterLobby(userId: Int, gameType: String) = doService(data) { transaction ->
         if (isGameTypeInvalid(gameType)) {

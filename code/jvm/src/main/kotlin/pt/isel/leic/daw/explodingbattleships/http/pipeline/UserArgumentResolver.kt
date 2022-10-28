@@ -12,8 +12,20 @@ import javax.servlet.http.HttpServletRequest
 @Component
 class UserArgumentResolver : HandlerMethodArgumentResolver {
 
+    /**
+     * Checks if a method parameter type is the same type as User
+     * @param parameter method parameter
+     * @returns true if method parameter type is the same type as User
+     */
     override fun supportsParameter(parameter: MethodParameter) = parameter.parameterType == User::class.java
 
+    /**
+     * Gets user from request or throws IllegalStateException otherwise
+     * @param parameter
+     * @param mavContainer
+     * @param webRequest
+     * @param binderFactory
+     */
     override fun resolveArgument(
         parameter: MethodParameter,
         mavContainer: ModelAndViewContainer?,
@@ -28,10 +40,20 @@ class UserArgumentResolver : HandlerMethodArgumentResolver {
     companion object {
         private const val KEY = "UserArgumentResolver"
 
+        /**
+         * Associates UserArgumentResolver with a user
+         * @param player user
+         * @param request
+         */
         fun addPlayerTo(player: User, request: HttpServletRequest) {
             return request.setAttribute(KEY, player)
         }
 
+        /**
+         * Gets User present in UserArgumentResolver
+         * @param request
+         * @returns user or null if it's not present in UserArgumentResolver
+         */
         fun getPlayerFrom(request: HttpServletRequest): User? {
             return request.getAttribute(KEY)?.let {
                 it as? User
