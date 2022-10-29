@@ -31,7 +31,7 @@ class LobbiesDataDb : LobbiesData {
         (transaction as TransactionDataDb).withHandle { handle ->
             handle.createQuery(
                 "select * from lobbies where game_type = :gameType " +
-                    "and lobbies.user_id <> :userId order by enter_time asc"
+                    "and lobbies.user_id <> :userId and game_id is not null order by enter_time asc"
             )
                 .bind("gameType", gameType)
                 .bind("userId", userId)

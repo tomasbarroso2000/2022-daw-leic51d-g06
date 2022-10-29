@@ -64,8 +64,9 @@ class GamesController(private val services: GamesServices) {
                     )
                 ) {
                     link(Uris.Games.gameInfo(gameId), Rels.SELF)
-                    link(Uris.home(), Rels.HOME)
+                    link(Uris.Games.sendHits(), Rels.SEND_HITS)
                     link(Uris.Users.home(), Rels.USER)
+                    link(Uris.home(), Rels.HOME)
                     clazz("GameOutputModel")
                 }
             )
@@ -201,6 +202,7 @@ class GamesController(private val services: GamesServices) {
                 siren(LayoutOutputModel(res)) {
                     link(Uris.Games.defineLayout(), Rels.SELF)
                     link(Uris.home(), Rels.HOME)
+                    link(Uris.Games.gameInfo(input.gameId), Rels.GAME)
                     clazz("LayoutOutputModel")
                 }
             )

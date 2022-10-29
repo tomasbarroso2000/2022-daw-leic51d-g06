@@ -67,17 +67,17 @@ class GamesServices(private val data: Data) {
     }
 
     /**
-     * Gets the number of registered games
-     * @return the number of games
+     * Gets the total number of played games
+     * @return the number of played games
      */
     fun getNumberOfPlayedGames() = doService(data) { transaction ->
         data.gamesData.getNumberOfPlayedGames(transaction)
     }
 
     /**
-     * Gets the game state of a game
-     * @param gameId the id of the game
-     * @return the state of the game
+     * Gets the state of a game
+     * @param gameId the game id
+     * @return the game state
      */
     fun getGameState(gameId: Int) = doService(data) { transaction ->
         if (gameId <= 0) {
@@ -89,10 +89,10 @@ class GamesServices(private val data: Data) {
 
     /**
      * Shows the state of the player's or enemy's fleet
-     * @param userId the player's id
-     * @param gameId the game's id
-     * @param myFleet represents the fleet that is being requested
-     * @return the state of every ship
+     * @param userId the player id
+     * @param gameId the game id
+     * @param myFleet if it is the player fleet
+     * @return a list with the state of every ship
      */
     fun fleetState(userId: Int, gameId: Int, myFleet: Boolean) = doService(data) { transaction ->
         val game = computeGame(transaction, gameId, data)
@@ -106,10 +106,10 @@ class GamesServices(private val data: Data) {
 
     /**
      * Sends the hits the user has thrown in his turn
-     * @param userId the user's id
-     * @param gameId the game's id
-     * @param squares the list of all the squares hit by the user
-     * @return every hit's outcome
+     * @param userId the user id
+     * @param gameId the game id
+     * @param squares the list of all the squares hit
+     * @return a list with all the hit's outcomes
      */
     fun sendHits(userId: Int, gameId: Int, squares: List<Square>) = doService(data) { transaction ->
         val game = computeGame(transaction, gameId, data)
@@ -144,10 +144,10 @@ class GamesServices(private val data: Data) {
     /**
      * Sends a layout for a player in a game and
      * starts a game if both players have successfully defined their layout
-     * @param userId the user's id
-     * @param gameId the game's id
+     * @param userId the user id
+     * @param gameId the game id
      * @param ships a list with all the information regarding the positioning of the ships
-     * @return true if successful
+     * @return the layout outcome status
      */
     fun sendLayout(userId: Int, gameId: Int, ships: List<ShipCreationInfo>) = doService(data) { transaction ->
         val game = computeGame(transaction, gameId, data)

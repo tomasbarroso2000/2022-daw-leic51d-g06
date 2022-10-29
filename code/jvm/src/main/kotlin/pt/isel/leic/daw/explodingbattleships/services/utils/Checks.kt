@@ -40,6 +40,7 @@ fun checkLimitAndSkip(limit: Int, skip: Int) {
 /**
  * Check if the email address is valid
  * @param email the given email
+ * @return if the email is valid
  */
 fun isEmailValid(email: String): Boolean {
     return Pattern.compile("^(.+)@(\\S+)$")
@@ -70,9 +71,10 @@ fun checkPasswordValid(password: String) {
 /**
  * Checks if a layout is valid and
  * throws an exception if it is not
- * @param userId the user id that creates the layout
- * @param game the game associated with this layout
- * @param ships the ships associated with this layout
+ * @param userId the user id
+ * @param game the game
+ * @param ships a list of information needed to create the ships
+ * @return a ships list
  */
 fun checkShipLayout(userId: Int, game: Game, ships: List<ShipCreationInfo>): List<Ship> {
     val gameType = game.type.toGameTypeOrNull()
@@ -101,10 +103,10 @@ fun checkShipLayout(userId: Int, game: Game, ships: List<ShipCreationInfo>): Lis
 }
 
 /**
- * Checks if a list of ships is a valid one
- * @param gameType the type of game
- * @param ships the list of ships
- * @return true if the list is valid
+ * Checks if a list of ships is valid
+ * @param gameType the game type
+ * @param ships the ships list
+ * @return true if the ships list is valid
  */
 private fun shipsValid(gameType: GameType, ships: List<ShipCreationInfo>) =
     ships.map { it.name }.containsAll(gameType.fleetComposition.map { it.name })
@@ -113,6 +115,7 @@ private fun shipsValid(gameType: GameType, ships: List<ShipCreationInfo>) =
  * Checks if a square is within a board
  * @param square the square in question
  * @param boardSize the size of the board
+ * @return if a square is within a board
  */
 fun squareInBoard(square: Square, boardSize: Int): Boolean {
     val lastRow = 'a' + boardSize - 1
@@ -123,8 +126,8 @@ fun squareInBoard(square: Square, boardSize: Int): Boolean {
 }
 
 /**
- * Validates the squares of a [UnverifiedShip]
- * @param ship the ship in question
+ * Validates the squares of a ship
+ * @param ship the ship
  * @param occupiedSquares the occupied squares
  * @param nextSquare the function to calculate the next square
  */
@@ -153,8 +156,9 @@ private fun validateShipSquares(
 /**
  * Gets the game corresponding to the game id
  * @param transaction the transaction that will be used to obtain the game
- * @param gameId id of the desired game
+ * @param gameId game id
  * @param data specifies what section of data is accessed
+ * @return the game
  */
 fun computeGame(transaction: Transaction, gameId: Int, data: Data): Game {
     if (gameId <= 0) {

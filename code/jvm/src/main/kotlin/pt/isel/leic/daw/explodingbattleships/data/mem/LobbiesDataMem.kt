@@ -16,14 +16,10 @@ class LobbiesDataMem(private val mockData: MockData) : LobbiesData {
     override fun getLobbyById(transaction: Transaction, id: Int): Lobby? =
         mockData.lobbies.find { it.id == id }
 
-    override fun searchLobbies(transaction: Transaction, gameType: String, userId: Int): List<Lobby> {
-        val sameTypeLobbies = mutableListOf<Lobby>()
+    override fun searchLobbies(transaction: Transaction, gameType: String, userId: Int): List<Lobby> =
         mockData.lobbies
-            .filter { it.gameType == gameType && it.userId != userId }
+            .filter { it.gameType == gameType && it.userId != userId && it.gameId == null }
             .sortedBy { it.enterTime }
-            .forEach { sameTypeLobbies.add(Lobby(it.id, it.userId, it.gameType, it.enterTime, it.gameId)) }
-        return sameTypeLobbies
-    }
 
     override fun removeLobby(transaction: Transaction, id: Int) {
         mockData.lobbies.removeIf { it.id == id }

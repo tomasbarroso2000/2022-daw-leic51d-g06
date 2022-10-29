@@ -32,6 +32,10 @@ class HomeController {
                 siren(HomeOutputModel()) {
                     link(Uris.home(), Rels.SELF)
                     link(Uris.home(), Rels.HOME)
+                    link(Uris.Users.rankings(), Rels.RANKINGS)
+                    link(Uris.Users.createUser(), Rels.CREATE_USER)
+                    link(Uris.Users.enterLobby(), Rels.ENTER_LOBBY)
+                    link(Uris.Games.nrOfGames(), Rels.NR_OF_TOTAL_GAMES)
                     clazz("HomeOutputModel")
                 }
             )

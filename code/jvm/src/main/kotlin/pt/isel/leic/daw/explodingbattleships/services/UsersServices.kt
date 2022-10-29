@@ -22,7 +22,7 @@ class UsersServices(private val data: Data) {
      * @param name the user's name
      * @param email the user's email
      * @param password the user's password
-     * @return the output of the user creation which is the new user's id
+     * @return the new user id
      */
     fun createUser(name: String, email: String, password: String) = doService(data) { transaction ->
         if (name.isBlank()) {
@@ -43,7 +43,7 @@ class UsersServices(private val data: Data) {
      * Creates a token
      * @param email the user's email
      * @param password the user's password
-     * @return the output of the token creation which is the user's token
+     * @return the user's token
      */
     fun createToken(email: String, password: String) = doService(data) { transaction ->
         val user = data.usersData.getUserFromEmail(transaction, email)
@@ -54,7 +54,7 @@ class UsersServices(private val data: Data) {
     }
 
     /**
-     * Get the user with the token passed as parameter
+     * Gets the user with the corresponding token
      * @param token the user's token
      * @return the user
      */
@@ -70,7 +70,7 @@ class UsersServices(private val data: Data) {
      * Gets the player rankings
      * @param limit the limit value of the list
      * @param skip the skip value of the list
-     * @return a [DataList] with the players sorted by score
+     * @return a list with the players sorted by score
      */
     fun getRankings(limit: Int, skip: Int): DataList<Ranking> = doService(data) { transaction ->
         checkLimitAndSkip(limit, skip)
@@ -78,10 +78,11 @@ class UsersServices(private val data: Data) {
     }
 
     /**
-     * Places the user in a lobby or in a game if there is already someone
-     * waiting in the lobby with the same game characteristics
-     * @param userId the id of the user that enters the lobby
-     * @param gameType the type of the game the user wants to play
+     * Places the user in a lobby or in a game if there is already other player
+     * waiting in a lobby with the same game characteristics
+     * @param userId the user id
+     * @param gameType the game type the user wants to play
+     * @return the enter-lobby status
      */
     fun enterLobby(userId: Int, gameType: String) = doService(data) { transaction ->
         if (isGameTypeInvalid(gameType)) {
@@ -92,16 +93,17 @@ class UsersServices(private val data: Data) {
             val gameId = data.gamesData.createGame(transaction, gameType, userId, matchingLobby.userId)
             data.lobbiesData.setGameId(transaction, matchingLobby.id, gameId)
             EnterLobbyOutcome(false, gameId)
+        } else {
+            val lobbyId = data.lobbiesData.enterLobby(transaction, userId, gameType)
+            EnterLobbyOutcome(true, lobbyId)
         }
-        val lobbyId = data.lobbiesData.enterLobby(transaction, userId, gameType)
-        EnterLobbyOutcome(true, lobbyId)
     }
 
     /**
-     * Checks if a game was create for a lobby
-     * @param userId the id of the user that entered the lobby
-     * @param lobbyId the id of the lobby that was created
-     * @return the id of the created game
+     * Checks if a game was created for a lobby
+     * @param userId the user id
+     * @param lobbyId the lobby id
+     * @return the created game id or null
      */
     fun enteredGame(userId: Int, lobbyId: Int) = doService(data) { transaction ->
         checkOrThrowBadRequest(lobbyId <= 0, "Invalid lobby id")

@@ -56,6 +56,9 @@ class UsersController(private val services: UsersServices) {
                 siren(UserOutputModel(user.id, user.name, user.email, user.score)) {
                     link(Uris.Users.home(), Rels.SELF)
                     link(Uris.home(), Rels.HOME)
+                    link(Uris.Games.nrOfGames(), Rels.NR_OF_TOTAL_GAMES)
+                    link(Uris.Users.enterLobby(), Rels.ENTER_LOBBY)
+                    link(Uris.Users.createToken(), Rels.TOKEN)
                     clazz("UserOutputModel")
                 }
             )
@@ -150,6 +153,7 @@ class UsersController(private val services: UsersServices) {
                 siren(LobbyOutputModel(res.enteredLobby, res.lobbyOrGameId)) {
                     link(Uris.Users.enterLobby(), Rels.SELF)
                     link(Uris.home(), Rels.HOME)
+                    link(Uris.Users.enteredGame(res.lobbyOrGameId), Rels.ENTER_LOBBY)
                     clazz("LobbyOutputModel")
                 }
             )
@@ -170,6 +174,7 @@ class UsersController(private val services: UsersServices) {
                     link(Uris.home(), Rels.HOME)
                     if (res != null) {
                         link(Uris.Games.gameInfo(res), Rels.GAME)
+                        link(Uris.home(), Rels.HOME)
                     }
                     clazz("EnteredGameOutputModel")
                 }
