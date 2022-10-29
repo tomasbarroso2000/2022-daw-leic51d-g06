@@ -1,6 +1,8 @@
 package pt.isel.leic.daw.explodingbattleships.http.controllers
 
+import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -64,7 +66,28 @@ class GamesController(private val services: GamesServices) {
                     )
                 ) {
                     link(Uris.Games.gameInfo(gameId), Rels.SELF)
-                    link(Uris.Games.sendHits(), Rels.SEND_HITS)
+                    if (res.game.state == "shooting") {
+                        action(
+                            "send-hits",
+                            Uris.Games.sendHits(),
+                            HttpMethod.PUT,
+                            MediaType.APPLICATION_JSON.toString()
+                        ) {
+                            hiddenField("gameId", res.game.id.toString())
+                            textField("squares")
+                        }
+                    }
+                    if (res.game.state == "layout_definition") {
+                        action(
+                            "define-layout",
+                            Uris.Games.defineLayout(),
+                            HttpMethod.PUT,
+                            MediaType.APPLICATION_JSON.toString()
+                        ) {
+                            hiddenField("gameId", res.game.id.toString())
+                            textField("ships")
+                        }
+                    }
                     link(Uris.Users.home(), Rels.USER)
                     link(Uris.home(), Rels.HOME)
                     clazz("GameOutputModel")
@@ -106,6 +129,7 @@ class GamesController(private val services: GamesServices) {
                     siren(GameStateOutputModel(res)) {
                         link(Uris.Games.state(gameId), Rels.SELF)
                         link(Uris.home(), Rels.HOME)
+                        link(Uris.Games.gameInfo(gameId), Rels.GAME)
                         clazz("GameStateOutputModel")
                     }
                 )
@@ -128,7 +152,7 @@ class GamesController(private val services: GamesServices) {
             .body(
                 siren(FleetStateOutputModel(res)) {
                     link(Uris.Games.playerFleet(gameId), Rels.SELF)
-                    link(Uris.home(), Rels.HOME)
+                    link(Uris.Games.gameInfo(gameId), Rels.GAME)
                     clazz("FleetStateOutputModel")
                 }
             )
@@ -151,7 +175,7 @@ class GamesController(private val services: GamesServices) {
             .body(
                 siren(FleetStateOutputModel(res)) {
                     link(Uris.Games.enemyFleet(gameId), Rels.SELF)
-                    link(Uris.home(), Rels.HOME)
+                    link(Uris.Games.gameInfo(gameId), Rels.GAME)
                     clazz("FleetStateOutputModel")
                 }
             )
