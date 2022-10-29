@@ -2,7 +2,6 @@ package pt.isel.leic.daw.explodingbattleships.services.utils
 
 import pt.isel.leic.daw.explodingbattleships.data.Data
 import pt.isel.leic.daw.explodingbattleships.data.Transaction
-import pt.isel.leic.daw.explodingbattleships.domain.EnterLobbyOutcome
 import pt.isel.leic.daw.explodingbattleships.domain.Game
 import pt.isel.leic.daw.explodingbattleships.domain.GameType
 import pt.isel.leic.daw.explodingbattleships.domain.HitOutcome
@@ -112,24 +111,6 @@ fun winConditionDetection(transaction: Transaction, gameId: Int, playerId: Int, 
  * @return true if the game type exists
  */
 fun isGameTypeInvalid(gameType: String) = gameType.toGameTypeOrNull() == null
-
-/**
- * Inserts in lobby or creates a game
- * @param transaction the current transaction
- * @param playerId the player id
- * @param gameType the game type
- * @param data the data module to be used
- * @return information about whether the player was placed in the lobby or a game was started
- */
-fun enterLobbyOrCreateGame(transaction: Transaction, playerId: Int, gameType: String, data: Data): EnterLobbyOutcome {
-    val matchingLobby = data.lobbiesData.searchLobbies(transaction, gameType, playerId).firstOrNull()
-    if (matchingLobby != null) {
-        val gameId = data.gamesData.createGame(transaction, gameType, playerId, matchingLobby.userId)
-        data.lobbiesData.setGameId(transaction, matchingLobby.id, gameId)
-        return EnterLobbyOutcome(false, gameId)
-    }
-    return EnterLobbyOutcome(true, data.lobbiesData.enterLobby(transaction, playerId, gameType))
-}
 
 /**
  * Converts the string to one of the game types or null

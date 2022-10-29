@@ -65,6 +65,7 @@ class GamesController(private val services: GamesServices) {
                 ) {
                     link(Uris.Games.gameInfo(gameId), Rels.SELF)
                     link(Uris.home(), Rels.HOME)
+                    link(Uris.Users.home(), Rels.USER)
                     clazz("GameOutputModel")
                 }
             )

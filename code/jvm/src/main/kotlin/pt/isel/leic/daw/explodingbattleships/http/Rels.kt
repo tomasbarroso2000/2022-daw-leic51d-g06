@@ -9,4 +9,5 @@ object Rels {
     val SELF = LinkRelation("self")
     val HOME = LinkRelation("home")
     val GAME = LinkRelation("game")
+    val USER = LinkRelation("user")
 }
