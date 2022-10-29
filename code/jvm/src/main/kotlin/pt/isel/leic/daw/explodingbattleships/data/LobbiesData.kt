@@ -1,7 +1,6 @@
 package pt.isel.leic.daw.explodingbattleships.data
 
 import pt.isel.leic.daw.explodingbattleships.domain.Lobby
-import java.time.Instant
 
 interface LobbiesData {
     /**
@@ -12,6 +11,14 @@ interface LobbiesData {
      * @return the lobby id
      */
     fun enterLobby(transaction: Transaction, userId: Int, gameType: String): Int
+
+    /**
+     * Gets a lobby by its id
+     * @param transaction the current transaction
+     * @param id the lobby id
+     * @return the found lobby
+     */
+    fun getLobbyById(transaction: Transaction, id: Int): Lobby?
 
     /**
      * Searches for lobbies
@@ -25,9 +32,15 @@ interface LobbiesData {
     /**
      * Removes a lobby
      * @param transaction the current transaction
-     * @param userId the user id
-     * @param gameType the game type
-     * @param enterTime the instant the player entered the lobby
+     * @param id the lobby id
      */
-    fun removeLobby(transaction: Transaction, userId: Int, gameType: String, enterTime: Instant)
+    fun removeLobby(transaction: Transaction, id: Int)
+
+    /**
+     * Sets a game id for a lobby
+     * @param transaction the current transaction
+     * @param id the lobby id
+     * @param gameId the game id
+     */
+    fun setGameId(transaction: Transaction, id: Int, gameId: Int)
 }

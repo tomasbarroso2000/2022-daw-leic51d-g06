@@ -8,6 +8,7 @@ import pt.isel.leic.daw.explodingbattleships.services.utils.AppException
 import pt.isel.leic.daw.explodingbattleships.services.utils.AppExceptionStatus
 import pt.isel.leic.daw.explodingbattleships.services.utils.checkEmailValid
 import pt.isel.leic.daw.explodingbattleships.services.utils.checkLimitAndSkip
+import pt.isel.leic.daw.explodingbattleships.services.utils.checkOrThrowBadRequest
 import pt.isel.leic.daw.explodingbattleships.services.utils.checkPasswordValid
 import pt.isel.leic.daw.explodingbattleships.services.utils.doService
 import pt.isel.leic.daw.explodingbattleships.services.utils.enterLobbyOrCreateGame
@@ -86,5 +87,24 @@ class UsersServices(private val data: Data) {
             throw AppException("Invalid game type", AppExceptionStatus.BAD_REQUEST)
         }
         enterLobbyOrCreateGame(transaction, userId, gameType, data)
+    }
+
+    /**
+     * Checks if a game was create for a lobby
+     * @param userId the id of the user that entered the lobby
+     * @param lobbyId the id of the lobby that was created
+     * @return the id of the created game
+     */
+    fun enteredGame(userId: Int, lobbyId: Int) = doService(data) { transaction ->
+        checkOrThrowBadRequest(lobbyId <= 0, "Invalid lobby id")
+        val lobby = data.lobbiesData.getLobbyById(transaction, lobbyId)
+            ?: throw AppException("Lobby doesn't exist", AppExceptionStatus.NOT_FOUND)
+        if (lobby.userId != userId) {
+            throw AppException("User not in lobby", AppExceptionStatus.UNAUTHORIZED)
+        }
+        if (lobby.gameId != null) {
+            data.lobbiesData.removeLobby(transaction, lobbyId)
+        }
+        lobby.gameId
     }
 }

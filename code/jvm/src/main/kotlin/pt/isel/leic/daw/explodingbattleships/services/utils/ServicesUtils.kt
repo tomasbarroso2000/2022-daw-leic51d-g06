@@ -124,16 +124,11 @@ fun isGameTypeInvalid(gameType: String) = gameType.toGameTypeOrNull() == null
 fun enterLobbyOrCreateGame(transaction: Transaction, playerId: Int, gameType: String, data: Data): EnterLobbyOutcome {
     val matchingLobby = data.lobbiesData.searchLobbies(transaction, gameType, playerId).firstOrNull()
     if (matchingLobby != null) {
-        data.lobbiesData.removeLobby(transaction, matchingLobby.userId, matchingLobby.gameType, matchingLobby.enterTime)
-        return EnterLobbyOutcome(
-            false,
-            data.gamesData.createGame(transaction, gameType, playerId, matchingLobby.userId)
-        )
+        val gameId = data.gamesData.createGame(transaction, gameType, playerId, matchingLobby.userId)
+        data.lobbiesData.setGameId(transaction, matchingLobby.id, gameId)
+        return EnterLobbyOutcome(false, gameId)
     }
-    return EnterLobbyOutcome(
-        true,
-        data.lobbiesData.enterLobby(transaction, playerId, gameType)
-    )
+    return EnterLobbyOutcome(true, data.lobbiesData.enterLobby(transaction, playerId, gameType))
 }
 
 /**

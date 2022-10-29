@@ -1,9 +1,8 @@
 {
 	"info": {
-		"_postman_id": "a3a95c20-0f9b-4592-8cee-f34e7d8c86e6",
+		"_postman_id": "a8c8710b-3f80-4faf-a7c9-3a77b2acda66",
 		"name": "ExplodingBattleships",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "18405597"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
@@ -325,6 +324,33 @@
 							"raw": "{{BASE_URL}}lobby",
 							"host": [
 								"{{BASE_URL}}lobby"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "entered game",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "123",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}lobby/2",
+							"host": [
+								"{{BASE_URL}}lobby"
+							],
+							"path": [
+								"2"
 							]
 						}
 					},

@@ -1,10 +1,12 @@
 package pt.isel.leic.daw.explodingbattleships.services
 
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import pt.isel.leic.daw.explodingbattleships.data.mem.DataMem
+import pt.isel.leic.daw.explodingbattleships.domain.EnterLobbyOutcome
 import pt.isel.leic.daw.explodingbattleships.domain.User
 import pt.isel.leic.daw.explodingbattleships.services.utils.AppException
 import pt.isel.leic.daw.explodingbattleships.services.utils.AppExceptionStatus
@@ -190,12 +192,11 @@ class UsersServicesTests {
         assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
     }
 
-    /*
     @Test
     fun enter_lobby_start() {
         val userId = 3
         val gameType = "beginner"
-        val expectedOutput = EnterLobbyOutput(false, data.mockData.games.size + 1)
+        val expectedOutput = EnterLobbyOutcome(false, data.mockData.games.size + 1)
         val actualOutput = services.enterLobby(userId, gameType)
         assertEquals(expectedOutput, actualOutput)
     }
@@ -204,10 +205,52 @@ class UsersServicesTests {
     fun enter_lobby_wait() {
         val userId = 7
         val gameType = "experienced"
-        val expectedOutput = EnterLobbyOutput(true, null)
+        val expectedOutput = EnterLobbyOutcome(true, 3)
         val actualOutput = services.enterLobby(userId, gameType)
         assertEquals(expectedOutput, actualOutput)
     }
 
-     */
+    @Test
+    fun enter_lobby_with_invalid_game_type() {
+        val exception = assertThrows<AppException> {
+            services.enterLobby(1, "very very hard")
+        }
+        assertEquals("Invalid game type", exception.message)
+        assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
+    }
+
+    @Test
+    fun entered_game() {
+        val expectedEnteredGame = 6
+        val actualEnteredGame = services.enteredGame(3, 2)
+        assertEquals(expectedEnteredGame, actualEnteredGame)
+        assertFalse(data.mockData.lobbies.any { it.id == 2 })
+    }
+
+    @Test
+    fun entered_game_with_invalid_lobby_id() {
+        val exception = assertThrows<AppException> {
+            services.enteredGame(3, -1)
+        }
+        assertEquals("Invalid lobby id", exception.message)
+        assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
+    }
+
+    @Test
+    fun entered_game_with_non_existing_lobby() {
+        val exception = assertThrows<AppException> {
+            services.enteredGame(3, 10)
+        }
+        assertEquals("Lobby doesn't exist", exception.message)
+        assertEquals(AppExceptionStatus.NOT_FOUND, exception.status)
+    }
+
+    @Test
+    fun entered_game_with_lobby_of_someone_else() {
+        val exception = assertThrows<AppException> {
+            services.enteredGame(1, 2)
+        }
+        assertEquals("User not in lobby", exception.message)
+        assertEquals(AppExceptionStatus.UNAUTHORIZED, exception.status)
+    }
 }

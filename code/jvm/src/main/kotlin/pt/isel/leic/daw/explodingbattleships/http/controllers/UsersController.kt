@@ -2,7 +2,9 @@ package pt.isel.leic.daw.explodingbattleships.http.controllers
 
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -13,6 +15,7 @@ import pt.isel.leic.daw.explodingbattleships.http.Rels
 import pt.isel.leic.daw.explodingbattleships.http.Successes
 import pt.isel.leic.daw.explodingbattleships.http.Uris
 import pt.isel.leic.daw.explodingbattleships.http.Uris.Users.CREATE
+import pt.isel.leic.daw.explodingbattleships.http.Uris.Users.ENTERED_GAME
 import pt.isel.leic.daw.explodingbattleships.http.Uris.Users.ENTER_LOBBY
 import pt.isel.leic.daw.explodingbattleships.http.Uris.Users.HOME
 import pt.isel.leic.daw.explodingbattleships.http.Uris.Users.RANKINGS
@@ -21,6 +24,7 @@ import pt.isel.leic.daw.explodingbattleships.http.doApiTask
 import pt.isel.leic.daw.explodingbattleships.http.models.input.LobbyInputModel
 import pt.isel.leic.daw.explodingbattleships.http.models.input.UserInputModel
 import pt.isel.leic.daw.explodingbattleships.http.models.input.UserTokenInputModel
+import pt.isel.leic.daw.explodingbattleships.http.models.output.EnteredGameOutputModel
 import pt.isel.leic.daw.explodingbattleships.http.models.output.LobbyOutputModel
 import pt.isel.leic.daw.explodingbattleships.http.models.output.RankingsOutputModel
 import pt.isel.leic.daw.explodingbattleships.http.models.output.UserCreationOutputModel
@@ -128,17 +132,17 @@ class UsersController(private val services: UsersServices) {
 
     /**
      * Handles a post request for entering a lobby
-     * @param player the user that sent the request
+     * @param user the user that sent the request
      * @param input the lobby input model that represents the game type the user desires to play
      */
     @PostMapping(ENTER_LOBBY)
     fun enterLobby(
-        player: User,
+        user: User,
         @Valid
         @RequestBody
         input: LobbyInputModel
     ) = doApiTask {
-        val res = services.enterLobby(player.id, input.gameType)
+        val res = services.enterLobby(user.id, input.gameType)
         ResponseEntity
             .status(Successes.OK)
             .contentType(APPLICATION_SIREN)
@@ -147,6 +151,27 @@ class UsersController(private val services: UsersServices) {
                     link(Uris.Users.enterLobby(), Rels.SELF)
                     link(Uris.home(), Rels.HOME)
                     clazz("LobbyOutputModel")
+                }
+            )
+    }
+
+    @PutMapping(ENTERED_GAME)
+    fun enteredGame(
+        user: User,
+        @PathVariable lobbyId: Int
+    ) = doApiTask {
+        val res = services.enteredGame(user.id, lobbyId)
+        ResponseEntity
+            .status(Successes.OK)
+            .contentType(APPLICATION_SIREN)
+            .body(
+                siren(EnteredGameOutputModel(res)) {
+                    link(Uris.Users.enteredGame(lobbyId), Rels.SELF)
+                    link(Uris.home(), Rels.HOME)
+                    if (res != null) {
+                        link(Uris.Games.gameInfo(res), Rels.GAME)
+                    }
+                    clazz("EnteredGameOutputModel")
                 }
             )
     }

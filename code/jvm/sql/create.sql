@@ -63,7 +63,8 @@ create table if not exists lobbies(
     id serial primary key,
 	user_id integer references users(id),
 	game_type varchar(20) not null check (game_type in ('beginner', 'experienced', 'advanced')),
-	enter_time timestamp not null
+	enter_time timestamp not null,
+	game_id integer references  games(id)
 );
 
 

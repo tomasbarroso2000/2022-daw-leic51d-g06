@@ -16,12 +16,14 @@ object Uris {
         const val CREATE = "users"
         const val TOKEN = "users/token"
         const val ENTER_LOBBY = "lobby"
+        const val ENTERED_GAME = "lobby/{lobbyId}"
         const val RANKINGS = "users/rankings"
 
         fun home(): URI = URI(BASE_PATH + HOME)
         fun createUser(): URI = URI(BASE_PATH + CREATE)
         fun createToken(): URI = URI(BASE_PATH + TOKEN)
         fun enterLobby(): URI = URI(BASE_PATH + ENTER_LOBBY)
+        fun enteredGame(lobbyId: Int): URI = UriTemplate(BASE_PATH + ENTERED_GAME).expand(lobbyId)
         fun rankings(): URI = URI(BASE_PATH + RANKINGS)
     }
 
