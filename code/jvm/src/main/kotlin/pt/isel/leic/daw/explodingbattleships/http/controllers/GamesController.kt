@@ -152,6 +152,7 @@ class GamesController(private val services: GamesServices) {
             .body(
                 siren(FleetStateOutputModel(res)) {
                     link(Uris.Games.playerFleet(gameId), Rels.SELF)
+                    link(Uris.home(), Rels.HOME)
                     link(Uris.Games.gameInfo(gameId), Rels.GAME)
                     clazz("FleetStateOutputModel")
                 }
@@ -175,6 +176,7 @@ class GamesController(private val services: GamesServices) {
             .body(
                 siren(FleetStateOutputModel(res)) {
                     link(Uris.Games.enemyFleet(gameId), Rels.SELF)
+                    link(Uris.home(), Rels.HOME)
                     link(Uris.Games.gameInfo(gameId), Rels.GAME)
                     clazz("FleetStateOutputModel")
                 }
@@ -201,6 +203,7 @@ class GamesController(private val services: GamesServices) {
                 siren(HitsOutputModel(res.hitsOutcome, res.win)) {
                     link(Uris.Games.sendHits(), Rels.SELF)
                     link(Uris.home(), Rels.HOME)
+                    link(Uris.Games.gameInfo(input.gameId), Rels.GAME)
                     clazz("HitsOutputModel")
                 }
             )

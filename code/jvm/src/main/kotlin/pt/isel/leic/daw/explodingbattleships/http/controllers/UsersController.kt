@@ -1,5 +1,7 @@
 package pt.isel.leic.daw.explodingbattleships.http.controllers
 
+import org.springframework.http.HttpMethod
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -54,11 +56,16 @@ class UsersController(private val services: UsersServices) {
             .contentType(APPLICATION_SIREN)
             .body(
                 siren(UserOutputModel(user.id, user.name, user.email, user.score)) {
+                    action(
+                        "enter-lobby",
+                        Uris.Users.enterLobby(),
+                        HttpMethod.POST,
+                        MediaType.APPLICATION_JSON.toString()
+                    ) {
+                        textField("game-type")
+                    }
                     link(Uris.Users.home(), Rels.SELF)
                     link(Uris.home(), Rels.HOME)
-                    link(Uris.Games.nrOfGames(), Rels.NR_OF_TOTAL_GAMES)
-                    link(Uris.Users.enterLobby(), Rels.ENTER_LOBBY)
-                    link(Uris.Users.createToken(), Rels.TOKEN)
                     clazz("UserOutputModel")
                 }
             )
@@ -82,6 +89,7 @@ class UsersController(private val services: UsersServices) {
                 siren(UserCreationOutputModel(res)) {
                     link(Uris.Users.createUser(), Rels.SELF)
                     link(Uris.home(), Rels.HOME)
+                    link(Uris.Users.home(), Rels.USER)
                     clazz("UserCreationOutputModel")
                 }
             )
@@ -105,6 +113,7 @@ class UsersController(private val services: UsersServices) {
                 siren(UserTokenOutputModel(res)) {
                     link(Uris.Users.createToken(), Rels.SELF)
                     link(Uris.home(), Rels.HOME)
+                    link(Uris.Users.home(), Rels.USER)
                     clazz("UserTokenOutputModel")
                 }
             )
@@ -153,7 +162,11 @@ class UsersController(private val services: UsersServices) {
                 siren(LobbyOutputModel(res.enteredLobby, res.lobbyOrGameId)) {
                     link(Uris.Users.enterLobby(), Rels.SELF)
                     link(Uris.home(), Rels.HOME)
-                    link(Uris.Users.enteredGame(res.lobbyOrGameId), Rels.ENTER_LOBBY)
+                    if (res.enteredLobby) {
+                        link(Uris.Users.enteredGame(res.lobbyOrGameId), Rels.ENTERED_GAME)
+                    } else {
+                        link(Uris.Games.gameInfo(res.lobbyOrGameId), Rels.GAME)
+                    }
                     clazz("LobbyOutputModel")
                 }
             )
@@ -174,7 +187,6 @@ class UsersController(private val services: UsersServices) {
                     link(Uris.home(), Rels.HOME)
                     if (res != null) {
                         link(Uris.Games.gameInfo(res), Rels.GAME)
-                        link(Uris.home(), Rels.HOME)
                     }
                     clazz("EnteredGameOutputModel")
                 }

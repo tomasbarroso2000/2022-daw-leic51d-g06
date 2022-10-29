@@ -1,5 +1,7 @@
 package pt.isel.leic.daw.explodingbattleships.http.controllers
 
+import org.springframework.http.HttpMethod
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -30,10 +32,28 @@ class HomeController {
             .contentType(APPLICATION_SIREN)
             .body(
                 siren(HomeOutputModel()) {
+                    action(
+                        "create-user",
+                        Uris.Users.createUser(),
+                        HttpMethod.POST,
+                        MediaType.APPLICATION_JSON.toString()
+                    ) {
+                        textField("name")
+                        textField("email")
+                        textField("password")
+                    }
+                    action(
+                        "create-token",
+                        Uris.Users.createToken(),
+                        HttpMethod.POST,
+                        MediaType.APPLICATION_JSON.toString()
+                    ) {
+                        textField("email")
+                        textField("password")
+                    }
                     link(Uris.home(), Rels.SELF)
                     link(Uris.home(), Rels.HOME)
                     link(Uris.Users.rankings(), Rels.RANKINGS)
-                    link(Uris.Users.createUser(), Rels.CREATE_USER)
                     link(Uris.Users.enterLobby(), Rels.ENTER_LOBBY)
                     link(Uris.Games.nrOfGames(), Rels.NR_OF_TOTAL_GAMES)
                     clazz("HomeOutputModel")

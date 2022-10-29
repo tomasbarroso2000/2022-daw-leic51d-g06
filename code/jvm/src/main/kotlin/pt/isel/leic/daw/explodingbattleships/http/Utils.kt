@@ -25,14 +25,12 @@ fun doApiTask(task: () -> ResponseEntity<*>): ResponseEntity<*> {
  * Represents an error response
  * @param type the error type
  * @param title the error response title
- * @param status the error status
  * @param detail the error details
  * @param instance the error instance
  */
 data class ErrorResponse(
     val type: String = "",
     val title: String,
-    val status: Int,
     val detail: String = "",
     val instance: String = ""
 )
@@ -47,19 +45,19 @@ fun handleError(error: Exception): ResponseEntity<ErrorResponse> {
         onAppException(error)
     } else {
         logger.warn(error.message)
-        makeResponse(
+        makeProblemResponse(
             Errors.INTERNAL_SERVER_ERROR,
-            ErrorResponse(title = "Something went wrong", status = Errors.INTERNAL_SERVER_ERROR)
+            ErrorResponse(title = "Something went wrong")
         )
     }
 }
 
 /**
- * Fabricates a response with the given status and response body
+ * Fabricates an error response with the given status and response body
  * @param statusCode the status of the [ResponseEntity]
  * @param body the body of the [ResponseEntity]
  */
-fun <T> makeResponse(statusCode: Int, body: T) =
+fun <T> makeProblemResponse(statusCode: Int, body: T) =
     ResponseEntity
         .status(statusCode)
         .header("content-type", "application/problem+json")
@@ -74,21 +72,21 @@ fun <T> makeResponse(statusCode: Int, body: T) =
 fun onAppException(error: AppException): ResponseEntity<ErrorResponse> {
     val message = error.message ?: "¯\\_(ツ)_/¯"
     return when (error.status) {
-        AppExceptionStatus.UNAUTHORIZED -> makeResponse(
+        AppExceptionStatus.UNAUTHORIZED -> makeProblemResponse(
             Errors.UNAUTHORIZED,
-            ErrorResponse(title = message, status = Errors.UNAUTHORIZED)
+            ErrorResponse(title = message)
         )
-        AppExceptionStatus.BAD_REQUEST -> makeResponse(
+        AppExceptionStatus.BAD_REQUEST -> makeProblemResponse(
             Errors.BAD_REQUEST,
-            ErrorResponse(title = message, status = Errors.BAD_REQUEST)
+            ErrorResponse(title = message)
         )
-        AppExceptionStatus.NOT_FOUND -> makeResponse(
+        AppExceptionStatus.NOT_FOUND -> makeProblemResponse(
             Errors.NOT_FOUND,
-            ErrorResponse(title = message, status = Errors.NOT_FOUND)
+            ErrorResponse(title = message)
         )
-        AppExceptionStatus.INTERNAL -> makeResponse(
+        AppExceptionStatus.INTERNAL -> makeProblemResponse(
             Errors.INTERNAL_SERVER_ERROR,
-            ErrorResponse(title = message, status = Errors.INTERNAL_SERVER_ERROR)
+            ErrorResponse(title = message)
         )
     }
 }
