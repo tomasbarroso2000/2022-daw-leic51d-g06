@@ -7,7 +7,6 @@ import pt.isel.leic.daw.explodingbattleships.infra.LinkRelation
  */
 object Rels {
     val NR_OF_TOTAL_GAMES = LinkRelation("nr_of_played_games")
-    val ENTER_LOBBY = LinkRelation("enter_lobby")
     val RANKINGS = LinkRelation("rankings")
     val SELF = LinkRelation("self")
     val HOME = LinkRelation("home")

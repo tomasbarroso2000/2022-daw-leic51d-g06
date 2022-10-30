@@ -44,11 +44,11 @@ import javax.validation.Valid
 class UsersController(private val services: UsersServices) {
 
     /**
-     * Handles a get request for the player home resource
+     * Handles a get request for the user home resource
      * @param user the user that sent the request
      */
     @GetMapping(HOME)
-    fun getPlayerHome(
+    fun getUserHome(
         user: User
     ) = doApiTask {
         ResponseEntity
