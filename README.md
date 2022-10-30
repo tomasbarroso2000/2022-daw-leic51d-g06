@@ -14,7 +14,7 @@ Frontend applications communicate with the backend service using an HTTP API. Th
 
 [Server run instructions](https://github.com/isel-leic-daw/2022-daw-leic51d-g06/blob/main/code/jvm/README.md) 
 
-HTTP API specification:
+[HTTP API specification](https://github.com/isel-leic-daw/2022-daw-leic51d-g06/blob/main/docs/api-spec.md)
 
 ### Developed by 
 #### TheExplodingKittens:
