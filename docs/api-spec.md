@@ -257,3 +257,70 @@ Response body parameters:
   ]
 }
 ```
+
+#### Send Hits
+
+URI: /api/games/hit
+
+Method: PUT
+
+Authorization: Bearer token
+
+Request body:
+```json
+{
+  "game-id": 2,
+  "squares": [
+    {
+      "row": "a",
+      "column": 1
+    }
+  ]
+}
+```
+
+Response body parameters:
+```json
+{
+  "hits-outcome": [
+    {
+      "square": {
+        "row": "a",
+        "column": 1
+      },
+      "hit-ship": false,
+      "destroyed-ship": null
+    }
+  ],
+  "win": false
+}
+```
+
+#### Define Layout
+
+URI: /api/games/layout
+
+Method: PUT
+
+Authorization: Bearer token
+
+Request body:
+```json
+{
+  "game-id": 2,
+  "ships": [
+    {
+      "name": "carrier",
+      "first-square": "a1",
+      "orientation": "horizontal"
+    }
+  ]
+}
+```
+
+Response body parameters:
+```json
+{
+  "status": "waiting"
+}
+```
