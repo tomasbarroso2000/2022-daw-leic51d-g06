@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "a8c8710b-3f80-4faf-a7c9-3a77b2acda66",
+		"_postman_id": "4e4ff19e-0fe9-4962-bcaa-d1cf1f7025be",
 		"name": "ExplodingBattleships",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -174,7 +174,7 @@
 					"response": []
 				},
 				{
-					"name": "get game info",
+					"name": "game info",
 					"request": {
 						"auth": {
 							"type": "bearer",
