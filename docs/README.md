@@ -37,21 +37,31 @@ We highlight the following aspects of this model:
 
 ## Software organization
 
-### Request Details
+### Spring Framework
+The Spring Framework is an open-source application framework that provides infrastructure support for developing Java applications.
+This framework was used to build this application, allowing the devolopers to easily create HTTP endpoint handlers, app configurations (interceptors and argument resolvers) and add components to the overall application as its complexity increases.
 
-example use-case scenario
+### Request Details
+We will use the defineLayout endpoint as an example of a use case scenario. When a request is made to this endpoint, the request token is intercepted and creates a User object that represents that tokens's user. This object is then sent to the HTTP handler which also receives the request body. In the HTTP handler, the service which is responsible for that operation is called and will execute all the validations necessary on the submitted data. If any anomally is detected, the services module will throw an exception that will propagate to the http module, which will create an HTTP response. The services module will call the necessary data functions to perform the necessary changes to the database (storing the ships in the databse). After all this is done, a success outcome is produced by the services module and the http module creates a success response for the user of the API to receive.
 
 ### Connection Management
-The Data module implements a transaction system that uses the same connection throughout an entire operation, thus preventing the creation of multiple connections for the same operation. The transaction is created and executed in the Services module (using the Data.getTransaction and executeTransaction functions, respectively) and passed to the Data module as an argument. When all the operations inside the executeTransaction block are terminated, the connection is closed. This way we guarantee that the database-related operations are atomic.
+The data module implements a transaction system that uses the same connection throughout an entire operation, thus preventing the creation of multiple connections for the same operation. The transaction is created and executed in the Services module (using the Data.getTransaction and executeTransaction functions, respectively) and passed to the data module as an argument. When all the operations inside the executeTransaction block are terminated, the connection is closed. This way we guarantee that the database-related operations are atomic.
 
 ### Data Access
-The Data module is divided into five sections: transactions, usersdata, shipsdata, lobbiesdata, hitsdata and gamesdata. Each section has an interface implemented for database access and data in memory (used for unit tests). The Data module also implements an interface that connects all of the sections previously mentioned.
-Each version of the Data module has a method called getTransaction that creates a Transaction object that prevents the use of multiple connections to the database for the same operation.
+The data module is divided into five sections: transactions, users data, ships data, lobbies data, hits data and games data. Each section has an interface implemented for database access and data in memory (used for unit tests). The data module also implements an interface that connects all of the sections previously mentioned.
+Each version of the data module has a method called getTransaction that creates a Transaction object that prevents the use of multiple connections to the database for the same operation.
+
+### Services
+The services module contains all the logic of the operations the API provides and is divided into two sections: users services and games services. This module also contains a utils file to help organize the more complex operations of the module.
 
 ### Error Handling/Processing
-We created a class called AppException that extends Exception and represents an exception thrown in the services module. Whether a validation fails or an exception is thrown in the Data module, the Services module will catch it and transform it into an AppException (which also logs the error) so that the WebApi module can interpret it. We also created a DataException class that extends Exception to represent the exceptions thrown by failed verifications in the DataMem module. We did this to recreate the SQLException thrown by the database when a constraint is violated. In the WebApi, all the AppExceptions are caught and transformed into HTTP responses for the user of the API to receive.
+We created a class called AppException that extends Exception and represents an exception thrown in the services module. Whether a validation fails or an exception is thrown in the data module, the services module will catch it and transform it into an AppException (which also logs the error) so that the http module can interpret it. We also created a DataException class that extends Exception to represent the exceptions thrown by failed verifications in the data in memory module. We did this to recreate the SQLException thrown by the database when a constraint is violated. In the http module, all the AppExceptions are caught and transformed into HTTP responses for the user of the API to receive.
 
 ### HTTP Module
+The http module is divided into three sections: controllers, models, and pipeline. 
+The controllers section is divided into home controller (contains the home endpoint handler), users controller (contains the users-related endpoints handlers) and games controller (contains the games-related endpoints handlers).
+The models section contains the signature of the models used to represent API request and response bodies.
+The pipeline section contains the interceptor that converts a bearer token into a User object and the JacksonCustomizer to be able to correctly interpret the request bodies' properties.
 
 ## Critical Evaluation
 
