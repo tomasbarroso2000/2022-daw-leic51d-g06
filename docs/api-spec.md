@@ -48,7 +48,6 @@ URI: /api/users
 Method: POST
 
 Request body:
-
 ```json
 {
   "name": "Fiona",
@@ -64,8 +63,70 @@ Response body parameters:
 }
 ```
 
+#### Create Token
 
+URI: /api/token
 
+Method: POST
 
+Request body:
+```json
+{
+  "email": "iloveshrek@gmail.com",
+  "password": "LordFarquaad1"
+}
+```
+
+Response body parameters:
+```json
+{
+  "token": "a74509f5-2ba6-419a-9947-8c3b977236db"
+}
+```
+
+#### Rankings
+
+URI: /api/users/rankings?limit={limit}&skip={skip}
+
+Method: GET
+
+Response body parameters:
+```json
+{
+  "rankings": {
+    "list": [
+      {
+        "id": 3,
+        "name": "Fiona",
+        "score": 10
+      }
+    ],
+    "has-more": true
+  }
+}
+```
+
+#### Enter Lobby
+
+URI: /api/lobby
+
+Method: POST
+
+Authorization: Bearer token
+
+Request body:
+```json
+{
+  "game-type": "beginner"
+}
+```
+
+Response body parameters:
+```json
+{
+  "waiting-for-game": true,
+  "lobby-or-game-id": 1
+}
+```
 
 ### Games
