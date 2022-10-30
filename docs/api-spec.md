@@ -5,6 +5,10 @@
 All the success responses produced by this API use the Siren hypermedia specification.
 The error responses use the Problem Json specification that provides the details of each error.  
 
+### Hypermedia Relations
+
+![image](https://user-images.githubusercontent.com/76069448/198892372-c400f351-da00-4d23-bd62-5e9bff4bbb86.png)
+
 ### Home
 
 #### Home
