@@ -16,6 +16,8 @@ URI: /api/
 
 Method: GET
 
+Success response status: 200 - OK
+
 Response body parameters:
 ```json
 {
@@ -34,6 +36,8 @@ URI: /api/me
 Method: GET
 
 Authorization: Bearer token
+
+Success response status: 200 - OK
 
 Response body parameters:
 ```json
@@ -60,6 +64,8 @@ Request body:
 }
 ```
 
+Success response status: 201 - CREATED
+
 Response body parameters:
 ```json
 {
@@ -81,6 +87,8 @@ Request body:
 }
 ```
 
+Success response status: 201 - CREATED
+
 Response body parameters:
 ```json
 {
@@ -93,6 +101,8 @@ Response body parameters:
 URI: /api/users/rankings?limit={limit}&skip={skip}
 
 Method: GET
+
+Success response status: 200 - OK
 
 Response body parameters:
 ```json
@@ -125,6 +135,8 @@ Request body:
 }
 ```
 
+Success response status: 200 - OK
+
 Response body parameters:
 ```json
 {
@@ -140,6 +152,8 @@ URI: /api/lobby/{lobbyId}
 Method: PUT
 
 Authorization: Bearer token
+
+Success response status: 200 - OK
 
 Response body parameters:
 ```json
@@ -157,6 +171,8 @@ URI: /api/games/info/{gameId}
 Method: GET
 
 Authorization: Bearer token
+
+Success response status: 200 - OK
 
 Response body parameters:
 ```json
@@ -202,6 +218,8 @@ URI: /api/games/total
 
 Method: GET
 
+Success response status: 200 - OK
+
 Response body parameters:
 ```json
 {
@@ -214,6 +232,8 @@ Response body parameters:
 URI: /api/games/state/{gameId}
 
 Method: GET
+
+Success response status: 200 - OK
 
 Response body parameters:
 ```json
@@ -229,6 +249,8 @@ URI: /api/games/fleet/player/{gameId}
 Method: GET
 
 Authorization: Bearer token
+
+Success response status: 200 - OK
 
 Response body parameters:
 ```json
@@ -249,6 +271,8 @@ URI: /api/games/fleet/enemy/{gameId}
 Method: GET
 
 Authorization: Bearer token
+
+Success response status: 200 - OK
 
 Response body parameters:
 ```json
@@ -282,6 +306,8 @@ Request body:
   ]
 }
 ```
+
+Success response status: 201 - CREATED
 
 Response body parameters:
 ```json
@@ -321,6 +347,8 @@ Request body:
   ]
 }
 ```
+
+Success response status: 201 - CREATED
 
 Response body parameters:
 ```json
