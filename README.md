@@ -10,9 +10,9 @@ This system is composed of a centralized backend service and two frontend applic
 Frontend applications communicate with the backend service using an HTTP API. These applications do not communicate directly between themselves. All communication is done via the backend service, which has the responsibility of ensuring all the game rules are followed, as well as storing the game states and final outcomes.
 
 ### Documentation
-Backend service technical report:
+[Backend service technical report](https://github.com/isel-leic-daw/2022-daw-leic51d-g06/blob/main/docs/README.md)
 
-Server run instructions: 
+[Server run instructions](https://github.com/isel-leic-daw/2022-daw-leic51d-g06/blob/main/code/jvm/README.md) 
 
 HTTP API specification:
 
