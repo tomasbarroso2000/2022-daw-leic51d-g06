@@ -75,7 +75,7 @@ class ShipsDataDb : ShipsData {
     ): Ship? =
         (transaction as TransactionDataDb).withHandle { handle ->
             handle.createQuery(
-                "select n_of_hits from ships where " +
+                "select * from ships where " +
                     "first_square = :firstSquare and game_id = :gameId and user_id = :userId"
             )
                 .bind("firstSquare", firstSquare)

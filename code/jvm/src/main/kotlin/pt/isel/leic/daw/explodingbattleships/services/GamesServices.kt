@@ -159,7 +159,6 @@ class GamesServices(private val data: Data) {
         val verifiedShips = checkShipLayout(userId, game, ships)
         data.shipsData.defineLayout(transaction, game.id, userId, verifiedShips)
         if (data.shipsData.checkEnemyLayoutDone(transaction, game.id, userId)) {
-            println("enemy done")
             data.gamesData.setGameToShooting(transaction, game.id)
             LayoutOutcomeStatus.STARTED
         } else {

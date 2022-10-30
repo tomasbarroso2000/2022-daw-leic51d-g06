@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "4e4ff19e-0fe9-4962-bcaa-d1cf1f7025be",
+		"_postman_id": "5897a312-d0b3-461b-8959-65453556469c",
 		"name": "ExplodingBattleships",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -357,6 +357,20 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "home",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}",
+					"host": [
+						"{{BASE_URL}}"
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }

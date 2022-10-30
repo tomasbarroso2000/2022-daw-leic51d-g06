@@ -90,10 +90,10 @@ fun executeHit(transaction: Transaction, game: Game, squares: List<Square>, play
 /**
  * Checks if a ship was destroyed this turn or not
  */
-fun maybeDestroyShip(transaction: Transaction, playerId: Int, gameId: Int, ship: Ship, data: Data): Boolean {
-    val nOfHits = data.shipsData.getShip(transaction, ship.firstSquare, gameId, playerId)?.nOfHits
+fun maybeDestroyShip(transaction: Transaction, userId: Int, gameId: Int, ship: Ship, data: Data): Boolean {
+    val nOfHits = data.shipsData.getShip(transaction, ship.firstSquare, gameId, userId)?.nOfHits
     if (ship.size == nOfHits) {
-        data.shipsData.destroyShip(transaction, gameId, playerId, ship.firstSquare)
+        data.shipsData.destroyShip(transaction, gameId, userId, ship.firstSquare)
         return true
     }
     return false
@@ -115,7 +115,8 @@ fun isGameTypeInvalid(gameType: String) = gameType.toGameTypeOrNull() == null
 /**
  * Converts the string to one of the game types or null
  */
-fun String.toGameTypeOrNull() = GameType.values().find { it.name == this.uppercase() }
+fun String.toGameTypeOrNull() =
+    GameType.values().find { it.name.lowercase() == this.lowercase() }
 
 /**
  * Converts the string to a game type or throws an exception

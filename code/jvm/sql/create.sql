@@ -9,7 +9,7 @@ create table if not exists users(
 ); -- might add privilege levels later for management purposes
 
 create table if not exists tokens(
-    token_ver varchar(40) primary key, -- maybe should be hashed
+    token_ver varchar(40) primary key, -- should be hashed
     user_id integer references users(id)
 );
 
@@ -62,7 +62,7 @@ create table if not exists ships(
 create table if not exists lobbies(
     id serial primary key,
 	user_id integer references users(id),
-	game_type varchar(20) not null check (game_type in ('beginner', 'experienced', 'advanced')),
+	game_type varchar(20) not null check (game_type in ('beginner', 'experienced', 'expert')),
 	enter_time timestamp not null,
 	game_id integer references  games(id)
 );
