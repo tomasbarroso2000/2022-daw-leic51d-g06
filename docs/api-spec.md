@@ -129,4 +129,131 @@ Response body parameters:
 }
 ```
 
+#### Entered Game
+
+URI: /api/lobby/{lobbyId}
+
+Method: PUT
+
+Authorization: Bearer token
+
+Response body parameters:
+```json
+{
+  "game-id": 2
+}
+```
+
 ### Games
+
+#### Game Info
+
+URI: /api/games/info/{gameId}
+
+Method: GET
+
+Authorization: Bearer token
+
+Response body parameters:
+```json
+{
+  "id": 1,
+  "type": "beginner",
+  "state": "layout_definition",
+  "opponent": 2,
+  "playing": false,
+  "started-at": "2022-10-30T16:51:55.593619Z",
+  "fleet": [
+    {
+      "first-square": "a1",
+      "name": "carrier",
+      "size": 5,
+      "n-of-hits": 0,
+      "destroyed": false,
+      "orientation": "horizontal",
+      "user-id": 1,
+      "game-id": 1
+    }
+  ],
+  "taken-hits": [
+    {
+      "row": "c",
+      "column": 1
+    }
+  ],
+  "enemy-sunk-fleet": [],
+  "hits": [
+    {
+      "row": "c",
+      "column": 1
+    }
+  ],
+  "misses": []
+}
+```
+
+#### Number of Played Games
+
+URI: /api/games/total
+
+Method: GET
+
+Response body parameters:
+```json
+{
+  "nr": 2
+}
+```
+
+#### Game State
+
+URI: /api/games/state/{gameId}
+
+Method: GET
+
+Response body parameters:
+```json
+{
+  "state": "shooting"
+}
+```
+
+#### Player Fleet State
+
+URI: /api/games/fleet/player/{gameId}
+
+Method: GET
+
+Authorization: Bearer token
+
+Response body parameters:
+```json
+{
+  "fleet": [
+    {
+      "name": "carrier",
+      "destroyed": false
+    }
+  ]
+}
+```
+
+#### Enemy Fleet State
+
+URI: /api/games/fleet/enemy/{gameId}
+
+Method: GET
+
+Authorization: Bearer token
+
+Response body parameters:
+```json
+{
+  "fleet": [
+    {
+      "name": "carrier",
+      "destroyed": false
+    }
+  ]
+}
+```
