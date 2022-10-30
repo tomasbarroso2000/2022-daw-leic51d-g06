@@ -13,5 +13,7 @@ insert into games (type, state, player1, player2, curr_player, started_at) value
     ('beginner', 'layout_definition', 1, 2, 1, now()),
     ('experienced', 'shooting', 1, 2, 1, now());
 
+insert into lobbies (user_id, game_type, enter_time) values
+    (1, 'beginner', now());
 
 commit transaction;
