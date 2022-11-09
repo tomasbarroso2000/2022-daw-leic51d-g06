@@ -114,8 +114,8 @@ class GamesServices(private val data: Data) {
     fun sendHits(userId: Int, gameId: Int, squares: List<Square>) = doService(data) { transaction ->
         val game = computeGame(transaction, gameId, data)
         checkPlayerInGame(game, userId)
-        checkCurrentPlayer(game, userId)
         checkGameState(game.state, "shooting")
+        checkCurrentPlayer(game, userId)
         val gameType = game.type.toGameTypeOrNull()
             ?: throw AppException("Game type not registered")
         if (squares.isEmpty()) {

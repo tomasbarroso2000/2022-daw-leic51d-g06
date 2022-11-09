@@ -5,15 +5,21 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import pt.isel.leic.daw.explodingbattleships.data.mem.DataMem
 import pt.isel.leic.daw.explodingbattleships.domain.EnterLobbyOutcome
 import pt.isel.leic.daw.explodingbattleships.domain.User
 import pt.isel.leic.daw.explodingbattleships.services.utils.AppException
 import pt.isel.leic.daw.explodingbattleships.services.utils.AppExceptionStatus
+import pt.isel.leic.daw.explodingbattleships.utils.Sha256TokenEncoder
 
 class UsersServicesTests {
     private val data = DataMem()
-    private val services = UsersServices(data)
+    private val services = UsersServices(
+        data,
+        BCryptPasswordEncoder(),
+        Sha256TokenEncoder()
+    )
 
     @Test
     fun create_user() {
@@ -142,7 +148,7 @@ class UsersServicesTests {
     @Test
     fun get_player_info() {
         val token = "123"
-        val expectedPlayer = User(1, "Leki", "leki@yes.com", 420, 123)
+        val expectedPlayer = User(1, "Leki", "leki@yes.com", 420, "yes")
         val actualPlayer = services.getPlayerInfo(token)
         assertEquals(expectedPlayer, actualPlayer)
     }

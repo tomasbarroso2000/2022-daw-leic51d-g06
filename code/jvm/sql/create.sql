@@ -2,14 +2,14 @@ begin transaction;
 
 create table if not exists users(
     id serial primary key,
-    name varchar(20) not null,
+    name varchar(64) not null,
     email  varchar(100) not null unique check (email like '%@%.%'),
     score integer not null check(score >= 0),
-    password_ver integer not null
+    password_ver varchar(256) not null
 ); -- might add privilege levels later for management purposes
 
 create table if not exists tokens(
-    token_ver varchar(40) primary key, -- should be hashed
+    token_ver varchar(256) primary key, -- should be hashed
     user_id integer references users(id)
 );
 

@@ -9,13 +9,13 @@ import pt.isel.leic.daw.explodingbattleships.domain.User
 import java.util.UUID
 
 class UsersDataDb : UsersData {
-    override fun getUserFromToken(transaction: Transaction, token: String): User? =
+    override fun getUserFromToken(transaction: Transaction, tokenVer: String): User? =
         (transaction as TransactionDataDb).withHandle { handle ->
             handle.select(
-                "select id, name, email, score, password_ver from tokens" +
-                    " join users on user_id = id where token_ver = :token"
+                "select * from tokens" +
+                    " join users on user_id = id where token_ver = :tokenVer"
             )
-                .bind("token", token)
+                .bind("tokenVer", tokenVer)
                 .mapTo<User>().firstOrNull()
         }
 
@@ -26,29 +26,28 @@ class UsersDataDb : UsersData {
                 .mapTo<User>().firstOrNull()
         }
 
-    override fun createUser(transaction: Transaction, name: String, email: String, password: Int): Int =
+    override fun createUser(transaction: Transaction, name: String, email: String, passwordVer: String): Int =
         (transaction as TransactionDataDb).withHandle { handle ->
             handle.createUpdate(
                 "insert into users (name, email, score, password_ver)" +
-                    " values (:name, :email, 0, :password)"
+                    " values (:name, :email, 0, :passwordVer)"
             )
                 .bind("name", name)
                 .bind("email", email)
-                .bind("password", password)
+                .bind("passwordVer", passwordVer)
                 .executeAndReturnGeneratedKeys()
                 .mapTo<Int>()
                 .first()
         }
 
-    override fun createToken(transaction: Transaction, userId: Int): String =
+    override fun createToken(transaction: Transaction, userId: Int, tokenVer: String) {
         (transaction as TransactionDataDb).withHandle { handle ->
-            val token = UUID.randomUUID().toString()
-            handle.createUpdate("insert into tokens values (:token, :userId)")
-                .bind("token", token)
+            handle.createUpdate("insert into tokens values (:tokenVer, :userId)")
+                .bind("tokenVer", tokenVer)
                 .bind("userId", userId)
                 .execute()
-            token
         }
+    }
 
     override fun getRankings(transaction: Transaction, limit: Int, skip: Int): DataList<Ranking> =
         (transaction as TransactionDataDb).withHandle { handle ->

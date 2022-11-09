@@ -8,10 +8,10 @@ interface UsersData {
     /**
      * Gets the user with the corresponding token
      * @param transaction the current transaction
-     * @token the token
+     * @param tokenVer the hashed token
      * @return the user or null if there is no user with the token
      */
-    fun getUserFromToken(transaction: Transaction, token: String): User?
+    fun getUserFromToken(transaction: Transaction, tokenVer: String): User?
 
     /**
      * Gets the user with the corresponding email
@@ -26,18 +26,18 @@ interface UsersData {
      * @param transaction the current transaction
      * @param name the new user's name
      * @param email the new user's email
-     * @param password the new user's password
+     * @param passwordVer the new user's hashed password
      * @return the user id
      */
-    fun createUser(transaction: Transaction, name: String, email: String, password: Int): Int
+    fun createUser(transaction: Transaction, name: String, email: String, passwordVer: String): Int
 
     /**
      * Creates a token for a user
      * @param transaction the current transaction
      * @param userId the user id
-     * @return the token
+     * @param tokenVer the encoded token
      */
-    fun createToken(transaction: Transaction, userId: Int): String
+    fun createToken(transaction: Transaction, userId: Int, tokenVer: String)
 
     /**
      * Gets the users rankings

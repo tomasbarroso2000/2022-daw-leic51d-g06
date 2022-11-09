@@ -1,5 +1,6 @@
 package pt.isel.leic.daw.explodingbattleships.services
 
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Component
 import pt.isel.leic.daw.explodingbattleships.data.Data
 import pt.isel.leic.daw.explodingbattleships.domain.DataList
@@ -13,9 +14,26 @@ import pt.isel.leic.daw.explodingbattleships.services.utils.checkOrThrowBadReque
 import pt.isel.leic.daw.explodingbattleships.services.utils.checkPasswordValid
 import pt.isel.leic.daw.explodingbattleships.services.utils.doService
 import pt.isel.leic.daw.explodingbattleships.services.utils.isGameTypeInvalid
+import pt.isel.leic.daw.explodingbattleships.utils.TokenEncoder
+import java.security.SecureRandom
+import java.util.*
 
 @Component
-class UsersServices(private val data: Data) {
+class UsersServices(
+    private val data: Data,
+    private val passwordEncoder: PasswordEncoder,
+    private val tokenEncoder: TokenEncoder
+) {
+
+    companion object {
+        private const val TOKEN_BYTE_SIZE = 256 / 8
+
+        private fun generateToken() =
+            ByteArray(TOKEN_BYTE_SIZE).let { byteArray ->
+                SecureRandom.getInstanceStrong().nextBytes(byteArray)
+                Base64.getUrlEncoder().encodeToString(byteArray)
+            }
+    }
 
     /**
      * Creates a user
@@ -36,7 +54,7 @@ class UsersServices(private val data: Data) {
         }
         checkEmailValid(email)
         checkPasswordValid(password)
-        data.usersData.createUser(transaction, name, email, password.hashCode())
+        data.usersData.createUser(transaction, name, email, passwordEncoder.encode(password))
     }
 
     /**
@@ -45,12 +63,16 @@ class UsersServices(private val data: Data) {
      * @param password the user's password
      * @return the user's token
      */
-    fun createToken(email: String, password: String) = doService(data) { transaction ->
+    fun createToken(email: String, password: String): String = doService(data) { transaction ->
         val user = data.usersData.getUserFromEmail(transaction, email)
-        if (user == null || user.passwordVer != password.hashCode()) {
+        if (user == null || !passwordEncoder.matches(password, user.passwordVer)) {
             throw AppException("Bad credentials", AppExceptionStatus.UNAUTHORIZED)
         }
-        data.usersData.createToken(transaction, user.id)
+
+        val token = generateToken()
+        val tokenVer = tokenEncoder.hash(token)
+        data.usersData.createToken(transaction, user.id, tokenVer)
+        token
     }
 
     /**
@@ -62,7 +84,8 @@ class UsersServices(private val data: Data) {
         if (token.isNullOrBlank()) {
             throw AppException("No token provided", AppExceptionStatus.UNAUTHORIZED)
         }
-        data.usersData.getUserFromToken(transaction, token)
+        val tokenVer = tokenEncoder.hash(token)
+        data.usersData.getUserFromToken(transaction, tokenVer)
             ?: throw AppException("Invalid token", AppExceptionStatus.UNAUTHORIZED)
     }
 

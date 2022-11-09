@@ -1,5 +1,6 @@
 package pt.isel.leic.daw.explodingbattleships.data.mem
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import pt.isel.leic.daw.explodingbattleships.domain.Game
 import pt.isel.leic.daw.explodingbattleships.domain.Hit
 import pt.isel.leic.daw.explodingbattleships.domain.Lobby
@@ -57,6 +58,8 @@ data class StoredToken(
     val userId: Int
 )
 
+val passwordEncoder = BCryptPasswordEncoder()
+
 /**
  * The mock data used for tests
  * @property users the users in memory
@@ -68,13 +71,13 @@ data class StoredToken(
  */
 data class MockData(
     val users: MutableSet<User> = mutableSetOf(
-        User(1, "Leki", "leki@yes.com", 420, 123),
-        User(2, "Daizer", "daizer@daizer.daizer", 500, 123),
-        User(3, "LordFarquaad", "farquaad@buebuelonge.com", 510, 123),
-        User(4, "GingerbreadMan", "ginger@buebuelonge.com", 520, 123),
-        User(5, "Shrek", "ilovefiona@pantano.com", 10, 123),
-        User(6, "Fiona", "iloveshrek@gmail.com", 10, 123),
-        User(7, "Burro", "iloveshrekalso@gmail.com", 10, "shrek".hashCode())
+        User(1, "Leki", "leki@yes.com", 420, "yes"),
+        User(2, "Daizer", "daizer@daizer.daizer", 500, "yes"),
+        User(3, "LordFarquaad", "farquaad@buebuelonge.com", 510, "yes"),
+        User(4, "GingerbreadMan", "ginger@buebuelonge.com", 520, "yes"),
+        User(5, "Shrek", "ilovefiona@pantano.com", 10, "yes"),
+        User(6, "Fiona", "iloveshrek@gmail.com", 10, "yes"),
+        User(7, "Burro", "iloveshrekalso@gmail.com", 10, passwordEncoder.encode("shrek"))
     ),
     val games: MutableSet<Game> = mutableSetOf(
         Game(1, "beginner", "layout_definition", 1, 2, 1, Instant.now()),

@@ -1,9 +1,9 @@
 begin transaction;
 
 insert into users (name, email, score, password_ver) values
-    ('Leki', 'leki@leki.leki', 10, 123),
-    ('Palma', 'palma@palma.palma', 0, 123),
-    ('Barroso', 'barroso@barroso.barroso', 20, 123);
+    ('Leki', 'leki@leki.leki', 10, 'yes'),
+    ('Palma', 'palma@palma.palma', 0, 'yes'),
+    ('Barroso', 'barroso@barroso.barroso', 20, 'yes');
 
 insert into tokens (token_ver, user_id) values
     ('123', 1),
