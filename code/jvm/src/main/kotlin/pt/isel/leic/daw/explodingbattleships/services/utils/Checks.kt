@@ -3,10 +3,10 @@ package pt.isel.leic.daw.explodingbattleships.services.utils
 import pt.isel.leic.daw.explodingbattleships.data.Data
 import pt.isel.leic.daw.explodingbattleships.data.Transaction
 import pt.isel.leic.daw.explodingbattleships.domain.Game
-import pt.isel.leic.daw.explodingbattleships.domain.GameType
 import pt.isel.leic.daw.explodingbattleships.domain.NextSquare
 import pt.isel.leic.daw.explodingbattleships.domain.Ship
 import pt.isel.leic.daw.explodingbattleships.domain.ShipCreationInfo
+import pt.isel.leic.daw.explodingbattleships.domain.ShipSpec
 import pt.isel.leic.daw.explodingbattleships.domain.Square
 import pt.isel.leic.daw.explodingbattleships.domain.down
 import pt.isel.leic.daw.explodingbattleships.domain.getString
@@ -15,6 +15,7 @@ import pt.isel.leic.daw.explodingbattleships.domain.right
 import pt.isel.leic.daw.explodingbattleships.domain.toShipOrNull
 import pt.isel.leic.daw.explodingbattleships.domain.toSquareOrNull
 import pt.isel.leic.daw.explodingbattleships.domain.up
+import java.lang.IllegalArgumentException
 import java.util.regex.Pattern
 
 /**
@@ -78,21 +79,28 @@ fun checkPasswordValid(password: String) {
  * @param ships a list of information needed to create the ships
  * @return a ships list
  */
-fun checkShipLayout(userId: Int, game: Game, ships: List<ShipCreationInfo>): List<Ship> {
-    val gameType = game.type.toGameTypeOrNull()
-        ?: throw AppException("Game type not registered")
+fun checkShipLayout(
+    transaction: Transaction,
+    data: Data,
+    userId: Int,
+    game: Game,
+    ships: List<ShipCreationInfo>
+): List<Ship> {
+    val gameType = data.gamesData.getGameType(transaction, game)
+        ?: throw IllegalArgumentException("Invalid game type")
+    val fleetComposition = data.gamesData.getGameTypeShips(transaction, gameType)
     checkOrThrowBadRequest(
-        ships.size != gameType.fleetComposition.size,
-        "Can only place ${gameType.fleetComposition.size} ships"
+        ships.size != fleetComposition.size,
+        "Can only place ${fleetComposition.size} ships"
     )
     checkOrThrowBadRequest(
-        !shipsValid(gameType, ships),
+        !shipsValid(fleetComposition, ships),
         "Invalid ship list for ${gameType.name} game"
     )
     val unavailableSquares = mutableSetOf<Square>()
     val verifiedShips = mutableListOf<Ship>()
     ships.forEach { unverifiedShip ->
-        val verifiedShip = unverifiedShip.toShipOrNull(userId, game.id, gameType)
+        val verifiedShip = unverifiedShip.toShipOrNull(userId, game.id, fleetComposition)
             ?: throw AppException("Invalid ship", AppExceptionStatus.BAD_REQUEST)
         when (verifiedShip.orientation.lowercase()) {
             "vertical" -> validateShipSquares(verifiedShip, gameType.boardSize, unavailableSquares, Square::down)
@@ -106,12 +114,12 @@ fun checkShipLayout(userId: Int, game: Game, ships: List<ShipCreationInfo>): Lis
 
 /**
  * Checks if a list of ships is valid
- * @param gameType the game type
- * @param ships the ships list
+ * @param fleetComposition the fleet composition of the game type
+ * @param ships the ships list the user is creating
  * @return true if the ships list is valid
  */
-private fun shipsValid(gameType: GameType, ships: List<ShipCreationInfo>) =
-    ships.map { it.name }.containsAll(gameType.fleetComposition.map { it.name })
+private fun shipsValid(fleetComposition: List<ShipSpec>, ships: List<ShipCreationInfo>) =
+    ships.map { it.name }.containsAll(fleetComposition.map { it.name })
 
 /**
  * Checks if a square is within a board

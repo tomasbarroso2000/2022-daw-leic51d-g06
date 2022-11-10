@@ -108,7 +108,7 @@ class UsersServices(
      * @return the enter-lobby status
      */
     fun enterLobby(userId: Int, gameType: String) = doService(data) { transaction ->
-        if (isGameTypeInvalid(gameType)) {
+        if (isGameTypeInvalid(transaction, data, gameType)) {
             throw AppException("Invalid game type", AppExceptionStatus.BAD_REQUEST)
         }
         val matchingLobby = data.lobbiesData.searchLobbies(transaction, gameType, userId).firstOrNull()

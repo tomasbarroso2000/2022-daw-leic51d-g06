@@ -2,10 +2,12 @@ package pt.isel.leic.daw.explodingbattleships.data.mem
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import pt.isel.leic.daw.explodingbattleships.domain.Game
+import pt.isel.leic.daw.explodingbattleships.domain.GameType
 import pt.isel.leic.daw.explodingbattleships.domain.Hit
 import pt.isel.leic.daw.explodingbattleships.domain.Lobby
 import pt.isel.leic.daw.explodingbattleships.domain.Ranking
 import pt.isel.leic.daw.explodingbattleships.domain.Ship
+import pt.isel.leic.daw.explodingbattleships.domain.ShipSpec
 import pt.isel.leic.daw.explodingbattleships.domain.User
 import pt.isel.leic.daw.explodingbattleships.utils.Sha256TokenEncoder
 import java.time.Instant
@@ -80,6 +82,26 @@ data class MockData(
         User(5, "Shrek", "ilovefiona@pantano.com", 10, "yes"),
         User(6, "Fiona", "iloveshrek@gmail.com", 10, "yes"),
         User(7, "Burro", "iloveshrekalso@gmail.com", 10, passwordEncoder.encode("shrek"))
+    ),
+    val gameTypes: MutableList<GameType> = mutableListOf(
+        GameType("beginner", 10, 1, 60, 60),
+        GameType("experienced", 12, 5, 60, 30),
+        GameType("expert", 15, 6, 30, 30)
+    ),
+    val ship_types: MutableList<ShipSpec> = mutableListOf(
+        ShipSpec("carrier", 6, "beginner"),
+        ShipSpec("battleship", 5, "beginner"),
+        ShipSpec("cruiser", 4, "beginner"),
+        ShipSpec("submarine", 4, "beginner"),
+        ShipSpec("destroyer", 3, "beginner"),
+        ShipSpec("carrier", 5, "experienced"),
+        ShipSpec("battleship", 4, "experienced"),
+        ShipSpec("cruiser", 3, "experienced"),
+        ShipSpec("submarine", 3, "experienced"),
+        ShipSpec("destroyer", 2, "experienced"),
+        ShipSpec("carrier", 5, "expert"),
+        ShipSpec("battleship", 4, "expert"),
+        ShipSpec("destroyer", 3, "expert")
     ),
     val games: MutableSet<Game> = mutableSetOf(
         Game(1, "beginner", "layout_definition", 1, 2, 1, Instant.now()),

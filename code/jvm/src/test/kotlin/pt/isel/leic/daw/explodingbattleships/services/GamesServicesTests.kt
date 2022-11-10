@@ -149,7 +149,7 @@ class GamesServicesTests {
         val exception = assertThrows<AppException> {
             services.sendLayout(userId, gameId, ships)
         }
-        assertEquals("Invalid ship list for BEGINNER game", exception.message)
+        assertEquals("Invalid ship list for beginner game", exception.message)
         assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
     }
 

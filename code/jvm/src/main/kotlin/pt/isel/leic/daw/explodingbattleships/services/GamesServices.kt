@@ -22,8 +22,6 @@ import pt.isel.leic.daw.explodingbattleships.services.utils.computeGame
 import pt.isel.leic.daw.explodingbattleships.services.utils.doService
 import pt.isel.leic.daw.explodingbattleships.services.utils.executeHit
 import pt.isel.leic.daw.explodingbattleships.services.utils.squareInBoard
-import pt.isel.leic.daw.explodingbattleships.services.utils.toGameTypeOrNull
-import pt.isel.leic.daw.explodingbattleships.services.utils.toGameTypeOrThrow
 import java.lang.IllegalArgumentException
 import java.time.Instant
 
@@ -38,7 +36,8 @@ class GamesServices(private val data: Data) {
      */
     fun getGame(userId: Int, gameId: Int) = doService(data) { transaction ->
         var game = computeGame(transaction, gameId, data)
-        val gameType = game.type.toGameTypeOrThrow()
+        val gameType = data.gamesData.getGameType(transaction, game)
+            ?: throw IllegalArgumentException("Invalid game type")
         val isTimeOver = game
             .startedAt
             .plusSeconds(gameType.shootingTimeInSecs.toLong()) <= Instant.now()
@@ -116,8 +115,8 @@ class GamesServices(private val data: Data) {
         checkPlayerInGame(game, userId)
         checkGameState(game.state, "shooting")
         checkCurrentPlayer(game, userId)
-        val gameType = game.type.toGameTypeOrNull()
-            ?: throw AppException("Game type not registered")
+        val gameType = data.gamesData.getGameType(transaction, game)
+            ?: throw IllegalArgumentException("Invalid game type")
         if (squares.isEmpty()) {
             throw AppException("No squares provided", AppExceptionStatus.BAD_REQUEST)
         }
@@ -156,7 +155,7 @@ class GamesServices(private val data: Data) {
         if (data.shipsData.hasShips(transaction, userId, game.id)) {
             throw AppException("Layout already defined", AppExceptionStatus.BAD_REQUEST)
         }
-        val verifiedShips = checkShipLayout(userId, game, ships)
+        val verifiedShips = checkShipLayout(transaction, data, userId, game, ships)
         data.shipsData.defineLayout(transaction, game.id, userId, verifiedShips)
         if (data.shipsData.checkEnemyLayoutDone(transaction, game.id, userId)) {
             data.gamesData.setGameToShooting(transaction, game.id)

@@ -13,22 +13,22 @@ create table if not exists tokens(
     user_id integer references users(id)
 );
 
-create table if not exists games(
-    id serial primary key,
-    type varchar(20) not null check (type in ('beginner', 'experienced', 'expert')),
-    state varchar(20) not null check (state in ('layout_definition', 'shooting', 'completed')),
-    player1 integer not null references users(id),
-    player2 integer not null references users(id),
-    curr_player integer not null check (curr_player = player1 or curr_player = player2),
-    started_at timestamp not null
-);
-
 create table if not exists game_types(
     name varchar(25) primary key,
     board_size integer not null,
     shots_per_round integer not null,
     layout_def_time_in_secs integer not null,
     shooting_time_in_secs integer not null
+);
+
+create table if not exists games(
+    id serial primary key,
+    type varchar(20) not null references game_types(name),
+    state varchar(20) not null check (state in ('layout_definition', 'shooting', 'completed')),
+    player1 integer not null references users(id),
+    player2 integer not null references users(id),
+    curr_player integer not null check (curr_player = player1 or curr_player = player2),
+    started_at timestamp not null
 );
 
 create table if not exists ship_types(

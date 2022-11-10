@@ -3,6 +3,8 @@ package pt.isel.leic.daw.explodingbattleships.data.mem
 import pt.isel.leic.daw.explodingbattleships.data.GamesData
 import pt.isel.leic.daw.explodingbattleships.data.Transaction
 import pt.isel.leic.daw.explodingbattleships.domain.Game
+import pt.isel.leic.daw.explodingbattleships.domain.GameType
+import pt.isel.leic.daw.explodingbattleships.domain.ShipSpec
 import java.time.Instant
 
 class GamesDataMem(private val mockData: MockData) : GamesData {
@@ -22,6 +24,9 @@ class GamesDataMem(private val mockData: MockData) : GamesData {
 
     override fun getGameState(transaction: Transaction, gameId: Int) =
         mockData.games.find { it.id == gameId }?.state
+
+    override fun getGameType(transaction: Transaction, game: Game): GameType? =
+        mockData.gameTypes.find { it.name == game.type }
 
     override fun getGame(transaction: Transaction, gameId: Int): Game? =
         mockData.games.find { it.id == gameId }
@@ -48,5 +53,24 @@ class GamesDataMem(private val mockData: MockData) : GamesData {
             mockData.games.remove(storedGame)
             mockData.games.add(storedGame.copy(state = "completed"))
         }
+    }
+
+    override fun getAllGameTypesNames(transaction: Transaction): List<String> {
+        val names = mutableListOf<String>()
+        for (gameType in mockData.gameTypes) {
+            names.add(gameType.name)
+        }
+        println(names)
+        return names
+    }
+
+    override fun getGameTypeShips(transaction: Transaction, gameType: GameType): List<ShipSpec> {
+        val ships = mutableListOf<ShipSpec>()
+        for (ship in mockData.ship_types) {
+            if (ship.gameType == gameType.name) {
+                ships.add(ship)
+            }
+        }
+        return ships
     }
 }

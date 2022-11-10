@@ -3,7 +3,6 @@ package pt.isel.leic.daw.explodingbattleships.services.utils
 import pt.isel.leic.daw.explodingbattleships.data.Data
 import pt.isel.leic.daw.explodingbattleships.data.Transaction
 import pt.isel.leic.daw.explodingbattleships.domain.Game
-import pt.isel.leic.daw.explodingbattleships.domain.GameType
 import pt.isel.leic.daw.explodingbattleships.domain.HitOutcome
 import pt.isel.leic.daw.explodingbattleships.domain.HitsOutcome
 import pt.isel.leic.daw.explodingbattleships.domain.Ship
@@ -110,15 +109,5 @@ fun winConditionDetection(transaction: Transaction, gameId: Int, playerId: Int, 
  * @param gameType the game type name
  * @return true if the game type exists
  */
-fun isGameTypeInvalid(gameType: String) = gameType.toGameTypeOrNull() == null
-
-/**
- * Converts the string to one of the game types or null
- */
-fun String.toGameTypeOrNull() =
-    GameType.values().find { it.name.lowercase() == this.lowercase() }
-
-/**
- * Converts the string to a game type or throws an exception
- */
-fun String.toGameTypeOrThrow() = toGameTypeOrNull() ?: throw IllegalArgumentException("Invalid game type")
+fun isGameTypeInvalid(transaction: Transaction, data: Data, gameType: String) =
+    !data.gamesData.getAllGameTypesNames(transaction).contains(gameType)

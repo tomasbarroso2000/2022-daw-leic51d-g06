@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.test.web.reactive.server.WebTestClient
-import pt.isel.leic.daw.explodingbattleships.data.mem.tokenEncoder
 import pt.isel.leic.daw.explodingbattleships.domain.Square
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)

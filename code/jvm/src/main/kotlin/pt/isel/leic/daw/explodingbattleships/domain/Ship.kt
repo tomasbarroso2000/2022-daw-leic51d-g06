@@ -53,11 +53,11 @@ data class ShipCreationInfo(
  * Converts a ShipCreationInfo to a Ship or null
  * @param userId the user's id
  * @param gameId the game's id
- * @param gameType the game's type
+ * @param fleetComposition the list of ships of the corresponding game type
  * @return the ship or null
  */
-fun ShipCreationInfo.toShipOrNull(userId: Int, gameId: Int, gameType: GameType): Ship? {
-    val shipSize = gameType.getShipSizeOrNull(name) ?: return null
+fun ShipCreationInfo.toShipOrNull(userId: Int, gameId: Int, fleetComposition: List<ShipSpec>): Ship? {
+    val shipSize = getShipSizeOrNull(name, fleetComposition) ?: return null
     return Ship(firstSquare.getString(), name, shipSize, 0, false, orientation, userId, gameId)
 }
 

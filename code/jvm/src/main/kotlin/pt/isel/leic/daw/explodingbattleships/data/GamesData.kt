@@ -1,6 +1,8 @@
 package pt.isel.leic.daw.explodingbattleships.data
 
 import pt.isel.leic.daw.explodingbattleships.domain.Game
+import pt.isel.leic.daw.explodingbattleships.domain.GameType
+import pt.isel.leic.daw.explodingbattleships.domain.ShipSpec
 
 interface GamesData {
     /**
@@ -26,6 +28,13 @@ interface GamesData {
      * @return the game state
      */
     fun getGameState(transaction: Transaction, gameId: Int): String?
+
+    /**
+     * Gets the type of the game
+     * @param transaction the current transaction
+     * @return the game state
+     */
+    fun getGameType(transaction: Transaction, game: Game): GameType?
 
     /**
      * Gets the game with corresponding game id
@@ -56,4 +65,19 @@ interface GamesData {
      * @param gameId the game to be changed
      */
     fun setGameStateCompleted(transaction: Transaction, gameId: Int)
+
+    /**
+     * Gets all the names of the available game types
+     * @param transaction the current transaction
+     * @return all the game types names
+     */
+    fun getAllGameTypesNames(transaction: Transaction): List<String>
+
+    /**
+     * Gets all the specifications of the ships from the corresponding game type
+     * @param transaction the current transction
+     * @param gameType the game type
+     * @return all the ships
+     */
+    fun getGameTypeShips(transaction: Transaction, gameType: GameType): List<ShipSpec>
 }
