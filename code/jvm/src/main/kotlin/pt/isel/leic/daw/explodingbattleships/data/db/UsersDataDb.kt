@@ -6,7 +6,6 @@ import pt.isel.leic.daw.explodingbattleships.data.UsersData
 import pt.isel.leic.daw.explodingbattleships.domain.DataList
 import pt.isel.leic.daw.explodingbattleships.domain.Ranking
 import pt.isel.leic.daw.explodingbattleships.domain.User
-import java.util.UUID
 
 class UsersDataDb : UsersData {
     override fun getUserFromToken(transaction: Transaction, tokenVer: String): User? =

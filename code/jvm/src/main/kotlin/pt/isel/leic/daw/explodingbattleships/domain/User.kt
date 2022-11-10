@@ -14,4 +14,4 @@ data class User(
     val email: String,
     val score: Int,
     val passwordVer: String
-) // potentially add profile pic
+)

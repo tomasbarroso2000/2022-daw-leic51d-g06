@@ -22,7 +22,7 @@ class UsersDataDbTests {
         assertEquals("Palma", user2.name)
         assertEquals("palma@palma.palma", user2.email)
 
-        val createdUserId = db.usersData.createUser(transaction, "Daizer", "daizer@ric.com", 10)
+        val createdUserId = db.usersData.createUser(transaction, "Daizer", "daizer@ric.com", "yes")
 
         val createdUser = db.usersData.getUserFromEmail(transaction, "daizer@ric.com")
 

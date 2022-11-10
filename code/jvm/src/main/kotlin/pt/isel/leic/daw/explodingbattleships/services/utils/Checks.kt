@@ -10,9 +10,11 @@ import pt.isel.leic.daw.explodingbattleships.domain.ShipCreationInfo
 import pt.isel.leic.daw.explodingbattleships.domain.Square
 import pt.isel.leic.daw.explodingbattleships.domain.down
 import pt.isel.leic.daw.explodingbattleships.domain.getString
+import pt.isel.leic.daw.explodingbattleships.domain.left
 import pt.isel.leic.daw.explodingbattleships.domain.right
 import pt.isel.leic.daw.explodingbattleships.domain.toShipOrNull
 import pt.isel.leic.daw.explodingbattleships.domain.toSquareOrNull
+import pt.isel.leic.daw.explodingbattleships.domain.up
 import java.util.regex.Pattern
 
 /**
@@ -87,14 +89,14 @@ fun checkShipLayout(userId: Int, game: Game, ships: List<ShipCreationInfo>): Lis
         !shipsValid(gameType, ships),
         "Invalid ship list for ${gameType.name} game"
     )
-    val occupiedSquares = mutableSetOf<Square>()
+    val unavailableSquares = mutableSetOf<Square>()
     val verifiedShips = mutableListOf<Ship>()
     ships.forEach { unverifiedShip ->
         val verifiedShip = unverifiedShip.toShipOrNull(userId, game.id, gameType)
             ?: throw AppException("Invalid ship", AppExceptionStatus.BAD_REQUEST)
         when (verifiedShip.orientation.lowercase()) {
-            "vertical" -> validateShipSquares(verifiedShip, gameType.boardSize, occupiedSquares, Square::down)
-            "horizontal" -> validateShipSquares(verifiedShip, gameType.boardSize, occupiedSquares, Square::right)
+            "vertical" -> validateShipSquares(verifiedShip, gameType.boardSize, unavailableSquares, Square::down)
+            "horizontal" -> validateShipSquares(verifiedShip, gameType.boardSize, unavailableSquares, Square::right)
             else -> throw AppException("Invalid orientation for ${verifiedShip.name}", AppExceptionStatus.BAD_REQUEST)
         }
         verifiedShips.add(verifiedShip)
@@ -128,29 +130,45 @@ fun squareInBoard(square: Square, boardSize: Int): Boolean {
 /**
  * Validates the squares of a ship
  * @param ship the ship
- * @param occupiedSquares the occupied squares
+ * @param unavailableSquares the unavailable squares
  * @param nextSquare the function to calculate the next square
  */
 private fun validateShipSquares(
     ship: Ship,
     boardSize: Int,
-    occupiedSquares: MutableSet<Square>,
+    unavailableSquares: MutableSet<Square>,
     nextSquare: NextSquare
 ) {
     var currentSquare = ship.firstSquare.toSquareOrNull()
         ?: throw AppException("Invalid first square: ${ship.firstSquare}")
-    for (i in 0 until ship.size) {
+    val shipSquares = mutableListOf<Square>()
+    repeat(ship.size) {
         checkOrThrowBadRequest(
             !squareInBoard(currentSquare, boardSize),
             "Invalid square: ${currentSquare.getString()}"
         )
         checkOrThrowBadRequest(
-            occupiedSquares.contains(currentSquare),
-            "Square already occupied: ${currentSquare.getString()}"
+            unavailableSquares.contains(currentSquare),
+            "Can't place on this square: ${currentSquare.getString()}"
         )
-        occupiedSquares.add(currentSquare)
+
+        shipSquares.add(currentSquare)
         currentSquare = currentSquare.nextSquare()
     }
+    // needs cleaning up
+    val surroundingSquares = mutableListOf<Square>()
+    shipSquares.forEach { shipSquare ->
+        surroundingSquares.add(shipSquare.up().left())
+        surroundingSquares.add(shipSquare.up())
+        surroundingSquares.add(shipSquare.up().right())
+        surroundingSquares.add(shipSquare.left())
+        surroundingSquares.add(shipSquare.right())
+        surroundingSquares.add(shipSquare.down().left())
+        surroundingSquares.add(shipSquare.down())
+        surroundingSquares.add(shipSquare.down().right())
+    }
+    unavailableSquares.addAll(shipSquares)
+    unavailableSquares.addAll(surroundingSquares)
 }
 
 /**

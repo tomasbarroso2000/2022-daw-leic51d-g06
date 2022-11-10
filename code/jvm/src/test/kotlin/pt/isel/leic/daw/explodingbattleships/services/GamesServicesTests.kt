@@ -71,10 +71,10 @@ class GamesServicesTests {
         val gameId = 3
         val ships = listOf(
             ShipCreationInfo("carrier", Square('a', 1), "horizontal"),
-            ShipCreationInfo("battleship", Square('b', 1), "vertical"),
-            ShipCreationInfo("submarine", Square('b', 2), "horizontal"),
-            ShipCreationInfo("cruiser", Square('c', 2), "horizontal"),
-            ShipCreationInfo("destroyer", Square('d', 2), "vertical")
+            ShipCreationInfo("battleship", Square('c', 1), "vertical"),
+            ShipCreationInfo("submarine", Square('d', 3), "horizontal"),
+            ShipCreationInfo("cruiser", Square('f', 4), "horizontal"),
+            ShipCreationInfo("destroyer", Square('b', 9), "vertical")
         )
         val expectedLayoutOutcome = LayoutOutcomeStatus.WAITING
         val actualLayoutOutcome = services.sendLayout(userId, gameId, ships)
@@ -88,10 +88,10 @@ class GamesServicesTests {
         val gameId = 5
         val ships = listOf(
             ShipCreationInfo("carrier", Square('a', 1), "horizontal"),
-            ShipCreationInfo("battleship", Square('b', 1), "vertical"),
-            ShipCreationInfo("submarine", Square('b', 2), "horizontal"),
-            ShipCreationInfo("cruiser", Square('c', 2), "horizontal"),
-            ShipCreationInfo("destroyer", Square('d', 2), "vertical")
+            ShipCreationInfo("battleship", Square('c', 1), "vertical"),
+            ShipCreationInfo("submarine", Square('d', 3), "horizontal"),
+            ShipCreationInfo("cruiser", Square('f', 4), "horizontal"),
+            ShipCreationInfo("destroyer", Square('b', 9), "vertical")
         )
         val expectedLayoutOutcome = LayoutOutcomeStatus.STARTED
         val actualLayoutOutcome = services.sendLayout(userId, gameId, ships)
@@ -123,10 +123,10 @@ class GamesServicesTests {
         val gameId = 3
         val ships = listOf(
             ShipCreationInfo("carrier", Square('a', 1), "horizontal"),
-            ShipCreationInfo("battleship", Square('b', 1), "vertical"),
-            ShipCreationInfo("submarine", Square('b', 2), "up"),
-            ShipCreationInfo("cruiser", Square('c', 2), "horizontal"),
-            ShipCreationInfo("destroyer", Square('d', 2), "vertical")
+            ShipCreationInfo("battleship", Square('c', 1), "vertical"),
+            ShipCreationInfo("submarine", Square('d', 3), "up"),
+            ShipCreationInfo("cruiser", Square('f', 4), "horizontal"),
+            ShipCreationInfo("destroyer", Square('b', 9), "vertical")
         )
         val exception = assertThrows<AppException> {
             services.sendLayout(userId, gameId, ships)

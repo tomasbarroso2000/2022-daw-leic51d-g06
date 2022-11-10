@@ -15,13 +15,25 @@ data class Square(
 )
 
 /**
- * Get the square placed in the row bellow the current square
+ * Get the square placed above the current square
+ */
+fun Square.up() =
+    Square(row - 1, column)
+
+/**
+ * Get the square placed below the current square
  */
 fun Square.down() =
     Square(row + 1, column)
 
 /**
- * Get the square placed in the row above the current square
+ * Get the square placed to the left of the current square
+ */
+fun Square.left() =
+    Square(row, column - 1)
+
+/**
+ * Get the square placed to the right of the current square
  */
 fun Square.right() =
     Square(row, column + 1)
@@ -40,4 +52,4 @@ fun String.toSquareOrNull() =
 /**
  * Converts the string to a square or throws an exception
  */
-fun String.toSquareOrThrow() = this.toSquareOrNull() ?: throw IllegalArgumentException("Invalid Square")
+fun String.toSquareOrThrow() = this.toSquareOrNull() ?: throw IllegalArgumentException("Invalid square")

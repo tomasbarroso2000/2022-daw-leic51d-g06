@@ -7,6 +7,7 @@ import pt.isel.leic.daw.explodingbattleships.domain.Lobby
 import pt.isel.leic.daw.explodingbattleships.domain.Ranking
 import pt.isel.leic.daw.explodingbattleships.domain.Ship
 import pt.isel.leic.daw.explodingbattleships.domain.User
+import pt.isel.leic.daw.explodingbattleships.utils.Sha256TokenEncoder
 import java.time.Instant
 
 /**
@@ -59,6 +60,7 @@ data class StoredToken(
 )
 
 val passwordEncoder = BCryptPasswordEncoder()
+val tokenEncoder = Sha256TokenEncoder()
 
 /**
  * The mock data used for tests
@@ -88,12 +90,12 @@ data class MockData(
         Game(6, "experienced", "layout_definition", 3, 7, 3, Instant.now())
     ),
     val tokens: MutableSet<StoredToken> = mutableSetOf(
-        StoredToken("123", 1),
-        StoredToken("321", 2),
-        StoredToken("fiona", 3),
-        StoredToken("homem-queque", 4),
-        StoredToken("buro", 5),
-        StoredToken("shrekinho", 6)
+        StoredToken(tokenEncoder.hash("123"), 1),
+        StoredToken(tokenEncoder.hash("321"), 2),
+        StoredToken(tokenEncoder.hash("fiona"), 3),
+        StoredToken(tokenEncoder.hash("homem-queque"), 4),
+        StoredToken(tokenEncoder.hash("buro"), 5),
+        StoredToken(tokenEncoder.hash("shrekinho"), 6)
     ),
     val ships: MutableSet<Ship> = mutableSetOf(
         Ship("a1", "carrier", 5, 0, false, "horizontal", 1, 1),
