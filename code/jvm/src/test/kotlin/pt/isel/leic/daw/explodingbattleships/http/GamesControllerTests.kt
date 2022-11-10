@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.test.web.reactive.server.WebTestClient
+import pt.isel.leic.daw.explodingbattleships.data.mem.tokenEncoder
 import pt.isel.leic.daw.explodingbattleships.domain.Square
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -58,7 +59,6 @@ class GamesControllerTests {
     @Test
     fun can_get_player_fleet_state() {
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port/api/").build()
-
         client.get().uri("games/fleet/player/1")
             .header("Authorization", "Bearer 123")
             .exchange()

@@ -8,6 +8,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.web.method.support.HandlerMethodArgumentResolver
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
+import pt.isel.leic.daw.explodingbattleships.data.mem.tokenEncoder
 import pt.isel.leic.daw.explodingbattleships.http.pipeline.AuthenticationInterceptor
 import pt.isel.leic.daw.explodingbattleships.http.pipeline.UserArgumentResolver
 import pt.isel.leic.daw.explodingbattleships.utils.Sha256TokenEncoder
@@ -38,5 +39,7 @@ class PipelineConfigurer(
 }
 
 fun main(args: Array<String>) {
+    println("token 123 = ${tokenEncoder.hash("123")}")
+    println("token 321 = ${tokenEncoder.hash("321")}")
     runApplication<ExplodingBattleshipsApplication>(*args)
 }
