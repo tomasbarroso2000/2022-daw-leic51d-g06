@@ -5,7 +5,7 @@ import pt.isel.leic.daw.explodingbattleships.data.GamesData
 import pt.isel.leic.daw.explodingbattleships.data.Transaction
 import pt.isel.leic.daw.explodingbattleships.domain.Game
 import pt.isel.leic.daw.explodingbattleships.domain.GameType
-import pt.isel.leic.daw.explodingbattleships.domain.ShipSpec
+import pt.isel.leic.daw.explodingbattleships.domain.ShipType
 
 class GamesDataDb : GamesData {
     override fun createGame(
@@ -38,14 +38,11 @@ class GamesDataDb : GamesData {
                 .mapTo<String>().firstOrNull()
         }
 
-    override fun getGameType(transaction: Transaction, game: Game): GameType? =
+    override fun getGameType(transaction: Transaction, gameType: String): GameType? =
         (transaction as TransactionDataDb).withHandle { handle ->
-            handle.createQuery(
-                "select name, board_size, shots_per_round, layout_def_time_in_secs, shooting_time_in_secs " +
-                    "from game_types join games on game_types.name = games.type where games.id = :id"
-            )
-                .bind("id", game.id)
-                .mapTo<GameType>().first()
+            handle.createQuery("select * from game_types where name = :gameType")
+                .bind("gameType", gameType)
+                .mapTo<GameType>().firstOrNull()
         }
 
     override fun getGame(transaction: Transaction, gameId: Int): Game? =
@@ -80,16 +77,10 @@ class GamesDataDb : GamesData {
         }
     }
 
-    override fun getAllGameTypesNames(transaction: Transaction): List<String> =
-        (transaction as TransactionDataDb).withHandle { handle ->
-            handle.createQuery("select name from game_types")
-                .mapTo<String>().list()
-        }
-
-    override fun getGameTypeShips(transaction: Transaction, gameType: GameType): List<ShipSpec> =
+    override fun getGameTypeShips(transaction: Transaction, gameType: GameType): List<ShipType> =
         (transaction as TransactionDataDb).withHandle { handle ->
             handle.createQuery("select * from ship_types where game_type = :gameType")
-                .bind("gameType", gameType)
-                .mapTo<ShipSpec>().list()
+                .bind("gameType", gameType.name)
+                .mapTo<ShipType>().list()
         }
 }

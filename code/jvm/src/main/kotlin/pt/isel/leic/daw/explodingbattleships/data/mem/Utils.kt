@@ -7,7 +7,7 @@ import pt.isel.leic.daw.explodingbattleships.domain.Hit
 import pt.isel.leic.daw.explodingbattleships.domain.Lobby
 import pt.isel.leic.daw.explodingbattleships.domain.Ranking
 import pt.isel.leic.daw.explodingbattleships.domain.Ship
-import pt.isel.leic.daw.explodingbattleships.domain.ShipSpec
+import pt.isel.leic.daw.explodingbattleships.domain.ShipType
 import pt.isel.leic.daw.explodingbattleships.domain.User
 import pt.isel.leic.daw.explodingbattleships.utils.Sha256TokenEncoder
 import java.time.Instant
@@ -88,20 +88,20 @@ data class MockData(
         GameType("experienced", 12, 5, 60, 30),
         GameType("expert", 15, 6, 30, 30)
     ),
-    val ship_types: MutableList<ShipSpec> = mutableListOf(
-        ShipSpec("carrier", 6, "beginner"),
-        ShipSpec("battleship", 5, "beginner"),
-        ShipSpec("cruiser", 4, "beginner"),
-        ShipSpec("submarine", 4, "beginner"),
-        ShipSpec("destroyer", 3, "beginner"),
-        ShipSpec("carrier", 5, "experienced"),
-        ShipSpec("battleship", 4, "experienced"),
-        ShipSpec("cruiser", 3, "experienced"),
-        ShipSpec("submarine", 3, "experienced"),
-        ShipSpec("destroyer", 2, "experienced"),
-        ShipSpec("carrier", 5, "expert"),
-        ShipSpec("battleship", 4, "expert"),
-        ShipSpec("destroyer", 3, "expert")
+    val ship_types: MutableList<ShipType> = mutableListOf(
+        ShipType("carrier", 6, "beginner"),
+        ShipType("battleship", 5, "beginner"),
+        ShipType("cruiser", 4, "beginner"),
+        ShipType("submarine", 4, "beginner"),
+        ShipType("destroyer", 3, "beginner"),
+        ShipType("carrier", 5, "experienced"),
+        ShipType("battleship", 4, "experienced"),
+        ShipType("cruiser", 3, "experienced"),
+        ShipType("submarine", 3, "experienced"),
+        ShipType("destroyer", 2, "experienced"),
+        ShipType("carrier", 5, "expert"),
+        ShipType("battleship", 4, "expert"),
+        ShipType("destroyer", 3, "expert")
     ),
     val games: MutableSet<Game> = mutableSetOf(
         Game(1, "beginner", "layout_definition", 1, 2, 1, Instant.now()),

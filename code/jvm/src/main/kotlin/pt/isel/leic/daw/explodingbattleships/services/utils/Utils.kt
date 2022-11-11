@@ -102,7 +102,9 @@ fun maybeDestroyShip(transaction: Transaction, userId: Int, gameId: Int, ship: S
  * Checks if player won
  */
 fun winConditionDetection(transaction: Transaction, gameId: Int, playerId: Int, data: Data): Boolean =
-    data.shipsData.getFleet(transaction, gameId, playerId).all { it.destroyed }
+    data.shipsData.getFleet(transaction, gameId, playerId).let { fleet ->
+        fleet.isNotEmpty() && fleet.all { it.destroyed }
+    }
 
 /**
  * Checks if a game type exists in the system
@@ -110,4 +112,4 @@ fun winConditionDetection(transaction: Transaction, gameId: Int, playerId: Int, 
  * @return true if the game type exists
  */
 fun isGameTypeInvalid(transaction: Transaction, data: Data, gameType: String) =
-    !data.gamesData.getAllGameTypesNames(transaction).contains(gameType)
+    data.gamesData.getGameType(transaction, gameType) == null

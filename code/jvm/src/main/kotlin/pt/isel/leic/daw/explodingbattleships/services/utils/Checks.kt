@@ -6,7 +6,7 @@ import pt.isel.leic.daw.explodingbattleships.domain.Game
 import pt.isel.leic.daw.explodingbattleships.domain.NextSquare
 import pt.isel.leic.daw.explodingbattleships.domain.Ship
 import pt.isel.leic.daw.explodingbattleships.domain.ShipCreationInfo
-import pt.isel.leic.daw.explodingbattleships.domain.ShipSpec
+import pt.isel.leic.daw.explodingbattleships.domain.ShipType
 import pt.isel.leic.daw.explodingbattleships.domain.Square
 import pt.isel.leic.daw.explodingbattleships.domain.down
 import pt.isel.leic.daw.explodingbattleships.domain.getString
@@ -86,7 +86,7 @@ fun checkShipLayout(
     game: Game,
     ships: List<ShipCreationInfo>
 ): List<Ship> {
-    val gameType = data.gamesData.getGameType(transaction, game)
+    val gameType = data.gamesData.getGameType(transaction, game.type)
         ?: throw IllegalArgumentException("Invalid game type")
     val fleetComposition = data.gamesData.getGameTypeShips(transaction, gameType)
     checkOrThrowBadRequest(
@@ -118,7 +118,7 @@ fun checkShipLayout(
  * @param ships the ships list the user is creating
  * @return true if the ships list is valid
  */
-private fun shipsValid(fleetComposition: List<ShipSpec>, ships: List<ShipCreationInfo>) =
+private fun shipsValid(fleetComposition: List<ShipType>, ships: List<ShipCreationInfo>) =
     ships.map { it.name }.containsAll(fleetComposition.map { it.name })
 
 /**

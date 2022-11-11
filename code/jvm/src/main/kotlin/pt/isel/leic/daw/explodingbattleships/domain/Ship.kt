@@ -56,7 +56,7 @@ data class ShipCreationInfo(
  * @param fleetComposition the list of ships of the corresponding game type
  * @return the ship or null
  */
-fun ShipCreationInfo.toShipOrNull(userId: Int, gameId: Int, fleetComposition: List<ShipSpec>): Ship? {
+fun ShipCreationInfo.toShipOrNull(userId: Int, gameId: Int, fleetComposition: List<ShipType>): Ship? {
     val shipSize = getShipSizeOrNull(name, fleetComposition) ?: return null
     return Ship(firstSquare.getString(), name, shipSize, 0, false, orientation, userId, gameId)
 }

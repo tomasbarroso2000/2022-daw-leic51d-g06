@@ -36,7 +36,7 @@ class GamesServices(private val data: Data) {
      */
     fun getGame(userId: Int, gameId: Int) = doService(data) { transaction ->
         var game = computeGame(transaction, gameId, data)
-        val gameType = data.gamesData.getGameType(transaction, game)
+        val gameType = data.gamesData.getGameType(transaction, game.type)
             ?: throw IllegalArgumentException("Invalid game type")
         val isTimeOver = game
             .startedAt
@@ -115,7 +115,7 @@ class GamesServices(private val data: Data) {
         checkPlayerInGame(game, userId)
         checkGameState(game.state, "shooting")
         checkCurrentPlayer(game, userId)
-        val gameType = data.gamesData.getGameType(transaction, game)
+        val gameType = data.gamesData.getGameType(transaction, game.type)
             ?: throw IllegalArgumentException("Invalid game type")
         if (squares.isEmpty()) {
             throw AppException("No squares provided", AppExceptionStatus.BAD_REQUEST)

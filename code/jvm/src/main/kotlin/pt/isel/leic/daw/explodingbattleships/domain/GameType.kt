@@ -1,11 +1,12 @@
 package pt.isel.leic.daw.explodingbattleships.domain
 
 /**
- * Represents a ship name and size
+ * Represents a ship type
  * @property name the ship name
  * @property size the ship size
+ * @property gameType the game type
  */
-data class ShipSpec(val name: String, val size: Int, val gameType: String) {
+data class ShipType(val name: String, val size: Int, val gameType: String) {
     init {
         require(name.isNotEmpty())
         require(size > 0)
@@ -34,5 +35,5 @@ class GameType(
  *  @param fleetComposition the list of ship specifications depending on the game type
  *  @return the ship size or null
  */
-fun getShipSizeOrNull(shipName: String, fleetComposition: List<ShipSpec>): Int? =
+fun getShipSizeOrNull(shipName: String, fleetComposition: List<ShipType>): Int? =
     fleetComposition.find { it.name.lowercase() == shipName.lowercase() }?.size
