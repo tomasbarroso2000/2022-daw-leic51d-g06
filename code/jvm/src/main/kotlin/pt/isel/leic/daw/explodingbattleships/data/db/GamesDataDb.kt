@@ -31,13 +31,6 @@ class GamesDataDb : GamesData {
             handle.createQuery("select count(*) from games").mapTo<Int>().first()
         }
 
-    override fun getGameState(transaction: Transaction, gameId: Int): String? =
-        (transaction as TransactionDataDb).withHandle { handle ->
-            handle.createQuery("select state from games where id = :id")
-                .bind("id", gameId)
-                .mapTo<String>().firstOrNull()
-        }
-
     override fun getGameType(transaction: Transaction, gameType: String): GameType? =
         (transaction as TransactionDataDb).withHandle { handle ->
             handle.createQuery("select * from game_types where name = :gameType")

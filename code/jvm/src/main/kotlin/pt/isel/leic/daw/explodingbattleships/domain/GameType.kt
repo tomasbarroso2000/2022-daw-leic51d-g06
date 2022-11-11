@@ -1,20 +1,6 @@
 package pt.isel.leic.daw.explodingbattleships.domain
 
 /**
- * Represents a ship type
- * @property name the ship name
- * @property size the ship size
- * @property gameType the game type
- */
-data class ShipType(val name: String, val size: Int, val gameType: String) {
-    init {
-        require(name.isNotEmpty())
-        require(size > 0)
-        require(gameType.isNotEmpty())
-    }
-}
-
-/**
  * Represents a game type
  * @property boardSize the size of the board
  * @property shotsPerRound the number os shots allowed per round
@@ -28,12 +14,3 @@ class GameType(
     val layoutDefTimeInSecs: Int,
     val shootingTimeInSecs: Int
 )
-
-/**
- *  Gets the ship size or null if there is no ship with the corresponding name
- *  @param shipName the ship name
- *  @param fleetComposition the list of ship specifications depending on the game type
- *  @return the ship size or null
- */
-fun getShipSizeOrNull(shipName: String, fleetComposition: List<ShipType>): Int? =
-    fleetComposition.find { it.name.lowercase() == shipName.lowercase() }?.size

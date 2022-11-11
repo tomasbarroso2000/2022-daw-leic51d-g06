@@ -52,7 +52,7 @@ class GamesServicesTests {
         val exception = assertThrows<AppException> {
             services.getGameState(-1)
         }
-        assertEquals("Invalid gameId", exception.message)
+        assertEquals("Invalid game id", exception.message)
         assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
     }
 

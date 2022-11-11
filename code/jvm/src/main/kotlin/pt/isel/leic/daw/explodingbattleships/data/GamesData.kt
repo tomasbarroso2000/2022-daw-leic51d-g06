@@ -23,13 +23,6 @@ interface GamesData {
     fun getNumberOfPlayedGames(transaction: Transaction): Int
 
     /**
-     * Gets the state of the game
-     * @param transaction the current transaction
-     * @return the game state
-     */
-    fun getGameState(transaction: Transaction, gameId: Int): String?
-
-    /**
      * Gets the type of the game
      * @param transaction the current transaction
      * @param gameType the gameType name

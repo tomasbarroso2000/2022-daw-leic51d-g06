@@ -4,7 +4,6 @@ import pt.isel.leic.daw.explodingbattleships.data.ShipsData
 import pt.isel.leic.daw.explodingbattleships.data.Transaction
 import pt.isel.leic.daw.explodingbattleships.domain.Ship
 import pt.isel.leic.daw.explodingbattleships.domain.Square
-import pt.isel.leic.daw.explodingbattleships.domain.getSquares
 
 class ShipsDataMem(private val mockData: MockData) : ShipsData {
     override fun defineLayout(

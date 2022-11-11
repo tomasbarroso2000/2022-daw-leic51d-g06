@@ -109,7 +109,7 @@ class GamesControllerTests {
                     "squares" to squares
                 )
             )
-            .header("Authorization", "Bearer 123")
+            .header("Authorization", "Bearer 321")
             .exchange()
             .expectStatus().isCreated
     }

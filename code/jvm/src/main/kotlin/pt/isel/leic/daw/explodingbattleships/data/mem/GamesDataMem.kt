@@ -22,9 +22,6 @@ class GamesDataMem(private val mockData: MockData) : GamesData {
     override fun getNumberOfPlayedGames(transaction: Transaction) =
         mockData.games.size
 
-    override fun getGameState(transaction: Transaction, gameId: Int) =
-        mockData.games.find { it.id == gameId }?.state
-
     override fun getGameType(transaction: Transaction, gameType: String): GameType? =
         mockData.gameTypes.find { it.name == gameType }
 

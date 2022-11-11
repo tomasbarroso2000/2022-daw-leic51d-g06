@@ -2,12 +2,6 @@ package pt.isel.leic.daw.explodingbattleships.services.utils
 
 import pt.isel.leic.daw.explodingbattleships.data.Data
 import pt.isel.leic.daw.explodingbattleships.data.Transaction
-import pt.isel.leic.daw.explodingbattleships.domain.Game
-import pt.isel.leic.daw.explodingbattleships.domain.HitOutcome
-import pt.isel.leic.daw.explodingbattleships.domain.HitsOutcome
-import pt.isel.leic.daw.explodingbattleships.domain.Ship
-import pt.isel.leic.daw.explodingbattleships.domain.Square
-import pt.isel.leic.daw.explodingbattleships.domain.idlePlayer
 
 /**
  * Executes a function within a [Transaction]
@@ -49,67 +43,3 @@ fun <T> doService(data: Data, function: (t: Transaction) -> T): T {
         }
     }
 }
-
-/**
- * Responsible for executing the hit, producing a list with the hits outcome
- * and if any ship was destroyed
- * @param transaction the current transaction
- * @param game the current game
- * @param squares the squares that will be hit
- * @param playerId the player id
- * @param data the data module to be used
- * @return a list with the hits outcome
- */
-fun executeHit(transaction: Transaction, game: Game, squares: List<Square>, playerId: Int, data: Data): HitsOutcome {
-    val shipsSquares = data.shipsData.getShipsAndSquares(transaction, game.id, playerId)
-    val hitOutcomeList = mutableListOf<HitOutcome>()
-    squares.forEach { square ->
-        val entry = shipsSquares.entries.find { it.value.contains(square) }
-        if (entry != null) {
-            data.hitsData.createHit(transaction, square, game.id, playerId, true)
-            data.shipsData.updateNumOfHits(transaction, game.id, playerId, entry.key.firstSquare)
-            val destroyed = maybeDestroyShip(transaction, playerId, game.id, entry.key, data)
-            if (destroyed) {
-                hitOutcomeList.add(HitOutcome(square, true, entry.key.name))
-            } else {
-                hitOutcomeList.add(HitOutcome(square, true))
-            }
-        } else {
-            data.hitsData.createHit(transaction, square, game.id, playerId, false)
-            hitOutcomeList.add(HitOutcome(square, false))
-        }
-    }
-    if (winConditionDetection(transaction, game.id, playerId, data)) {
-        return HitsOutcome(hitOutcomeList, true)
-    }
-    data.gamesData.changeCurrPlayer(transaction, game.id, game.idlePlayer())
-    return HitsOutcome(hitOutcomeList, false)
-}
-
-/**
- * Checks if a ship was destroyed this turn or not
- */
-fun maybeDestroyShip(transaction: Transaction, userId: Int, gameId: Int, ship: Ship, data: Data): Boolean {
-    val nOfHits = data.shipsData.getShip(transaction, ship.firstSquare, gameId, userId)?.nOfHits
-    if (ship.size == nOfHits) {
-        data.shipsData.destroyShip(transaction, gameId, userId, ship.firstSquare)
-        return true
-    }
-    return false
-}
-
-/**
- * Checks if player won
- */
-fun winConditionDetection(transaction: Transaction, gameId: Int, playerId: Int, data: Data): Boolean =
-    data.shipsData.getFleet(transaction, gameId, playerId).let { fleet ->
-        fleet.isNotEmpty() && fleet.all { it.destroyed }
-    }
-
-/**
- * Checks if a game type exists in the system
- * @param gameType the game type name
- * @return true if the game type exists
- */
-fun isGameTypeInvalid(transaction: Transaction, data: Data, gameType: String) =
-    data.gamesData.getGameType(transaction, gameType) == null

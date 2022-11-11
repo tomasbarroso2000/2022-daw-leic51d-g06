@@ -13,7 +13,7 @@ import pt.isel.leic.daw.explodingbattleships.services.utils.checkLimitAndSkip
 import pt.isel.leic.daw.explodingbattleships.services.utils.checkOrThrowBadRequest
 import pt.isel.leic.daw.explodingbattleships.services.utils.checkPasswordValid
 import pt.isel.leic.daw.explodingbattleships.services.utils.doService
-import pt.isel.leic.daw.explodingbattleships.services.utils.isGameTypeInvalid
+import pt.isel.leic.daw.explodingbattleships.services.utils.getGameType
 import pt.isel.leic.daw.explodingbattleships.utils.TokenEncoder
 import java.security.SecureRandom
 import java.util.*
@@ -68,7 +68,6 @@ class UsersServices(
         if (user == null || !passwordEncoder.matches(password, user.passwordVer)) {
             throw AppException("Bad credentials", AppExceptionStatus.UNAUTHORIZED)
         }
-
         val token = generateToken()
         val tokenVer = tokenEncoder.hash(token)
         data.usersData.createToken(transaction, user.id, tokenVer)
@@ -104,20 +103,18 @@ class UsersServices(
      * Places the user in a lobby or in a game if there is already other player
      * waiting in a lobby with the same game characteristics
      * @param userId the user id
-     * @param gameType the game type the user wants to play
+     * @param gameTypeName the name of the game type the user wants to play
      * @return the enter-lobby status
      */
-    fun enterLobby(userId: Int, gameType: String) = doService(data) { transaction ->
-        if (isGameTypeInvalid(transaction, data, gameType)) {
-            throw AppException("Invalid game type", AppExceptionStatus.BAD_REQUEST)
-        }
-        val matchingLobby = data.lobbiesData.searchLobbies(transaction, gameType, userId).firstOrNull()
+    fun enterLobby(userId: Int, gameTypeName: String) = doService(data) { transaction ->
+        val gameType = getGameType(transaction, gameTypeName, data)
+        val matchingLobby = data.lobbiesData.searchLobbies(transaction, gameType.name, userId).firstOrNull()
         if (matchingLobby != null) {
-            val gameId = data.gamesData.createGame(transaction, gameType, userId, matchingLobby.userId)
+            val gameId = data.gamesData.createGame(transaction, gameType.name, userId, matchingLobby.userId)
             data.lobbiesData.setGameId(transaction, matchingLobby.id, gameId)
             EnterLobbyOutcome(false, gameId)
         } else {
-            val lobbyId = data.lobbiesData.enterLobby(transaction, userId, gameType)
+            val lobbyId = data.lobbiesData.enterLobby(transaction, userId, gameType.name)
             EnterLobbyOutcome(true, lobbyId)
         }
     }

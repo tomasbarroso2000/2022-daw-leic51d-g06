@@ -6,11 +6,7 @@ import pt.isel.leic.daw.explodingbattleships.domain.FullGameInfo
 import pt.isel.leic.daw.explodingbattleships.domain.LayoutOutcomeStatus
 import pt.isel.leic.daw.explodingbattleships.domain.ShipCreationInfo
 import pt.isel.leic.daw.explodingbattleships.domain.Square
-import pt.isel.leic.daw.explodingbattleships.domain.getString
-import pt.isel.leic.daw.explodingbattleships.domain.idlePlayer
-import pt.isel.leic.daw.explodingbattleships.domain.otherPlayer
-import pt.isel.leic.daw.explodingbattleships.domain.toShipState
-import pt.isel.leic.daw.explodingbattleships.domain.toSquareOrThrow
+import pt.isel.leic.daw.explodingbattleships.domain.toSquare
 import pt.isel.leic.daw.explodingbattleships.services.utils.AppException
 import pt.isel.leic.daw.explodingbattleships.services.utils.AppExceptionStatus
 import pt.isel.leic.daw.explodingbattleships.services.utils.checkCurrentPlayer
@@ -21,9 +17,9 @@ import pt.isel.leic.daw.explodingbattleships.services.utils.checkShipLayout
 import pt.isel.leic.daw.explodingbattleships.services.utils.computeGame
 import pt.isel.leic.daw.explodingbattleships.services.utils.doService
 import pt.isel.leic.daw.explodingbattleships.services.utils.executeHit
+import pt.isel.leic.daw.explodingbattleships.services.utils.getGameOrThrow
+import pt.isel.leic.daw.explodingbattleships.services.utils.getGameType
 import pt.isel.leic.daw.explodingbattleships.services.utils.squareInBoard
-import java.lang.IllegalArgumentException
-import java.time.Instant
 
 @Component
 class GamesServices(private val data: Data) {
@@ -35,24 +31,15 @@ class GamesServices(private val data: Data) {
      * @return all the information of the game
      */
     fun getGame(userId: Int, gameId: Int) = doService(data) { transaction ->
-        var game = computeGame(transaction, gameId, data)
-        val gameType = data.gamesData.getGameType(transaction, game.type)
-            ?: throw IllegalArgumentException("Invalid game type")
-        val isTimeOver = game
-            .startedAt
-            .plusSeconds(gameType.shootingTimeInSecs.toLong()) <= Instant.now()
-        if (isTimeOver) {
-            data.gamesData.changeCurrPlayer(transaction, game.id, game.idlePlayer())
-            game = data.gamesData.getGame(transaction, gameId) ?: throw IllegalArgumentException("Get game is null")
-        }
+        val game = computeGame(transaction, gameId, data)
         val opponentId = game.otherPlayer(userId)
         val playing = game.currPlayer == userId
         val playerFleet = data.shipsData.getFleet(transaction, game.id, userId)
-        val takenHitsSquares = data.hitsData.getHits(transaction, game.id, userId).map { it.square.toSquareOrThrow() }
+        val takenHitsSquares = data.hitsData.getHits(transaction, game.id, userId).map { it.square.toSquare() }
         val enemyFleet = data.shipsData.getFleet(transaction, game.id, opponentId).filter { it.destroyed }
         val sentHits = data.hitsData.getHits(transaction, game.id, opponentId)
-        val hits = sentHits.filter { it.onShip }.map { it.square.toSquareOrThrow() }
-        val misses = sentHits.filter { !it.onShip }.map { it.square.toSquareOrThrow() }
+        val hits = sentHits.filter { it.onShip }.map { it.square.toSquare() }
+        val misses = sentHits.filter { !it.onShip }.map { it.square.toSquare() }
         FullGameInfo(
             game,
             opponentId,
@@ -79,11 +66,7 @@ class GamesServices(private val data: Data) {
      * @return the game state
      */
     fun getGameState(gameId: Int) = doService(data) { transaction ->
-        if (gameId <= 0) {
-            throw AppException("Invalid gameId", AppExceptionStatus.BAD_REQUEST)
-        }
-        data.gamesData.getGameState(transaction, gameId)
-            ?: throw AppException("Game does not exist", AppExceptionStatus.NOT_FOUND)
+        computeGame(transaction, gameId, data).state
     }
 
     /**
@@ -115,8 +98,7 @@ class GamesServices(private val data: Data) {
         checkPlayerInGame(game, userId)
         checkGameState(game.state, "shooting")
         checkCurrentPlayer(game, userId)
-        val gameType = data.gamesData.getGameType(transaction, game.type)
-            ?: throw IllegalArgumentException("Invalid game type")
+        val gameType = getGameType(transaction, game.type, data)
         if (squares.isEmpty()) {
             throw AppException("No squares provided", AppExceptionStatus.BAD_REQUEST)
         }
@@ -124,11 +106,11 @@ class GamesServices(private val data: Data) {
             throw AppException("Invalid amount of hits", AppExceptionStatus.BAD_REQUEST)
         }
         val hitSquares = data.hitsData.getHits(transaction, game.id, game.idlePlayer())
-            .map { it.square.toSquareOrThrow() }.toMutableSet()
+            .map { it.square.toSquare() }.toMutableSet()
         val verifiedSquares = mutableListOf<Square>()
         squares.forEach { square ->
-            checkOrThrowBadRequest(!squareInBoard(square, gameType.boardSize), "Invalid square: ${square.getString()}")
-            checkOrThrowBadRequest(hitSquares.contains(square), "Square already hit: ${square.getString()}")
+            checkOrThrowBadRequest(!squareInBoard(square, gameType.boardSize), "Invalid square: $square")
+            checkOrThrowBadRequest(hitSquares.contains(square), "Square already hit: $square")
             verifiedSquares.add(square)
         }
         val hitsOutcome = executeHit(transaction, game, squares, game.idlePlayer(), data)
@@ -149,14 +131,14 @@ class GamesServices(private val data: Data) {
      * @return the layout outcome status
      */
     fun sendLayout(userId: Int, gameId: Int, ships: List<ShipCreationInfo>) = doService(data) { transaction ->
-        val game = computeGame(transaction, gameId, data)
+        val game = getGameOrThrow(transaction, gameId, data)
         checkPlayerInGame(game, userId)
         checkGameState(game.state, "layout_definition")
         if (data.shipsData.hasShips(transaction, userId, game.id)) {
             throw AppException("Layout already defined", AppExceptionStatus.BAD_REQUEST)
         }
-        val verifiedShips = checkShipLayout(transaction, data, userId, game, ships)
-        data.shipsData.defineLayout(transaction, game.id, userId, verifiedShips)
+        val layout = checkShipLayout(transaction, userId, game, ships, data)
+        data.shipsData.defineLayout(transaction, game.id, userId, layout)
         if (data.shipsData.checkEnemyLayoutDone(transaction, game.id, userId)) {
             data.gamesData.setGameToShooting(transaction, game.id)
             LayoutOutcomeStatus.STARTED

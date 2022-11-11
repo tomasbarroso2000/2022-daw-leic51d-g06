@@ -5,7 +5,6 @@ import pt.isel.leic.daw.explodingbattleships.data.ShipsData
 import pt.isel.leic.daw.explodingbattleships.data.Transaction
 import pt.isel.leic.daw.explodingbattleships.domain.Ship
 import pt.isel.leic.daw.explodingbattleships.domain.Square
-import pt.isel.leic.daw.explodingbattleships.domain.getSquares
 
 class ShipsDataDb : ShipsData {
     override fun defineLayout(transaction: Transaction, gameId: Int, userId: Int, ships: List<Ship>) =
