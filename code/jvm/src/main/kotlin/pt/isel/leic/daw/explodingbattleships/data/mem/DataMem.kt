@@ -1,8 +1,6 @@
 package pt.isel.leic.daw.explodingbattleships.data.mem
 
 import pt.isel.leic.daw.explodingbattleships.data.Data
-import pt.isel.leic.daw.explodingbattleships.data.GameTypesData
-import pt.isel.leic.daw.explodingbattleships.data.ShipTypesData
 
 class DataMem : Data {
 

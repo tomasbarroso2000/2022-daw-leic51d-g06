@@ -4,8 +4,6 @@ import org.jdbi.v3.core.kotlin.mapTo
 import pt.isel.leic.daw.explodingbattleships.data.GamesData
 import pt.isel.leic.daw.explodingbattleships.data.Transaction
 import pt.isel.leic.daw.explodingbattleships.domain.Game
-import pt.isel.leic.daw.explodingbattleships.domain.GameType
-import pt.isel.leic.daw.explodingbattleships.domain.ShipType
 
 class GamesDataDb : GamesData {
     override fun createGame(

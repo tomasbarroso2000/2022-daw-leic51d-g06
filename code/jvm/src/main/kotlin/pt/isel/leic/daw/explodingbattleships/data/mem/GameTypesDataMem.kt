@@ -4,7 +4,7 @@ import pt.isel.leic.daw.explodingbattleships.data.GameTypesData
 import pt.isel.leic.daw.explodingbattleships.data.Transaction
 import pt.isel.leic.daw.explodingbattleships.domain.GameType
 
-class GameTypesDataMem(private val mockData: MockData)  : GameTypesData {
+class GameTypesDataMem(private val mockData: MockData) : GameTypesData {
     override fun getGameType(transaction: Transaction, gameType: String): GameType? =
         mockData.gameTypes.find { it.name == gameType }
 

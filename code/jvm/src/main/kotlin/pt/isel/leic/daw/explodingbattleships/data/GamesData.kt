@@ -1,8 +1,6 @@
 package pt.isel.leic.daw.explodingbattleships.data
 
 import pt.isel.leic.daw.explodingbattleships.domain.Game
-import pt.isel.leic.daw.explodingbattleships.domain.GameType
-import pt.isel.leic.daw.explodingbattleships.domain.ShipType
 
 interface GamesData {
     /**

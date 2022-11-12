@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.test.web.reactive.server.WebTestClient
+import pt.isel.leic.daw.explodingbattleships.domain.ShipCreationInfo
 import pt.isel.leic.daw.explodingbattleships.domain.Square
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -109,7 +110,7 @@ class GamesControllerTests {
                     "squares" to squares
                 )
             )
-            .header("Authorization", "Bearer 321")
+            .header("Authorization", "Bearer 123")
             .exchange()
             .expectStatus().isCreated
     }
@@ -119,6 +120,31 @@ class GamesControllerTests {
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port/api/").build()
 
         client.put().uri("games/hit")
+            .header("Authorization", "Bearer 123")
+            .exchange()
+            .expectStatus().isBadRequest
+    }
+
+    @Test
+    fun can_define_layout() {
+        val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port/api/").build()
+
+        val gameId = 3
+        val ships = listOf(
+            ShipCreationInfo("carrier", Square('a', 1), "vertical"),
+            ShipCreationInfo("battleship", Square('a', 3), "vertical"),
+            ShipCreationInfo("submarine", Square('a', 5), "vertical"),
+            ShipCreationInfo("cruiser", Square('i', 3), "horizontal"),
+            ShipCreationInfo("destroyer", Square('g', 5), "horizontal")
+        )
+
+        client.put().uri("games/layout")
+            .bodyValue(
+                mapOf(
+                    "game-id" to gameId,
+                    "ships" to ships
+                )
+            )
             .header("Authorization", "Bearer 123")
             .exchange()
             .expectStatus().isBadRequest
