@@ -2,9 +2,11 @@ package pt.isel.leic.daw.explodingbattleships.http
 
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import pt.isel.leic.daw.explodingbattleships.http.models.input.UserTokenInputModel
 import pt.isel.leic.daw.explodingbattleships.services.utils.AppException
 import pt.isel.leic.daw.explodingbattleships.services.utils.AppExceptionStatus
 import pt.isel.leic.daw.explodingbattleships.services.utils.logger
+import java.util.Base64
 
 val APPLICATION_SIREN = MediaType.parseMediaType("application/vnd.siren+json")
 
@@ -93,6 +95,7 @@ fun onAppException(error: AppException): ResponseEntity<ErrorResponse> {
 
 /**
  * Gets the user token from the Authorization header
+ * @param authorization the authorization header
  * @return the token
  */
 fun getTokenFromAuthorization(authorization: String?): String? {
@@ -104,3 +107,24 @@ fun getTokenFromAuthorization(authorization: String?): String? {
     }
     return null
 }
+
+/**
+ * Used to decode Authorization header
+ */
+val base64Decoder: Base64.Decoder = Base64.getDecoder()
+
+/**
+ * Gets the user credentials from the Authorization header
+ * @return the token
+ */
+fun getCredentialsFromAuthorization(authorization: String?): UserTokenInputModel? {
+    if (authorization != null) {
+        val authData = authorization.trim().split(' ')
+        if (authData[0].lowercase() == "basic") {
+            val decodedData = String(base64Decoder.decode(authData[1]))
+            val credentials = decodedData.split(':')
+            return UserTokenInputModel(credentials[0], credentials[1])
+        }
+    }
+    return null
+} // use when implementing basic authentication for creating a token

@@ -9,8 +9,10 @@ create table if not exists users(
 ); -- might add privilege levels later for management purposes
 
 create table if not exists tokens(
-    token_ver varchar(256) primary key, -- should be hashed
-    user_id integer references users(id)
+    token_ver varchar(256) primary key,
+    user_id integer references users(id),
+    created_at timestamp not null,
+    last_used_at timestamp not null
 );
 
 create table if not exists game_types(

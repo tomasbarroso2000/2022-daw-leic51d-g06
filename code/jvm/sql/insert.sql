@@ -5,9 +5,9 @@ insert into users (name, email, score, password_ver) values
     ('Palma', 'palma@palma.palma', 0, 'yes'),
     ('Barroso', 'barroso@barroso.barroso', 20, 'yes');
 
-insert into tokens (token_ver, user_id) values
-    ('pmWkWSBCL51Bfkhn79xPuKBKHz__H6B-mY6G9_eieuM=', 1),
-    ('jSPPbIboNKeqbt7VTCbOK7LnSQNTjGG91dIZeZerL3I=', 2);
+insert into tokens values
+    ('pmWkWSBCL51Bfkhn79xPuKBKHz__H6B-mY6G9_eieuM=', 1, now(), now()),
+    ('jSPPbIboNKeqbt7VTCbOK7LnSQNTjGG91dIZeZerL3I=', 2, now(), now());
 
 insert into game_types values
     ('beginner', 10, 1, 60, 60),
@@ -16,7 +16,7 @@ insert into game_types values
 
 insert into games (type, state, player1, player2, curr_player, started_at) values
     ('beginner', 'layout_definition', 1, 2, 1, now()),
-    ('experienced', 'shooting', 1, 2, 1, now());
+    ('experienced', 'shooting', 1, 2, 2, now());
 
 insert into ship_types values
     ('carrier', 6, 'beginner'),

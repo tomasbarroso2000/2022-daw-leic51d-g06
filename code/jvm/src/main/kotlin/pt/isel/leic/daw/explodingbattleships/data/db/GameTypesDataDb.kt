@@ -24,7 +24,6 @@ class GameTypesDataDb : GameTypesData {
         (transaction as TransactionDataDb).withHandle { handle ->
             handle.createUpdate(
                 "insert into game_types " +
-                    "(name, board_size, shots_per_round , layout_def_time_in_secs , shooting_time_in_secs ) " +
                     "values (:gameType, :boardSize, :shotsPerRound, :layoutDefTime, :shootingTime)"
             )
                 .bind("gameType", gameType)
@@ -32,9 +31,7 @@ class GameTypesDataDb : GameTypesData {
                 .bind("shotsPerRound", shotsPerRound)
                 .bind("layoutDefTime", layoutDefTime)
                 .bind("shootingTime", shootingTime)
-                .executeAndReturnGeneratedKeys()
-                .mapTo<Int>()
-                .first()
+                .execute()
         }
     }
 }

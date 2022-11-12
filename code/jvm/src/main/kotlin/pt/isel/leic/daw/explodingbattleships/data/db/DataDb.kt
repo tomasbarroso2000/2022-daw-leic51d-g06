@@ -26,6 +26,7 @@ class DataDb : Data {
     }
 
     override val usersData = UsersDataDb()
+    override val tokensData = TokensDataDb()
     override val gamesData = GamesDataDb()
     override val lobbiesData = LobbiesDataDb()
     override val shipsData = ShipsDataDb()

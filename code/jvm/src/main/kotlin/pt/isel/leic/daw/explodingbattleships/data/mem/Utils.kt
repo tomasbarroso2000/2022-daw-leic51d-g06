@@ -8,6 +8,7 @@ import pt.isel.leic.daw.explodingbattleships.domain.Lobby
 import pt.isel.leic.daw.explodingbattleships.domain.Ranking
 import pt.isel.leic.daw.explodingbattleships.domain.Ship
 import pt.isel.leic.daw.explodingbattleships.domain.ShipType
+import pt.isel.leic.daw.explodingbattleships.domain.Token
 import pt.isel.leic.daw.explodingbattleships.domain.User
 import pt.isel.leic.daw.explodingbattleships.utils.Sha256TokenEncoder
 import java.time.Instant
@@ -52,14 +53,6 @@ fun hasMore(count: Int, limit: Int, skip: Int) = count > skip + limit
  * Transforms a [User] into a [Ranking]
  */
 fun User.toRanking() = Ranking(id, name, score)
-
-/**
- * Represents the tokens stored in memory
- */
-data class StoredToken(
-    val tokenVer: String,
-    val userId: Int
-)
 
 val passwordEncoder = BCryptPasswordEncoder()
 val tokenEncoder = Sha256TokenEncoder()
@@ -111,13 +104,13 @@ data class MockData(
         Game(5, "beginner", "layout_definition", 3, 7, 3, Instant.now()),
         Game(6, "experienced", "layout_definition", 3, 7, 3, Instant.now())
     ),
-    val tokens: MutableSet<StoredToken> = mutableSetOf(
-        StoredToken(tokenEncoder.hash("123"), 1),
-        StoredToken(tokenEncoder.hash("321"), 2),
-        StoredToken(tokenEncoder.hash("fiona"), 3),
-        StoredToken(tokenEncoder.hash("homem-queque"), 4),
-        StoredToken(tokenEncoder.hash("buro"), 5),
-        StoredToken(tokenEncoder.hash("shrekinho"), 6)
+    val tokens: MutableSet<Token> = mutableSetOf(
+        Token(tokenEncoder.hash("123"), 1, Instant.now(), Instant.now()),
+        Token(tokenEncoder.hash("321"), 2, Instant.now(), Instant.now()),
+        Token(tokenEncoder.hash("fiona"), 3, Instant.now(), Instant.now()),
+        Token(tokenEncoder.hash("homem-queque"), 4, Instant.now(), Instant.now()),
+        Token(tokenEncoder.hash("buro"), 5, Instant.now(), Instant.now()),
+        Token(tokenEncoder.hash("shrekinho"), 6, Instant.now(), Instant.now())
     ),
     val ships: MutableSet<Ship> = mutableSetOf(
         Ship("a1", "carrier", 5, 0, false, "horizontal", 1, 1),

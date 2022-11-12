@@ -10,9 +10,22 @@ import pt.isel.leic.daw.explodingbattleships.domain.Ship
 import pt.isel.leic.daw.explodingbattleships.domain.ShipCreationInfo
 import pt.isel.leic.daw.explodingbattleships.domain.ShipType
 import pt.isel.leic.daw.explodingbattleships.domain.Square
+import pt.isel.leic.daw.explodingbattleships.domain.Token
+import pt.isel.leic.daw.explodingbattleships.services.UsersServices
 import java.lang.IllegalArgumentException
 import java.time.Instant
 import java.util.regex.Pattern
+
+/**
+ * Checks if a token is still valid
+ * @param token the token
+ * @return true if the token is valid
+ */
+fun isTokenStillValid(token: Token): Boolean {
+    val now = Instant.now()
+    return now.isBefore(token.createdAt.plus(UsersServices.TOKEN_TTL)) &&
+        now.isBefore(token.lastUsedAt.plus(UsersServices.TOKEN_ROLLING_TTL))
+}
 
 /**
  * Check if the email address is valid

@@ -8,13 +8,11 @@ import pt.isel.leic.daw.explodingbattleships.domain.Ranking
 import pt.isel.leic.daw.explodingbattleships.domain.User
 
 class UsersDataDb : UsersData {
-    override fun getUserFromToken(transaction: Transaction, tokenVer: String): User? =
+
+    override fun getUserById(transaction: Transaction, userId: Int): User? =
         (transaction as TransactionDataDb).withHandle { handle ->
-            handle.select(
-                "select * from tokens" +
-                    " join users on user_id = id where token_ver = :tokenVer"
-            )
-                .bind("tokenVer", tokenVer)
+            handle.createQuery("select * from users where id = :userId")
+                .bind("userId", userId)
                 .mapTo<User>().firstOrNull()
         }
 
@@ -38,15 +36,6 @@ class UsersDataDb : UsersData {
                 .mapTo<Int>()
                 .first()
         }
-
-    override fun createToken(transaction: Transaction, userId: Int, tokenVer: String) {
-        (transaction as TransactionDataDb).withHandle { handle ->
-            handle.createUpdate("insert into tokens values (:tokenVer, :userId)")
-                .bind("tokenVer", tokenVer)
-                .bind("userId", userId)
-                .execute()
-        }
-    }
 
     override fun getRankings(transaction: Transaction, limit: Int, skip: Int): DataList<Ranking> =
         (transaction as TransactionDataDb).withHandle { handle ->

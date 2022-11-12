@@ -10,6 +10,7 @@ class DataMem : Data {
     val mockData = MockData()
 
     override val usersData = UsersDataMem(mockData)
+    override val tokensData = TokensDataMem(mockData)
     override val gamesData = GamesDataMem(mockData)
     override val lobbiesData = LobbiesDataMem(mockData)
     override val shipsData = ShipsDataMem(mockData)

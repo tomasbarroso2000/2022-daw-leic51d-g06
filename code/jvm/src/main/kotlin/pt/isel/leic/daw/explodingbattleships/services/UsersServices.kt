@@ -14,8 +14,10 @@ import pt.isel.leic.daw.explodingbattleships.services.utils.checkOrThrowBadReque
 import pt.isel.leic.daw.explodingbattleships.services.utils.checkPasswordValid
 import pt.isel.leic.daw.explodingbattleships.services.utils.doService
 import pt.isel.leic.daw.explodingbattleships.services.utils.getGameType
+import pt.isel.leic.daw.explodingbattleships.services.utils.isTokenStillValid
 import pt.isel.leic.daw.explodingbattleships.utils.TokenEncoder
 import java.security.SecureRandom
+import java.time.Duration
 import java.util.*
 
 @Component
@@ -26,6 +28,9 @@ class UsersServices(
 ) {
 
     companion object {
+        val TOKEN_ROLLING_TTL: Duration = Duration.ofHours(1)
+        val TOKEN_TTL: Duration = Duration.ofDays(1)
+        private const val MAX_TOKENS: Int = 3
         private const val TOKEN_BYTE_SIZE = 256 / 8
 
         private fun generateToken() =
@@ -70,7 +75,7 @@ class UsersServices(
         }
         val token = generateToken()
         val tokenVer = tokenEncoder.hash(token)
-        data.usersData.createToken(transaction, user.id, tokenVer)
+        data.tokensData.createToken(transaction, user.id, tokenVer, MAX_TOKENS)
         token
     }
 
@@ -84,8 +89,13 @@ class UsersServices(
             throw AppException("No token provided", AppExceptionStatus.UNAUTHORIZED)
         }
         val tokenVer = tokenEncoder.hash(token)
-        data.usersData.getUserFromToken(transaction, tokenVer)
-            ?: throw AppException("Invalid token", AppExceptionStatus.UNAUTHORIZED)
+        val actualToken = data.tokensData.getToken(transaction, tokenVer)
+        if (actualToken == null || !isTokenStillValid(actualToken)) {
+            throw AppException("Invalid token", AppExceptionStatus.UNAUTHORIZED)
+        }
+        data.tokensData.updateTokenLastUsed(transaction, actualToken.tokenVer)
+        data.usersData.getUserById(transaction, actualToken.userId)
+            ?: throw AppException("User not found", AppExceptionStatus.UNAUTHORIZED)
     }
 
     /**

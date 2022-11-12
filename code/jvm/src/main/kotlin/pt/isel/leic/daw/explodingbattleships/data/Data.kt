@@ -2,6 +2,7 @@ package pt.isel.leic.daw.explodingbattleships.data
 
 interface Data {
     val usersData: UsersData
+    val tokensData: TokensData
     val gamesData: GamesData
     val lobbiesData: LobbiesData
     val shipsData: ShipsData
