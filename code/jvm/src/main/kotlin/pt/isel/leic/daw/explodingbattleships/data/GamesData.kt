@@ -23,14 +23,6 @@ interface GamesData {
     fun getNumberOfPlayedGames(transaction: Transaction): Int
 
     /**
-     * Gets the type of the game
-     * @param transaction the current transaction
-     * @param gameType the gameType name
-     * @return the game state
-     */
-    fun getGameType(transaction: Transaction, gameType: String): GameType?
-
-    /**
      * Gets the game with corresponding game id
      * @param transaction the current transaction
      * @param gameId the game id
@@ -59,12 +51,4 @@ interface GamesData {
      * @param gameId the game to be changed
      */
     fun setGameStateCompleted(transaction: Transaction, gameId: Int)
-
-    /**
-     * Gets all the specifications of the ships from the corresponding game type
-     * @param transaction the current transction
-     * @param gameType the game type
-     * @return all the ships
-     */
-    fun getGameTypeShips(transaction: Transaction, gameType: GameType): List<ShipType>
 }

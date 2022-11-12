@@ -22,9 +22,6 @@ class GamesDataMem(private val mockData: MockData) : GamesData {
     override fun getNumberOfPlayedGames(transaction: Transaction) =
         mockData.games.size
 
-    override fun getGameType(transaction: Transaction, gameType: String): GameType? =
-        mockData.gameTypes.find { it.name == gameType }
-
     override fun getGame(transaction: Transaction, gameId: Int): Game? =
         mockData.games.find { it.id == gameId }
 
@@ -50,15 +47,5 @@ class GamesDataMem(private val mockData: MockData) : GamesData {
             mockData.games.remove(storedGame)
             mockData.games.add(storedGame.copy(state = "completed"))
         }
-    }
-
-    override fun getGameTypeShips(transaction: Transaction, gameType: GameType): List<ShipType> {
-        val ships = mutableListOf<ShipType>()
-        for (ship in mockData.ship_types) {
-            if (ship.gameType == gameType.name) {
-                ships.add(ship)
-            }
-        }
-        return ships
     }
 }

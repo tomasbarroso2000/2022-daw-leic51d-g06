@@ -69,7 +69,7 @@ fun checkShipLayout(
     data: Data
 ): List<Ship> {
     val gameType = getGameType(transaction, game.type, data)
-    val fleetComposition = data.gamesData.getGameTypeShips(transaction, gameType)
+    val fleetComposition = data.shipTypesData.getGameTypeShips(transaction, gameType)
     checkOrThrowBadRequest(
         ships.size != fleetComposition.size,
         "Can only place ${fleetComposition.size} ships"

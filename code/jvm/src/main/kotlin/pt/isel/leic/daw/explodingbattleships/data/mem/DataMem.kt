@@ -1,6 +1,8 @@
 package pt.isel.leic.daw.explodingbattleships.data.mem
 
 import pt.isel.leic.daw.explodingbattleships.data.Data
+import pt.isel.leic.daw.explodingbattleships.data.GameTypesData
+import pt.isel.leic.daw.explodingbattleships.data.ShipTypesData
 
 class DataMem : Data {
 
@@ -14,6 +16,8 @@ class DataMem : Data {
     override val lobbiesData = LobbiesDataMem(mockData)
     override val shipsData = ShipsDataMem(mockData)
     override val hitsData = HitsDataMem(mockData)
+    override val gameTypesData = GameTypesDataMem(mockData)
+    override val shipTypesData = ShipTypesDataMem(mockData)
 
     override fun getTransaction() = TransactionDataMem()
 }
