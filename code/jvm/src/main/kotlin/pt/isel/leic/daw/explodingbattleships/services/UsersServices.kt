@@ -30,9 +30,13 @@ class UsersServices(
     companion object {
         val TOKEN_ROLLING_TTL: Duration = Duration.ofHours(1)
         val TOKEN_TTL: Duration = Duration.ofDays(1)
-        private const val MAX_TOKENS: Int = 3
+        private const val MAX_TOKENS = 3
         private const val TOKEN_BYTE_SIZE = 256 / 8
 
+        /**
+         * Generates a token
+         * @return the generated token
+         */
         private fun generateToken() =
             ByteArray(TOKEN_BYTE_SIZE).let { byteArray ->
                 SecureRandom.getInstanceStrong().nextBytes(byteArray)
@@ -49,13 +53,13 @@ class UsersServices(
      */
     fun createUser(name: String, email: String, password: String) = doService(data) { transaction ->
         if (name.isBlank()) {
-            throw AppException("Invalid name", AppExceptionStatus.BAD_REQUEST)
+            throw AppException("Invalid name", "Name is empty", AppExceptionStatus.BAD_REQUEST)
         }
         if (email.isBlank()) {
-            throw AppException("Invalid email", AppExceptionStatus.BAD_REQUEST)
+            throw AppException("Invalid email", "Email is empty", AppExceptionStatus.BAD_REQUEST)
         }
         if (password.isBlank()) {
-            throw AppException("Invalid password", AppExceptionStatus.BAD_REQUEST)
+            throw AppException("Invalid password", "Password is empty", AppExceptionStatus.BAD_REQUEST)
         }
         checkEmailValid(email)
         checkPasswordValid(password)
@@ -71,7 +75,7 @@ class UsersServices(
     fun createToken(email: String, password: String): String = doService(data) { transaction ->
         val user = data.usersData.getUserFromEmail(transaction, email)
         if (user == null || !passwordEncoder.matches(password, user.passwordVer)) {
-            throw AppException("Bad credentials", AppExceptionStatus.UNAUTHORIZED)
+            throw AppException("Bad credentials", "Credentials don't match any user", AppExceptionStatus.UNAUTHORIZED)
         }
         val token = generateToken()
         val tokenVer = tokenEncoder.hash(token)
@@ -86,16 +90,16 @@ class UsersServices(
      */
     fun getPlayerInfo(token: String?) = doService(data) { transaction ->
         if (token.isNullOrBlank()) {
-            throw AppException("No token provided", AppExceptionStatus.UNAUTHORIZED)
+            throw AppException("Invalid token", "No token provided", AppExceptionStatus.UNAUTHORIZED)
         }
         val tokenVer = tokenEncoder.hash(token)
         val actualToken = data.tokensData.getToken(transaction, tokenVer)
         if (actualToken == null || !isTokenStillValid(actualToken)) {
-            throw AppException("Invalid token", AppExceptionStatus.UNAUTHORIZED)
+            throw AppException("Invalid token", "Token cannot be used", AppExceptionStatus.UNAUTHORIZED)
         }
         data.tokensData.updateTokenLastUsed(transaction, actualToken.tokenVer)
         data.usersData.getUserById(transaction, actualToken.userId)
-            ?: throw AppException("User not found", AppExceptionStatus.UNAUTHORIZED)
+            ?: throw IllegalArgumentException("User not found")
     }
 
     /**
@@ -136,11 +140,15 @@ class UsersServices(
      * @return the created game id or null
      */
     fun enteredGame(userId: Int, lobbyId: Int) = doService(data) { transaction ->
-        checkOrThrowBadRequest(lobbyId <= 0, "Invalid lobby id")
+        checkOrThrowBadRequest(
+            lobbyId <= 0,
+            "Invalid lobby id",
+            "Lobby id must be greater than 0"
+        )
         val lobby = data.lobbiesData.getLobbyById(transaction, lobbyId)
-            ?: throw AppException("Lobby doesn't exist", AppExceptionStatus.NOT_FOUND)
+            ?: throw AppException("Lobby not found", "Lobby doesn't exist", AppExceptionStatus.NOT_FOUND)
         if (lobby.userId != userId) {
-            throw AppException("User not in lobby", AppExceptionStatus.UNAUTHORIZED)
+            throw AppException("Unauthorized lobby", "Not in that lobby", AppExceptionStatus.UNAUTHORIZED)
         }
         if (lobby.gameId != null) {
             data.lobbiesData.removeLobby(transaction, lobbyId)

@@ -31,7 +31,7 @@ class GamesServicesTests {
         val exception = assertThrows<AppException> {
             services.getGame(1, -1)
         }
-        assertEquals("Invalid game id", exception.message)
+        assertEquals("Invalid game id", exception.title)
         assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
     }
 
@@ -52,7 +52,7 @@ class GamesServicesTests {
         val exception = assertThrows<AppException> {
             services.getGameState(-1)
         }
-        assertEquals("Invalid game id", exception.message)
+        assertEquals("Invalid game id", exception.title)
         assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
     }
 
@@ -61,7 +61,8 @@ class GamesServicesTests {
         val exception = assertThrows<AppException> {
             services.getGameState(100)
         }
-        assertEquals("Game does not exist", exception.message)
+        assertEquals("Game not found", exception.title)
+        assertEquals("Game does not exist", exception.detail)
         assertEquals(AppExceptionStatus.NOT_FOUND, exception.status)
     }
 
@@ -113,7 +114,7 @@ class GamesServicesTests {
         val exception = assertThrows<AppException> {
             services.sendLayout(userId, gameId, ships)
         }
-        assertEquals("Player not in game", exception.message)
+        assertEquals("Player not in game", exception.title)
         assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
     }
 
@@ -131,7 +132,8 @@ class GamesServicesTests {
         val exception = assertThrows<AppException> {
             services.sendLayout(userId, gameId, ships)
         }
-        assertEquals("Invalid orientation for submarine", exception.message)
+        assertEquals("Invalid orientation", exception.title)
+        assertEquals("All orientations must be horizontal or vertical", exception.detail)
         assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
     }
 
@@ -149,7 +151,8 @@ class GamesServicesTests {
         val exception = assertThrows<AppException> {
             services.sendLayout(userId, gameId, ships)
         }
-        assertEquals("Invalid ship list for beginner game", exception.message)
+        assertEquals("Invalid fleet", exception.title)
+        assertEquals("Invalid ship list for beginner game", exception.detail)
         assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
     }
 
@@ -167,7 +170,7 @@ class GamesServicesTests {
         val exception = assertThrows<AppException> {
             services.sendLayout(userId, gameId, ships)
         }
-        assertEquals("Layout already defined", exception.message)
+        assertEquals("Layout already defined", exception.title)
         assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
     }
 
@@ -205,7 +208,7 @@ class GamesServicesTests {
         val exception = assertThrows<AppException> {
             services.sendHits(userId, gameId, squares)
         }
-        assertEquals("Player not in game", exception.message)
+        assertEquals("Player not in game", exception.title)
         assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
     }
 
@@ -220,7 +223,7 @@ class GamesServicesTests {
         val exception = assertThrows<AppException> {
             services.sendHits(userId, gameId, squares)
         }
-        assertEquals("Not your turn", exception.message)
+        assertEquals("Not your turn", exception.title)
         assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
     }
 
@@ -232,7 +235,8 @@ class GamesServicesTests {
         val exception = assertThrows<AppException> {
             services.sendHits(userId, gameId, squares)
         }
-        assertEquals("No squares provided", exception.message)
+        assertEquals("Empty squares", exception.title)
+        assertEquals("No squares provided", exception.detail)
         assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
     }
 
@@ -251,7 +255,7 @@ class GamesServicesTests {
         val exception = assertThrows<AppException> {
             services.sendHits(userId, gameId, squares)
         }
-        assertEquals("Invalid amount of hits", exception.message)
+        assertEquals("Invalid amount of hits", exception.title)
         assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
     }
 
@@ -266,7 +270,8 @@ class GamesServicesTests {
         val exception = assertThrows<AppException> {
             services.sendHits(userId, gameId, squares)
         }
-        assertEquals("Invalid square: z2", exception.message)
+        assertEquals("Invalid square", exception.title)
+        assertEquals("Square not in board: z2", exception.detail)
         assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
     }
 
@@ -281,7 +286,8 @@ class GamesServicesTests {
         val exception = assertThrows<AppException> {
             services.sendHits(userId, gameId, squares)
         }
-        assertEquals("Square already hit: f1", exception.message)
+        assertEquals("Invalid square", exception.title)
+        assertEquals("Square already hit: f1", exception.detail)
         assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
     }
 
@@ -324,7 +330,7 @@ class GamesServicesTests {
         val exception = assertThrows<AppException> {
             services.fleetState(userId, 1, true)
         }
-        assertEquals("Player not in game", exception.message)
+        assertEquals("Player not in game", exception.title)
         assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
     }
 
@@ -348,7 +354,7 @@ class GamesServicesTests {
         val exception = assertThrows<AppException> {
             services.fleetState(userId, 1, false)
         }
-        assertEquals("Player not in game", exception.message)
+        assertEquals("Player not in game", exception.title)
         assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
     }
 }

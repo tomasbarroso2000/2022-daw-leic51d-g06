@@ -15,15 +15,18 @@ val logger: Logger = LoggerFactory.getLogger(
 
 /**
  * Represents an app exception
- * @property message the exception message
+ * @property title the exception message
+ * @property detail
  * @property status the status of the exception
  */
 data class AppException(
-    override val message: String? = null,
+    val title: String,
+    val detail: String,
     val status: AppExceptionStatus = AppExceptionStatus.INTERNAL
 ) : Exception() {
     init {
-        logger.warn(message)
+        logger.warn("Title: $title")
+        logger.warn("Detail: $detail")
     }
 }
 
@@ -48,7 +51,11 @@ enum class AppExceptionStatus {
 fun handleDataError(error: Exception): Exception {
     return when (error) {
         is JdbiException -> handleJdbiException(error)
-        is DataException -> AppException(error.message, AppExceptionStatus.BAD_REQUEST)
+        is DataException -> AppException(
+            error.title,
+            error.detail,
+            AppExceptionStatus.BAD_REQUEST
+        )
         else -> {
             logger.warn(error.message)
             error
@@ -81,14 +88,26 @@ fun handleJdbiException(error: JdbiException): Exception {
 fun handleSQLException(error: SQLException): AppException {
     return when {
         isUniqueViolation(error) -> {
-            AppException(buildUniqueViolationMessage(error.message), AppExceptionStatus.BAD_REQUEST)
+            AppException(
+                "Already in use error",
+                buildUniqueViolationMessage(error.message) ?: "Already in use",
+                AppExceptionStatus.BAD_REQUEST
+            )
         }
         isCheckViolation(error) -> {
-            AppException(buildCheckViolationMessage(error.message), AppExceptionStatus.BAD_REQUEST)
+            AppException(
+                "Invalid error",
+                buildCheckViolationMessage(error.message) ?: "Invalid",
+                AppExceptionStatus.BAD_REQUEST
+            )
         }
         else -> {
             logger.warn(error.message)
-            AppException("Something went wrong", AppExceptionStatus.INTERNAL)
+            AppException(
+                "Something went wrong",
+                "A server error has occurred",
+                AppExceptionStatus.INTERNAL
+            )
         }
     }
 }

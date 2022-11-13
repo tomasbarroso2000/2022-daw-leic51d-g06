@@ -28,13 +28,12 @@ fun doApiTask(task: () -> ResponseEntity<*>): ResponseEntity<*> {
  * @param type the error type
  * @param title the error response title
  * @param detail the error details
- * @param instance the error instance
  */
 data class ErrorResponse(
-    val type: String = "",
+    val type: String = "about:blank",
     val title: String,
-    val detail: String = "",
-    val instance: String = ""
+    val status: Int,
+    val detail: String
 )
 
 /**
@@ -48,22 +47,25 @@ fun handleError(error: Exception): ResponseEntity<ErrorResponse> {
     } else {
         logger.warn(error.message)
         makeProblemResponse(
-            Errors.INTERNAL_SERVER_ERROR,
-            ErrorResponse(title = "Something went wrong")
+            ErrorResponse(
+                title = "Something went wrong",
+                status = Errors.INTERNAL_SERVER_ERROR,
+                detail = "Internal error"
+            )
         )
     }
 }
 
 /**
  * Fabricates an error response with the given status and response body
- * @param statusCode the status of the [ResponseEntity]
- * @param body the body of the [ResponseEntity]
+ * @param error the [ErrorResponse] that represents the error
+ * @return a [ResponseEntity] with the error
  */
-fun <T> makeProblemResponse(statusCode: Int, body: T) =
+fun makeProblemResponse(error: ErrorResponse) =
     ResponseEntity
-        .status(statusCode)
+        .status(error.status)
         .header("content-type", "application/problem+json")
-        .body(body)
+        .body(error)
 
 /**
  * Handles any [AppException] that was thrown
@@ -71,27 +73,19 @@ fun <T> makeProblemResponse(statusCode: Int, body: T) =
  * @param error the exception thrown
  * @return a status response for the user to see
  */
-fun onAppException(error: AppException): ResponseEntity<ErrorResponse> {
-    val message = error.message ?: "¯\\_(ツ)_/¯"
-    return when (error.status) {
-        AppExceptionStatus.UNAUTHORIZED -> makeProblemResponse(
-            Errors.UNAUTHORIZED,
-            ErrorResponse(title = message)
+fun onAppException(error: AppException): ResponseEntity<ErrorResponse> =
+    makeProblemResponse(
+        ErrorResponse(
+            title = error.title,
+            status = when (error.status) {
+                AppExceptionStatus.UNAUTHORIZED -> Errors.UNAUTHORIZED
+                AppExceptionStatus.BAD_REQUEST -> Errors.BAD_REQUEST
+                AppExceptionStatus.NOT_FOUND -> Errors.NOT_FOUND
+                AppExceptionStatus.INTERNAL -> Errors.INTERNAL_SERVER_ERROR
+            },
+            detail = error.detail
         )
-        AppExceptionStatus.BAD_REQUEST -> makeProblemResponse(
-            Errors.BAD_REQUEST,
-            ErrorResponse(title = message)
-        )
-        AppExceptionStatus.NOT_FOUND -> makeProblemResponse(
-            Errors.NOT_FOUND,
-            ErrorResponse(title = message)
-        )
-        AppExceptionStatus.INTERNAL -> makeProblemResponse(
-            Errors.INTERNAL_SERVER_ERROR,
-            ErrorResponse(title = message)
-        )
-    }
-}
+    )
 
 /**
  * Gets the user token from the Authorization header

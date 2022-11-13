@@ -16,7 +16,7 @@ class UsersDataMem(private val mockData: MockData) : UsersData {
 
     override fun createUser(transaction: Transaction, name: String, email: String, passwordVer: String): Int {
         if (mockData.users.any { it.email == email }) {
-            throw DataException("Email $email is already in use")
+            throw DataException("Already in use", "Email $email is already in use")
         }
         val id = mockData.users.maxOf { it.id } + 1
         mockData.users.add(User(id, name, email, 0, passwordVer))

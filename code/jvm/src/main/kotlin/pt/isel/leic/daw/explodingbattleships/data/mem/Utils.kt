@@ -15,10 +15,12 @@ import java.time.Instant
 
 /**
  * To be thrown by the DataMem module when an error is detected
- * @property message the error message
+ * @property title the title of the error
+ * @property detail the detail of the error
  */
 data class DataException(
-    override val message: String? = null
+    val title: String,
+    val detail: String
 ) : Exception()
 
 /**

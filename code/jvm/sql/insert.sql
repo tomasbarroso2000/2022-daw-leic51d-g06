@@ -16,7 +16,7 @@ insert into game_types values
 
 insert into games (type, state, player1, player2, curr_player, started_at) values
     ('beginner', 'layout_definition', 1, 2, 1, now()),
-    ('experienced', 'shooting', 1, 2, 2, now());
+    ('experienced', 'shooting', 1, 2, 2, now() - interval '30 seconds');
 
 insert into ship_types values
     ('carrier', 6, 'beginner'),

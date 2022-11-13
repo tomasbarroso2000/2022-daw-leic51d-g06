@@ -120,7 +120,7 @@ fun GameType.isTimeOver(game: Game) =
  */
 fun getGameType(transaction: Transaction, gameType: String, data: Data) =
     data.gameTypesData.getGameType(transaction, gameType)
-        ?: throw AppException("Invalid game type", AppExceptionStatus.BAD_REQUEST)
+        ?: throw AppException("Invalid game type", "Game type doesn't exist", AppExceptionStatus.BAD_REQUEST)
 
 /**
  * Changes the current player if the current player exceeded their time

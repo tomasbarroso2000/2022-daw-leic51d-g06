@@ -100,17 +100,29 @@ class GamesServices(private val data: Data) {
         checkCurrentPlayer(game, userId)
         val gameType = getGameType(transaction, game.type, data)
         if (squares.isEmpty()) {
-            throw AppException("No squares provided", AppExceptionStatus.BAD_REQUEST)
+            throw AppException("Empty squares", "No squares provided", AppExceptionStatus.BAD_REQUEST)
         }
         if (squares.size > gameType.shotsPerRound) {
-            throw AppException("Invalid amount of hits", AppExceptionStatus.BAD_REQUEST)
+            throw AppException(
+                "Invalid amount of hits",
+                "Can't send more than ${gameType.shotsPerRound} shots",
+                AppExceptionStatus.BAD_REQUEST
+            )
         }
         val hitSquares = data.hitsData.getHits(transaction, game.id, game.idlePlayer())
             .map { it.square.toSquare() }.toMutableSet()
         val verifiedSquares = mutableListOf<Square>()
         squares.forEach { square ->
-            checkOrThrowBadRequest(!squareInBoard(square, gameType.boardSize), "Invalid square: $square")
-            checkOrThrowBadRequest(hitSquares.contains(square), "Square already hit: $square")
+            checkOrThrowBadRequest(
+                !squareInBoard(square, gameType.boardSize),
+                "Invalid square",
+                "Square not in board: $square"
+            )
+            checkOrThrowBadRequest(
+                hitSquares.contains(square),
+                "Invalid square",
+                "Square already hit: $square"
+            )
             verifiedSquares.add(square)
         }
         val hitsOutcome = executeHit(transaction, game, squares, game.idlePlayer(), data)
@@ -135,7 +147,11 @@ class GamesServices(private val data: Data) {
         checkPlayerInGame(game, userId)
         checkGameState(game.state, "layout_definition")
         if (data.shipsData.hasShips(transaction, userId, game.id)) {
-            throw AppException("Layout already defined", AppExceptionStatus.BAD_REQUEST)
+            throw AppException(
+                "Layout already defined",
+                "Your layout has already been defined",
+                AppExceptionStatus.BAD_REQUEST
+            )
         }
         val layout = checkShipLayout(transaction, userId, game, ships, data)
         data.shipsData.defineLayout(transaction, game.id, userId, layout)

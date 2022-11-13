@@ -8,14 +8,16 @@ import pt.isel.leic.daw.explodingbattleships.domain.ShipCreationInfo
 import pt.isel.leic.daw.explodingbattleships.domain.Square
 import pt.isel.leic.daw.explodingbattleships.domain.toSquareOrNull
 
+const val MIN_PASSWORD_SIZE = 4
+
 /**
  * Throws an [AppException] if the undesired condition is verified
  * @param undesiredCondition the undesired condition
- * @param errorMessage the error message to be thrown
+ * @param title the error message to be thrown
  */
-fun checkOrThrowBadRequest(undesiredCondition: Boolean, errorMessage: String) {
+fun checkOrThrowBadRequest(undesiredCondition: Boolean, title: String, detail: String) {
     if (undesiredCondition) {
-        throw AppException(errorMessage, AppExceptionStatus.BAD_REQUEST)
+        throw AppException(title, detail, AppExceptionStatus.BAD_REQUEST)
     }
 }
 
@@ -26,8 +28,8 @@ fun checkOrThrowBadRequest(undesiredCondition: Boolean, errorMessage: String) {
  * @param skip the given skip
  */
 fun checkLimitAndSkip(limit: Int, skip: Int) {
-    checkOrThrowBadRequest(limit <= 0, "Invalid limit")
-    checkOrThrowBadRequest(skip < 0, "Invalid skip")
+    checkOrThrowBadRequest(limit <= 0, "Invalid limit", "Limit must be greater than 0")
+    checkOrThrowBadRequest(skip < 0, "Invalid skip", "Skip must be greater or equal to 0")
 }
 
 /**
@@ -36,7 +38,7 @@ fun checkLimitAndSkip(limit: Int, skip: Int) {
  * @param email the given email
  */
 fun checkEmailValid(email: String) {
-    checkOrThrowBadRequest(!isEmailValid(email), "Invalid email format")
+    checkOrThrowBadRequest(!isEmailValid(email), "Invalid email", "Email must have a valid email format")
 }
 
 /**
@@ -45,10 +47,26 @@ fun checkEmailValid(email: String) {
  * @param password the given password
  */
 fun checkPasswordValid(password: String) {
-    checkOrThrowBadRequest(password.length < 4, "Password needs to be at least 4 characters")
-    checkOrThrowBadRequest(!password.any { it.isDigit() }, "Password doesn't contain numbers")
-    checkOrThrowBadRequest(!password.any { it.isUpperCase() }, "Password doesn't contain uppercase letters")
-    checkOrThrowBadRequest(!password.any { it.isLowerCase() }, "Password doesn't contain lowercase letters")
+    checkOrThrowBadRequest(
+        password.length < MIN_PASSWORD_SIZE,
+        "Invalid password",
+        "Password needs to be at least $MIN_PASSWORD_SIZE characters"
+    )
+    checkOrThrowBadRequest(
+        !password.any { it.isDigit() },
+        "Invalid password",
+        "Password doesn't contain numbers"
+    )
+    checkOrThrowBadRequest(
+        !password.any { it.isUpperCase() },
+        "Invalid password",
+        "Password doesn't contain uppercase letters"
+    )
+    checkOrThrowBadRequest(
+        !password.any { it.isLowerCase() },
+        "Invalid password",
+        "Password doesn't contain lowercase letters"
+    )
 }
 
 /**
@@ -72,21 +90,27 @@ fun checkShipLayout(
     val fleetComposition = data.shipTypesData.getGameTypeShips(transaction, gameType)
     checkOrThrowBadRequest(
         ships.size != fleetComposition.size,
+        "Invalid fleet size",
         "Can only place ${fleetComposition.size} ships"
     )
     checkOrThrowBadRequest(
         !shipsValid(fleetComposition, ships),
+        "Invalid fleet",
         "Invalid ship list for ${gameType.name} game"
     )
     val unavailableSquares = mutableSetOf<Square>()
     val verifiedShips = mutableListOf<Ship>()
     ships.forEach { unverifiedShip ->
         val verifiedShip = unverifiedShip.toShipOrNull(userId, game.id, fleetComposition)
-            ?: throw AppException("Invalid ship", AppExceptionStatus.BAD_REQUEST)
+            ?: throw AppException("Invalid ship", "No ship by that name", AppExceptionStatus.BAD_REQUEST)
         when (verifiedShip.orientation.lowercase()) {
             "vertical" -> checkShipSquares(verifiedShip, gameType.boardSize, unavailableSquares, Square::down)
             "horizontal" -> checkShipSquares(verifiedShip, gameType.boardSize, unavailableSquares, Square::right)
-            else -> throw AppException("Invalid orientation for ${verifiedShip.name}", AppExceptionStatus.BAD_REQUEST)
+            else -> throw AppException(
+                "Invalid orientation",
+                "All orientations must be horizontal or vertical",
+                AppExceptionStatus.BAD_REQUEST
+            )
         }
         verifiedShips.add(verifiedShip)
     }
@@ -120,16 +144,18 @@ private fun checkShipSquares(
     nextSquare: Square.() -> Square
 ) {
     var currentSquare = ship.firstSquare.toSquareOrNull()
-        ?: throw AppException("Invalid first square: ${ship.firstSquare}")
+        ?: throw AppException("Invalid square", "Invalid first square: ${ship.firstSquare}")
     val shipSquares = mutableListOf<Square>()
     repeat(ship.size) {
         checkOrThrowBadRequest(
             !squareInBoard(currentSquare, boardSize),
-            "Invalid square: $currentSquare"
+            "Invalid square",
+            "Square not in board: $currentSquare"
         )
         checkOrThrowBadRequest(
             unavailableSquares.contains(currentSquare),
-            "Can't place on this square: $currentSquare"
+            "Invalid square",
+            "Square not available: $currentSquare"
         )
 
         shipSquares.add(currentSquare)
@@ -159,10 +185,10 @@ private fun checkShipSquares(
  */
 fun getGameOrThrow(transaction: Transaction, gameId: Int, data: Data): Game {
     if (gameId <= 0) {
-        throw AppException("Invalid game id", AppExceptionStatus.BAD_REQUEST)
+        throw AppException("Invalid game id", "Game id must be greater than 0", AppExceptionStatus.BAD_REQUEST)
     }
     return data.gamesData.getGame(transaction, gameId)
-        ?: throw AppException("Game does not exist", AppExceptionStatus.NOT_FOUND)
+        ?: throw AppException("Game not found", "Game does not exist", AppExceptionStatus.NOT_FOUND)
 }
 
 /**
@@ -172,7 +198,11 @@ fun getGameOrThrow(transaction: Transaction, gameId: Int, data: Data): Game {
  * @param state the desired game state
  */
 fun checkGameState(gameState: String, state: String) =
-    checkOrThrowBadRequest(gameState != state, "Invalid game state")
+    checkOrThrowBadRequest(
+        gameState != state,
+        "Invalid game state",
+        "Game state is not $state"
+    )
 
 /**
  * Checks if a player is present in a game
@@ -181,7 +211,11 @@ fun checkGameState(gameState: String, state: String) =
  * @param playerId the player id
  */
 fun checkPlayerInGame(game: Game, playerId: Int) =
-    checkOrThrowBadRequest(game.player1 != playerId && game.player2 != playerId, "Player not in game")
+    checkOrThrowBadRequest(
+        game.player1 != playerId && game.player2 != playerId,
+        "Player not in game",
+        "Player not playing in this game"
+    )
 
 /**
  * Checks if a player's turn is valid
@@ -190,4 +224,8 @@ fun checkPlayerInGame(game: Game, playerId: Int) =
  * @param playerId the player id
  */
 fun checkCurrentPlayer(game: Game, playerId: Int) =
-    checkOrThrowBadRequest(game.currPlayer != playerId, "Not your turn")
+    checkOrThrowBadRequest(
+        game.currPlayer != playerId,
+        "Not your turn",
+        "It's your opponent's turn"
+    )

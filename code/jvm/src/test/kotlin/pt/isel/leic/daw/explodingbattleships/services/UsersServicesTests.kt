@@ -40,7 +40,7 @@ class UsersServicesTests {
         val exception = assertThrows<AppException> {
             services.createUser(name, email, password)
         }
-        assertEquals("Invalid name", exception.message)
+        assertEquals("Invalid name", exception.title)
         assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
     }
 
@@ -52,7 +52,7 @@ class UsersServicesTests {
         val exception = assertThrows<AppException> {
             services.createUser(name, email, password)
         }
-        assertEquals("Invalid email", exception.message)
+        assertEquals("Invalid email", exception.title)
         assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
     }
 
@@ -64,7 +64,8 @@ class UsersServicesTests {
         val exception = assertThrows<AppException> {
             services.createUser(name, email, password)
         }
-        assertEquals("Invalid email format", exception.message)
+        assertEquals("Invalid email", exception.title)
+        assertEquals("Email must have a valid email format", exception.detail)
         assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
     }
 
@@ -76,7 +77,8 @@ class UsersServicesTests {
         val exception = assertThrows<AppException> {
             services.createUser(name, email, password)
         }
-        assertEquals("Email $email is already in use", exception.message)
+        assertEquals("Already in use", exception.title)
+        assertEquals("Email $email is already in use", exception.detail)
         assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
     }
 
@@ -88,7 +90,21 @@ class UsersServicesTests {
         val exception = assertThrows<AppException> {
             services.createUser(name, email, password)
         }
-        assertEquals("Invalid password", exception.message)
+        assertEquals("Invalid password", exception.title)
+        assertEquals("Password is empty", exception.detail)
+        assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
+    }
+
+    @Test
+    fun create_player_with_password_too_small() {
+        val name = "aleixo"
+        val email = "aleixo@casapia.pt"
+        val password = "1"
+        val exception = assertThrows<AppException> {
+            services.createUser(name, email, password)
+        }
+        assertEquals("Invalid password", exception.title)
+        assertEquals("Password needs to be at least 4 characters", exception.detail)
         assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
     }
 
@@ -100,7 +116,8 @@ class UsersServicesTests {
         val exception = assertThrows<AppException> {
             services.createUser(name, email, password)
         }
-        assertEquals("Password doesn't contain numbers", exception.message)
+        assertEquals("Invalid password", exception.title)
+        assertEquals("Password doesn't contain numbers", exception.detail)
         assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
     }
 
@@ -112,7 +129,8 @@ class UsersServicesTests {
         val exception = assertThrows<AppException> {
             services.createUser(name, email, password)
         }
-        assertEquals("Password doesn't contain uppercase letters", exception.message)
+        assertEquals("Invalid password", exception.title)
+        assertEquals("Password doesn't contain uppercase letters", exception.detail)
         assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
     }
 
@@ -124,7 +142,8 @@ class UsersServicesTests {
         val exception = assertThrows<AppException> {
             services.createUser(name, email, password)
         }
-        assertEquals("Password doesn't contain lowercase letters", exception.message)
+        assertEquals("Invalid password", exception.title)
+        assertEquals("Password doesn't contain lowercase letters", exception.detail)
         assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
     }
 
@@ -142,7 +161,7 @@ class UsersServicesTests {
         val exception = assertThrows<AppException> {
             services.createToken(email, password)
         }
-        assertEquals("Bad credentials", exception.message)
+        assertEquals("Bad credentials", exception.title)
     }
 
     @Test
@@ -159,7 +178,8 @@ class UsersServicesTests {
         val exception = assertThrows<AppException> {
             services.getPlayerInfo(token)
         }
-        assertEquals("No token provided", exception.message)
+        assertEquals("Invalid token", exception.title)
+        assertEquals("No token provided", exception.detail)
         assertEquals(AppExceptionStatus.UNAUTHORIZED, exception.status)
     }
 
@@ -169,7 +189,7 @@ class UsersServicesTests {
         val exception = assertThrows<AppException> {
             services.getPlayerInfo(token)
         }
-        assertEquals("Invalid token", exception.message)
+        assertEquals("Invalid token", exception.title)
         assertEquals(AppExceptionStatus.UNAUTHORIZED, exception.status)
     }
 
@@ -185,7 +205,7 @@ class UsersServicesTests {
         val exception = assertThrows<AppException> {
             services.getRankings(-1, 0)
         }
-        assertEquals("Invalid limit", exception.message)
+        assertEquals("Invalid limit", exception.title)
         assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
     }
 
@@ -194,7 +214,7 @@ class UsersServicesTests {
         val exception = assertThrows<AppException> {
             services.getRankings(10, -1)
         }
-        assertEquals("Invalid skip", exception.message)
+        assertEquals("Invalid skip", exception.title)
         assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
     }
 
@@ -221,7 +241,7 @@ class UsersServicesTests {
         val exception = assertThrows<AppException> {
             services.enterLobby(1, "very very hard")
         }
-        assertEquals("Invalid game type", exception.message)
+        assertEquals("Invalid game type", exception.title)
         assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
     }
 
@@ -238,7 +258,7 @@ class UsersServicesTests {
         val exception = assertThrows<AppException> {
             services.enteredGame(3, -1)
         }
-        assertEquals("Invalid lobby id", exception.message)
+        assertEquals("Invalid lobby id", exception.title)
         assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
     }
 
@@ -247,7 +267,8 @@ class UsersServicesTests {
         val exception = assertThrows<AppException> {
             services.enteredGame(3, 10)
         }
-        assertEquals("Lobby doesn't exist", exception.message)
+        assertEquals("Lobby not found", exception.title)
+        assertEquals("Lobby doesn't exist", exception.detail)
         assertEquals(AppExceptionStatus.NOT_FOUND, exception.status)
     }
 
@@ -256,7 +277,8 @@ class UsersServicesTests {
         val exception = assertThrows<AppException> {
             services.enteredGame(1, 2)
         }
-        assertEquals("User not in lobby", exception.message)
+        assertEquals("Unauthorized lobby", exception.title)
+        assertEquals("Not in that lobby", exception.detail)
         assertEquals(AppExceptionStatus.UNAUTHORIZED, exception.status)
     }
 }
