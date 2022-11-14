@@ -1,9 +1,8 @@
 {
 	"info": {
-		"_postman_id": "7adc5a14-5bdc-45e9-b844-65d07f6144df",
+		"_postman_id": "9c987685-8d5f-4052-b0f8-ad3cd3c9dd55",
 		"name": "ExplodingBattleships",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "18405597"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
@@ -205,16 +204,44 @@
 				{
 					"name": "currently playing games",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "123",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
-						"header": []
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}games",
+							"host": [
+								"{{BASE_URL}}games"
+							]
+						}
 					},
 					"response": []
 				},
 				{
 					"name": "game types",
 					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "GET",
-						"header": []
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}games/types",
+							"host": [
+								"{{BASE_URL}}games"
+							],
+							"path": [
+								"types"
+							]
+						}
 					},
 					"response": []
 				}
