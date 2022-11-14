@@ -6,7 +6,6 @@ import pt.isel.leic.daw.explodingbattleships.data.Transaction
 import pt.isel.leic.daw.explodingbattleships.domain.DataList
 import pt.isel.leic.daw.explodingbattleships.domain.Game
 import pt.isel.leic.daw.explodingbattleships.domain.GameType
-import pt.isel.leic.daw.explodingbattleships.domain.Ranking
 
 class GamesDataDb : GamesData {
     override fun createGame(
@@ -32,7 +31,7 @@ class GamesDataDb : GamesData {
         (transaction as TransactionDataDb).withHandle { handle ->
             val foundGames = handle.createQuery(
                 "select * from games " +
-                "where player1 = :userId or player2 = :userId offset :skip limit :limit "
+                    "where player1 = :userId or player2 = :userId offset :skip limit :limit"
             )
                 .bind("userId", userId)
                 .bind("skip", skip)
@@ -53,7 +52,6 @@ class GamesDataDb : GamesData {
             handle.createQuery("select * from game_types")
                 .mapTo<GameType>().list()
         }
-
 
     override fun getGame(transaction: Transaction, gameId: Int): Game? =
         (transaction as TransactionDataDb).withHandle { handle ->

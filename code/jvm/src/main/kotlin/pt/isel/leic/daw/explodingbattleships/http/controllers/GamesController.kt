@@ -41,7 +41,7 @@ class GamesController(private val services: GamesServices) {
     /**
      * Handles a get request for the list of games the player is currently playing
      * @param user the user that sent the request
-      */
+     */
     @GetMapping(Uris.Games.GAMES)
     fun getCurrentlyPlayingGames(
         @RequestParam(required = false, defaultValue = "10") limit: Int,
@@ -56,7 +56,7 @@ class GamesController(private val services: GamesServices) {
                 .body(
                     siren(
                         GamesOutputModel(res.list, res.hasMore)
-                    ){
+                    ) {
                         link(Uris.Games.games(), Rels.SELF)
                         link(Uris.home(), Rels.HOME)
                         for (game in res.list) {

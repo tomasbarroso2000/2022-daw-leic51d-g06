@@ -2,7 +2,6 @@ package pt.isel.leic.daw.explodingbattleships.services
 
 import org.springframework.stereotype.Component
 import pt.isel.leic.daw.explodingbattleships.data.Data
-import pt.isel.leic.daw.explodingbattleships.data.Transaction
 import pt.isel.leic.daw.explodingbattleships.domain.AvailableGame
 import pt.isel.leic.daw.explodingbattleships.domain.DataList
 import pt.isel.leic.daw.explodingbattleships.domain.FullGameInfo
@@ -10,7 +9,6 @@ import pt.isel.leic.daw.explodingbattleships.domain.LayoutOutcomeStatus
 import pt.isel.leic.daw.explodingbattleships.domain.ShipCreationInfo
 import pt.isel.leic.daw.explodingbattleships.domain.Square
 import pt.isel.leic.daw.explodingbattleships.domain.toSquare
-import pt.isel.leic.daw.explodingbattleships.http.doApiTask
 import pt.isel.leic.daw.explodingbattleships.services.utils.AppException
 import pt.isel.leic.daw.explodingbattleships.services.utils.AppExceptionStatus
 import pt.isel.leic.daw.explodingbattleships.services.utils.checkCurrentPlayer
@@ -38,18 +36,20 @@ class GamesServices(private val data: Data) {
         val userPlayingGames = mutableListOf<AvailableGame>()
         val userGames = data.gamesData.getGames(transaction, userId, limit, skip)
         for (game in userGames.list) {
-            if (game.state != "completed")
+            if (game.state != "completed") {
                 userPlayingGames.add(
                     AvailableGame(
                         game.id,
                         game.type,
                         game.state,
-                        if (game.player1 == userId)
+                        if (game.player1 == userId) {
                             game.player2
-                        else
+                        } else {
                             game.player1
+                        }
                     )
                 )
+            }
         }
         DataList(userPlayingGames, userGames.hasMore)
     }

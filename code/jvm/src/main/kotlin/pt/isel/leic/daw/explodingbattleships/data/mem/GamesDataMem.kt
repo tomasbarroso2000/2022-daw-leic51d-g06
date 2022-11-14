@@ -20,17 +20,15 @@ class GamesDataMem(private val mockData: MockData) : GamesData {
     }
 
     override fun getGames(transaction: Transaction, userId: Int, limit: Int, skip: Int): DataList<Game> {
-        val games = mockData.games.filter {it.player1 == userId || it.player2 == userId }
+        val games = mockData.games.filter { it.player1 == userId || it.player2 == userId }
         return DataList(getSublist(games, limit, skip), hasMore(games.size, limit, skip))
     }
-
 
     override fun getNumberOfPlayedGames(transaction: Transaction) =
         mockData.games.size
 
     override fun getGameTypes(transaction: Transaction): List<GameType> =
         mockData.gameTypes
-
 
     override fun getGame(transaction: Transaction, gameId: Int): Game? =
         mockData.games.find { it.id == gameId }
