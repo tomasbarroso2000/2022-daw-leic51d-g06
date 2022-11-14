@@ -134,7 +134,7 @@ class UsersController(private val services: UsersServices) {
             .status(Successes.OK)
             .contentType(APPLICATION_SIREN)
             .body(
-                siren(RankingsOutputModel(res)) {
+                siren(RankingsOutputModel(res.list, res.hasMore)) {
                     link(Uris.Users.rankings(), Rels.SELF)
                     link(Uris.home(), Rels.HOME)
                     clazz("RankingsOutputModel")

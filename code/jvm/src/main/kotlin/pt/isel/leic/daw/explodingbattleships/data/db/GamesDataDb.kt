@@ -5,6 +5,7 @@ import pt.isel.leic.daw.explodingbattleships.data.GamesData
 import pt.isel.leic.daw.explodingbattleships.data.Transaction
 import pt.isel.leic.daw.explodingbattleships.domain.DataList
 import pt.isel.leic.daw.explodingbattleships.domain.Game
+import pt.isel.leic.daw.explodingbattleships.domain.GameType
 import pt.isel.leic.daw.explodingbattleships.domain.Ranking
 
 class GamesDataDb : GamesData {
@@ -46,6 +47,13 @@ class GamesDataDb : GamesData {
         (transaction as TransactionDataDb).withHandle { handle ->
             handle.createQuery("select count(*) from games").mapTo<Int>().first()
         }
+
+    override fun getGameTypes(transaction: Transaction): List<GameType> =
+        (transaction as TransactionDataDb).withHandle { handle ->
+            handle.createQuery("select * from game_types")
+                .mapTo<GameType>().list()
+        }
+
 
     override fun getGame(transaction: Transaction, gameId: Int): Game? =
         (transaction as TransactionDataDb).withHandle { handle ->

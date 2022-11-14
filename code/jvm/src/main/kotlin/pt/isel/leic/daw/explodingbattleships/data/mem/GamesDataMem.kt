@@ -4,6 +4,7 @@ import pt.isel.leic.daw.explodingbattleships.data.GamesData
 import pt.isel.leic.daw.explodingbattleships.data.Transaction
 import pt.isel.leic.daw.explodingbattleships.domain.DataList
 import pt.isel.leic.daw.explodingbattleships.domain.Game
+import pt.isel.leic.daw.explodingbattleships.domain.GameType
 import java.time.Instant
 
 class GamesDataMem(private val mockData: MockData) : GamesData {
@@ -26,6 +27,10 @@ class GamesDataMem(private val mockData: MockData) : GamesData {
 
     override fun getNumberOfPlayedGames(transaction: Transaction) =
         mockData.games.size
+
+    override fun getGameTypes(transaction: Transaction): List<GameType> =
+        mockData.gameTypes
+
 
     override fun getGame(transaction: Transaction, gameId: Int): Game? =
         mockData.games.find { it.id == gameId }

@@ -10,5 +10,6 @@ import pt.isel.leic.daw.explodingbattleships.domain.DataList
  * @param opponent the player's opponent
  */
 class GamesOutputModel(
-    val games: DataList<AvailableGame>
+    val games: List<AvailableGame>,
+    val hasMore: Boolean
 )

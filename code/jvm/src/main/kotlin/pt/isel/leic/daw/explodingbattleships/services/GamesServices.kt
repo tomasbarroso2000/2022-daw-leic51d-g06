@@ -2,6 +2,7 @@ package pt.isel.leic.daw.explodingbattleships.services
 
 import org.springframework.stereotype.Component
 import pt.isel.leic.daw.explodingbattleships.data.Data
+import pt.isel.leic.daw.explodingbattleships.data.Transaction
 import pt.isel.leic.daw.explodingbattleships.domain.AvailableGame
 import pt.isel.leic.daw.explodingbattleships.domain.DataList
 import pt.isel.leic.daw.explodingbattleships.domain.FullGameInfo
@@ -9,6 +10,7 @@ import pt.isel.leic.daw.explodingbattleships.domain.LayoutOutcomeStatus
 import pt.isel.leic.daw.explodingbattleships.domain.ShipCreationInfo
 import pt.isel.leic.daw.explodingbattleships.domain.Square
 import pt.isel.leic.daw.explodingbattleships.domain.toSquare
+import pt.isel.leic.daw.explodingbattleships.http.doApiTask
 import pt.isel.leic.daw.explodingbattleships.services.utils.AppException
 import pt.isel.leic.daw.explodingbattleships.services.utils.AppExceptionStatus
 import pt.isel.leic.daw.explodingbattleships.services.utils.checkCurrentPlayer
@@ -189,5 +191,9 @@ class GamesServices(private val data: Data) {
         } else {
             LayoutOutcomeStatus.WAITING
         }
+    }
+
+    fun getGameTypes() = doService(data) { transaction ->
+        data.gamesData.getGameTypes(transaction)
     }
 }
