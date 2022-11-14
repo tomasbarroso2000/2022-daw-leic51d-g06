@@ -3,7 +3,9 @@ package pt.isel.leic.daw.explodingbattleships.data.db
 import org.jdbi.v3.core.kotlin.mapTo
 import pt.isel.leic.daw.explodingbattleships.data.GamesData
 import pt.isel.leic.daw.explodingbattleships.data.Transaction
+import pt.isel.leic.daw.explodingbattleships.domain.DataList
 import pt.isel.leic.daw.explodingbattleships.domain.Game
+import pt.isel.leic.daw.explodingbattleships.domain.Ranking
 
 class GamesDataDb : GamesData {
     override fun createGame(
@@ -24,6 +26,22 @@ class GamesDataDb : GamesData {
                 .mapTo<Int>()
                 .first()
         }
+
+    override fun getGames(transaction: Transaction, userId: Int, limit: Int, skip: Int): DataList<Game> =
+        (transaction as TransactionDataDb).withHandle { handle ->
+            val foundGames = handle.createQuery(
+                "select * from games " +
+                "where player1 = :userId or player2 = :userId offset :skip limit :limit "
+            )
+                .bind("userId", userId)
+                .bind("skip", skip)
+                .bind("limit", limit)
+                .mapTo<Game>().list()
+            val games = mutableListOf<Game>()
+            val hasMore = getHasMoreAndProcessList(foundGames, games, limit)
+            DataList(games, hasMore)
+        }
+
     override fun getNumberOfPlayedGames(transaction: Transaction): Int =
         (transaction as TransactionDataDb).withHandle { handle ->
             handle.createQuery("select count(*) from games").mapTo<Int>().first()

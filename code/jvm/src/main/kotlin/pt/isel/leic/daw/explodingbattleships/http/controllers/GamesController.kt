@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import pt.isel.leic.daw.explodingbattleships.domain.User
 import pt.isel.leic.daw.explodingbattleships.http.APPLICATION_SIREN
@@ -21,6 +22,7 @@ import pt.isel.leic.daw.explodingbattleships.http.models.input.LayoutInputModel
 import pt.isel.leic.daw.explodingbattleships.http.models.output.FleetStateOutputModel
 import pt.isel.leic.daw.explodingbattleships.http.models.output.GameOutputModel
 import pt.isel.leic.daw.explodingbattleships.http.models.output.GameStateOutputModel
+import pt.isel.leic.daw.explodingbattleships.http.models.output.GamesOutputModel
 import pt.isel.leic.daw.explodingbattleships.http.models.output.HitsOutputModel
 import pt.isel.leic.daw.explodingbattleships.http.models.output.LayoutOutputModel
 import pt.isel.leic.daw.explodingbattleships.http.models.output.NumberOfPlayedGamesOutputModel
@@ -34,6 +36,35 @@ import javax.validation.Valid
 @RestController
 @RequestMapping(Uris.BASE_PATH)
 class GamesController(private val services: GamesServices) {
+
+    /**
+     * Handles a get request for the list of games the player is currently playing
+     * @param user the user that sent the request
+      */
+    @GetMapping(Uris.Games.GAMES)
+    fun getCurrentlyPlayingGames(
+        @RequestParam(required = false, defaultValue = "10") limit: Int,
+        @RequestParam(required = false, defaultValue = "0") skip: Int,
+        user: User
+    ) =
+        doApiTask {
+            val res = services.getCurrentlyPlayingGames(user.id, limit, skip)
+            ResponseEntity
+                .status(HttpStatus.OK)
+                .contentType(APPLICATION_SIREN)
+                .body(
+                    siren(
+                        GamesOutputModel(res)
+                    ){
+                        link(Uris.Games.games(), Rels.SELF)
+                        link(Uris.home(), Rels.HOME)
+                        for (game in res.list) {
+                            link(Uris.Games.gameInfo(game.id), Rels.GAME)
+                        }
+                        clazz("GamesOutputModel")
+                    }
+                )
+        }
 
     /**
      * Handles a get request for the game info

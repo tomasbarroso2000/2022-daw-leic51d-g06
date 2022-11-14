@@ -2,6 +2,7 @@ package pt.isel.leic.daw.explodingbattleships.data.mem
 
 import pt.isel.leic.daw.explodingbattleships.data.GamesData
 import pt.isel.leic.daw.explodingbattleships.data.Transaction
+import pt.isel.leic.daw.explodingbattleships.domain.DataList
 import pt.isel.leic.daw.explodingbattleships.domain.Game
 import java.time.Instant
 
@@ -16,6 +17,12 @@ class GamesDataMem(private val mockData: MockData) : GamesData {
         mockData.games.add(Game(id, gameType, "layout_definition", player1, player2, player1, Instant.now()))
         return id
     }
+
+    override fun getGames(transaction: Transaction, userId: Int, limit: Int, skip: Int): DataList<Game> {
+        val games = mockData.games.filter {it.player1 == userId || it.player2 == userId }
+        return DataList(getSublist(games, limit, skip), hasMore(games.size, limit, skip))
+    }
+
 
     override fun getNumberOfPlayedGames(transaction: Transaction) =
         mockData.games.size

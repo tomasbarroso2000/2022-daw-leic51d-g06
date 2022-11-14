@@ -2,6 +2,8 @@ package pt.isel.leic.daw.explodingbattleships.services
 
 import org.springframework.stereotype.Component
 import pt.isel.leic.daw.explodingbattleships.data.Data
+import pt.isel.leic.daw.explodingbattleships.domain.AvailableGame
+import pt.isel.leic.daw.explodingbattleships.domain.DataList
 import pt.isel.leic.daw.explodingbattleships.domain.FullGameInfo
 import pt.isel.leic.daw.explodingbattleships.domain.LayoutOutcomeStatus
 import pt.isel.leic.daw.explodingbattleships.domain.ShipCreationInfo
@@ -11,6 +13,7 @@ import pt.isel.leic.daw.explodingbattleships.services.utils.AppException
 import pt.isel.leic.daw.explodingbattleships.services.utils.AppExceptionStatus
 import pt.isel.leic.daw.explodingbattleships.services.utils.checkCurrentPlayer
 import pt.isel.leic.daw.explodingbattleships.services.utils.checkGameState
+import pt.isel.leic.daw.explodingbattleships.services.utils.checkLimitAndSkip
 import pt.isel.leic.daw.explodingbattleships.services.utils.checkOrThrowBadRequest
 import pt.isel.leic.daw.explodingbattleships.services.utils.checkPlayerInGame
 import pt.isel.leic.daw.explodingbattleships.services.utils.checkShipLayout
@@ -23,6 +26,31 @@ import pt.isel.leic.daw.explodingbattleships.services.utils.squareInBoard
 
 @Component
 class GamesServices(private val data: Data) {
+
+    /**
+     * Gets all the games the user is currently playing
+     * @param userId the user id
+     */
+    fun getCurrentlyPlayingGames(userId: Int, limit: Int, skip: Int) = doService(data) { transaction ->
+        checkLimitAndSkip(limit, skip)
+        val userPlayingGames = mutableListOf<AvailableGame>()
+        val userGames = data.gamesData.getGames(transaction, userId, limit, skip)
+        for (game in userGames.list) {
+            if (game.state != "completed")
+                userPlayingGames.add(
+                    AvailableGame(
+                        game.id,
+                        game.type,
+                        game.state,
+                        if (game.player1 == userId)
+                            game.player2
+                        else
+                            game.player1
+                    )
+                )
+        }
+        DataList(userPlayingGames, userGames.hasMore)
+    }
 
     /**
      * Gets all the information of a game

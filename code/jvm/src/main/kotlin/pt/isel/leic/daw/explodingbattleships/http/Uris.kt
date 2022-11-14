@@ -28,6 +28,7 @@ object Uris {
     }
 
     object Games {
+        const val GAMES = "games"
         const val GAME_INFO = "games/info/{gameId}"
         const val SEND_HITS = "games/hit"
         const val DEFINE_LAYOUT = "games/layout"
@@ -36,6 +37,7 @@ object Uris {
         const val NR_OF_GAMES = "games/total"
         const val STATE = "games/state/{gameId}"
 
+        fun games(): URI = URI(BASE_PATH + GAMES)
         fun gameInfo(gameId: Int): URI = UriTemplate(BASE_PATH + GAME_INFO).expand(gameId)
         fun sendHits(): URI = URI(BASE_PATH + SEND_HITS)
         fun defineLayout(): URI = URI(BASE_PATH + DEFINE_LAYOUT)

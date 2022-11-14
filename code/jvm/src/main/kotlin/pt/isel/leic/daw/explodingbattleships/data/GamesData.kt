@@ -1,5 +1,7 @@
 package pt.isel.leic.daw.explodingbattleships.data
 
+import pt.isel.leic.daw.explodingbattleships.domain.AvailableGame
+import pt.isel.leic.daw.explodingbattleships.domain.DataList
 import pt.isel.leic.daw.explodingbattleships.domain.Game
 
 interface GamesData {
@@ -12,6 +14,14 @@ interface GamesData {
      * @return the game id
      */
     fun createGame(transaction: Transaction, gameType: String, player1: Int, player2: Int): Int
+
+    /**
+     * Gets all the user games
+     * @param transaction the current transaction
+     * @param userId the user id
+     * @return the list of games
+     */
+    fun getGames(transaction: Transaction, userId: Int, limit: Int, skip: Int): DataList<Game>
 
     /**
      * Gets the number of played games so far
