@@ -1,8 +1,8 @@
 package pt.isel.leic.daw.explodingbattleships.data
 
 import pt.isel.leic.daw.explodingbattleships.domain.DataList
-import pt.isel.leic.daw.explodingbattleships.domain.Ranking
 import pt.isel.leic.daw.explodingbattleships.domain.User
+import pt.isel.leic.daw.explodingbattleships.domain.UserInfo
 
 interface UsersData {
 
@@ -39,5 +39,5 @@ interface UsersData {
      * @param skip the first index of the database table to be fetched
      * @return a list of rankings and if there are more ranked users in the database
      */
-    fun getRankings(transaction: Transaction, limit: Int, skip: Int): DataList<Ranking>
+    fun getRankings(transaction: Transaction, limit: Int, skip: Int): DataList<UserInfo>
 }

@@ -4,8 +4,8 @@ import org.jdbi.v3.core.kotlin.mapTo
 import pt.isel.leic.daw.explodingbattleships.data.Transaction
 import pt.isel.leic.daw.explodingbattleships.data.UsersData
 import pt.isel.leic.daw.explodingbattleships.domain.DataList
-import pt.isel.leic.daw.explodingbattleships.domain.Ranking
 import pt.isel.leic.daw.explodingbattleships.domain.User
+import pt.isel.leic.daw.explodingbattleships.domain.UserInfo
 
 class UsersDataDb : UsersData {
 
@@ -37,14 +37,14 @@ class UsersDataDb : UsersData {
                 .first()
         }
 
-    override fun getRankings(transaction: Transaction, limit: Int, skip: Int): DataList<Ranking> =
+    override fun getRankings(transaction: Transaction, limit: Int, skip: Int): DataList<UserInfo> =
         (transaction as TransactionDataDb).withHandle { handle ->
             val foundRankings =
                 handle.createQuery("select id, name, score from users order by score desc offset :skip limit :limit")
                     .bind("skip", skip)
                     .bind("limit", limit + 1)
-                    .mapTo<Ranking>().list()
-            val rankings = mutableListOf<Ranking>()
+                    .mapTo<UserInfo>().list()
+            val rankings = mutableListOf<UserInfo>()
             val hasMore = getHasMoreAndProcessList(foundRankings, rankings, limit)
             DataList(rankings, hasMore)
         }

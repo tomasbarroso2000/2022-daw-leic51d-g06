@@ -3,8 +3,8 @@ package pt.isel.leic.daw.explodingbattleships.data.mem
 import pt.isel.leic.daw.explodingbattleships.data.Transaction
 import pt.isel.leic.daw.explodingbattleships.data.UsersData
 import pt.isel.leic.daw.explodingbattleships.domain.DataList
-import pt.isel.leic.daw.explodingbattleships.domain.Ranking
 import pt.isel.leic.daw.explodingbattleships.domain.User
+import pt.isel.leic.daw.explodingbattleships.domain.UserInfo
 
 class UsersDataMem(private val mockData: MockData) : UsersData {
 
@@ -23,7 +23,7 @@ class UsersDataMem(private val mockData: MockData) : UsersData {
         return id
     }
 
-    override fun getRankings(transaction: Transaction, limit: Int, skip: Int): DataList<Ranking> {
+    override fun getRankings(transaction: Transaction, limit: Int, skip: Int): DataList<UserInfo> {
         val rankings = mockData.users.map { it.toRanking() }.sortedBy { it.score }.reversed()
         return DataList(getSublist(rankings, limit, skip), hasMore(rankings.size, limit, skip))
     }

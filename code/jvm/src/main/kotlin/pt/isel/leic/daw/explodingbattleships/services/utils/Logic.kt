@@ -2,6 +2,7 @@ package pt.isel.leic.daw.explodingbattleships.services.utils
 
 import pt.isel.leic.daw.explodingbattleships.data.Data
 import pt.isel.leic.daw.explodingbattleships.data.Transaction
+import pt.isel.leic.daw.explodingbattleships.domain.FullGameInfo
 import pt.isel.leic.daw.explodingbattleships.domain.Game
 import pt.isel.leic.daw.explodingbattleships.domain.GameType
 import pt.isel.leic.daw.explodingbattleships.domain.HitOutcome
@@ -11,6 +12,8 @@ import pt.isel.leic.daw.explodingbattleships.domain.ShipCreationInfo
 import pt.isel.leic.daw.explodingbattleships.domain.ShipType
 import pt.isel.leic.daw.explodingbattleships.domain.Square
 import pt.isel.leic.daw.explodingbattleships.domain.Token
+import pt.isel.leic.daw.explodingbattleships.domain.UserInfo
+import pt.isel.leic.daw.explodingbattleships.domain.toSquare
 import pt.isel.leic.daw.explodingbattleships.services.UsersServices
 import java.lang.IllegalArgumentException
 import java.time.Instant
@@ -138,4 +141,35 @@ fun computeGame(transaction: Transaction, gameId: Int, data: Data): Game {
             ?: throw IllegalArgumentException("Get game is null")
     }
     return game
+}
+
+/**
+ * Gets a full game information
+ * @param transaction the current transaction
+ * @param game the game
+ */
+fun getFullGameInfo(transaction: Transaction, game: Game, userId: Int, data: Data): FullGameInfo {
+    val gameType = getData { data.gameTypesData.getGameType(transaction, game.type) }
+    val opponent = game.otherPlayer(userId).let { opponentId ->
+        val user = getData { data.usersData.getUserById(transaction, opponentId) }
+        UserInfo(user.id, user.name, user.score)
+    }
+    val playing = game.currPlayer == userId
+    val playerFleet = data.shipsData.getFleet(transaction, game.id, userId)
+    val takenHitsSquares = data.hitsData.getHits(transaction, game.id, userId).map { it.square.toSquare() }
+    val enemyFleet = data.shipsData.getFleet(transaction, game.id, opponent.id).filter { it.destroyed }
+    val sentHits = data.hitsData.getHits(transaction, game.id, opponent.id)
+    val hits = sentHits.filter { it.onShip }.map { it.square.toSquare() }
+    val misses = sentHits.filter { !it.onShip }.map { it.square.toSquare() }
+    return FullGameInfo(
+        game,
+        gameType,
+        opponent,
+        playing,
+        playerFleet,
+        takenHitsSquares,
+        enemyFleet,
+        hits,
+        misses
+    )
 }

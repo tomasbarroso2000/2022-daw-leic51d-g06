@@ -20,13 +20,13 @@ import pt.isel.leic.daw.explodingbattleships.http.doApiTask
 import pt.isel.leic.daw.explodingbattleships.http.models.input.HitsInputModel
 import pt.isel.leic.daw.explodingbattleships.http.models.input.LayoutInputModel
 import pt.isel.leic.daw.explodingbattleships.http.models.output.FleetStateOutputModel
-import pt.isel.leic.daw.explodingbattleships.http.models.output.GameOutputModel
 import pt.isel.leic.daw.explodingbattleships.http.models.output.GameStateOutputModel
 import pt.isel.leic.daw.explodingbattleships.http.models.output.GameTypesOutputModel
 import pt.isel.leic.daw.explodingbattleships.http.models.output.GamesOutputModel
 import pt.isel.leic.daw.explodingbattleships.http.models.output.HitsOutputModel
 import pt.isel.leic.daw.explodingbattleships.http.models.output.LayoutOutputModel
 import pt.isel.leic.daw.explodingbattleships.http.models.output.NumberOfPlayedGamesOutputModel
+import pt.isel.leic.daw.explodingbattleships.http.toGameOutputModel
 import pt.isel.leic.daw.explodingbattleships.infra.siren
 import pt.isel.leic.daw.explodingbattleships.services.GamesServices
 import javax.validation.Valid
@@ -47,45 +47,44 @@ class GamesController(private val services: GamesServices) {
         @RequestParam(required = false, defaultValue = "10") limit: Int,
         @RequestParam(required = false, defaultValue = "0") skip: Int,
         user: User
-    ) =
-        doApiTask {
-            val res = services.getCurrentlyPlayingGames(user.id, limit, skip)
-            ResponseEntity
-                .status(HttpStatus.OK)
-                .contentType(APPLICATION_SIREN)
-                .body(
-                    siren(
-                        GamesOutputModel(res.list, res.hasMore)
-                    ) {
-                        link(Uris.Games.games(), Rels.SELF)
-                        link(Uris.home(), Rels.HOME)
-                        for (game in res.list) {
-                            link(Uris.Games.gameInfo(game.id), Rels.GAME)
-                        }
-                        clazz("GamesOutputModel")
+    ) = doApiTask {
+        val res = services.getCurrentlyPlayingGames(user.id, limit, skip)
+        ResponseEntity
+            .status(HttpStatus.OK)
+            .contentType(APPLICATION_SIREN)
+            .body(
+                siren(
+                    GamesOutputModel(res.list.map { it.toGameOutputModel() }, res.hasMore)
+                ) {
+                    link(Uris.Games.games(), Rels.SELF)
+                    link(Uris.home(), Rels.HOME)
+                    for (game in res.list) {
+                        link(Uris.Games.gameInfo(game.game.id), Rels.GAME)
                     }
-                )
-        }
+                    link(Uris.Games.gameTypes(), Rels.GAME_TYPES)
+                    clazz("GamesOutputModel")
+                }
+            )
+    }
 
     /**
      * Handles a get request for the available game types
      */
     @GetMapping(Uris.Games.GAME_TYPES)
-    fun getGameTypes() =
-        doApiTask {
-            val res = services.getGameTypesAndShips()
-            ResponseEntity
-                .status(HttpStatus.OK)
-                .contentType(APPLICATION_SIREN)
-                .body(
-                    siren(
-                        GameTypesOutputModel(res)
-                    ) {
-                        link(Uris.Games.gameTypes(), Rels.SELF)
-                        link(Uris.home(), Rels.HOME)
-                    }
-                )
-        }
+    fun getGameTypes() = doApiTask {
+        val res = services.getGameTypesAndShips()
+        ResponseEntity
+            .status(HttpStatus.OK)
+            .contentType(APPLICATION_SIREN)
+            .body(
+                siren(
+                    GameTypesOutputModel(res)
+                ) {
+                    link(Uris.Games.gameTypes(), Rels.SELF)
+                    link(Uris.home(), Rels.HOME)
+                }
+            )
+    }
 
     /**
      * Handles a get request for the game info
@@ -102,21 +101,7 @@ class GamesController(private val services: GamesServices) {
             .status(HttpStatus.OK)
             .contentType(APPLICATION_SIREN)
             .body(
-                siren(
-                    GameOutputModel(
-                        res.game.id,
-                        res.game.type,
-                        res.game.state,
-                        res.opponent,
-                        res.playing,
-                        res.game.startedAt,
-                        res.playerFleet,
-                        res.takenHits,
-                        res.enemySunkFleet,
-                        res.hits,
-                        res.misses
-                    )
-                ) {
+                siren(res.toGameOutputModel()) {
                     link(Uris.Games.gameInfo(gameId), Rels.SELF)
                     if (res.game.state == "shooting") {
                         action(

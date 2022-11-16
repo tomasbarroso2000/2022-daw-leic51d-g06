@@ -23,7 +23,7 @@ class GamesServicesTests {
         val outcome = services.getGame(1, 1)
         assertEquals(1, outcome.game.id)
         assertTrue(outcome.playing)
-        assertEquals(2, outcome.opponent)
+        assertEquals(2, outcome.opponent.id)
     }
 
     @Test

@@ -5,11 +5,11 @@ import pt.isel.leic.daw.explodingbattleships.domain.Game
 import pt.isel.leic.daw.explodingbattleships.domain.GameType
 import pt.isel.leic.daw.explodingbattleships.domain.Hit
 import pt.isel.leic.daw.explodingbattleships.domain.Lobby
-import pt.isel.leic.daw.explodingbattleships.domain.Ranking
 import pt.isel.leic.daw.explodingbattleships.domain.Ship
 import pt.isel.leic.daw.explodingbattleships.domain.ShipType
 import pt.isel.leic.daw.explodingbattleships.domain.Token
 import pt.isel.leic.daw.explodingbattleships.domain.User
+import pt.isel.leic.daw.explodingbattleships.domain.UserInfo
 import pt.isel.leic.daw.explodingbattleships.utils.Sha256TokenEncoder
 import java.time.Instant
 
@@ -52,9 +52,9 @@ fun <T> getSublist(list: List<T>, limit: Int, skip: Int): List<T> {
 fun hasMore(count: Int, limit: Int, skip: Int) = count > skip + limit
 
 /**
- * Transforms a [User] into a [Ranking]
+ * Transforms a [User] into a [UserInfo]
  */
-fun User.toRanking() = Ranking(id, name, score)
+fun User.toRanking() = UserInfo(id, name, score)
 
 val passwordEncoder = BCryptPasswordEncoder()
 val tokenEncoder = Sha256TokenEncoder()

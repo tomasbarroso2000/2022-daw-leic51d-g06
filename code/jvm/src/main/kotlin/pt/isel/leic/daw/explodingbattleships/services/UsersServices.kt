@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component
 import pt.isel.leic.daw.explodingbattleships.data.Data
 import pt.isel.leic.daw.explodingbattleships.domain.DataList
 import pt.isel.leic.daw.explodingbattleships.domain.EnterLobbyOutcome
-import pt.isel.leic.daw.explodingbattleships.domain.Ranking
+import pt.isel.leic.daw.explodingbattleships.domain.UserInfo
 import pt.isel.leic.daw.explodingbattleships.services.utils.AppException
 import pt.isel.leic.daw.explodingbattleships.services.utils.AppExceptionStatus
 import pt.isel.leic.daw.explodingbattleships.services.utils.checkEmailValid
@@ -13,6 +13,7 @@ import pt.isel.leic.daw.explodingbattleships.services.utils.checkLimitAndSkip
 import pt.isel.leic.daw.explodingbattleships.services.utils.checkOrThrowBadRequest
 import pt.isel.leic.daw.explodingbattleships.services.utils.checkPasswordValid
 import pt.isel.leic.daw.explodingbattleships.services.utils.doService
+import pt.isel.leic.daw.explodingbattleships.services.utils.getData
 import pt.isel.leic.daw.explodingbattleships.services.utils.getGameType
 import pt.isel.leic.daw.explodingbattleships.services.utils.isTokenStillValid
 import pt.isel.leic.daw.explodingbattleships.utils.TokenEncoder
@@ -98,8 +99,7 @@ class UsersServices(
             throw AppException("Invalid token", "Token cannot be used", AppExceptionStatus.UNAUTHORIZED)
         }
         data.tokensData.updateTokenLastUsed(transaction, actualToken.tokenVer)
-        data.usersData.getUserById(transaction, actualToken.userId)
-            ?: throw IllegalArgumentException("User not found")
+        getData { data.usersData.getUserById(transaction, actualToken.userId) }
     }
 
     /**
@@ -108,7 +108,7 @@ class UsersServices(
      * @param skip the skip value of the list
      * @return a list with the players sorted by score
      */
-    fun getRankings(limit: Int, skip: Int): DataList<Ranking> = doService(data) { transaction ->
+    fun getRankings(limit: Int, skip: Int): DataList<UserInfo> = doService(data) { transaction ->
         checkLimitAndSkip(limit, skip)
         data.usersData.getRankings(transaction, limit, skip)
     }

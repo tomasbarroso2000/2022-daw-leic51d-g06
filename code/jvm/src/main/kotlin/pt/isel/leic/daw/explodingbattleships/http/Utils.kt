@@ -2,7 +2,9 @@ package pt.isel.leic.daw.explodingbattleships.http
 
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import pt.isel.leic.daw.explodingbattleships.domain.FullGameInfo
 import pt.isel.leic.daw.explodingbattleships.http.models.input.UserTokenInputModel
+import pt.isel.leic.daw.explodingbattleships.http.models.output.GameOutputModel
 import pt.isel.leic.daw.explodingbattleships.services.utils.AppException
 import pt.isel.leic.daw.explodingbattleships.services.utils.AppExceptionStatus
 import pt.isel.leic.daw.explodingbattleships.services.utils.logger
@@ -122,3 +124,21 @@ fun getCredentialsFromAuthorization(authorization: String?): UserTokenInputModel
     }
     return null
 } // use when implementing basic authentication for creating a token
+
+/**
+ * Converts a [FullGameInfo] to a [GameOutputModel]
+ */
+fun FullGameInfo.toGameOutputModel() =
+    GameOutputModel(
+        game.id,
+        gameType,
+        game.state,
+        opponent,
+        playing,
+        game.startedAt,
+        playerFleet,
+        takenHits,
+        enemySunkFleet,
+        hits,
+        misses
+    )

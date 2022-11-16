@@ -2,7 +2,6 @@ package pt.isel.leic.daw.explodingbattleships.services
 
 import org.springframework.stereotype.Component
 import pt.isel.leic.daw.explodingbattleships.data.Data
-import pt.isel.leic.daw.explodingbattleships.domain.AvailableGame
 import pt.isel.leic.daw.explodingbattleships.domain.DataList
 import pt.isel.leic.daw.explodingbattleships.domain.FullGameInfo
 import pt.isel.leic.daw.explodingbattleships.domain.GameTypeOutcome
@@ -22,6 +21,7 @@ import pt.isel.leic.daw.explodingbattleships.services.utils.checkShipLayout
 import pt.isel.leic.daw.explodingbattleships.services.utils.computeGame
 import pt.isel.leic.daw.explodingbattleships.services.utils.doService
 import pt.isel.leic.daw.explodingbattleships.services.utils.executeHit
+import pt.isel.leic.daw.explodingbattleships.services.utils.getFullGameInfo
 import pt.isel.leic.daw.explodingbattleships.services.utils.getGameOrThrow
 import pt.isel.leic.daw.explodingbattleships.services.utils.getGameType
 import pt.isel.leic.daw.explodingbattleships.services.utils.squareInBoard
@@ -32,23 +32,22 @@ class GamesServices(private val data: Data) {
     /**
      * Gets all the games the user is currently playing
      * @param userId the user id
+     * @param limit the limit value of the list
+     * @param skip the skip value of the list
+     * @return the list of game information
      */
     fun getCurrentlyPlayingGames(userId: Int, limit: Int, skip: Int) = doService(data) { transaction ->
         checkLimitAndSkip(limit, skip)
-        val userPlayingGames = mutableListOf<AvailableGame>()
+        val userPlayingGames = mutableListOf<FullGameInfo>()
         val userGames = data.gamesData.getGames(transaction, userId, limit, skip)
         for (game in userGames.list) {
             if (game.state != "completed") {
                 userPlayingGames.add(
-                    AvailableGame(
-                        game.id,
-                        game.type,
-                        game.state,
-                        if (game.player1 == userId) {
-                            game.player2
-                        } else {
-                            game.player1
-                        }
+                    getFullGameInfo(
+                        transaction,
+                        game,
+                        userId,
+                        data
                     )
                 )
             }
@@ -64,24 +63,7 @@ class GamesServices(private val data: Data) {
      */
     fun getGame(userId: Int, gameId: Int) = doService(data) { transaction ->
         val game = computeGame(transaction, gameId, data)
-        val opponentId = game.otherPlayer(userId)
-        val playing = game.currPlayer == userId
-        val playerFleet = data.shipsData.getFleet(transaction, game.id, userId)
-        val takenHitsSquares = data.hitsData.getHits(transaction, game.id, userId).map { it.square.toSquare() }
-        val enemyFleet = data.shipsData.getFleet(transaction, game.id, opponentId).filter { it.destroyed }
-        val sentHits = data.hitsData.getHits(transaction, game.id, opponentId)
-        val hits = sentHits.filter { it.onShip }.map { it.square.toSquare() }
-        val misses = sentHits.filter { !it.onShip }.map { it.square.toSquare() }
-        FullGameInfo(
-            game,
-            opponentId,
-            playing,
-            playerFleet,
-            takenHitsSquares,
-            enemyFleet,
-            hits,
-            misses
-        )
+        getFullGameInfo(transaction, game, userId, data)
     }
 
     /**
