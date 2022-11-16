@@ -14,7 +14,7 @@ package pt.isel.leic.daw.explodingbattleships.domain
  */
 data class FullGameInfo(
     val game: Game,
-    val gameType: GameType,
+    val gameType: GameTypeWithFleet,
     val opponent: UserInfo,
     val playing: Boolean,
     val playerFleet: List<Ship>,

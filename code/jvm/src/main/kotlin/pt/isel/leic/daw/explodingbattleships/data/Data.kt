@@ -8,7 +8,6 @@ interface Data {
     val shipsData: ShipsData
     val hitsData: HitsData
     val gameTypesData: GameTypesData
-    val shipTypesData: ShipTypesData
 
     /**
      * Gets a transaction

@@ -5,6 +5,7 @@ import pt.isel.leic.daw.explodingbattleships.data.Transaction
 import pt.isel.leic.daw.explodingbattleships.domain.FullGameInfo
 import pt.isel.leic.daw.explodingbattleships.domain.Game
 import pt.isel.leic.daw.explodingbattleships.domain.GameType
+import pt.isel.leic.daw.explodingbattleships.domain.GameTypeWithFleet
 import pt.isel.leic.daw.explodingbattleships.domain.HitOutcome
 import pt.isel.leic.daw.explodingbattleships.domain.HitsOutcome
 import pt.isel.leic.daw.explodingbattleships.domain.Ship
@@ -111,7 +112,7 @@ fun winConditionDetection(transaction: Transaction, gameId: Int, playerId: Int, 
  * @param game the game
  * @return true if the time is over
  */
-fun GameType.isTimeOver(game: Game) =
+fun GameTypeWithFleet.isTimeOver(game: Game) =
     game.startedAt.plusSeconds(shootingTimeInSecs.toLong()) <= Instant.now()
 
 /**

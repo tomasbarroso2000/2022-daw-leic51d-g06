@@ -13,5 +13,6 @@ object Rels {
     val GAME = LinkRelation("game")
     val USER = LinkRelation("user")
     val ENTERED_GAME = LinkRelation("entered_game")
+    val GAMES = LinkRelation("games")
     val GAME_TYPES = LinkRelation("game_types")
 }

@@ -1,6 +1,6 @@
 package pt.isel.leic.daw.explodingbattleships.http.models.output
 
-import pt.isel.leic.daw.explodingbattleships.domain.GameType
+import pt.isel.leic.daw.explodingbattleships.domain.GameTypeWithFleet
 import pt.isel.leic.daw.explodingbattleships.domain.Ship
 import pt.isel.leic.daw.explodingbattleships.domain.Square
 import pt.isel.leic.daw.explodingbattleships.domain.UserInfo
@@ -22,7 +22,7 @@ import java.time.Instant
  */
 data class GameOutputModel(
     val id: Int,
-    val type: GameType,
+    val type: GameTypeWithFleet,
     val state: String,
     val opponent: UserInfo,
     val playing: Boolean,

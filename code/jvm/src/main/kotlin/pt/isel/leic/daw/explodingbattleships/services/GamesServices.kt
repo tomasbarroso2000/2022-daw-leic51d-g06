@@ -4,8 +4,6 @@ import org.springframework.stereotype.Component
 import pt.isel.leic.daw.explodingbattleships.data.Data
 import pt.isel.leic.daw.explodingbattleships.domain.DataList
 import pt.isel.leic.daw.explodingbattleships.domain.FullGameInfo
-import pt.isel.leic.daw.explodingbattleships.domain.GameTypeOutcome
-import pt.isel.leic.daw.explodingbattleships.domain.GameTypesOutcome
 import pt.isel.leic.daw.explodingbattleships.domain.LayoutOutcomeStatus
 import pt.isel.leic.daw.explodingbattleships.domain.ShipCreationInfo
 import pt.isel.leic.daw.explodingbattleships.domain.Square
@@ -178,21 +176,6 @@ class GamesServices(private val data: Data) {
     }
 
     fun getGameTypesAndShips() = doService(data) { transaction ->
-        val gameTypesAndFleets = mutableListOf<GameTypeOutcome>()
-        val gameTypes = data.gameTypesData.getGameTypes(transaction)
-        for (gameType in gameTypes) {
-            val fleetComposition = data.shipTypesData.getGameTypeShips(transaction, gameType)
-            gameTypesAndFleets.add(
-                GameTypeOutcome(
-                    gameType.name,
-                    gameType.boardSize,
-                    gameType.shotsPerRound,
-                    gameType.layoutDefTimeInSecs,
-                    gameType.shootingTimeInSecs,
-                    fleetComposition
-                )
-            )
-        }
-        GameTypesOutcome(gameTypesAndFleets)
+        data.gameTypesData.getGameTypes(transaction)
     }
 }

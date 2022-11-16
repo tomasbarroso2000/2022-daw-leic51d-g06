@@ -32,7 +32,6 @@ class DataDb : Data {
     override val shipsData = ShipsDataDb()
     override val hitsData = HitsDataDb()
     override val gameTypesData = GameTypesDataDb()
-    override val shipTypesData = ShipTypesDataDb()
 
     override fun getTransaction() = TransactionDataDb(jdbi.open())
 }

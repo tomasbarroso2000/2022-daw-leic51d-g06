@@ -55,6 +55,7 @@ class HomeController {
                     link(Uris.home(), Rels.HOME)
                     link(Uris.Users.rankings(), Rels.RANKINGS)
                     link(Uris.Games.nrOfGames(), Rels.NR_OF_TOTAL_GAMES)
+                    link(Uris.Games.games(), Rels.GAMES)
                     clazz("HomeOutputModel")
                 }
             )

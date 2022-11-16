@@ -83,7 +83,7 @@ data class MockData(
         GameType("experienced", 12, 5, 60, 30),
         GameType("expert", 15, 6, 30, 30)
     ),
-    val ship_types: MutableList<ShipType> = mutableListOf(
+    val shipTypes: MutableList<ShipType> = mutableListOf(
         ShipType("carrier", 6, "beginner"),
         ShipType("battleship", 5, "beginner"),
         ShipType("cruiser", 4, "beginner"),
