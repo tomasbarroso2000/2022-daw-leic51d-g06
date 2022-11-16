@@ -2,8 +2,6 @@ package pt.isel.leic.daw.explodingbattleships.data
 
 import pt.isel.leic.daw.explodingbattleships.domain.DataList
 import pt.isel.leic.daw.explodingbattleships.domain.Game
-import pt.isel.leic.daw.explodingbattleships.domain.GameType
-
 interface GamesData {
     /**
      * Creates a game
@@ -29,11 +27,6 @@ interface GamesData {
      * @return the number of played games
      */
     fun getNumberOfPlayedGames(transaction: Transaction): Int
-
-    /**
-     * Gets all the game types available
-     */
-    fun getGameTypes(transaction: Transaction): List<GameType>
 
     /**
      * Gets the game with corresponding game id

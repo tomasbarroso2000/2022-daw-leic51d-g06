@@ -73,7 +73,7 @@ class GamesController(private val services: GamesServices) {
     @GetMapping(Uris.Games.GAME_TYPES)
     fun getGameTypes() =
         doApiTask {
-            val res = services.getGameTypes()
+            val res = services.getGameTypesAndShips()
             ResponseEntity
                 .status(HttpStatus.OK)
                 .contentType(APPLICATION_SIREN)

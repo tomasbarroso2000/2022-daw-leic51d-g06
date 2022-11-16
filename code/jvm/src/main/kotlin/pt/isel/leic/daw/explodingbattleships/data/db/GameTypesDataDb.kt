@@ -13,6 +13,12 @@ class GameTypesDataDb : GameTypesData {
                 .mapTo<GameType>().firstOrNull()
         }
 
+    override fun getGameTypes(transaction: Transaction): List<GameType> =
+        (transaction as TransactionDataDb).withHandle { handle ->
+            handle.createQuery("select * from game_types")
+                .mapTo<GameType>().list()
+        }
+
     override fun createGameType(
         transaction: Transaction,
         gameType: String,

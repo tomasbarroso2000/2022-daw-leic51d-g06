@@ -8,6 +8,9 @@ class GameTypesDataMem(private val mockData: MockData) : GameTypesData {
     override fun getGameType(transaction: Transaction, gameType: String): GameType? =
         mockData.gameTypes.find { it.name == gameType }
 
+    override fun getGameTypes(transaction: Transaction): List<GameType> =
+        mockData.gameTypes
+
     override fun createGameType(
         transaction: Transaction,
         gameType: String,

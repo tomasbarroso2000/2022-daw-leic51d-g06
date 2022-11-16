@@ -12,6 +12,11 @@ interface GameTypesData {
     fun getGameType(transaction: Transaction, gameType: String): GameType?
 
     /**
+     * Gets all the game types available
+     */
+    fun getGameTypes(transaction: Transaction): List<GameType>
+
+    /**
      * Creates a game type
      * @param transaction the current transaction
      * @param gameType the type of game being created
