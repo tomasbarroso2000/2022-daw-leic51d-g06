@@ -38,4 +38,12 @@ data class Game(
         } else {
             throw IllegalArgumentException("Player not in game")
         }
+
+    /**
+     * Checks if a player is in this game
+     * @param playerId the player id to look for
+     * @return true if the player is in this game
+     */
+    fun playerInGame(playerId: Int): Boolean =
+        player1 == playerId || player2 == playerId
 }

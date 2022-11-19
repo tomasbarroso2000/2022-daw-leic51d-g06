@@ -61,6 +61,9 @@ class GamesServices(private val data: Data) {
      */
     fun getGame(userId: Int, gameId: Int) = doService(data) { transaction ->
         val game = computeGame(transaction, gameId, data)
+        if (!game.playerInGame(userId)) {
+            throw AppException("Can't access game", "You are not in this game", AppExceptionStatus.UNAUTHORIZED)
+        }
         getFullGameInfo(transaction, game, userId, data)
     }
 
