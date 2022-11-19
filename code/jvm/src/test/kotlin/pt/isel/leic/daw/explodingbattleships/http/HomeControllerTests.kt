@@ -1,3 +1,21 @@
 package pt.isel.leic.daw.explodingbattleships.http
 
-class HomeControllerTests
+import org.junit.jupiter.api.Test
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.test.web.reactive.server.WebTestClient
+
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+class HomeControllerTests {
+    @LocalServerPort
+    var port: Int = 0
+
+    @Test
+    fun get_home() {
+        val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port/api/").build()
+        client.get().uri("games/info/1")
+            .header("Authorization", "Bearer 123")
+            .exchange()
+            .expectStatus().isOk
+    }
+}

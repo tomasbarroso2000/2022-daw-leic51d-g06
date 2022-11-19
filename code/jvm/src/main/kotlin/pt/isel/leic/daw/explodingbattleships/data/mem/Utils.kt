@@ -86,17 +86,9 @@ data class MockData(
     val shipTypes: MutableList<ShipType> = mutableListOf(
         ShipType("carrier", 6, "beginner"),
         ShipType("battleship", 5, "beginner"),
-        ShipType("cruiser", 4, "beginner"),
-        ShipType("submarine", 4, "beginner"),
-        ShipType("destroyer", 3, "beginner"),
         ShipType("carrier", 5, "experienced"),
         ShipType("battleship", 4, "experienced"),
-        ShipType("cruiser", 3, "experienced"),
-        ShipType("submarine", 3, "experienced"),
-        ShipType("destroyer", 2, "experienced"),
-        ShipType("carrier", 5, "expert"),
-        ShipType("battleship", 4, "expert"),
-        ShipType("destroyer", 3, "expert")
+        ShipType("carrier", 5, "expert")
     ),
     val games: MutableSet<Game> = mutableSetOf(
         Game(1, "beginner", "layout_definition", 1, 2, 1, Instant.now()),

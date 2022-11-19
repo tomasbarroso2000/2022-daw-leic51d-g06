@@ -5,11 +5,14 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import pt.isel.leic.daw.explodingbattleships.data.mem.DataMem
+import pt.isel.leic.daw.explodingbattleships.domain.DataList
+import pt.isel.leic.daw.explodingbattleships.domain.GameTypeWithFleet
 import pt.isel.leic.daw.explodingbattleships.domain.HitOutcome
 import pt.isel.leic.daw.explodingbattleships.domain.HitsOutcome
 import pt.isel.leic.daw.explodingbattleships.domain.LayoutOutcomeStatus
 import pt.isel.leic.daw.explodingbattleships.domain.ShipCreationInfo
 import pt.isel.leic.daw.explodingbattleships.domain.ShipState
+import pt.isel.leic.daw.explodingbattleships.domain.ShipType
 import pt.isel.leic.daw.explodingbattleships.domain.Square
 import pt.isel.leic.daw.explodingbattleships.services.utils.AppException
 import pt.isel.leic.daw.explodingbattleships.services.utils.AppExceptionStatus
@@ -17,6 +20,15 @@ import pt.isel.leic.daw.explodingbattleships.services.utils.AppExceptionStatus
 class GamesServicesTests {
     private val data = DataMem()
     private val services = GamesServices(data)
+
+    @Test
+    fun get_currently_playing_games() {
+        val userId = 4
+        val games = listOf(services.getGame(4, 4))
+        val expected = DataList(games, false)
+        val actual = services.getCurrentlyPlayingGames(userId, 1000, 0)
+        assertEquals(expected, actual)
+    }
 
     @Test
     fun get_game() {
@@ -33,6 +45,28 @@ class GamesServicesTests {
         }
         assertEquals("Invalid game id", exception.title)
         assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
+    }
+
+    @Test
+    fun get_game_types_and_ships() {
+        val outcome = services.getGameTypesAndShips()
+        val beginnerShips = listOf(
+            ShipType("carrier", 6, "beginner"),
+            ShipType("battleship", 5, "beginner"),
+        )
+        val experiencedShips = listOf(
+            ShipType("carrier", 5, "experienced"),
+            ShipType("battleship", 4, "experienced"),
+        )
+        val expertShips = listOf(
+            ShipType("carrier", 5, "expert")
+        )
+        val expected = listOf(
+            GameTypeWithFleet("beginner", 10, 1, 60, 60, beginnerShips),
+            GameTypeWithFleet("experienced", 12, 5, 30, 60, experiencedShips),
+            GameTypeWithFleet("expert", 15, 6, 30, 30, expertShips)
+        )
+        assertEquals(expected, outcome)
     }
 
     @Test
@@ -72,15 +106,12 @@ class GamesServicesTests {
         val gameId = 3
         val ships = listOf(
             ShipCreationInfo("carrier", Square('a', 1), "horizontal"),
-            ShipCreationInfo("battleship", Square('c', 1), "vertical"),
-            ShipCreationInfo("submarine", Square('d', 3), "horizontal"),
-            ShipCreationInfo("cruiser", Square('f', 4), "horizontal"),
-            ShipCreationInfo("destroyer", Square('b', 9), "vertical")
+            ShipCreationInfo("battleship", Square('c', 1), "vertical")
         )
         val expectedLayoutOutcome = LayoutOutcomeStatus.WAITING
         val actualLayoutOutcome = services.sendLayout(userId, gameId, ships)
         assertEquals(expectedLayoutOutcome, actualLayoutOutcome)
-        assertEquals(5, data.mockData.ships.filter { it.gameId == gameId && it.userId == userId }.size)
+        assertEquals(2, data.mockData.ships.filter { it.gameId == gameId && it.userId == userId }.size)
     }
 
     @Test
@@ -89,15 +120,12 @@ class GamesServicesTests {
         val gameId = 5
         val ships = listOf(
             ShipCreationInfo("carrier", Square('a', 1), "horizontal"),
-            ShipCreationInfo("battleship", Square('c', 1), "vertical"),
-            ShipCreationInfo("submarine", Square('d', 3), "horizontal"),
-            ShipCreationInfo("cruiser", Square('f', 4), "horizontal"),
-            ShipCreationInfo("destroyer", Square('b', 9), "vertical")
+            ShipCreationInfo("battleship", Square('c', 1), "vertical")
         )
         val expectedLayoutOutcome = LayoutOutcomeStatus.STARTED
         val actualLayoutOutcome = services.sendLayout(userId, gameId, ships)
         assertEquals(expectedLayoutOutcome, actualLayoutOutcome)
-        assertEquals(5, data.mockData.ships.filter { it.gameId == gameId && it.userId == userId }.size)
+        assertEquals(2, data.mockData.ships.filter { it.gameId == gameId && it.userId == userId }.size)
     }
 
     @Test
@@ -124,10 +152,7 @@ class GamesServicesTests {
         val gameId = 3
         val ships = listOf(
             ShipCreationInfo("carrier", Square('a', 1), "horizontal"),
-            ShipCreationInfo("battleship", Square('c', 1), "vertical"),
-            ShipCreationInfo("submarine", Square('d', 3), "up"),
-            ShipCreationInfo("cruiser", Square('f', 4), "horizontal"),
-            ShipCreationInfo("destroyer", Square('b', 9), "vertical")
+            ShipCreationInfo("battleship", Square('c', 1), "error")
         )
         val exception = assertThrows<AppException> {
             services.sendLayout(userId, gameId, ships)
@@ -142,11 +167,8 @@ class GamesServicesTests {
         val userId = 1
         val gameId = 3
         val ships = listOf(
-            ShipCreationInfo("carrier", Square('a', 1), "horizontal"),
-            ShipCreationInfo("battleship", Square('b', 1), "vertical"),
-            ShipCreationInfo("submarine", Square('b', 2), "horizontal"),
-            ShipCreationInfo("smoothie", Square('c', 2), "horizontal"),
-            ShipCreationInfo("destroyer", Square('d', 2), "vertical")
+            ShipCreationInfo("carrier", Square('a', 1), "vertical"),
+            ShipCreationInfo("smoothie", Square('c', 2), "horizontal")
         )
         val exception = assertThrows<AppException> {
             services.sendLayout(userId, gameId, ships)
