@@ -39,11 +39,12 @@ class GamesServices(private val data: Data) {
         val userPlayingGames = mutableListOf<FullGameInfo>()
         val userGames = data.gamesData.getGames(transaction, userId, limit, skip)
         for (game in userGames.list) {
-            if (game.state != "completed") {
+            val updatedGame = computeGame(transaction, game.id, data)
+            if (updatedGame.state != "completed") {
                 userPlayingGames.add(
                     getFullGameInfo(
                         transaction,
-                        game,
+                        updatedGame,
                         userId,
                         data
                     )
