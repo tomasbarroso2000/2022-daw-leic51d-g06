@@ -1,7 +1,10 @@
 module.exports = {
-    mode: 'development',
+    mode: "development",
     resolve: {
         extensions: [".js", ".ts", ".tsx"]
+    },
+    devServer: {
+        historyApiFallback: true,
     },
     module: {
         rules: [
