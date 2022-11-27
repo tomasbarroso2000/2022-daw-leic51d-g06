@@ -53,20 +53,36 @@ function Home() {
     const contentJson = JSON.parse(content)
 
     return (
-        <div>
-            <h1>{contentJson.properties.name}</h1>
-            <p>Authors:</p>
-            <ul>
-                {contentJson.properties.authors.map((author: string) => <li key={author}>{author}</li>)}
-            </ul>
-            <p>Version: {contentJson.properties.version}</p>
-            <ol>
-                {contentJson.links.map((link: {rel: Array<string>, href: string}) => 
-                    <li key={link.rel[0]}> 
-                        <Link to={link.href}>{link.rel[0]}</Link>
-                    </li>
-                )}
-            </ol> 
+        <div id="content">
+            <div id="right-side-content">
+                <h1 id="title">{contentJson.properties.name}</h1>
+                <img src="images/battleship.png" alt="battleship" id="battleship" />
+                <div id="footer">
+                    <div id="authors">
+                        <h3>Authors:</h3>
+                        <ul>
+                            {contentJson.properties.authors.map((author: string) => <li key={author}>{author}</li>)}
+                        </ul>
+                    </div>
+                    <div id="version">
+                        <h4>Version: {contentJson.properties.version}</h4>
+                    </div>
+                </div>
+                
+            </div>
+            <div id="left-side-content">
+                <div id="menu">
+                    <h2 id="menu-title">Menu</h2>
+                    <ol>
+                        {contentJson.links.map((link: {rel: Array<string>, href: string}) => 
+                            <li key={link.rel[0]}> 
+                                <Link to={link.href}>{link.rel[0]}</Link>
+                            </li>
+                        )}
+                    </ol> 
+                </div>
+            </div>
+            
         </div>
     )
 }

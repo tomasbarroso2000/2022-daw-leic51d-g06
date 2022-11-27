@@ -1,0 +1,175 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300&display=swap');
+
+html {
+    -webkit-animation: fadein 2s; /* Safari, Chrome and Opera > 12.1 */
+    -moz-animation: fadein 2s; /* Firefox < 16 */
+    -ms-animation: fadein 2s; /* Internet Explorer */
+    -o-animation: fadein 2s; /* Opera < 12.1 */
+    animation: fadein 2s;
+}
+
+@keyframes fadein {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Firefox < 16 */
+@-moz-keyframes fadein {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Safari, Chrome and Opera > 12.1 */
+@-webkit-keyframes fadein {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Internet Explorer */
+@-ms-keyframes fadein {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Opera < 12.1 */
+@-o-keyframes fadein {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+
+*{
+    margin: 0;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+}
+
+div#content {
+    width: 100%;
+    height: 100vh;
+}
+
+div#right-side-content {
+    width: 70%;
+    height: 100vh;
+    background-color: #3a9efd;
+    right: 0;
+    top: 0;
+    float: right;
+}
+
+div#left-side-content {
+    width: 30%;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    float: left;
+    -webkit-box-shadow: 8px 0px 5px 0px rgba(0,0,0,0.14);
+    -moz-box-shadow: 8px 0px 5px 0px rgba(0,0,0,0.14);
+    box-shadow: 8px 0px 5px 0px rgba(0,0,0,0.14);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+div#right-side-content h1#title {
+    display: block;
+    margin: 15vh auto;
+    font-family: 'Open Sans', sans-serif;
+    color: white;
+    width: fit-content;
+    font-size: 42pt;
+    border: 4px solid white;
+    padding: 15px 10px;
+    margin-bottom: 25px;
+    border-radius: 4px;
+}
+
+div#right-side-content img#battleship {
+    display: block;
+    margin: 0 auto;
+    width: 25%;
+    height: auto;
+}
+
+div#right-side-content div#footer {
+    width: 70%;
+    position: fixed;
+    float: right;
+    height: fit-content;
+    bottom: 25px;
+}
+
+div#right-side-content div#footer div#authors {
+    font-family: 'Quicksand', sans-serif;
+    bottom: 0;
+    float: left;
+    background-color: white;
+    width: fit-content;
+    margin-left: 25px;
+    padding: 20px;
+    border-radius: 2px;
+}
+
+div#right-side-content div#footer div#version {
+    font-family: 'Quicksand', sans-serif;
+    margin-bottom: 0;
+    float: right;
+    background-color: white;
+    width: fit-content;
+    margin-right: 25px;
+    padding: 20px;
+    border-radius: 2px;
+    bottom: 0;
+    position: absolute;
+    right: 0;
+}
+
+div#left-side-content div#menu {
+    width: 80%;
+    height: fit-content;
+    margin: 0 auto;
+    font-family: 'Quicksand', sans-serif;
+}
+
+div#left-side-content div#menu h2#menu-title {
+    font-size: 32px;
+    text-align: center;
+    margin-bottom: 25px;
+    color: #f7a400;
+}
+
+div#left-side-content div#menu ol {
+    font-size: 20px;
+    transition: .4s;
+}
+
+div#left-side-content div#menu ol li:hover {
+    color: #f7a400;
+    font-size: 24px;
+    transition: .4s;
+}
