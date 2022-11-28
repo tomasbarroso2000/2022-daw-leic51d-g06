@@ -173,3 +173,64 @@ div#left-side-content div#menu ol li:hover {
     font-size: 24px;
     transition: .4s;
 }
+
+div#content-rankings {
+    width: 30%;
+    height: 70vh;
+    display: block;
+    margin: 0 auto;
+    position: absolute;
+    margin: 0 auto;
+    right: 0;
+    left: 0;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+    padding: 0;
+    text-align: center;
+}   
+
+div#content-rankings h1#rankings-title {
+    text-align: center;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 42pt;
+}
+
+div#content-rankings ul {
+    margin-top: 15px;
+    text-align: center;
+    padding: 0;
+    width: 100%;
+}
+
+div#content-rankings li {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    display: block;
+    background-color: #008DD5;
+    color: white;
+    border-radius: 4px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+    font-family: 'Quicksand', sans-serif;
+    text-align: center;
+}
+
+div#content-rankings li dl {
+    padding: 5px 5px;
+}
+
+div#content-rankings li dt {
+    
+}
+
+div#content-rankings li dt#rankings-player {
+    
+}
+
+div#content-rankings li dd {
+    
+}
+
+div#content-rankings li hr {
+    border-top: 1px dotted white;
+}

@@ -89,6 +89,7 @@ function Home() {
 
 function Rankings() {
     const content = JSON.stringify(useFetch(baseURL + "users/rankings/"))
+    let rank = 0
 
     if (!content) {
         return (
@@ -102,14 +103,18 @@ function Rankings() {
     console.log(contentJson)
 
     return (
-        <div>
-            <h1>Rankings</h1>
+        <div id="content-rankings">
+            <h1 id="rankings-title">Rankings</h1>
             <ul>
+                <li>
+                    <dl>
+                        <dt>Rank - Name: </dt><dd>Score: </dd>
+                    </dl>
+                </li>
             {contentJson.properties.rankings.map((user: UserInfo) => 
                 <li key={user.id}>
                     <dl>
-                        <dt>Name: </dt><dd>{user.name}</dd>
-                        <dt>Score: </dt><dd>{user.score}</dd>
+                        <dt id="rankings-player">{++rank} - {user.name}</dt><span></span><dd>{user.score}</dd>
                     </dl>
                 </li>
             )}
