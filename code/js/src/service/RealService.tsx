@@ -4,28 +4,28 @@ import { useFetch } from "../fetch/useFetch"
 import { paths } from "../router/App"
 import { Service } from "./Service"
 import { EmbeddedLink } from "siren-types"
+import { doFetch } from "../fetch/doFetch"
+import SirenClient from '@siren-js/client'
 
 const baseURL = "http://localhost:8080"
 const homeURL = baseURL + "/api/"
 
 export class RealService implements Service {
+    client = new SirenClient()
+
     homeNavigation = []
     rankingsNavigation = []
     rankingsLink: EmbeddedLink | undefined = undefined
 
     home = function (): Home | undefined {
         this.homeNavigation = []
+        const [content, loading] = useFetch(homeURL)
 
-        const content = useFetch(homeURL)
-        console.log(content)
-
-        if (!content) {
+        if (!content || loading) {
             return undefined
         }
 
         const jsonObj = JSON.parse(content)
-
-        console.log(jsonObj)
 
         jsonObj.links.forEach((link: EmbeddedLink) => {
             const path = paths[link.rel[0]]
@@ -35,7 +35,6 @@ export class RealService implements Service {
         })
 
         this.rankingsLink = jsonObj.links.find((link: EmbeddedLink) => link.rel[0] == "rankings")
-        console.log(this.rankingsLink)
 
         jsonObj.actions.forEach((action) => {
             const path = paths[action.rel]
@@ -55,24 +54,34 @@ export class RealService implements Service {
         if (this.rankingsLink == undefined) {
             console.log("in if")
             const home = this.home()
+            if (!home) {
+                console.log("in inner if")
+                return undefined
+            }
+            console.log("in inner else")
             return this.rankingsLink.href
         }
-        console.log(this.rankingsLink)
+        console.log("in else")
         return this.rankingsLink.href
     }
 
     rankings = function (): Rankings | undefined {
         const path = this.ensureRankingsLink()
 
-        console.log(path)
+        if (!path)
+            return undefined
+
+        console.log(baseURL + path)
 
         this.rankingsNavigation = []
 
-        const content = useFetch(baseURL + path)
+        const [content, loading] = useFetch(baseURL + path)
 
-        if (!content) {
+        if (!content || loading) {
             return undefined
         }
+
+        console.log(content)
 
         const jsonObj = JSON.parse(content)
 

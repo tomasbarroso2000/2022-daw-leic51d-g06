@@ -6,8 +6,8 @@ import {
     RouterProvider, 
     useParams
 } from 'react-router-dom'
-import { FakeService } from '../service/fakeService'
-import { RealService } from '../service/realService'
+import { FakeService } from '../service/FakeService'
+import { RealService } from '../service/RealService'
 import { Home } from './Home'
 import { Rankings } from './Rankings'
 
