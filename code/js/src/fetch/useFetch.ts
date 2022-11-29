@@ -1,7 +1,4 @@
-import {
-    useState,
-    useEffect,
-} from 'react'
+import { useState, useEffect } from 'react'
 
 export function useFetch(url: string): string | undefined {
     const [content, setContent] = useState(undefined)
@@ -20,5 +17,5 @@ export function useFetch(url: string): string | undefined {
             cancelled = true
         }
     }, [url])
-    return content
+    return JSON.stringify(content)
 }
