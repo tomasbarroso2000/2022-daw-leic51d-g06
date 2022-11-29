@@ -9,7 +9,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@siren-js/client": "^0.5.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.4.3",
     "siren-types": "^1.0.0-rc13"

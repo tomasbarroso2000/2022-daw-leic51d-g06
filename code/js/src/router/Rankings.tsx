@@ -1,9 +1,10 @@
 import * as React from "react"
 import { UserInfo } from "../domain/UserInfo"
+import { askService } from "../service/askService"
 import { service } from "./App"
 
 export function Rankings() {
-    const rankings = service.rankings()
+    const rankings = askService(service, service.rankings)
     let rank = 0
 
     if (!rankings) {
@@ -13,8 +14,6 @@ export function Rankings() {
             </div>
         )
     }
-
-    console.log(rankings)
 
     return (
         <div id="content-rankings">

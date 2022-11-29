@@ -1,9 +1,10 @@
 import * as React from "react"
 import { Link } from "react-router-dom"
+import { askService } from "../service/askService"
 import { service } from "./App"
 
 export function Home() {
-    const home = service.home()
+    const home = askService(service, service.home)
 
     if (!home) {
         return (

@@ -1,31 +1,28 @@
 import { Home } from "../domain/Home"
 import { Rankings } from "../domain/Rankings"
-import { useFetch } from "../fetch/useFetch"
 import { paths } from "../router/App"
 import { Service } from "./Service"
 import { EmbeddedLink } from "siren-types"
-import { doFetch } from "../fetch/doFetch"
-import SirenClient from '@siren-js/client'
+import { doFetch } from "./doFetch"
 
 const baseURL = "http://localhost:8080"
 const homeURL = baseURL + "/api/"
 
 export class RealService implements Service {
-    client = new SirenClient()
-
     homeNavigation = []
     rankingsNavigation = []
     rankingsLink: EmbeddedLink | undefined = undefined
 
-    home = function (): Home | undefined {
+    home = async function (): Promise<Home | undefined> {
         this.homeNavigation = []
-        const [content, loading] = useFetch(homeURL)
 
-        if (!content || loading) {
+        const res = await doFetch(homeURL)
+
+        if (!res) {
             return undefined
         }
 
-        const jsonObj = JSON.parse(content)
+        const jsonObj = JSON.parse(res)
 
         jsonObj.links.forEach((link: EmbeddedLink) => {
             const path = paths[link.rel[0]]
@@ -48,44 +45,31 @@ export class RealService implements Service {
             authors: jsonObj.properties.authors,
             version: jsonObj.properties.verion
         }
+        
     }
 
-    ensureRankingsLink = function (): string | undefined {
+    ensureRankingsLink = async function (): Promise<string | undefined> {
         if (this.rankingsLink == undefined) {
-            console.log("in if")
-            const home = this.home()
-            if (!home) {
-                console.log("in inner if")
-                return undefined
-            }
-            console.log("in inner else")
-            return this.rankingsLink.href
+            return this.home().then(() => this.rankingsLink.href)
         }
-        console.log("in else")
         return this.rankingsLink.href
     }
 
-    rankings = function (): Rankings | undefined {
-        const path = this.ensureRankingsLink()
+    rankings = async function (): Promise<Rankings | undefined> {
+        const path = await this.ensureRankingsLink()
 
         if (!path)
             return undefined
 
-        console.log(baseURL + path)
-
         this.rankingsNavigation = []
 
-        const [content, loading] = useFetch(baseURL + path)
+        const res = await doFetch(baseURL + path)
 
-        if (!content || loading) {
+        if (!res) {
             return undefined
         }
 
-        console.log(content)
-
-        const jsonObj = JSON.parse(content)
-
-        console.log(jsonObj)
+        const jsonObj = JSON.parse(res)
 
         jsonObj.links.forEach((link: EmbeddedLink) => {
             const path = paths[link.rel[0]]
