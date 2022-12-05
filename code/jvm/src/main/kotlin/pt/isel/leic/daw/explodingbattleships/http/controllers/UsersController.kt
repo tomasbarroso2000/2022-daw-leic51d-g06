@@ -3,10 +3,10 @@ package pt.isel.leic.daw.explodingbattleships.http.controllers
 import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -166,7 +166,7 @@ class UsersController(private val services: UsersServices) {
                         action(
                             "entered-game",
                             Uris.Users.enteredGame(res.lobbyOrGameId),
-                            HttpMethod.PUT,
+                            HttpMethod.DELETE,
                             MediaType.APPLICATION_JSON.toString()
                         ) { }
                     } else {
@@ -177,7 +177,7 @@ class UsersController(private val services: UsersServices) {
             )
     }
 
-    @PutMapping(ENTERED_GAME)
+    @DeleteMapping(ENTERED_GAME)
     fun enteredGame(
         user: User,
         @PathVariable lobbyId: Int
