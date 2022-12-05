@@ -163,7 +163,12 @@ class UsersController(private val services: UsersServices) {
                     link(Uris.Users.enterLobby(), Rels.SELF)
                     link(Uris.home(), Rels.HOME)
                     if (res.enteredLobby) {
-                        link(Uris.Users.enteredGame(res.lobbyOrGameId), Rels.ENTERED_GAME)
+                        action(
+                            "entered-game",
+                            Uris.Users.enteredGame(res.lobbyOrGameId),
+                            HttpMethod.PUT,
+                            MediaType.APPLICATION_JSON.toString()
+                        ) { }
                     } else {
                         link(Uris.Games.gameInfo(res.lobbyOrGameId), Rels.GAME)
                     }
