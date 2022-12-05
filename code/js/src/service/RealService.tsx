@@ -4,7 +4,7 @@ import { paths } from "../router/App"
 import { Service } from "./Service"
 import { EmbeddedLink } from "siren-types"
 import { doFetch } from "./doFetch"
-import { CreateUser } from "../domain/CreateUser"
+import { CreateUser, Field, UserRequest } from "../domain/CreateUser"
 import { Action } from "@remix-run/router"
 
 const baseURL = "http://localhost:8080"
@@ -13,6 +13,7 @@ const homeURL = baseURL + "/api/"
 export class RealService implements Service {
     homeNavigation = []
     rankingsNavigation = []
+    createUserNavigation = []
     rankingsLink: EmbeddedLink | undefined = undefined
     homeActions = []
     createUserAction: EmbeddedLink | undefined = undefined
@@ -96,6 +97,63 @@ export class RealService implements Service {
             return this.home().then(() => this.createUserAction.href)
         }
         return this.createUserAction.href
+    }
+
+    getUserFields = async function (): Promise<Array<Field> | undefined> {
+        await this.ensureCreateUserAction()
+        console.log("action fields: " + this.createUserAction.fields)
+        let fields = []
+        const arr: Array<Field> = []
+        if (this.createUserAction == undefined) {
+            fields = this.home().then(() => this.createUserAction.fields)
+        } else {
+            fields = this.createUserAction.fields
+        }
+
+
+        fields.forEach((field: Field) => {
+            arr.push({
+                name: field.name,
+                type: field.type,
+                value: field.value
+            })
+        })
+        return arr
+    }
+
+    createUser = async function (bod: UserRequest): Promise<CreateUser | undefined> {
+        const path = await this.ensureCreateUserAction()
+        if (!path)
+            return undefined
+
+        this.createUserNavigation = []
+
+        const res = async () => {
+            const resp = await fetch(baseURL + path, {
+                method: 'POST',
+                body: JSON.stringify({
+                   name: bod.name,
+                   email: bod.email,
+                   password: bod.password,
+                }),
+                headers: {
+                   'Content-type': 'application/json',
+                },
+             })
+             const body = await resp.json()
+             return JSON.stringify(body)
+        }
+        const resp = await res()
+        if (!resp) {
+            return undefined
+        }
+
+        const jsonObj = JSON.parse(resp)
+
+        //user creation actions and links
+        return {
+            id: jsonObj.properties.id
+        }
     }
 
 }
