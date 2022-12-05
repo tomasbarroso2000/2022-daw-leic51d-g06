@@ -10,6 +10,7 @@ import { FakeService } from '../service/FakeService'
 import { RealService } from '../service/RealService'
 import { Home } from './Home'
 import { Rankings } from './Rankings'
+import { CreateUser } from './CreateUser'
 
 export const paths = {
     "home": "/",
@@ -29,8 +30,8 @@ const router = createBrowserRouter(
             "element": <Rankings />
         },
         {
-            "path": "/path2",
-            "element": <Screen2 />
+            "path": paths['create-user'],
+            "element": <CreateUser />
         },
         {
             "path": "/path3",

@@ -4,6 +4,8 @@ import { paths } from "../router/App"
 import { Service } from "./Service"
 import { EmbeddedLink } from "siren-types"
 import { doFetch } from "./doFetch"
+import { CreateUser } from "../domain/CreateUser"
+import { Action } from "@remix-run/router"
 
 const baseURL = "http://localhost:8080"
 const homeURL = baseURL + "/api/"
@@ -12,9 +14,12 @@ export class RealService implements Service {
     homeNavigation = []
     rankingsNavigation = []
     rankingsLink: EmbeddedLink | undefined = undefined
+    homeActions = []
+    createUserAction: EmbeddedLink | undefined = undefined
 
     home = async function (): Promise<Home | undefined> {
         this.homeNavigation = []
+        this.homeActions = []
 
         const res = await doFetch(homeURL)
 
@@ -34,11 +39,13 @@ export class RealService implements Service {
         this.rankingsLink = jsonObj.links.find((link: EmbeddedLink) => link.rel[0] == "rankings")
 
         jsonObj.actions.forEach((action) => {
-            const path = paths[action.rel]
+            const path = paths[action.name]
             if (path) {
-                this.homeNavigation.push(path)
+                this.homeActions.push(path)
             }
         })
+
+        this.createUserAction = jsonObj.actions.find((action) => action.name == "create-user")
 
         return {
             name: jsonObj.properties.name,
@@ -78,16 +85,17 @@ export class RealService implements Service {
             }
         })
 
-        jsonObj.actions.forEach((action) => {
-            const path = paths[action.rel]
-            if (path) {
-                this.rankingsNavigation.push(path)
-            }
-        })
-
         return {
             rankings: jsonObj.properties.rankings,
             hasMore: jsonObj.properties.hasMore
         }
     }
+
+    ensureCreateUserAction = async function (): Promise<string | undefined> {
+        if (this.createUserAction == undefined) {
+            return this.home().then(() => this.createUserAction.href)
+        }
+        return this.createUserAction.href
+    }
+
 }

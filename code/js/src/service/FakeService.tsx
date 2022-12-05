@@ -1,3 +1,4 @@
+import { CreateUser } from "../domain/CreateUser"
 import { Home } from "../domain/Home"
 import { Rankings } from "../domain/Rankings"
 import { Service } from "./Service"
@@ -36,6 +37,14 @@ export class FakeService implements Service {
                     }
                 ],
                 hasMore: false
+            }
+        )
+    }
+
+    createUser = function(): Promise<CreateUser> {
+        return Promise.resolve(
+            {
+                id: 1
             }
         )
     }
