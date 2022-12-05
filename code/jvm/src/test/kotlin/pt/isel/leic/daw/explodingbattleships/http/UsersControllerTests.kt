@@ -125,7 +125,7 @@ class UsersControllerTests {
     fun entered_game() {
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port/api/").build()
 
-        client.put().uri("lobby/1")
+        client.delete().uri("lobby/1")
             .header("Authorization", "Bearer 123")
             .exchange()
             .expectStatus().isOk
