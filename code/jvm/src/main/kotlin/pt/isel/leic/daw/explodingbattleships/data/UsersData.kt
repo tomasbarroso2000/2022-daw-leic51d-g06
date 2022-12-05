@@ -40,4 +40,11 @@ interface UsersData {
      * @return a list of rankings and if there are more ranked users in the database
      */
     fun getRankings(transaction: Transaction, limit: Int, skip: Int): DataList<UserInfo>
+
+    /**
+     * Increases the player score
+     * @param transaction the current transaction
+     * @param userId the user id
+     */
+    fun increasePlayerScore(transaction: Transaction, userId: Int)
 }

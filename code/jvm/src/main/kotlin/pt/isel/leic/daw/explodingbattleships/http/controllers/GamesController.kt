@@ -125,7 +125,7 @@ class GamesController(private val services: GamesServices) {
                             textField("ships")
                         }
                     }
-                    link(Uris.Users.home(), Rels.USER)
+                    link(Uris.Users.home(), Rels.USER_HOME)
                     link(Uris.home(), Rels.HOME)
                     clazz("GameOutputModel")
                 }

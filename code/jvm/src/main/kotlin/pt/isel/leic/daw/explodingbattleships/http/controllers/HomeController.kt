@@ -52,7 +52,7 @@ class HomeController {
                         textField("password")
                     }
                     link(Uris.home(), Rels.SELF)
-                    link(Uris.home(), Rels.HOME)
+                    link(Uris.Users.home(), Rels.USER_HOME)
                     link(Uris.Users.rankings(), Rels.RANKINGS)
                     link(Uris.Games.nrOfGames(), Rels.NR_OF_TOTAL_GAMES)
                     link(Uris.Games.games(), Rels.GAMES)

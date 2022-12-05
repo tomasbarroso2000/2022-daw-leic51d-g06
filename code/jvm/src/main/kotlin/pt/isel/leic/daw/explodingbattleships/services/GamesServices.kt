@@ -144,6 +144,7 @@ class GamesServices(private val data: Data) {
         val hitsOutcome = executeHit(transaction, game, squares, game.idlePlayer(), data)
         if (hitsOutcome.win) {
             data.gamesData.setGameStateCompleted(transaction, game.id)
+            data.usersData.increasePlayerScore(transaction, userId)
             hitsOutcome
         } else {
             hitsOutcome

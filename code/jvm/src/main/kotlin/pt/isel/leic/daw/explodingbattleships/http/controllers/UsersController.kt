@@ -89,7 +89,7 @@ class UsersController(private val services: UsersServices) {
                 siren(UserCreationOutputModel(res)) {
                     link(Uris.Users.createUser(), Rels.SELF)
                     link(Uris.home(), Rels.HOME)
-                    link(Uris.Users.home(), Rels.USER)
+                    link(Uris.Users.home(), Rels.USER_HOME)
                     clazz("UserCreationOutputModel")
                 }
             )
@@ -113,7 +113,7 @@ class UsersController(private val services: UsersServices) {
                 siren(UserTokenOutputModel(res)) {
                     link(Uris.Users.createToken(), Rels.SELF)
                     link(Uris.home(), Rels.HOME)
-                    link(Uris.Users.home(), Rels.USER)
+                    link(Uris.Users.home(), Rels.USER_HOME)
                     clazz("UserTokenOutputModel")
                 }
             )

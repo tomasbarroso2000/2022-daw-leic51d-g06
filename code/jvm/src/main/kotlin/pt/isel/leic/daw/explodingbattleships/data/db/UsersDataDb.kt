@@ -48,4 +48,18 @@ class UsersDataDb : UsersData {
             val hasMore = getHasMoreAndProcessList(foundRankings, rankings, limit)
             DataList(rankings, hasMore)
         }
+
+    override fun increasePlayerScore(transaction: Transaction, userId: Int) {
+        val oldScore: Int = (transaction as TransactionDataDb).withHandle { handle ->
+            handle.createQuery("select score from user where id = :id")
+                .bind("id", userId)
+                .mapTo<Int>().first()
+        }
+        (transaction as TransactionDataDb).withHandle { handle ->
+            handle.createUpdate("update users set score = :score where id = :userId")
+                .bind("score", oldScore + 10)
+                .bind("userId", userId)
+                .execute()
+        }
+    }
 }

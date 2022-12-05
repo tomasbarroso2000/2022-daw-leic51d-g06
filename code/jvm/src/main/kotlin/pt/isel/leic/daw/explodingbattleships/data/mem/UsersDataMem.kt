@@ -27,4 +27,12 @@ class UsersDataMem(private val mockData: MockData) : UsersData {
         val rankings = mockData.users.map { it.toRanking() }.sortedBy { it.score }.reversed()
         return DataList(getSublist(rankings, limit, skip), hasMore(rankings.size, limit, skip))
     }
+
+    override fun increasePlayerScore(transaction: Transaction, userId: Int) {
+        val storedUser = mockData.users.find { it.id == userId }
+        if (storedUser != null) {
+            mockData.users.remove(storedUser)
+            mockData.users.add(storedUser.copy(score = storedUser.score + 10))
+        }
+    }
 }
