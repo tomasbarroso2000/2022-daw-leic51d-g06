@@ -27,6 +27,10 @@ import pt.isel.leic.daw.explodingbattleships.services.utils.squareInBoard
 @Component
 class GamesServices(private val data: Data) {
 
+    companion object {
+        const val WINNING_POINTS = 10
+    }
+
     /**
      * Gets all the games the user is currently playing
      * @param userId the user id
@@ -144,11 +148,9 @@ class GamesServices(private val data: Data) {
         val hitsOutcome = executeHit(transaction, game, squares, game.idlePlayer(), data)
         if (hitsOutcome.win) {
             data.gamesData.setGameStateCompleted(transaction, game.id)
-            data.usersData.increasePlayerScore(transaction, userId)
-            hitsOutcome
-        } else {
-            hitsOutcome
+            data.usersData.increasePlayerScore(transaction, userId, WINNING_POINTS)
         }
+        hitsOutcome
     }
 
     /**

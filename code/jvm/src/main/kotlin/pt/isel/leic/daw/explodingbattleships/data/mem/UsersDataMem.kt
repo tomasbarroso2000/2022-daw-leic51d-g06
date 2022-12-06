@@ -28,11 +28,11 @@ class UsersDataMem(private val mockData: MockData) : UsersData {
         return DataList(getSublist(rankings, limit, skip), hasMore(rankings.size, limit, skip))
     }
 
-    override fun increasePlayerScore(transaction: Transaction, userId: Int) {
+    override fun increasePlayerScore(transaction: Transaction, userId: Int, pointsReceived: Int) {
         val storedUser = mockData.users.find { it.id == userId }
         if (storedUser != null) {
             mockData.users.remove(storedUser)
-            mockData.users.add(storedUser.copy(score = storedUser.score + 10))
+            mockData.users.add(storedUser.copy(score = storedUser.score + pointsReceived))
         }
     }
 }

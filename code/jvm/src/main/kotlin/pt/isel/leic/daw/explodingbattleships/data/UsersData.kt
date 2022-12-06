@@ -45,6 +45,7 @@ interface UsersData {
      * Increases the player score
      * @param transaction the current transaction
      * @param userId the user id
+     * @param pointsReceived the points the user received
      */
-    fun increasePlayerScore(transaction: Transaction, userId: Int)
+    fun increasePlayerScore(transaction: Transaction, userId: Int, pointsReceived: Int)
 }
