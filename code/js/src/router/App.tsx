@@ -11,22 +11,23 @@ import { RealService } from '../service/RealService'
 import { Home } from './Home'
 import { Rankings } from './Rankings'
 import { CreateUser } from './CreateUser'
+import { CreateToken } from './CreateToken'
 
 export const paths = {
     "home": "/",
     "rankings": "/rankings",
     "create-user": "/signup",
-    "create-token": "/signin"
+    "create-token": "/login"
 }
 
 const router = createBrowserRouter(
     [
         {
-            "path": paths.home,
+            "path": paths['home'],
             "element": <Home />
         },
         {
-            "path": paths.rankings,
+            "path": paths['rankings'],
             "element": <Rankings />
         },
         {
@@ -34,8 +35,8 @@ const router = createBrowserRouter(
             "element": <CreateUser />
         },
         {
-            "path": "/path3",
-            "element": <Screen3 />
+            "path": paths['create-token'],
+            "element": <CreateToken />
         },
         {
             "path": "/users/:uid",

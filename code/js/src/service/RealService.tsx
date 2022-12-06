@@ -2,10 +2,10 @@ import { Home } from "../domain/Home"
 import { Rankings } from "../domain/Rankings"
 import { paths } from "../router/App"
 import { Service } from "./Service"
-import { EmbeddedLink } from "siren-types"
+import { EmbeddedLink, Action, Field } from "siren-types"
 import { doFetch } from "./doFetch"
-import { CreateUser, Field, UserRequest } from "../domain/CreateUser"
-import { Action } from "@remix-run/router"
+import { CreateUser, UserRequest } from "../domain/CreateUser"
+import { CreateToken } from "../domain/CreateToken"
 
 const baseURL = "http://localhost:8080"
 const homeURL = baseURL + "/api/"
@@ -16,7 +16,12 @@ export class RealService implements Service {
     createUserNavigation = []
     rankingsLink: EmbeddedLink | undefined = undefined
     homeActions = []
-    createUserAction: EmbeddedLink | undefined = undefined
+    createUserAction: Action | undefined = undefined
+    createTokenAction: Action | undefined = undefined
+
+    /**
+     * HOME
+     */
 
     home = async function (): Promise<Home | undefined> {
         this.homeNavigation = []
@@ -39,14 +44,16 @@ export class RealService implements Service {
 
         this.rankingsLink = jsonObj.links.find((link: EmbeddedLink) => link.rel[0] == "rankings")
 
-        jsonObj.actions.forEach((action) => {
+        jsonObj.actions.forEach((action: Action) => {
             const path = paths[action.name]
             if (path) {
                 this.homeActions.push(path)
             }
         })
 
-        this.createUserAction = jsonObj.actions.find((action) => action.name == "create-user")
+        this.createUserAction = jsonObj.actions.find((action: Action) => action.name == "create-user")
+
+        this.createTokenAction = jsonObj.actions.find((action: Action) => action.name == "create-token")
 
         return {
             name: jsonObj.properties.name,
@@ -55,6 +62,10 @@ export class RealService implements Service {
         }
         
     }
+
+    /**
+     * RANKINGS
+     */
 
     ensureRankingsLink = async function (): Promise<string | undefined> {
         if (this.rankingsLink == undefined) {
@@ -92,6 +103,10 @@ export class RealService implements Service {
         }
     }
 
+    /**
+     * CREATE USER
+     */
+
     ensureCreateUserAction = async function (): Promise<string | undefined> {
         if (this.createUserAction == undefined) {
             return this.home().then(() => this.createUserAction.href)
@@ -99,30 +114,15 @@ export class RealService implements Service {
         return this.createUserAction.href
     }
 
-    getUserFields = async function (): Promise<Array<Field> | undefined> {
-        await this.ensureCreateUserAction()
-        
-        let fields = []
-        const arr: Array<Field> = []
+    getCreateUserFields = async function (): Promise<Array<Field> | undefined> {
         if (this.createUserAction == undefined) {
-            fields = this.home().then(() => this.createUserAction.fields)
+            return this.home().then(() => this.createUserAction.fields)
         } else {
-            fields = this.createUserAction.fields
+            return this.createUserAction.fields
         }
-
-
-        fields.forEach((field) => {
-            arr.push({
-                name: field.name,
-                type: field.type,
-                value: field.value
-            })
-        })
-        console.log("action fields: " + fields)
-        return arr
     }
 
-    createUser = async function (bod: UserRequest): Promise<CreateUser | undefined> {
+    createUser = async function (reqBody: UserRequest): Promise<CreateUser | undefined> {
         const path = await this.ensureCreateUserAction()
         if (!path)
             return undefined
@@ -133,9 +133,9 @@ export class RealService implements Service {
             const resp = await fetch(baseURL + path, {
                 method: 'POST',
                 body: JSON.stringify({
-                   name: bod.name,
-                   email: bod.email,
-                   password: bod.password,
+                   name: reqBody.name,
+                   email: reqBody.email,
+                   password: reqBody.password,
                 }),
                 headers: {
                    'Content-type': 'application/json',
@@ -157,4 +157,57 @@ export class RealService implements Service {
         }
     }
 
+    /**
+     *  LOGIN
+     */
+
+     ensureCreateTokenAction = async function (): Promise<string | undefined> {
+        if (this.createTokenAction == undefined) {
+            return this.home().then(() => this.createTokenAction.href)
+        }
+        return this.createTokenAction.href
+    }
+
+    getCreateTokenFields = async function (): Promise<Array<Field> | undefined> {
+        if (this.createTokenAction == undefined) {
+            return this.home().then(() => this.createTokenAction.fields)
+        } else {
+            return this.createTokenAction.fields
+        }
+    }
+
+    // needs to be dynamic
+    createToken = async function (email: string, password: string): Promise<CreateToken | undefined> {
+        const path = await this.ensureCreateTokenAction()
+        if (!path)
+            return undefined
+
+        this.createTokenNavigation = []
+
+        const res = async () => {
+            const resp = await fetch(baseURL + path, {
+                method: 'POST',
+                body: JSON.stringify({
+                   email: email,
+                   password: password,
+                }),
+                headers: {
+                   'Content-type': 'application/json',
+                },
+             })
+             const body = await resp.json()
+             return JSON.stringify(body)
+        }
+        const resp = await res()
+        if (!resp) {
+            return undefined
+        }
+
+        const jsonObj = JSON.parse(resp)
+
+        //user creation actions and links
+        return {
+            token: jsonObj.properties.token
+        }
+    }
 }

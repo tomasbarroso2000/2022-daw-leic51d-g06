@@ -1,9 +1,11 @@
+import { CreateToken } from "../domain/CreateToken"
 import { CreateUser } from "../domain/CreateUser"
 import { Home } from "../domain/Home"
 import { Rankings } from "../domain/Rankings"
 import { Service } from "./Service"
 
 export class FakeService implements Service {
+    createToken: (email: string, password: string) => Promise<CreateToken>
     home = function home(): Promise<Home> {
         return Promise.resolve(
             {

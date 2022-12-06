@@ -1,11 +1,11 @@
 import * as React from "react"
 import { Form, Link } from "react-router-dom"
-import { Field } from "../domain/CreateUser"
+import { Field } from "siren-types"
 import { askService } from "../service/askService"
 import { service } from "./App"
 
 export function CreateUser() {
-    const fields = askService(service, service.getUserFields)
+    const fields = askService(service, service.getCreateUserFields)
     console.log("fields" + JSON.stringify(fields))
 
     if(!fields) {
@@ -32,7 +32,7 @@ export function CreateUser() {
                 {fields.map((field: Field) => 
                     <input key={key++} type={field.type} name={field.name} placeholder={field.name}/>
                 )}
-                <input id="create-user" type="submit" value="Signup" />
+                <input id="create-user" type="submit" value="Sign Up" />
             </form>
         </div>
     )
