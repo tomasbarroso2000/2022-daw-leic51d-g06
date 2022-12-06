@@ -51,7 +51,7 @@ export class RealService implements Service {
         return {
             name: jsonObj.properties.name,
             authors: jsonObj.properties.authors,
-            version: jsonObj.properties.verion
+            version: jsonObj.properties.version
         }
         
     }
@@ -101,7 +101,7 @@ export class RealService implements Service {
 
     getUserFields = async function (): Promise<Array<Field> | undefined> {
         await this.ensureCreateUserAction()
-        console.log("action fields: " + this.createUserAction.fields)
+        
         let fields = []
         const arr: Array<Field> = []
         if (this.createUserAction == undefined) {
@@ -111,13 +111,14 @@ export class RealService implements Service {
         }
 
 
-        fields.forEach((field: Field) => {
+        fields.forEach((field) => {
             arr.push({
                 name: field.name,
                 type: field.type,
                 value: field.value
             })
         })
+        console.log("action fields: " + fields)
         return arr
     }
 

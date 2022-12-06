@@ -13,7 +13,7 @@ export function Home() {
             </div>
         )
     }
-
+    
     return (
         <div id="content">
             <div id="right-side-content">
@@ -38,7 +38,12 @@ export function Home() {
                     <ol>
                         {service.homeNavigation.map((nav) => 
                             <li key={nav}> 
-                                <Link to={nav}>{nav}</Link>
+                                <Link to={nav}>{nav.slice(1)}</Link>
+                            </li>
+                        )}
+                        {service.homeActions.map((nav) => 
+                            <li key={nav}> 
+                                <Link to={nav}>{nav.slice(1)}</Link>
                             </li>
                         )}
                     </ol> 

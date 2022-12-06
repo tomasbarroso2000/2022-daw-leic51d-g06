@@ -73,6 +73,50 @@ div#content {
     height: 100vh;
 }
 
+div#content h1 {
+    text-align: center;
+    margin-top: 10vh;
+}
+
+div#content form {
+    width: 30%;
+    top: 50%;
+    position: absolute;
+    display: block;
+    margin: 0 auto;
+    right: 0;
+    left: 0;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+    box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-color: #3a9efd;
+    border-radius: 4px;
+}
+
+div#content form input {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+    border: none;
+    border-radius: 2px;
+}
+
+div#content form input[type="text"] {
+    width: 50%;
+    display: block;
+    margin: 20px auto;
+    border-radius: 2px;
+}
+
+div#content form input[type="submit"] {
+    display: block;
+    margin: 20px auto;
+    text-align: center;
+    padding: 5px 10px;
+}
+
 div#right-side-content {
     width: 70%;
     height: 100vh;
@@ -180,7 +224,6 @@ div#content-rankings {
     display: block;
     margin: 0 auto;
     position: absolute;
-    margin: 0 auto;
     right: 0;
     left: 0;
     top: 50%;
