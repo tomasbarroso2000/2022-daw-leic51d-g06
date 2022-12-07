@@ -182,6 +182,21 @@ class GamesServices(private val data: Data) {
         }
     }
 
+    /**
+     * Changes the game state to completed and gives the victory to the other player
+     * @param userId the user id
+     * @param gameId the game id
+     * @return the game state
+     */
+    fun forfeit(userId: Int, gameId: Int) = doService(data) { transaction ->
+        val game = getGameOrThrow(transaction, gameId, data)
+        checkPlayerInGame(game, userId)
+        checkGameState(game.state, "shooting")
+        data.gamesData.setGameStateCompleted(transaction, game.id)
+        data.gamesData.changeCurrPlayer(transaction, game.id, game.idlePlayer())
+        "completed"
+    }
+
     fun getGameTypesAndShips() = doService(data) { transaction ->
         data.gameTypesData.getGameTypes(transaction)
     }

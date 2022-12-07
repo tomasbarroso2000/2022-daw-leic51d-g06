@@ -159,4 +159,21 @@ class GamesControllerTests {
             .exchange()
             .expectStatus().isBadRequest
     }
-}
+
+    @Test
+    fun forfeit() {
+        val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port/api/").build()
+
+        val gameId = 2
+
+        client.put().uri("games/forfeit")
+            .header("Authorization", "Bearer 123")
+            .bodyValue(
+                mapOf(
+                    "game-id" to gameId
+                )
+            )
+            .exchange()
+            .expectStatus().isCreated
+    }
+}g

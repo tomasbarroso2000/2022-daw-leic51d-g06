@@ -379,4 +379,12 @@ class GamesServicesTests {
         assertEquals("Player not in game", exception.title)
         assertEquals(AppExceptionStatus.BAD_REQUEST, exception.status)
     }
+
+    @Test
+    fun forfeit() {
+        val userId = 5
+        val gameId = 2
+        val gameState = services.forfeit(userId, gameId)
+        assertEquals("completed", gameState)
+    }
 }

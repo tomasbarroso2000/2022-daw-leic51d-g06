@@ -17,6 +17,7 @@ import pt.isel.leic.daw.explodingbattleships.http.Rels
 import pt.isel.leic.daw.explodingbattleships.http.Successes
 import pt.isel.leic.daw.explodingbattleships.http.Uris
 import pt.isel.leic.daw.explodingbattleships.http.doApiTask
+import pt.isel.leic.daw.explodingbattleships.http.models.input.ForfeitInputModel
 import pt.isel.leic.daw.explodingbattleships.http.models.input.HitsInputModel
 import pt.isel.leic.daw.explodingbattleships.http.models.input.LayoutInputModel
 import pt.isel.leic.daw.explodingbattleships.http.models.output.FleetStateOutputModel
@@ -269,6 +270,30 @@ class GamesController(private val services: GamesServices) {
                     link(Uris.home(), Rels.HOME)
                     link(Uris.Games.gameInfo(input.gameId), Rels.GAME)
                     clazz("LayoutOutputModel")
+                }
+            )
+    }
+
+    /**
+     * Handles the put request for forfeiting
+     * @param user the user that sent the request
+     * @param gameId the game id
+     */
+    @PutMapping(Uris.Games.FORFEIT)
+    fun forfeit(
+        user: User,
+        @RequestBody
+        input: ForfeitInputModel
+    ) = doApiTask {
+        val res = services.forfeit(user.id, input.gameId)
+        ResponseEntity
+            .status(Successes.CREATED)
+            .contentType(APPLICATION_SIREN)
+            .body(
+                siren(GameStateOutputModel(res)) {
+                    link(Uris.Games.forfeit(input.gameId), Rels.SELF)
+                    link(Uris.home(), Rels.HOME)
+                    clazz("GameStateOutputModel")
                 }
             )
     }
