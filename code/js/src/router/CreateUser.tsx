@@ -1,12 +1,14 @@
 import * as React from "react"
+import { useState } from "react";
 import { Form, Link } from "react-router-dom"
 import { Field } from "siren-types"
 import { askService } from "../service/askService"
 import { service } from "./App"
 
 export function CreateUser() {
-    const fields = askService(service, service.getCreateUserFields)
-    console.log("fields" + JSON.stringify(fields))
+    const fields: Array<Field> | undefined = askService(service, service.getCreateUserFields)
+    
+    const [inputs, setInputs]: [any, React.Dispatch<React.SetStateAction<{}>>] = useState({})
 
     if(!fields) {
         return (
@@ -16,21 +18,27 @@ export function CreateUser() {
         )
     }
 
-    fields.forEach((field: Field) => {
-        console.log(field.name + " : " + field.type)
-    })
-
-    function handleCreateUser() {
-        
+    function handleChange(ev: React.FormEvent<HTMLInputElement>) {
+        const name = ev.currentTarget.name
+        setInputs({ ...inputs, [name]: ev.currentTarget.value })
+        //setError(undefined)
     }
 
-    let key = 0
+    function handleSubmit(ev: React.FormEvent<HTMLFormElement>) {
+        ev.preventDefault()
+        //setIsSubmitting(true)
+        service.createUser(inputs.name, inputs.email, inputs.password)
+            .then((user) => {
+                console.log(user.id)
+            })
+    }
+
     return (
         <div id="content">
             <h1>Sign up</h1>
-            <form onSubmit={handleCreateUser}>
+            <form onSubmit={handleSubmit}>
                 {fields.map((field: Field) => 
-                    <input key={key++} type={field.type} name={field.name} placeholder={field.name}/>
+                    <input key={field.name} type={field.type} name={field.name} value={inputs[field.name]} placeholder={field.name} onChange={handleChange} />
                 )}
                 <input id="create-user" type="submit" value="Sign Up" />
             </form>

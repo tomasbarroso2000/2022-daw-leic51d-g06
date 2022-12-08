@@ -122,7 +122,7 @@ export class RealService implements Service {
         }
     }
 
-    createUser = async function (reqBody: UserRequest): Promise<CreateUser | undefined> {
+    createUser = async function (name:string, email: string, password: string): Promise<CreateUser | undefined> {
         const path = await this.ensureCreateUserAction()
         if (!path)
             return undefined
@@ -133,9 +133,9 @@ export class RealService implements Service {
             const resp = await fetch(baseURL + path, {
                 method: 'POST',
                 body: JSON.stringify({
-                   name: reqBody.name,
-                   email: reqBody.email,
-                   password: reqBody.password,
+                    name: name,
+                    email: email,
+                    password: password,
                 }),
                 headers: {
                    'Content-type': 'application/json',
@@ -144,6 +144,7 @@ export class RealService implements Service {
              const body = await resp.json()
              return JSON.stringify(body)
         }
+
         const resp = await res()
         if (!resp) {
             return undefined
