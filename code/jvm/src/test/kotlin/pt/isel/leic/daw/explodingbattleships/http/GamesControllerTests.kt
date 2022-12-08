@@ -176,4 +176,4 @@ class GamesControllerTests {
             .exchange()
             .expectStatus().isCreated
     }
-}g
+}

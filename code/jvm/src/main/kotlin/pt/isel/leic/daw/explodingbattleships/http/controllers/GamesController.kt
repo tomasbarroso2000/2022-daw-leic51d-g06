@@ -115,6 +115,14 @@ class GamesController(private val services: GamesServices) {
                             hiddenField("gameId", res.game.id.toString())
                             textField("squares")
                         }
+                        action(
+                            "forfeit",
+                            Uris.Games.forfeit(),
+                            HttpMethod.PUT,
+                            MediaType.APPLICATION_JSON.toString()
+                        ) {
+                            hiddenField("gameId", res.game.id.toString())
+                        }
                     }
                     if (res.game.state == "layout_definition") {
                         action(
@@ -291,7 +299,7 @@ class GamesController(private val services: GamesServices) {
             .contentType(APPLICATION_SIREN)
             .body(
                 siren(GameStateOutputModel(res)) {
-                    link(Uris.Games.forfeit(input.gameId), Rels.SELF)
+                    link(Uris.Games.forfeit(), Rels.SELF)
                     link(Uris.home(), Rels.HOME)
                     clazz("GameStateOutputModel")
                 }

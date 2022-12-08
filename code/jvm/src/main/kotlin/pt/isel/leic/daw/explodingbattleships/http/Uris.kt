@@ -48,6 +48,6 @@ object Uris {
         fun enemyFleet(gameId: Int): URI = UriTemplate(BASE_PATH + ENEMY_FLEET).expand(gameId)
         fun nrOfGames(): URI = URI(BASE_PATH + NR_OF_GAMES)
         fun state(gameId: Int): URI = UriTemplate(BASE_PATH + STATE).expand(gameId)
-        fun forfeit(gameId: Int): URI = URI(BASE_PATH + FORFEIT)
+        fun forfeit(): URI = URI(BASE_PATH + FORFEIT)
     }
 }
