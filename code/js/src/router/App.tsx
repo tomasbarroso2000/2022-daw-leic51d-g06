@@ -4,7 +4,8 @@ import {
     Link, 
     Navigate, 
     RouterProvider, 
-    useParams
+    useParams,
+    useRouteError
 } from 'react-router-dom'
 import { FakeService } from '../service/FakeService'
 import { RealService } from '../service/RealService'
@@ -12,12 +13,15 @@ import { Home } from './Home'
 import { Rankings } from './Rankings'
 import { CreateUser } from './CreateUser'
 import { CreateToken } from './CreateToken'
+import { RequireAuthn } from './RequireAuthn'
+import { Me } from './Me'
 
 export const paths = {
     "home": "/",
     "rankings": "/rankings",
     "create-user": "/signup",
-    "create-token": "/login"
+    "create-token": "/login",
+    "me": "/me"
 }
 
 const router = createBrowserRouter(
@@ -39,8 +43,8 @@ const router = createBrowserRouter(
             "element": <CreateToken />
         },
         {
-            "path": "/users/:uid",
-            "element": <UserDetail />
+            "path": paths['me'],
+            "element": <RequireAuthn><Me /></RequireAuthn>
         },
         {
             "path": "/users/:uid/games/:gid",
