@@ -15,13 +15,15 @@ import { CreateUser } from './CreateUser'
 import { CreateToken } from './CreateToken'
 import { RequireAuthn } from './RequireAuthn'
 import { Me } from './Me'
+import { CreateGame } from './CreateGame'
 
 export const paths = {
     "home": "/",
     "rankings": "/rankings",
     "create-user": "/signup",
     "create-token": "/login",
-    "me": "/me"
+    "me": "/me",
+    "create-game":"/game/new"
 }
 
 const router = createBrowserRouter(
@@ -41,6 +43,10 @@ const router = createBrowserRouter(
         {
             "path": paths['create-token'],
             "element": <CreateToken />
+        },
+        {
+            "path": paths['create-game'],
+            "element": <CreateGame />
         },
         {
             "path": paths['me'],

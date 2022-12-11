@@ -42,20 +42,21 @@ export function CreateToken() {
         ev.preventDefault()
         setIsSubmitting(true)
         service.createToken(inputs.email, inputs.password)
-            .then((res) => {
+            .then(res => {
                 setIsSubmitting(false)
-                if(res) {
+                if(res.token) {
                     //const redirect = location.state?.source?.pathname || "/home"
-                    console.log("token: " + res.token)
+                    console.log(`setUser(${res.token})`)
+                    setUser(res.token)
                     setUser(res.token)
                     setRedirect(true)
                 } else {
                     setError("Invalid username or password")
                 }
             })
-            .catch((error) => {
+            .catch(error => {
                 setIsSubmitting(false)
-                setError(error.message)
+                setError("Something went wrong!")
             })
     }
 

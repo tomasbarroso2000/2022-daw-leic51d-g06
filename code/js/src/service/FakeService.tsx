@@ -1,5 +1,6 @@
 import { CreateToken } from "../domain/CreateToken"
 import { CreateUser } from "../domain/CreateUser"
+import { GameType, GameTypes } from "../domain/GameTypes"
 import { Home } from "../domain/Home"
 import { Rankings } from "../domain/Rankings"
 import { Service } from "./Service"
@@ -47,6 +48,29 @@ export class FakeService implements Service {
         return Promise.resolve(
             {
                 id: 1
+            }
+        )
+    }
+
+    gameTypes = async function (): Promise<GameTypes | undefined> {
+        return Promise.resolve(
+            {
+                gameTypes: [
+                    {
+                        name: "beginner",
+                        boardSize: 0,
+                        shotsPerRound: 0,
+                        layoutDefTime: 0,
+                        shootingTime: 0,
+                        fleet: [
+                            {
+                                name: "duckShip",
+                                size: 99,
+                                gameType: "hardcore"
+                            }
+                        ]
+                    }
+                ]
             }
         )
     }

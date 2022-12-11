@@ -6,6 +6,8 @@ import { EmbeddedLink, Action, Field } from "siren-types"
 import { doFetch } from "./doFetch"
 import { CreateUser, UserRequest } from "../domain/CreateUser"
 import { CreateToken } from "../domain/CreateToken"
+import { GameType, GameTypes } from "../domain/GameTypes"
+import { Ship } from "../domain/Ship"
 
 const baseURL = "http://localhost:8080"
 const homeURL = baseURL + "/api/"
@@ -209,6 +211,41 @@ export class RealService implements Service {
         //user creation actions and links
         return {
             token: jsonObj.properties.token
+        }
+    }
+
+    gameTypes = async function (): Promise<GameTypes | undefined> {
+        const res = await doFetch(baseURL + "/api/games/types")
+
+        if (!res) {
+            return undefined
+        }
+
+        const jsonObj = JSON.parse(res)
+        //console.log("res: " + JSON.stringify(jsonObj))
+        const fleet: Array<Ship> = []
+        const listGameTypes: Array<GameType> = []
+        jsonObj.properties["game-types"].forEach(gameType => {
+            gameType.fleet.forEach(ship => {
+                fleet.push ({
+                     name: ship.name,
+                     size: ship.size,
+                     gameType: ship["game-type"]
+                 })
+             })
+            listGameTypes.push(
+                {
+                    name: gameType.name,
+                    boardSize: gameType["board-size"],
+                    shotsPerRound: gameType["shots-per-round"],
+                    layoutDefTime: gameType["layout-def-time-in-secs"],
+                    shootingTime: gameType["shooting-time-in-secs"],
+                    fleet: fleet
+                }
+            )
+        })
+        return {
+            gameTypes: listGameTypes 
         }
     }
 }
