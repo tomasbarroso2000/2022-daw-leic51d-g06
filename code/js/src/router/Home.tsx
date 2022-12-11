@@ -1,7 +1,7 @@
 import * as React from "react"
 import { Link } from "react-router-dom"
 import { askService } from "../service/askService"
-import { service } from "./App"
+import { paths, service } from "./App"
 
 export function Home() {
     const home = askService(service, service.home)
@@ -46,6 +46,9 @@ export function Home() {
                                 <Link to={nav}>{nav.slice(1)}</Link>
                             </li>
                         )}
+                            <li>
+                                <Link to={paths['create-game']}>start game</Link>
+                            </li>
                     </ol> 
                 </div>
             </div>
