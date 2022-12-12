@@ -7,16 +7,22 @@ import { doFetch } from "./doFetch"
 import { CreateUser, UserRequest } from "../domain/CreateUser"
 import { CreateToken } from "../domain/CreateToken"
 import { GameType, GameTypes } from "../domain/GameTypes"
-import { Ship } from "../domain/Ship"
+import { ShipType } from "../domain/ShipType"
+import { GamesList } from "../domain/GamesList"
 
 const baseURL = "http://localhost:8080"
 const homeURL = baseURL + "/api/"
 
+//temporary
+const token = "4XKO-Y7xZHP3cMV3T4tKyzlYnXZ-OFld5IN37KQ-u18="
+
 export class RealService implements Service {
     homeNavigation = []
     rankingsNavigation = []
+    gamesNavigation = []
     createUserNavigation = []
     rankingsLink: EmbeddedLink | undefined = undefined
+    gamesLink: EmbeddedLink | undefined = undefined
     homeActions = []
     createUserAction: Action | undefined = undefined
     createTokenAction: Action | undefined = undefined
@@ -45,6 +51,7 @@ export class RealService implements Service {
         })
 
         this.rankingsLink = jsonObj.links.find((link: EmbeddedLink) => link.rel[0] == "rankings")
+        this.gamesLink = jsonObj.links.find((link: EmbeddedLink) => link.rel[0] == "games")
 
         jsonObj.actions.forEach((action: Action) => {
             const path = paths[action.name]
@@ -223,7 +230,7 @@ export class RealService implements Service {
 
         const jsonObj = JSON.parse(res)
         //console.log("res: " + JSON.stringify(jsonObj))
-        const fleet: Array<Ship> = []
+        const fleet: Array<ShipType> = []
         const listGameTypes: Array<GameType> = []
         jsonObj.properties["game-types"].forEach(gameType => {
             gameType.fleet.forEach(ship => {
@@ -246,6 +253,62 @@ export class RealService implements Service {
         })
         return {
             gameTypes: listGameTypes 
+        }
+    }
+
+    ensureGamesLink = async function (): Promise<string | undefined> {
+        if (this.gamesLink == undefined) {
+            return this.home().then(() => this.gamesLink.href)
+        }
+        
+        return this.gamesLink.href
+    }
+
+    games = async function (): Promise<GamesList | undefined> {
+        
+        const path = await this.ensureGamesLink()
+
+        if (!path)
+            return undefined
+
+
+        console.log("gamesLink: " + path)
+        
+        this.gamesNavigation = []
+
+        const res = async () => {
+            console.log("here")
+            const resp = await fetch(baseURL + path, {
+                method: 'GET',
+                headers: {
+                    'Content-type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+             })
+             const body = await resp.json()
+             console.log("resp: " + body)
+             return JSON.stringify(body)
+        }
+
+        const resp = await res()
+        if (!resp) {
+            return undefined
+        }
+
+        const jsonObj = JSON.parse(resp)
+
+        console.log("jsonObj: " + jsonObj)
+
+        jsonObj.links.forEach((link: EmbeddedLink) => {
+            const path = paths[link.rel[0]]
+            if (path) {
+                this.rankingsNavigation.push(path)
+            }
+        })
+
+        return {
+            games: jsonObj.properties.games,
+            hasMore: jsonObj.properties.hasMore
         }
     }
 }

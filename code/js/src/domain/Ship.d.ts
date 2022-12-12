@@ -1,5 +1,13 @@
+import { Square } from "./Square"
+
 export type Ship = {
+    firstSquare: string,
     name: string,
     size: number,
-    gameType: string
+    destroyed: boolean,
+    orientation: string,
+    userId: number,
+    gameId: number,
+    nOfHits: number,
+    squares: Array<Square>
 }

@@ -1,12 +1,12 @@
-import { Ship } from "./Ship"
+import { ShipType } from "./ShipType"
 
-type GameType = {
+export type GameType = {
     name: string,
     boardSize: number,
     shotsPerRound: number,
     layoutDefTime: number,
     shootingTime: number,
-    fleet: Array<Ship>
+    fleet: Array<ShipType>
 }
 
 export type GameTypes = {

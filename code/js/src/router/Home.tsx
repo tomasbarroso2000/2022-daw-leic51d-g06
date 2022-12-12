@@ -47,7 +47,7 @@ export function Home() {
                             </li>
                         )}
                             <li>
-                                <Link to={paths['create-game']}>start game</Link>
+                                <Link to={paths['list-games']}>start game</Link>
                             </li>
                     </ol> 
                 </div>
