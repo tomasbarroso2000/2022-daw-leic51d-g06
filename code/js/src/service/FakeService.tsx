@@ -1,5 +1,6 @@
 import { CreateToken } from "../domain/CreateToken"
 import { CreateUser } from "../domain/CreateUser"
+import { EnteredGame, EnterLobby } from "../domain/Lobby"
 import { GamesList } from "../domain/GamesList"
 import { GameType, GameTypes } from "../domain/GameTypes"
 import { Home } from "../domain/Home"
@@ -72,6 +73,23 @@ export class FakeService implements Service {
                         ]
                     }
                 ]
+            }
+        )
+    }
+
+    enterLobby = async function (gameType: string): Promise<EnterLobby | undefined> {
+        return Promise.resolve(
+            {
+                waitingForGame: true,
+                lobbyOrGameId: 1
+            }
+        )
+    }
+
+    enteredGame = async function (lobbyId: number) : Promise<EnteredGame> {
+        return Promise.resolve(
+            {
+                gameId: 1
             }
         )
     }

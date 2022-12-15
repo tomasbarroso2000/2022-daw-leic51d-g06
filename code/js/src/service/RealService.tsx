@@ -9,12 +9,13 @@ import { CreateToken } from "../domain/CreateToken"
 import { GameType, GameTypes } from "../domain/GameTypes"
 import { ShipType } from "../domain/ShipType"
 import { GamesList } from "../domain/GamesList"
+import { EnteredGame, EnterLobby } from "../domain/Lobby"
 
 const baseURL = "http://localhost:8080"
 const homeURL = baseURL + "/api/"
 
 //temporary
-const token = "UnJV1QHjnbYaUpNVmOOoZV7nrh4cKp2oFnL8Y0ZXpIE="
+const token = "0nBHDqo71pqby0UDawaddIdDWl44KUP4QChJaYCs5ns="
 
 export class RealService implements Service {
     homeNavigation = []
@@ -221,6 +222,10 @@ export class RealService implements Service {
         }
     }
 
+    /**
+     * CREATE GAME
+     */
+
     gameTypes = async function (): Promise<GameTypes | undefined> {
         const res = await doFetch(baseURL + "/api/games/types")
 
@@ -256,6 +261,67 @@ export class RealService implements Service {
         }
     }
 
+    /**
+     * LOBBY
+     */
+
+    enterLobby = async function(gameType: string) : Promise<EnterLobby | undefined> {
+        const path = await this.ensureEnterLobbyAction()
+        if (!path)
+            return undefined
+
+        const res = async () => {
+            const resp = await fetch(baseURL + path, {
+                method: 'POST',
+                body: JSON.stringify({
+                   gameType: gameType
+                }),
+                headers: {
+                   'Content-type': 'application/json',
+                },
+             })
+             const body = await resp.json()
+             return JSON.stringify(body)
+        }
+        const resp = await res()
+        if (!resp) {
+            return undefined
+        }
+
+        const jsonObj = JSON.parse(resp)
+
+        return {
+            waitingForGame: jsonObj.properties.waitingForGame,
+            lobbyOrGameId: jsonObj.properties.lobbyOrGameId
+        }
+    }
+
+    enteredGame = async function(lobbyId: number) : Promise<EnteredGame | undefined> {
+        const res = async () => {
+            const resp = await fetch(baseURL + 'lobby/' + lobbyId, {
+                method: 'DELETE',
+                headers: {
+                   'Content-type': 'application/json',
+                },
+             })
+             const body = await resp.json()
+             return JSON.stringify(body)
+        }
+        const resp = await res()
+        if (!resp) {
+            return undefined
+        }
+
+        const jsonObj = JSON.parse(resp)
+
+        return {
+            gameId: jsonObj.properties.gameId
+        }
+    }
+
+    /**
+     *  AVALABLE GAMES
+     */
     ensureGamesLink = async function (): Promise<string | undefined> {
         if (this.gamesLink == undefined) {
             return this.home().then(() => this.gamesLink.href)
