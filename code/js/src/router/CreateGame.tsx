@@ -14,7 +14,7 @@ export function CreateGame() {
             </div>
         )
     }
-    let shipKey: number = 0
+    
     return (
         <div id="content-games-type">
             {gameTypes.gameTypes.map((types: GameType) => 
@@ -28,7 +28,7 @@ export function CreateGame() {
                             <li>Shooting time: {types.shootingTime}</li>
                             <h4>Ships in Game</h4>
                             {types.fleet.map(ship => 
-                                <ul key={shipKey++}>
+                                <ul key={ship.gameType + "+" + ship.name}>
                                     <li> Name: {ship.name}</li>
                                     <li> Size: {ship.size}</li>
                                 </ul>   

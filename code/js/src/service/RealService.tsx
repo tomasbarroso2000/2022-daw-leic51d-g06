@@ -14,7 +14,7 @@ const baseURL = "http://localhost:8080"
 const homeURL = baseURL + "/api/"
 
 //temporary
-const token = "4XKO-Y7xZHP3cMV3T4tKyzlYnXZ-OFld5IN37KQ-u18="
+const token = "0nBHDqo71pqby0UDawaddIdDWl44KUP4QChJaYCs5ns="
 
 export class RealService implements Service {
     homeNavigation = []
