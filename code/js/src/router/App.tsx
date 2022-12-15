@@ -3,6 +3,7 @@ import {
     createBrowserRouter, 
     Link, 
     Navigate, 
+    Outlet, 
     RouterProvider, 
     useParams,
     useRouteError
@@ -12,12 +13,13 @@ import { RealService } from '../service/RealService'
 import { Home } from './Home'
 import { Rankings } from './Rankings'
 import { CreateUser } from './CreateUser'
-import { CreateToken } from './CreateToken'
+import { Login } from './Login'
 import { RequireAuthn } from './RequireAuthn'
 import { Me } from './Me'
 import { CreateGame } from './CreateGame'
 import { DefineLayout } from './DefineLayout'
 import { ListGames } from './ListGames'
+import { AuthnContainer } from './Authn'
 
 export const paths = {
     "home": "/",
@@ -30,50 +32,54 @@ export const paths = {
     "list-games": "game/list"
 }
 
-const router = createBrowserRouter(
-    [
-        {
-            "path": paths['home'],
-            "element": <Home />
-        },
-        {
-            "path": paths['rankings'],
-            "element": <Rankings />
-        },
-        {
-            "path": paths['create-user'],
-            "element": <CreateUser />
-        },
-        {
-            "path": paths['create-token'],
-            "element": <CreateToken />
-        },
-        {
-            "path": paths['create-game'],
-            "element": <CreateGame />
-        },
-        {
-            "path": paths['me'],
-            "element": <RequireAuthn><Me /></RequireAuthn>
-        },
-        {
-            "path": paths['define-layout'],
-            "element": <DefineLayout />
-        },
-        {
-            "path": paths['list-games'],
-            "element": <ListGames />
-        },
-        {
-            "path": "/users/:uid/games/:gid",
-            "element": <UserGameDetail />
-        },
-        {
-            "path": "*",
-            "element": <Navigate to="/"/>
-        }
-    ]
-)
+const router = createBrowserRouter([
+    {
+        "path": "/",
+        "element": <AuthnContainer><Outlet /></AuthnContainer>,
+        "children": [
+            {
+                "path": paths['home'],
+                "element": <Home />
+            },
+            {
+                "path": paths['rankings'],
+                "element": <Rankings />
+            },
+            {
+                "path": paths['create-user'],
+                "element": <CreateUser />
+            },
+            {
+                "path": paths['create-token'],
+                "element": <Login />
+            },
+            {
+                "path": paths['create-game'],
+                "element": <CreateGame />
+            },
+            {
+                "path": paths['me'],
+                "element": <RequireAuthn><Me /></RequireAuthn>
+            },
+            {
+                "path": paths['define-layout'],
+                "element": <DefineLayout />
+            },
+            {
+                "path": paths['list-games'],
+                "element": <ListGames />
+            },
+            {
+                "path": "/users/:uid/games/:gid",
+                "element": <UserGameDetail />
+            },
+            {
+                "path": "*",
+                "element": <Navigate to="/"/>
+            }
+        ]
+    }
+])
 
 export const service = new RealService()
 //export const service = new FakeService()
@@ -81,22 +87,6 @@ export const service = new RealService()
 export function App() {
     return (
         <RouterProvider router={router} />
-    )
-}
-
-function Screen2() {
-    return (
-        <div>
-            <h1>Screen 2</h1>
-        </div>
-    )
-}
-
-function Screen3() {
-    return (
-        <div>
-            <h1>Screen 3</h1>
-        </div>
     )
 }
 

@@ -1,12 +1,12 @@
 import * as React from "react";
 import { useState } from "react";
-import { useLocation, Navigate, useNavigate } from "react-router-dom";
+import { useLocation, Navigate } from "react-router-dom";
 import { Field } from "siren-types";
 import { askService } from "../service/askService"
 import { service } from "./App"
 import { useSetUser } from "./Authn"
 
-export function CreateToken() {
+export function Login() {
     console.log("Login")
     const fields: Array<Field> | undefined = askService(service, service.getCreateTokenFields)
 
@@ -15,11 +15,10 @@ export function CreateToken() {
     const [error, setError] = useState(undefined)
     const [redirect, setRedirect] = useState(false)
     const setUser = useSetUser()
-    const navigate = useNavigate()
     const location = useLocation()
 
 
-    if(!fields) {
+    if (!fields) {
         console.log("loading")
         return (
             <div>
@@ -28,7 +27,7 @@ export function CreateToken() {
         )
     }
 
-    if(redirect) {
+    if (redirect) {
         return <Navigate to={location.state?.source?.pathname || "/me"} replace={true}/>
     }
 
@@ -45,16 +44,14 @@ export function CreateToken() {
             .then(res => {
                 setIsSubmitting(false)
                 if(res.token) {
-                    //const redirect = location.state?.source?.pathname || "/home"
                     console.log(`setUser(${res.token})`)
-                    setUser(res.token)
                     setUser(res.token)
                     setRedirect(true)
                 } else {
                     setError("Invalid username or password")
                 }
             })
-            .catch(error => {
+            .catch(() => {
                 setIsSubmitting(false)
                 setError("Something went wrong!")
             })

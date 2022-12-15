@@ -9,12 +9,9 @@ type ContextType = {
     user: string | undefined,
     setUser: (v: string | undefined) => void
 }
-
-let user_token: string = undefined
-
 const LoggedInContext = createContext<ContextType>({
-    user: user_token,
-    setUser: (v: string ) => {user_token = v},
+    user: undefined,
+    setUser: () => { }
 })
 
 export function AuthnContainer({ children }: { children: React.ReactNode }) {
