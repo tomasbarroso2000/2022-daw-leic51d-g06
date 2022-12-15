@@ -2,6 +2,7 @@ import * as React from "react";
 import { useState } from "react";
 import { useLocation, Navigate } from "react-router-dom";
 import { Field } from "siren-types";
+import { CurrentUser } from "../domain/CurrentUser";
 import { askService } from "../service/askService"
 import { service } from "./App"
 import { useSetUser } from "./Authn"
@@ -41,12 +42,18 @@ export function Login() {
         ev.preventDefault()
         setIsSubmitting(true)
         service.createToken(inputs.email, inputs.password)
-            .then(res => {
+            .then(token => {
                 setIsSubmitting(false)
-                if(res.token) {
-                    console.log(`setUser(${res.token})`)
-                    setUser(res.token)
-                    setRedirect(true)
+                if (token.token) {
+                    service.userHome(token.token).then((userHome) => {
+                        console.log(`setUser(${token.token})`)
+                        const newCurrentUser: CurrentUser = {
+                            token: token.token,
+                            name: userHome.name
+                        }
+                        setUser(newCurrentUser)
+                        setRedirect(true)
+                    })
                 } else {
                     setError("Invalid username or password")
                 }
@@ -63,7 +70,7 @@ export function Login() {
             <fieldset disabled={isSubmitting}>
                 <form onSubmit={handleSubmit}>
                     {fields.map((field: Field) => 
-                        <input key={field.name} type={field.type} name={field.name} value={inputs[field.name]} placeholder={field.name} onChange={handleChange}/>
+                        <input key={field.name} type={field.type} name={field.name} value={inputs[field.name] || ""} placeholder={field.name} onChange={handleChange}/>
                     )}
                     <input id="create-token" type="submit" value="Login" />
                 </form>

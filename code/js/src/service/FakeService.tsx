@@ -5,11 +5,14 @@ import { GamesList } from "../domain/GamesList"
 import { GameType, GameTypes } from "../domain/GameTypes"
 import { Home } from "../domain/Home"
 import { Rankings } from "../domain/Rankings"
+import { UserHome } from "../domain/UserHome"
 import { Service } from "./Service"
 
 export class FakeService implements Service {
+
     createToken: (email: string, password: string) => Promise<CreateToken>
-    home = function home(): Promise<Home> {
+
+    home = function (): Promise<Home> {
         return Promise.resolve(
             {
                 name: "Exploding Battleships",
@@ -21,7 +24,20 @@ export class FakeService implements Service {
 
     homeNavigation = ["/rankings"]
 
-    rankings = function(): Promise<Rankings> {
+    userHome = function (token: string): Promise<UserHome> {
+        return Promise.resolve(
+            {
+                id: 1,
+                name: "Fiona",
+                email: "iloveshrek@gmail.com",
+                score: 10
+            }
+        )
+    }
+
+    userHomeNavigation: string[]
+
+    rankings = function (): Promise<Rankings> {
         return Promise.resolve(
             {
                 rankings: [
@@ -46,7 +62,7 @@ export class FakeService implements Service {
         )
     }
 
-    createUser = function(): Promise<CreateUser> {
+    createUser = function (): Promise<CreateUser> {
         return Promise.resolve(
             {
                 id: 1

@@ -2,7 +2,7 @@ import { Home } from "../domain/Home"
 import { Rankings } from "../domain/Rankings"
 import { paths } from "../router/App"
 import { Service } from "./Service"
-import { EmbeddedLink, Action, Field } from "siren-types"
+import { EmbeddedLink, Action, Field, isEmbeddedLink } from "siren-types"
 import { doFetch } from "./doFetch"
 import { CreateUser, UserRequest } from "../domain/CreateUser"
 import { CreateToken } from "../domain/CreateToken"
@@ -10,6 +10,7 @@ import { GameType, GameTypes } from "../domain/GameTypes"
 import { ShipType } from "../domain/ShipType"
 import { GamesList } from "../domain/GamesList"
 import { EnteredGame, EnterLobby } from "../domain/Lobby"
+import { UserHome } from "../domain/UserHome"
 
 const baseURL = "http://localhost:8080"
 const homeURL = baseURL + "/api/"
@@ -19,14 +20,21 @@ const token = "0nBHDqo71pqby0UDawaddIdDWl44KUP4QChJaYCs5ns="
 
 export class RealService implements Service {
     homeNavigation = []
+    userHomeNavigation: []
     rankingsNavigation = []
     gamesNavigation = []
     createUserNavigation = []
+
+    homeActions = []
+    userHomeActions = []
+
+    userHomeLink: EmbeddedLink | undefined = undefined
     rankingsLink: EmbeddedLink | undefined = undefined
     gamesLink: EmbeddedLink | undefined = undefined
-    homeActions = []
+    
     createUserAction: Action | undefined = undefined
     createTokenAction: Action | undefined = undefined
+    enterLobbyAction: Action | undefined = undefined
 
     /**
      * HOME
@@ -51,6 +59,7 @@ export class RealService implements Service {
             }
         })
 
+        this.userHomeLink = jsonObj.links.find((link: EmbeddedLink) => link.rel[0] == "user-home")
         this.rankingsLink = jsonObj.links.find((link: EmbeddedLink) => link.rel[0] == "rankings")
         this.gamesLink = jsonObj.links.find((link: EmbeddedLink) => link.rel[0] == "games")
 
@@ -71,6 +80,59 @@ export class RealService implements Service {
             version: jsonObj.properties.version
         }
         
+    }
+
+    /**
+     * USER HOME
+     */
+
+    ensureUserHomeLink = async function (): Promise<string | undefined> {
+        if (this.userHomeLink == undefined) {
+            return this.home().then(() => this.userHomeLink.href)
+        }
+        return this.userHomeLink.href
+    }
+
+    userHome = async function (token: string): Promise<UserHome | undefined> {
+        const path = await this.ensureUserHomeLink()
+
+        console.log("in user home")
+
+        if (!path)
+            return undefined
+
+        this.userHomeNavigation = []
+
+        const res = await doFetch(baseURL + path, { token: token })
+
+        if (!res) {
+            return undefined
+        }
+
+        const jsonObj = JSON.parse(res)
+
+        jsonObj.links.forEach((link: EmbeddedLink) => {
+            const path = paths[link.rel[0]]
+            if (path) {
+                this.userHomeNavigation.push(path)
+            }
+        })
+
+        jsonObj.actions.forEach((action: Action) => {
+            const path = paths[action.name]
+            if (path) {
+                this.userHomeActions.push(path)
+            }
+        })
+
+        this.enterLobbyAction = jsonObj.actions.find((action: Action) => action.name == "enter-lobby")
+
+        return {
+            id: jsonObj.properties.id,
+            name: jsonObj.properties.name,
+            email: jsonObj.properties.email,
+            score: jsonObj.properties.score
+        }
     }
 
     /**

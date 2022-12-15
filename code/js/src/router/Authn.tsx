@@ -4,10 +4,11 @@ import {
     createContext,
     useContext,
 } from 'react'
+import { CurrentUser } from '../domain/CurrentUser'
 
 type ContextType = {
-    user: string | undefined,
-    setUser: (v: string | undefined) => void
+    user: CurrentUser | undefined,
+    setUser: (v: CurrentUser | undefined) => void
 }
 const LoggedInContext = createContext<ContextType>({
     user: undefined,
