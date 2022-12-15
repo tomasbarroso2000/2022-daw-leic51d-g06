@@ -6,6 +6,7 @@ export function askService(service: Service, serviceFunction: () => Promise<any 
     useEffect(() => {
         let cancelled = false
         async function doService() {
+            console.log("doService")
             const resp = await serviceFunction.call(service)
             if (!cancelled) {
                 setContent(resp)

@@ -1,5 +1,37 @@
-export async function doFetch(url: string) {
-        const resp = await fetch(url)
-        const body = await resp.json()
-        return JSON.stringify(body)
+export async function doFetch(
+	url: string, 
+	options: any | undefined = undefined
+) {
+	const resp = options ? await fetchWithOptions(url, options) : await fetch(url)
+	const responseBody = await resp.json()
+	return JSON.stringify(responseBody)
+}
+
+async function fetchWithOptions(url: string, options: any) {
+	return await fetch(
+		url,
+		{
+			method: options.method,
+			body: makeBody(options.body),
+			headers: makeHeaders(options.body, options.token)
+		}
+	)
+}
+
+function makeBody(body: any | undefined): string | undefined {
+	if (body == undefined)
+		return undefined
+	return JSON.stringify(body)
+}
+
+function makeHeaders(
+	body: any | undefined, 
+	token: string | undefined
+): any {
+	const headers = {}
+	if (body)
+		headers['Content-type'] = 'application/json'
+	if (token)
+		headers['Authorization'] = `Bearer ${token}`
+	return headers
 }
