@@ -15,8 +15,8 @@ interface Service {
     createUser: (name:string, email: string, password: string) => Promise<CreateUser | undefined>
     createToken: (email: string, password: string) => Promise<CreateToken |undefined>
     gameTypes: () => Promise<GameTypes | undefined>
-    enterLobby: (gameType: string) => Promise<EnterLobby | undefined>
-    enteredGame: (lobbyId: number) => Promise<EnteredGame | undefined>
+    enterLobby: (token: string, gameType: string) => Promise<EnterLobby | undefined>
+    enteredGame: (token: string, lobbyId: number) => Promise<EnteredGame | undefined>
     games: () => Promise<GamesList | undefined>
 
     homeNavigation: Array<string>

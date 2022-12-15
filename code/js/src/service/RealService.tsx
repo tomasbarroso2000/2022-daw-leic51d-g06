@@ -327,30 +327,27 @@ export class RealService implements Service {
      * LOBBY
      */
 
-    enterLobby = async function(gameType: string) : Promise<EnterLobby | undefined> {
+    ensureEnterLobbyAction = async function (): Promise<string | undefined> {
+        if (this.enterLobbyAction == undefined) {
+            return this.userHome().then(() => this.enterLobbyAction.href)
+        }
+        return this.enterLobbyAction.href
+    }
+
+    enterLobby = async function(token: string, gameType: string) : Promise<EnterLobby | undefined> {
         const path = await this.ensureEnterLobbyAction()
         if (!path)
             return undefined
 
-        const res = async () => {
-            const resp = await fetch(baseURL + path, {
+        const res = await doFetch(baseURL + path, {
                 method: 'POST',
-                body: JSON.stringify({
+                body: {
                    gameType: gameType
-                }),
-                headers: {
-                   'Content-type': 'application/json',
                 },
+                token: token 
              })
-             const body = await resp.json()
-             return JSON.stringify(body)
-        }
-        const resp = await res()
-        if (!resp) {
-            return undefined
-        }
 
-        const jsonObj = JSON.parse(resp)
+        const jsonObj = JSON.parse(res)
 
         return {
             waitingForGame: jsonObj.properties.waitingForGame,
@@ -358,7 +355,7 @@ export class RealService implements Service {
         }
     }
 
-    enteredGame = async function(lobbyId: number) : Promise<EnteredGame | undefined> {
+    enteredGame = async function(token: string, lobbyId: number) : Promise<EnteredGame | undefined> {
         const res = async () => {
             const resp = await fetch(baseURL + 'lobby/' + lobbyId, {
                 method: 'DELETE',

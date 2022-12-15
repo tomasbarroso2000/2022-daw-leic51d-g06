@@ -93,7 +93,7 @@ export class FakeService implements Service {
         )
     }
 
-    enterLobby = async function (gameType: string): Promise<EnterLobby | undefined> {
+    enterLobby = async function (token: string, gameType: string): Promise<EnterLobby | undefined> {
         return Promise.resolve(
             {
                 waitingForGame: true,
@@ -102,7 +102,7 @@ export class FakeService implements Service {
         )
     }
 
-    enteredGame = async function (lobbyId: number) : Promise<EnteredGame> {
+    enteredGame = async function (token:string, lobbyId: number) : Promise<EnteredGame> {
         return Promise.resolve(
             {
                 gameId: 1
