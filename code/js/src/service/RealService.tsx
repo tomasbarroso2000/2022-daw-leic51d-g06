@@ -96,8 +96,6 @@ export class RealService implements Service {
     userHome = async function (token: string): Promise<UserHome | undefined> {
         const path = await this.ensureUserHomeLink()
 
-        console.log("in user home")
-
         if (!path)
             return undefined
 

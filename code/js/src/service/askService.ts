@@ -1,13 +1,16 @@
 import { useState, useEffect } from 'react'
 import { Service } from './Service'
 
-export function askService(service: Service, serviceFunction: () => Promise<any | undefined>): any | undefined {
+export function askService(
+    service: Service, 
+    serviceFunction: (...args: any[]) => Promise<any | undefined>,
+    ...args: any[]
+): any | undefined {
     const [content, setContent] = useState(undefined)
     useEffect(() => {
         let cancelled = false
         async function doService() {
-            console.log("doService")
-            const resp = await serviceFunction.call(service)
+            const resp = await serviceFunction.call(service, args)
             if (!cancelled) {
                 setContent(resp)
             }

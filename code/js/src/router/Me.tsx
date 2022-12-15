@@ -8,7 +8,7 @@ export function Me() {
     const currentUser = useCurrentUser()
 
     const userHome: UserHome | undefined = 
-        askService(service, () => service.userHome(currentUser.token))
+        askService(service, service.userHome, currentUser.token)
     
     if (!userHome) {
         return (
