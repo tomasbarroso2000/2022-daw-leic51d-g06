@@ -4,52 +4,33 @@ import { GameType } from "../domain/GameTypes";
 import { askService } from "../service/askService"
 import { paths, service } from "./App"
 
-let board = []
+function GridSquare() {
+     return <div className="grid-square" />
+  }
 
-const Square = () => {
-    return (
-        <tr className="square">
-            
-        </tr>
-    )
-}
+  function GridBoard(boardSize: number) {
 
-function DrawBoard(boardSize: number) {
+    // generates an array of 18 rows, each containing 10 GridSquares.
+  
+      const grid = []
+      for (let row = 0; row < boardSize; row ++) {
+          grid.push([])
+          for (let col = 0; col < boardSize; col ++) {
+              grid[row].push(
+              <GridSquare key={`${col}${row}`} />)
+          }
+      }
+  
+    // The components generated in makeGrid are rendered in div.grid-board
+      
+    if(boardSize == 10)
+        return <div className='grid-board' id="beginner"> {grid}</div>
+    if(boardSize == 12)
+        return <div className='grid-board' id="experienced"> {grid}</div>
+    if(boardSize == 15)
+        return <div className='grid-board' id="expert"> {grid}</div>
+  }
 
-    let board = [];
-    for (var i = 0; i < boardSize; i++) {
-        board[i] = [];
-        for (var j = 0; j < boardSize; j++)
-            board[i][j] = 0;
-    }
-
-    var cells = [];
-    for (var i = 0; i < boardSize; i++)
-      for (var j = 0; j < boardSize; j++)
-        cells.push({row: i, col: j});
- 
-    let count = 0
-    return (
-        <div>
-            {   
-                <div>
-                    {
-                        cells.map(cell => {
-                            if (count <= 9) {
-                                count++
-                                return <span> {"[r: " + cell.row + " c: " + cell.col + "]"} </span>
-                            } else {
-                                count = 0
-                                return <div> {"[r: " + cell.row + " c: " + cell.col + "]"} </div> 
-                            }
-                        })
-                    }
-                </div>
-                
-            }
-        </div>
-    )
-}
 
 export function DefineLayout() {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -70,7 +51,7 @@ export function DefineLayout() {
     }
 
     const gameType = gameTypes.gameTypes.find((game: GameType) => game.name === gameTypeSearchParam)
-    console.log("GameType: " + gameType.boardSize)
+    //console.log("GameType: " + gameType.boardSize)
 
     if (!gameTypes) {
         return (
@@ -81,9 +62,11 @@ export function DefineLayout() {
     }
 
     return (
-        <div>
+        <div id="content">
             <h1>{gameTypeSearchParam}</h1>
-            { DrawBoard(gameType.boardSize) }   
+            <div id="board-content">
+                {GridBoard(gameType.boardSize)}
+            </div>
         </div>
     )
 }

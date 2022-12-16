@@ -331,10 +331,56 @@ div#content-rankings li hr {
     border-top: 1px dotted white;
 }
 
-table {
-    border: 1px solid black; 
-}
+.App-header {
+    background-color: #282c34;
+    min-height: 10vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(10px + 2vmin);
+    color: white;
+  }
 
-table .square {
-    border: 1px solid black;
-}
+  :root {
+    /* Numbers define values that will be used throughout the CSS.
+    --tile-size: 20px for example will set size of the grid squares. */
+    --colsBegginer: 10;
+    --colsIntermediate: 12;
+    --colsExpert: 15;
+    --cols: 15;
+    --rows: 15;
+    --tile-size: 40px;
+  }
+
+  .grid-square {
+    background-color: #008DD5;
+    width: var(--tile-size);
+    height: var(--tile-size);
+    border-width: var(--border-width);
+  }
+
+  #beginner {
+    grid-template-columns: repeat(var(--colsBegginer), var(--tile-size));
+  }
+
+  #experienced {
+    grid-template-columns: repeat(var(--colsIntermediate), var(--tile-size));
+  }
+
+  #expert {
+    grid-template-columns: repeat(var(--colsExpert), var(--tile-size));
+  }
+
+  .grid-board {
+    display: grid;
+    /*grid-template-columns: repeat(var(--cols), var(--tile-size));*/
+    grid-gap: 2px;
+    align-self: flex-start;
+  }
+
+  #board-content {
+   width: fit-content;
+   display: block;
+   margin: 20px auto;
+  }
