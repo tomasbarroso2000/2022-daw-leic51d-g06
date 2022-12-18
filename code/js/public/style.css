@@ -384,3 +384,7 @@ div#content-rankings li hr {
    display: block;
    margin: 20px auto;
   }
+
+  .ship {
+    background-color: #aed4e6;
+  }

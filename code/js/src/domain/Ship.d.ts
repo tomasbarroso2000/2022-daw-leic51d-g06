@@ -1,7 +1,7 @@
 import { Square } from "./Square"
 
 export type Ship = {
-    firstSquare: string,
+    firstSquare: Square,
     name: string,
     size: number,
     destroyed: boolean,
