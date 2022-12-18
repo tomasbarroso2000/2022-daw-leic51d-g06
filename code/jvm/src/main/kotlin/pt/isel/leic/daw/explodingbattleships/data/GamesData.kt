@@ -19,7 +19,7 @@ interface GamesData {
      * @param userId the user id
      * @return the list of games
      */
-    fun getGames(transaction: Transaction, userId: Int, limit: Int, skip: Int): DataList<Game>
+    fun getOngoingGames(transaction: Transaction, userId: Int, limit: Int, skip: Int): DataList<Game>
 
     /**
      * Gets the number of played games so far

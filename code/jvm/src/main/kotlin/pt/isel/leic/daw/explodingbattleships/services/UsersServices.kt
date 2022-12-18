@@ -124,7 +124,7 @@ class UsersServices(
         val gameType = getGameType(transaction, gameTypeName, data)
         val matchingLobby = data.lobbiesData.searchLobbies(transaction, gameType.name, userId).firstOrNull()
         if (matchingLobby != null) {
-            val gameId = data.gamesData.createGame(transaction, gameType.name, userId, matchingLobby.userId)
+            val gameId = data.gamesData.createGame(transaction, gameType.name, matchingLobby.userId, userId)
             data.lobbiesData.setGameId(transaction, matchingLobby.id, gameId)
             EnterLobbyOutcome(false, gameId)
         } else {

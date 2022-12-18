@@ -41,19 +41,17 @@ class GamesServices(private val data: Data) {
     fun getCurrentlyPlayingGames(userId: Int, limit: Int, skip: Int) = doService(data) { transaction ->
         checkLimitAndSkip(limit, skip)
         val userPlayingGames = mutableListOf<FullGameInfo>()
-        val userGames = data.gamesData.getGames(transaction, userId, limit, skip)
+        val userGames = data.gamesData.getOngoingGames(transaction, userId, limit, skip)
         for (game in userGames.list) {
             val updatedGame = computeGame(transaction, game.id, data)
-            if (updatedGame.state != "completed") {
-                userPlayingGames.add(
-                    getFullGameInfo(
-                        transaction,
-                        updatedGame,
-                        userId,
-                        data
-                    )
+            userPlayingGames.add(
+                getFullGameInfo(
+                    transaction,
+                    updatedGame,
+                    userId,
+                    data
                 )
-            }
+            )
         }
         DataList(userPlayingGames, userGames.hasMore)
     }
@@ -192,8 +190,10 @@ class GamesServices(private val data: Data) {
         val game = getGameOrThrow(transaction, gameId, data)
         checkPlayerInGame(game, userId)
         checkGameState(game.state, "shooting")
+        val idlePlayer = game.idlePlayer()
         data.gamesData.setGameStateCompleted(transaction, game.id)
-        data.gamesData.changeCurrPlayer(transaction, game.id, game.idlePlayer())
+        data.gamesData.changeCurrPlayer(transaction, game.id, idlePlayer)
+        data.usersData.increasePlayerScore(transaction, idlePlayer, WINNING_POINTS)
         "completed"
     }
 

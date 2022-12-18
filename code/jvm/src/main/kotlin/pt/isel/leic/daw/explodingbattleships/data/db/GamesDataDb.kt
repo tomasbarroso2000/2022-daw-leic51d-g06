@@ -26,15 +26,16 @@ class GamesDataDb : GamesData {
                 .first()
         }
 
-    override fun getGames(transaction: Transaction, userId: Int, limit: Int, skip: Int): DataList<Game> =
+    override fun getOngoingGames(transaction: Transaction, userId: Int, limit: Int, skip: Int): DataList<Game> =
         (transaction as TransactionDataDb).withHandle { handle ->
             val foundGames = handle.createQuery(
                 "select * from games " +
-                    "where player1 = :userId or player2 = :userId offset :skip limit :limit"
+                    "where (player1 = :userId or player2 = :userId) and state <> 'completed' " +
+                    "order by id offset :skip limit :limit"
             )
                 .bind("userId", userId)
                 .bind("skip", skip)
-                .bind("limit", limit)
+                .bind("limit", limit + 1)
                 .mapTo<Game>().list()
             val games = mutableListOf<Game>()
             val hasMore = getHasMoreAndProcessList(foundGames, games, limit)

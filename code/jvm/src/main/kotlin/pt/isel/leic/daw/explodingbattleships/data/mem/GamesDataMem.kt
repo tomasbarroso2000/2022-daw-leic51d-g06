@@ -18,8 +18,8 @@ class GamesDataMem(private val mockData: MockData) : GamesData {
         return id
     }
 
-    override fun getGames(transaction: Transaction, userId: Int, limit: Int, skip: Int): DataList<Game> {
-        val games = mockData.games.filter { it.player1 == userId || it.player2 == userId }
+    override fun getOngoingGames(transaction: Transaction, userId: Int, limit: Int, skip: Int): DataList<Game> {
+        val games = mockData.games.filter { (it.player1 == userId || it.player2 == userId) && it.state != "completed" }
         return DataList(getSublist(games, limit, skip), hasMore(games.size, limit, skip))
     }
 
