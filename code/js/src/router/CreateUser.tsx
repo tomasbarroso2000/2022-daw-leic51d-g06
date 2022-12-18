@@ -38,7 +38,7 @@ export function CreateUser() {
             <h1>Sign up</h1>
             <form onSubmit={handleSubmit}>
                 {fields.map((field: Field) => 
-                    <input key={field.name} type={field.type} name={field.name} value={inputs[field.name]} placeholder={field.name} onChange={handleChange} />
+                    <input key={field.name} type={field.type} name={field.name} value={inputs[field.name] || ""} placeholder={field.name} onChange={handleChange} />
                 )}
                 <input id="create-user" type="submit" value="Sign Up" />
             </form>

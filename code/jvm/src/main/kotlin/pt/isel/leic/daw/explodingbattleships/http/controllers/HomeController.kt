@@ -39,8 +39,8 @@ class HomeController {
                         MediaType.APPLICATION_JSON.toString()
                     ) {
                         textField("name")
-                        textField("email")
-                        textField("password")
+                        emailField("email")
+                        passwordField("password")
                     }
                     action(
                         "create-token",
@@ -48,8 +48,8 @@ class HomeController {
                         HttpMethod.POST,
                         MediaType.APPLICATION_JSON.toString()
                     ) {
-                        textField("email")
-                        textField("password")
+                        emailField("email")
+                        passwordField("password")
                     }
                     link(Uris.home(), Rels.SELF)
                     link(Uris.Users.home(), Rels.USER_HOME)

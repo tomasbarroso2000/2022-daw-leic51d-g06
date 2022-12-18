@@ -8,7 +8,6 @@ import { service } from "./App"
 import { useSetUser } from "./Authn"
 
 export function Login() {
-    console.log("Login")
     const fields: Array<Field> | undefined = askService(service, service.getCreateTokenFields)
 
     const [inputs, setInputs]: [any, React.Dispatch<React.SetStateAction<{}>>] = useState({})
@@ -20,7 +19,6 @@ export function Login() {
 
 
     if (!fields) {
-        console.log("loading")
         return (
             <div>
                 ...loading...

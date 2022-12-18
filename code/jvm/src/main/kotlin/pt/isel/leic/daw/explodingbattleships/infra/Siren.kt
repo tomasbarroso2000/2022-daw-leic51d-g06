@@ -108,6 +108,14 @@ class ActionBuilderScope(
         fields.add(FieldModel(name, "number"))
     }
 
+    fun emailField(name: String) {
+        fields.add(FieldModel(name, type = "email"))
+    }
+
+    fun passwordField(name: String) {
+        fields.add(FieldModel(name, type = "password"))
+    }
+
     fun hiddenField(name: String, value: String) {
         fields.add(FieldModel(name, "hidden", value))
     }
