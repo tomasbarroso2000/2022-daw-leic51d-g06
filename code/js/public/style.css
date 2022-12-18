@@ -61,6 +61,7 @@ html {
 
 *{
     margin: 0;
+    font-family: 'Quicksand', sans-serif;
 }
 
 a {
@@ -374,7 +375,6 @@ div#content-rankings li hr {
 
   .grid-board {
     display: grid;
-    /*grid-template-columns: repeat(var(--cols), var(--tile-size));*/
     grid-gap: 2px;
     align-self: flex-start;
   }
@@ -387,4 +387,14 @@ div#content-rankings li hr {
 
   .ship {
     background-color: #aed4e6;
+  }
+
+  div.cross:after {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    font-size: 32px;
+    content: ' \00D7';
+    color: rgb(219, 81, 81);
+    background-color: #282c34;
   }
