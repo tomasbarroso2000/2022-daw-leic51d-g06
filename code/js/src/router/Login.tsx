@@ -6,7 +6,8 @@ import { CurrentUser } from "../domain/CurrentUser";
 import { askService } from "../service/askService"
 import { service } from "./App"
 import { useSetUser } from "./Authn"
-
+import { Cookies, useCookies } from "react-cookie"; // npm install react-cookie
+ 
 export function Login() {
     const fields: Array<Field> | undefined = askService(service, service.getCreateTokenFields)
 
@@ -16,7 +17,7 @@ export function Login() {
     const [redirect, setRedirect] = useState(false)
     const setUser = useSetUser()
     const location = useLocation()
-
+    const [cookies, setCookie] = useCookies(['token']);
 
     if (!fields) {
         return (
@@ -50,6 +51,7 @@ export function Login() {
                             name: userHome.name
                         }
                         setUser(newCurrentUser)
+                        setCookie("token", token.token)
                         setRedirect(true)
                     })
                 } else {

@@ -10,7 +10,7 @@ export function askService(
     useEffect(() => {
         let cancelled = false
         async function doService() {
-            const resp = await serviceFunction.call(service, args)
+            const resp = await serviceFunction.call(service, ...args)
             if (!cancelled) {
                 setContent(resp)
             }

@@ -387,38 +387,27 @@ export class RealService implements Service {
         return this.gamesLink.href
     }
 
-    games = async function (): Promise<GamesList | undefined> {
+    games = async function (token: string, limit: number, skip: number): Promise<GamesList | undefined> {
         
         const path = await this.ensureGamesLink()
 
         if (!path)
             return undefined
 
-
         console.log("gamesLink: " + path)
         
         this.gamesNavigation = []
 
-        const res = async () => {
-            console.log("here")
-            const resp = await fetch(baseURL + path, {
-                method: 'GET',
-                headers: {
-                    'Content-type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-             })
-             const body = await resp.json()
-             console.log("resp: " + body)
-             return JSON.stringify(body)
-        }
+        const res = await doFetch(
+                baseURL + path + `?limit=${limit}&skip=${skip}`, 
+                { token: token }
+            )
 
-        const resp = await res()
-        if (!resp) {
+        if (!res) {
             return undefined
         }
 
-        const jsonObj = JSON.parse(resp)
+        const jsonObj = JSON.parse(res)
 
         console.log("jsonObj: " + jsonObj)
 

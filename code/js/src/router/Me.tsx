@@ -1,8 +1,10 @@
 import * as React from "react"
+import { Link } from "react-router-dom"
 import { UserHome } from "../domain/UserHome"
 import { askService } from "../service/askService"
-import { service } from "./App"
+import { paths, service } from "./App"
 import { useCurrentUser } from './Authn'
+import { Login } from "./Login"
 
 export function Me() {
     const currentUser = useCurrentUser()
@@ -22,6 +24,9 @@ export function Me() {
         <div>
             <div>{`Oh hi, ${userHome.name}`}</div>
             <div>{`Your score is ${userHome.score}`}</div>
+            <div>
+                <Link to={paths['home']}>home</Link>
+            </div>
         </div>
     )
 }

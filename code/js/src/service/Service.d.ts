@@ -17,7 +17,7 @@ interface Service {
     gameTypes: () => Promise<GameTypes | undefined>
     enterLobby: (token: string, gameType: string) => Promise<EnterLobby | undefined>
     enteredGame: (token: string, lobbyId: number) => Promise<EnteredGame | undefined>
-    games: () => Promise<GamesList | undefined>
+    games: (token: string, limit: number, skip: number) => Promise<GamesList | undefined>
 
     homeNavigation: Array<string>
     userHomeNavigation: Array<string>

@@ -2,9 +2,14 @@ import * as React from "react"
 import { Link } from "react-router-dom"
 import { askService } from "../service/askService"
 import { paths, service } from "./App"
+import { useCurrentUser } from './Authn'
 
 export function ListGames() {
-    const games = askService(service, service.games)
+    const currentUser = useCurrentUser()
+    const limit = 5
+    const skip = 0
+    console.log("token: " + currentUser.token)
+    const games = askService(service, service.games, currentUser.token, limit, skip)
 
     if (!games) {
         return (
