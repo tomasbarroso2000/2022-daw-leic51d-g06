@@ -1,14 +1,23 @@
 import * as React from "react"
 import { useState } from "react";
-import { Form, Link } from "react-router-dom"
+import { useLocation, Navigate, Link } from "react-router-dom"
 import { Field } from "siren-types"
 import { askService } from "../service/askService"
+import { CurrentUser } from "../domain/CurrentUser";
 import { service } from "./App"
+import { useSetUser } from "./Authn"
+import { Cookies, useCookies } from "react-cookie"; // npm install react-cookie
 
 export function CreateUser() {
     const fields: Array<Field> | undefined = askService(service, service.getCreateUserFields)
     
     const [inputs, setInputs]: [any, React.Dispatch<React.SetStateAction<{}>>] = useState({})
+    const [redirect, setRedirect] = useState(false)
+    const setUser = useSetUser()
+    const [cookies, setCookie] = useCookies(['token']);
+    const [isSubmitting, setIsSubmitting] = useState(false)
+    const [error, setError] = useState(undefined)
+    const location = useLocation()
 
     if(!fields) {
         return (
@@ -16,6 +25,10 @@ export function CreateUser() {
                 ...loading...
             </div>
         )
+    }
+
+    if (redirect) {
+        return <Navigate to={location.state?.source?.pathname || "/me"} replace={true}/>
     }
 
     function handleChange(ev: React.FormEvent<HTMLInputElement>) {
@@ -29,7 +42,24 @@ export function CreateUser() {
         //setIsSubmitting(true)
         service.createUser(inputs.name, inputs.email, inputs.password)
             .then((user) => {
-                console.log(user.id)
+                service.createToken(inputs.email, inputs.password)
+            .then(token => {
+                setIsSubmitting(false)
+                if (token.token) {
+                    service.userHome(token.token).then((userHome) => {
+                        console.log(`setUser(${token.token})`)
+                        const newCurrentUser: CurrentUser = {
+                            token: token.token,
+                            name: userHome.name
+                        }
+                        setUser(newCurrentUser)
+                        setCookie("token", token.token)
+                        setRedirect(true)
+                    })
+                } else {
+                    setError("Invalid username or password")
+                }
+            })
             })
     }
 

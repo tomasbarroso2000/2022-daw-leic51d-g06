@@ -42,6 +42,9 @@ export function ListGames() {
                         }
                     })
                 }
+                <div>
+                    <Link to={paths['create-game']}>New Game</Link>
+                </div>
         </div>
     )
 }

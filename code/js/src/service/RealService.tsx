@@ -199,28 +199,16 @@ export class RealService implements Service {
 
         this.createUserNavigation = []
 
-        const res = async () => {
-            const resp = await fetch(baseURL + path, {
+        const res = await doFetch(baseURL + path, {
                 method: 'POST',
-                body: JSON.stringify({
+                body: {
                     name: name,
                     email: email,
                     password: password,
-                }),
-                headers: {
-                   'Content-type': 'application/json',
-                },
+                }
              })
-             const body = await resp.json()
-             return JSON.stringify(body)
-        }
 
-        const resp = await res()
-        if (!resp) {
-            return undefined
-        }
-
-        const jsonObj = JSON.parse(resp)
+        const jsonObj = JSON.parse(res)
 
         //user creation actions and links
         return {
@@ -336,13 +324,12 @@ export class RealService implements Service {
         const path = await this.ensureEnterLobbyAction()
         if (!path)
             return undefined
-
         const res = await doFetch(baseURL + path, {
                 method: 'POST',
                 body: {
-                   gameType: gameType
-                },
-                token: token 
+                    "game-type": gameType
+                 },
+                token: token
              })
 
         const jsonObj = JSON.parse(res)
