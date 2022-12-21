@@ -1,6 +1,7 @@
 import * as React from "react"
 import { useState } from "react"
 import { Ship } from "./domain/ship"
+import { ShipType } from "./domain/ShipType"
 import { Square } from "./domain/Square"
 
 function gridSquare(key: string, hasShip: boolean) {
@@ -48,28 +49,41 @@ export function showGameBoard(boardSize: number, ships: Array<Ship>, hits: Array
         return <div className='grid-board' id="expert"> {gameBoard}</div>
 }
 
-export function showDefaultShips(fleet: Array<Ship>) {
+const wrapperStyle: React.CSSProperties = {
+    display: 'grid',
+    gridTemplateColumns: "repeat(3, 1fr)",
+    gap: "10px",
+    gridAutoRows: "minmax(100px, auto)",
+}
+
+// The function to compute the CSS style for a source `div`
+function sourceDivStyle(column: number, row: number): React.CSSProperties {
+    return {
+        gridColumn: column,
+        gridRow: row,
+        border: "solid",
+        width: "50px",
+        height: "50px",
+    }
+}
+
+export function showDefaultShips(fleet: Array<ShipType>) {
     const arrFleet = []
     
     fleet.forEach(ship => {
+        let ix = 0
         arrFleet.push(
-            (
-                <table>
-                    {
-                        <tr>
-                            
-                        </tr>
-                    }
-                </table>
-            )
+            <div style={wrapperStyle}>
+                {
+                    
+                }
+                <div
+                    key={ship.name}
+                    style={sourceDivStyle(ix + 1, 1)}
+                ></div>
+            </div>
         )
     })
 
-    return (
-        <div className='grid-board'> 
-            {fleet.map(ship => 
-                <p></p>
-            )}
-        </div>
-    )
+    return arrFleet
 }

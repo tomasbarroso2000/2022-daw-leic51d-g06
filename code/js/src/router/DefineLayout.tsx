@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useSearchParams } from "react-router-dom"
-import { showGameBoard } from "../board";
+import { showDefaultShips, showGameBoard } from "../board";
 import { GameType } from "../domain/GameTypes";
 import { askService } from "../service/askService"
 import { paths, service } from "./App"
@@ -23,7 +23,7 @@ export function DefineLayout() {
         )
     }
 
-    const gameType = gameTypes.gameTypes.find((game: GameType) => game.name === gameTypeSearchParam)
+    const gameType: GameType = gameTypes.gameTypes.find((game: GameType) => game.name === gameTypeSearchParam)
 
     if (!gameTypes) {
         return (

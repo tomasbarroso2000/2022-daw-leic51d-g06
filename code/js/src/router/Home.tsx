@@ -3,6 +3,13 @@ import { Link } from "react-router-dom"
 import { Home } from "../domain/Home"
 import { askService } from "../service/askService"
 import { paths, service } from "./App"
+import { useCurrentUser } from "./Authn"
+
+function UserInfo() {
+    const currentUser = useCurrentUser()
+    if(currentUser != null)
+        return <h3>{currentUser.name}</h3>
+}
 
 export function Home() {
     const home: Home | undefined = askService(service, service.home)
@@ -34,6 +41,7 @@ export function Home() {
                 
             </div>
             <div id="left-side-content">
+                
                 <div id="menu">
                     <h2 id="menu-title">Menu</h2>
                     <ol>

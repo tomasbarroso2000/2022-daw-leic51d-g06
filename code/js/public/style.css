@@ -398,3 +398,9 @@ div#content-rankings li hr {
     color: rgb(219, 81, 81);
     background-color: #282c34;
   }
+
+  div.game-box {
+    width: fit-content;
+    padding: 15px;
+    display: inline-block;
+  }

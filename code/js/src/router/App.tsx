@@ -22,6 +22,7 @@ import { DefineLayout } from './DefineLayout'
 import { ListGames } from './ListGames'
 import { AuthnContainer } from './Authn'
 import { EnteredGame } from './Lobby'
+import { PlayGame } from './PlayGame'
 
 export const paths = {
     "home": "/",
@@ -32,7 +33,8 @@ export const paths = {
     "create-game":"/game/new",
     "lobby":"/lobby",
     "define-layout": "/game/layout",
-    "list-games": "game/list"
+    "list-games": "/game/list",
+    "play-game": "/game/play"
 }
 
 const router = createBrowserRouter([
@@ -74,7 +76,11 @@ const router = createBrowserRouter([
             },
             {
                 "path": paths['list-games'],
-                "element": <ListGames />
+                "element": <RequireAuthn><ListGames /></RequireAuthn>
+            },
+            {
+                "path": paths['play-game'],
+                "element": <RequireAuthn><PlayGame /></RequireAuthn>
             },
             {
                 "path": "/users/:uid/games/:gid",

@@ -1,11 +1,25 @@
 import * as React from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
-import { useCurrentUser } from './Authn'
+import { UserHome } from '../domain/UserHome'
+import { askService } from '../service/askService'
+import { service } from './App'
+import { useCurrentCookie, useCurrentUser, useSetUser } from './Authn'
 
 export function RequireAuthn({ children }: { children: React.ReactNode }): React.ReactElement {
     const currentUser = useCurrentUser()
     const location = useLocation()
-    console.log(`currentUser = ${currentUser}`)
+    const currentCookie = useCurrentCookie()
+    const setUser = useSetUser()
+
+    if(!currentUser && currentCookie) {
+        const user: UserHome | undefined = askService(service, service.userHome, currentCookie.token)
+        
+        if (user) {
+            console.log(`info: ${currentCookie.token + ":" + user.name}`)
+            setUser({token: currentCookie.token, name: user.name})
+        }
+    }
+
     if (currentUser) {
         return <>{children}</>
     } else {

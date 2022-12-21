@@ -8,15 +8,15 @@ import { CreateUser, UserRequest } from "../domain/CreateUser"
 import { CreateToken } from "../domain/CreateToken"
 import { GameType, GameTypes } from "../domain/GameTypes"
 import { ShipType } from "../domain/ShipType"
-import { GamesList } from "../domain/GamesList"
+import { Game, GamesList } from "../domain/GamesList"
 import { EnteredGame, EnterLobby } from "../domain/Lobby"
 import { UserHome } from "../domain/UserHome"
+import { UserInfo } from "../domain/UserInfo"
+import { Ship } from "../domain/ship"
+import { Square } from "../domain/Square"
 
 const baseURL = "http://localhost:8080"
 const homeURL = baseURL + "/api/"
-
-//temporary
-const token = "0nBHDqo71pqby0UDawaddIdDWl44KUP4QChJaYCs5ns="
 
 export class RealService implements Service {
     homeNavigation = []
@@ -95,7 +95,7 @@ export class RealService implements Service {
 
     userHome = async function (token: string): Promise<UserHome | undefined> {
         const path = await this.ensureUserHomeLink()
-
+        
         if (!path)
             return undefined
 
@@ -223,7 +223,7 @@ export class RealService implements Service {
      ensureCreateTokenAction = async function (): Promise<string | undefined> {
         if (this.createTokenAction == undefined) {
             return this.home().then(() => this.createTokenAction.href)
-        }
+        }   
         return this.createTokenAction.href
     }
 
@@ -401,13 +401,130 @@ export class RealService implements Service {
         jsonObj.links.forEach((link: EmbeddedLink) => {
             const path = paths[link.rel[0]]
             if (path) {
-                this.rankingsNavigation.push(path)
+                this.gamesNavigation.push(path)
             }
         })
 
         return {
             games: jsonObj.properties.games,
             hasMore: jsonObj.properties.hasMore
+        }
+    }
+
+    gameInfo = async function (token: string): Promise<Game | undefined> {
+        const path = this.gamesNavigation["game"]
+        if(!path) 
+            return undefined
+
+        console.log(`path: ${path}`)
+        const res = await doFetch(
+            baseURL + path, 
+            { token: token }
+        )
+
+        if (!res) {
+            return undefined
+        }
+
+        const jsonObj = JSON.parse(res)
+
+        
+            const fleetTypes: Array<ShipType> = jsonObj.properties.fleet.map(ship => {
+                return {
+                    name: ship.name,
+                    size: ship.size,
+                    gameType: ship["game-type"]
+                }
+            })
+            
+            const gameType: GameType = {
+                name: jsonObj.properties.type.name,
+                boardSize: jsonObj.properties.type["board-size"],
+                shotsPerRound: jsonObj.properties.type["shots-per-round"],
+                layoutDefTime: jsonObj.properties.type["layout-def-time-in-secs"],
+                shootingTime: jsonObj.properties.type["shooting-time-in-secs"],
+                fleet: fleetTypes
+            }
+
+            const opponent: UserInfo = {
+                id: jsonObj.properties.opponent.id,
+                name: jsonObj.properties.opponent.name,
+                score: jsonObj.properties.opponent.sore
+            }
+
+            const fleet: Array<Ship> = jsonObj.properties.fleet.map(ship => {
+                const squares: Array<Square> = ship.squares.map(square => {
+                    return {
+                        row: square.row,
+                        column: square.column
+                    }
+                })
+                return {
+                    firstSquare: ship["first-square"],
+                    name: ship.name,
+                    size: ship.size,
+                    destroyed: ship.destroyed,
+                    orientation: ship.orientation,
+                    userId: ship["user-id"],
+                    gameId: ship["game-id"],
+                    nOfHits: ship["nof-hits"],
+                    squares: squares
+                }
+            })
+
+            const takenHits: Array<Square> = jsonObj.properties["taken-hits"].map(hit => {
+                return {
+                    row: hit.row,
+                    column: hit.column
+                }
+            })
+
+            const enemySunkfleet: Array<Ship> = jsonObj.properties["enemy-sunk-fleet"].map(ship => {
+                const squares: Array<Square> = ship.squares.map(square => {
+                    return {
+                        row: square.row,
+                        column: square.column
+                    }
+                })
+                return {
+                    firstSquare: ship["first-square"],
+                    name: ship.name,
+                    size: ship.size,
+                    destroyed: ship.destroyed,
+                    orientation: ship.orientation,
+                    userId: ship["user-id"],
+                    gameId: ship["game-id"],
+                    nOfHits: ship["nof-hits"],
+                    squares: squares
+                }
+            })
+
+            const hits: Array<Square> = jsonObj.properties.hits.map(hit => {
+                return {
+                    row: hit.row,
+                    column: hit.column
+                }
+            })
+
+            const misses: Array<Square> = jsonObj.properties.misses.map(hit => {
+                return {
+                    row: hit.row,
+                    column: hit.column
+                }
+            })
+
+        return {
+            id: jsonObj.properties.id,
+            type: gameType,
+            state: jsonObj.properties.state,
+            opponent: opponent,
+            playing: jsonObj.properties.playing,
+            startedAt: jsonObj.properties["started-at"],
+            fleet: fleet,
+            takenHits: takenHits,
+            enemySunkFleet: enemySunkfleet,
+            hits: hits,
+            misses: misses
         }
     }
 }

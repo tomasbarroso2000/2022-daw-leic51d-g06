@@ -5,7 +5,7 @@ import { Field } from "siren-types";
 import { CurrentUser } from "../domain/CurrentUser";
 import { askService } from "../service/askService"
 import { service } from "./App"
-import { useSetUser } from "./Authn"
+import { useSetCookie, useSetUser } from "./Authn"
 import { Cookies, useCookies } from "react-cookie"; // npm install react-cookie
  
 export function Login() {
@@ -16,8 +16,9 @@ export function Login() {
     const [error, setError] = useState(undefined)
     const [redirect, setRedirect] = useState(false)
     const setUser = useSetUser()
+    const setCookie = useSetCookie()
     const location = useLocation()
-    const [cookies, setCookie] = useCookies(['token']);
+    //const [cookies, setCookie] = useCookies(['token']);
 
     if (!fields) {
         return (
