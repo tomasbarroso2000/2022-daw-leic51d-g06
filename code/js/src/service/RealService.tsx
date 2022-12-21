@@ -31,6 +31,7 @@ export class RealService implements Service {
     userHomeLink: EmbeddedLink | undefined = undefined
     rankingsLink: EmbeddedLink | undefined = undefined
     gamesLink: EmbeddedLink | undefined = undefined
+    gameInfoLink: EmbeddedLink | undefined = undefined
     
     createUserAction: Action | undefined = undefined
     createTokenAction: Action | undefined = undefined
@@ -405,18 +406,32 @@ export class RealService implements Service {
             }
         })
 
+        this.gameInfoLink = jsonObj.links.find((link: EmbeddedLink) => link.rel[0] == "game")
+
         return {
             games: jsonObj.properties.games,
             hasMore: jsonObj.properties.hasMore
         }
     }
 
-    gameInfo = async function (token: string): Promise<Game | undefined> {
-        const path = this.gamesNavigation["game"]
-        if(!path) 
+    ensureGameInfoLink = async function (token: string): Promise<string | undefined> {
+        if (this.gameInfoLink == undefined) {
+            return this.games(token, 1, 0).then(() => this.gameInfoLink.href)
+        }
+        
+        return this.gameInfoLink.href
+    }
+
+    gameInfo = async function (token: string, gameId: number): Promise<Game | undefined> {
+        let path = await this.ensureGameInfoLink()
+
+        if (!path)
             return undefined
 
-        console.log(`path: ${path}`)
+        path = path.slice(0, -1) + `${gameId}`;
+        
+        console.log("gameInfoLink: " + path)
+        
         const res = await doFetch(
             baseURL + path, 
             { token: token }

@@ -1,7 +1,7 @@
 import { CreateToken } from "../domain/CreateToken"
 import { CreateUser } from "../domain/CreateUser"
 import { EnteredGame, EnterLobby } from "../domain/Lobby"
-import { GamesList } from "../domain/GamesList"
+import { Game, GamesList } from "../domain/GamesList"
 import { GameType, GameTypes } from "../domain/GameTypes"
 import { Home } from "../domain/Home"
 import { Rankings } from "../domain/Rankings"
@@ -147,6 +147,41 @@ export class FakeService implements Service {
             ],
             hasMore: false
         })
+    }
+
+    gameInfo = async function (): Promise<Game | undefined> {
+        return Promise.resolve(
+            {
+                id: 1,
+                type: {
+                    name: "beginner",
+                        boardSize: 10,
+                        shotsPerRound: 1,
+                        layoutDefTime: 60,
+                        shootingTime: 60,
+                        fleet: [
+                            {
+                                name: "duckShip",
+                                size: 99,
+                                gameType: "hardcore"
+                            }
+                        ]
+                },
+                state: "",
+                opponent: {
+                    id: 8,
+                            name: "Fiona2",
+                            score: 0
+                },
+                playing: false,
+                startedAt: "",
+                fleet: [],
+                takenHits: [],
+                enemySunkFleet: [],
+                hits: [],
+                misses: []
+            }
+        )
     }
 
     rankingsNavigation: ["/quaqua"]
