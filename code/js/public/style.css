@@ -349,8 +349,6 @@ div#content-rankings li hr {
     --colsBegginer: 10;
     --colsIntermediate: 12;
     --colsExpert: 15;
-    --cols: 15;
-    --rows: 15;
     --tile-size: 40px;
   }
 
@@ -379,9 +377,18 @@ div#content-rankings li hr {
     align-self: flex-start;
   }
 
+  #self-board-container {
+    display: inline-block;
+    margin-left: 25px;
+  }
+
+  #enemy-board-container {
+    display: inline-block;
+    margin-left: 25px;
+  }
+
   #board-content {
    width: fit-content;
-   display: block;
    margin: 20px auto;
   }
 

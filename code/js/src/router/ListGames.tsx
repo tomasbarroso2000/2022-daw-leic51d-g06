@@ -7,12 +7,14 @@ import { useCurrentUser } from './Authn'
 
 function Playing(game: Game) {
     let result: JSX.Element
-    if (game.playing) result = <p>Playing</p>
+    if(game.state != "shooting") result = undefined
+    else if (game.playing) result = <p>Playing</p>
     else result = <p>Not your turn</p>
     {console.log(`path: ${paths['play-game'] + `?game=${game.id}`}`)}
     return (
         <div key={game.id} className="game-box">
-            <p>{game.type.name}</p>
+            <p>Game type: {game.type.name}</p>
+            <p>Game state: {game.state}</p>
             {result}
             <Link to={paths['play-game'] + `?game=${game.id}`}> <button>Enter Game</button>  </Link>
         </div>

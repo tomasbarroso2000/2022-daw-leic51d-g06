@@ -72,7 +72,7 @@ const router = createBrowserRouter([
             },
             {
                 "path": paths['define-layout'],
-                "element": <DefineLayout />
+                "element": <RequireAuthn><DefineLayout /></RequireAuthn>
             },
             {
                 "path": paths['list-games'],
