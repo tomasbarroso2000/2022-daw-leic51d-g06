@@ -6,7 +6,7 @@ import { UserInfo } from "./UserInfo"
 type Game = {
     id: number,
     type: GameType,
-    state: string,
+    state: "layout_definition" | "shooting" | "completed",
     opponent: UserInfo,
     playing: boolean,
     startedAt: string,

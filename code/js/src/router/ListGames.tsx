@@ -7,15 +7,21 @@ import { useCurrentUser } from './Authn'
 
 function Playing(game: Game) {
     let result: JSX.Element
-    if(game.state != "shooting") result = undefined
-    else if (game.playing) result = <p>Playing</p>
-    else result = <p>Not your turn</p>
+
+    if (game.state != "shooting") {
+        result = undefined
+    } else if (game.playing) {
+        result = <p>Playing</p>
+    } else {
+        result = <p>Not your turn</p>
+    }
+
     return (
         <div key={game.id} className="game-box">
             <p>Game type: {game.type.name}</p>
             <p>Game state: {game.state}</p>
             {result}
-            <Link to={paths['play-game'] + `?game=${game.id}`}> <button>Enter Game</button>  </Link>
+            <button><Link to={paths['play-game'].replace(":gameId", game.id.toString())}>Enter Game</Link></button>
         </div>
     )
 }
@@ -38,13 +44,7 @@ export function ListGames() {
         return (
             <div>
                 <h1>Games</h1>
-                {
-                        games.result.games.map((game: Game) => {
-                            return (
-                                Playing(game)
-                            )
-                        })
-                }
+                {games.result.games.map((game: Game) => Playing(game))}
                 <div>
                     <Link to={paths['create-game']}>New Game</Link>
                 </div>

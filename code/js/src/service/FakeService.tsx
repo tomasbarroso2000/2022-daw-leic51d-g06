@@ -167,7 +167,7 @@ export class FakeService implements Service {
                             }
                         ]
                 },
-                state: "",
+                state: "shooting",
                 opponent: {
                     id: 8,
                             name: "Fiona2",

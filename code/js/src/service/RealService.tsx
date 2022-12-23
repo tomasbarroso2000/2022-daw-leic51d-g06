@@ -2,7 +2,7 @@ import { Home } from "../domain/Home"
 import { Rankings } from "../domain/Rankings"
 import { Service } from "./Service"
 import { EmbeddedLink, Action, Field, isEmbeddedLink } from "siren-types"
-import { doFetch } from "./doFetch"
+import { doFetch } from "../utils/doFetch"
 import { CreateUser, UserRequest } from "../domain/CreateUser"
 import { CreateToken } from "../domain/CreateToken"
 import { GameType, GameTypes } from "../domain/GameTypes"
@@ -13,7 +13,7 @@ import { UserHome } from "../domain/UserHome"
 import { UserInfo } from "../domain/UserInfo"
 import { Ship } from "../domain/ship"
 import { Square } from "../domain/Square"
-import { makeFleet, makeFleetTypes, makeGameType, makeHitsOrMIsses, makeUserInfo } from "./utils"
+import { makeFleet, makeFleetTypes, makeGameType, makeHitsOrMIsses, makeUserInfo } from "../utils/make"
 import { paths } from "../router/App"
 
 const baseURL = "http://localhost:8083"
@@ -405,16 +405,8 @@ export class RealService implements Service {
         }
     }
 
-    ensureGameInfoLink = async function (token: string): Promise<string | undefined> {
-        if (this.gameInfoLink == undefined) {
-            return this.games(token, 1, 0).then(() => this.gameInfoLink.href)
-        }
-        
-        return this.gameInfoLink.href
-    }
-
     gameInfo = async function (token: string, gameId: number): Promise<Game | undefined> {
-        let path = await this.ensureGameInfoLink()
+        let path = `/api/games/info/${gameId}`
 
         if (!path)
             return undefined

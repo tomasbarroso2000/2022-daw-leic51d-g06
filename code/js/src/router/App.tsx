@@ -17,8 +17,6 @@ import { Login } from './Login'
 import { RequireAuthn } from './RequireAuthn'
 import { Me } from './Me'
 import { CreateGame } from './CreateGame'
-//import { Lobby } from './Lobby'
-import { DefineLayout } from './DefineLayout'
 import { ListGames } from './ListGames'
 import { AuthnContainer } from './Authn'
 import { EnteredGame } from './Lobby'
@@ -33,10 +31,8 @@ export const paths = {
     "me": "/me",
     "create-game": "/games/new",
     "wait-for-game": "/games/new/:gameType",
-    "lobby":"/lobby",
-    "define-layout": "/games/layout",
     "list-games": "/games/list",
-    "play-game": "/games/play"
+    "play-game": "/games/play/:gameId"
 }
 
 const router = createBrowserRouter([
@@ -75,10 +71,6 @@ const router = createBrowserRouter([
             {
                 "path": paths['me'],
                 "element": <RequireAuthn><Me /></RequireAuthn>
-            },
-            {
-                "path": paths['define-layout'],
-                "element": <RequireAuthn><DefineLayout /></RequireAuthn>
             },
             {
                 "path": paths['list-games'],

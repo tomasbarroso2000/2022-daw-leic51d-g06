@@ -1,8 +1,8 @@
 import * as React from "react"
 import { useState } from "react"
-import { Ship } from "./domain/ship"
-import { ShipType } from "./domain/ShipType"
-import { Square } from "./domain/Square"
+import { Ship } from "../domain/ship"
+import { ShipType } from "../domain/ShipType"
+import { Square } from "../domain/Square"
 
 function gridSquare(key: string, hasShip: boolean, isShooting: boolean) {
     if(hasShip)
