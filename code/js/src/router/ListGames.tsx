@@ -1,7 +1,7 @@
 import * as React from "react"
 import { Link } from "react-router-dom"
 import { Game, GamesList } from "../domain/GamesList"
-import { askService } from "../service/askService"
+import { askService, Result } from "../service/askService"
 import { paths, service } from "./App"
 import { useCurrentUser } from './Authn'
 
@@ -26,7 +26,7 @@ export function ListGames() {
     const limit = 5
     const skip = 0
     console.log("token: " + currentUser.token)
-    const games: GamesList | undefined = askService(service, service.games, currentUser.token, limit, skip)
+    const games: Result<GamesList> | undefined = askService(service, service.games, currentUser.token, limit, skip)
 
     if (!games) {
         return (
@@ -36,19 +36,21 @@ export function ListGames() {
         )
     }
 
-    return (
-        <div>
-            <h1>Games</h1>
-            {
-                    games.games.map((game: Game) => {
-                        return (
-                            Playing(game)
-                        )
-                    })
-            }
+    if (games.kind == "success") {
+        return (
             <div>
-                <Link to={paths['create-game']}>New Game</Link>
+                <h1>Games</h1>
+                {
+                        games.result.games.map((game: Game) => {
+                            return (
+                                Playing(game)
+                            )
+                        })
+                }
+                <div>
+                    <Link to={paths['create-game']}>New Game</Link>
+                </div>
             </div>
-        </div>
-    )
+        )
+    }
 }

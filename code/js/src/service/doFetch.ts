@@ -3,8 +3,17 @@ export async function doFetch(
 	options: any | undefined = undefined
 ) {
 	const resp = options ? await fetchWithOptions(url, options) : await fetch(url)
-	const responseBody = await resp.json()
-	return JSON.stringify(responseBody)
+	if (resp.ok) {
+		const responseBody = await resp.json()
+		return JSON.stringify(responseBody)
+	} else {
+		if (resp.body) {
+			throw await resp.json()
+		} else {
+			throw "unauthorized"
+		}
+	}
+	
 }
 
 async function fetchWithOptions(url: string, options: any) {

@@ -1,7 +1,7 @@
 import * as React from "react"
 import { Link } from "react-router-dom"
 import { UserHome } from "../domain/UserHome"
-import { askService } from "../service/askService"
+import { askService, Result } from "../service/askService"
 import { paths, service } from "./App"
 import { useCurrentUser } from './Authn'
 import { Login } from "./Login"
@@ -9,8 +9,7 @@ import { Login } from "./Login"
 export function Me() {
     const currentUser = useCurrentUser()
 
-    const userHome: UserHome | undefined = 
-        askService(service, service.userHome, currentUser.token)
+    const userHome: Result<UserHome> | undefined = askService(service, service.userHome, currentUser.token)
     
     if (!userHome) {
         return (
@@ -19,14 +18,16 @@ export function Me() {
             </div>
         )
     }
-    
-    return (
-        <div>
-            <div>{`Oh hi, ${userHome.name}`}</div>
-            <div>{`Your score is ${userHome.score}`}</div>
+
+    if (userHome.kind == "success") {
+        return (
             <div>
-                <Link to={paths['home']}>home</Link>
+                <div>{`Oh hi, ${userHome.result.name}`}</div>
+                <div>{`Your score is ${userHome.result.score}`}</div>
+                <div>
+                    <Link to={paths['home']}>home</Link>
+                </div>
             </div>
-        </div>
-    )
+        )
+    }    
 }
