@@ -170,8 +170,8 @@ export class RealService implements Service {
         })
 
         return {
-            rankings: jsonObj.properties.rankings,
-            hasMore: jsonObj.properties.hasMore
+            rankings: jsonObj.properties["rankings"],
+            hasMore: jsonObj.properties["hasMore"]
         }
     }
 
@@ -305,30 +305,35 @@ export class RealService implements Service {
      * LOBBY
      */
 
-    ensureEnterLobbyAction = async function (): Promise<string | undefined> {
+    ensureEnterLobbyAction = async function (token: string): Promise<string | undefined> {
         if (this.enterLobbyAction == undefined) {
-            return this.userHome().then(() => this.enterLobbyAction.href)
+            return this.userHome(token).then(() => this.enterLobbyAction.href)
         }
         return this.enterLobbyAction.href
     }
 
     enterLobby = async function(token: string, gameType: string) : Promise<EnterLobby | undefined> {
         const path = await this.ensureEnterLobbyAction()
+
         if (!path)
             return undefined
+
         const res = await doFetch(baseURL + path, {
             method: 'POST',
             body: {
                 "game-type": gameType
-                },
+            },
             token: token
         })
 
         const jsonObj = JSON.parse(res)
 
+        console.log("jsonObj")
+        console.log(jsonObj)
+
         return {
-            waitingForGame: jsonObj.properties.waitingForGame,
-            lobbyOrGameId: jsonObj.properties.lobbyOrGameId
+            waitingForGame: jsonObj.properties["waiting-for-game"],
+            lobbyOrGameId: jsonObj.properties["lobby-or-game-id"]
         }
     }
 
@@ -350,7 +355,7 @@ export class RealService implements Service {
         const jsonObj = JSON.parse(res)
 
         return {
-            gameId: jsonObj.properties.gameId
+            gameId: jsonObj.properties["game-id"]
         }
     }
 
@@ -398,7 +403,7 @@ export class RealService implements Service {
 
         return {
             games: jsonObj.properties.games,
-            hasMore: jsonObj.properties.hasMore
+            hasMore: jsonObj.properties["has-more"]
         }
     }
 
@@ -432,7 +437,7 @@ export class RealService implements Service {
         const fleetTypes: Array<ShipType> = makeFleetTypes(jsonObj.properties.fleet)
         
         const gameType: GameType = makeGameType(
-            jsonObj.properties.type.name,
+            jsonObj.properties.type["name"],
             jsonObj.properties.type["board-size"],
             jsonObj.properties.type["shots-per-round"],
             jsonObj.properties.type["layout-def-time-in-secs"],

@@ -1,12 +1,11 @@
 import * as React from "react"
+import { Link } from "react-router-dom"
 import { GameType, GameTypes } from "../domain/GameTypes"
 import { askService, Result } from "../service/askService"
 import { service } from "./App"
 import { useCurrentUser } from './Authn'
 
-
 export function CreateGame() {
-    const currentUser = useCurrentUser()
     const gameTypes: Result<GameTypes> | undefined = askService(service, service.gameTypes)
 
     if (!gameTypes) {
@@ -39,20 +38,11 @@ export function CreateGame() {
                                 
                             </ul>
                             <div className="center-align-content">
-                                <button onClick={() => handleContinueClick(currentUser.token, type.name)}>Continue</button> 
+                                <button><Link to={`/games/new/${type.name}`}>play</Link></button>
                             </div>
                         </div>
                 )}
             </div>
         )
     }
-}
-
-function handleContinueClick(token: string, gameType: string) {
-    const lobby = service.enterLobby(token, gameType)
-        .then( (lobby) => {
-            console.log(lobby.waitingForGame)
-            console.log(lobby.lobbyOrGameId)
-            // navegar para a página do enteredGame
-        })
 }

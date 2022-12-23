@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Link } from "react-router-dom"
+import { Link, Navigate } from "react-router-dom"
 import { Game, GamesList } from "../domain/GamesList"
 import { askService, Result } from "../service/askService"
 import { paths, service } from "./App"
@@ -10,7 +10,6 @@ function Playing(game: Game) {
     if(game.state != "shooting") result = undefined
     else if (game.playing) result = <p>Playing</p>
     else result = <p>Not your turn</p>
-    {console.log(`path: ${paths['play-game'] + `?game=${game.id}`}`)}
     return (
         <div key={game.id} className="game-box">
             <p>Game type: {game.type.name}</p>
@@ -25,7 +24,6 @@ export function ListGames() {
     const currentUser = useCurrentUser()
     const limit = 5
     const skip = 0
-    console.log("token: " + currentUser.token)
     const games: Result<GamesList> | undefined = askService(service, service.games, currentUser.token, limit, skip)
 
     if (!games) {
