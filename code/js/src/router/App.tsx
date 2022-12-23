@@ -24,7 +24,6 @@ import { AuthnContainer } from './Authn'
 import { EnteredGame } from './Lobby'
 import { PlayGame } from './PlayGame'
 import { WaitForGame } from './WaitForGame'
-import { MaybeSetUser } from './MaybeSet'
 
 export const paths = {
     "home": "/",

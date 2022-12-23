@@ -30,7 +30,7 @@ export function RequireAuthn({ children }: { children: React.ReactNode }): React
     if (user.kind == "success") {
         console.log("success")
         if (!currentUser)
-            setUser({token: tokenInCookie, name: user.result.name})
+            setUser({token: token, name: user.result.name})
         return <>{children}</>
     } else {
         return <Navigate to="/login" state={{source: location.pathname}} replace={true}/>

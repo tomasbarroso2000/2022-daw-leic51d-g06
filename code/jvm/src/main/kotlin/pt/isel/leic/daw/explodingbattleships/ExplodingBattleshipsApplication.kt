@@ -38,7 +38,7 @@ class PipelineConfigurer(
     }
 
     override fun addCorsMappings(registry: CorsRegistry) {
-        registry.addMapping("/**").allowedOrigins("http://localhost:8083")
+        registry.addMapping("/**").allowedMethods("GET", "POST", "PUT", "DELETE")
     }
 }
 

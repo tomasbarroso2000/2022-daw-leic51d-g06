@@ -1,6 +1,5 @@
 import { Home } from "../domain/Home"
 import { Rankings } from "../domain/Rankings"
-import { paths } from "../router/App"
 import { Service } from "./Service"
 import { EmbeddedLink, Action, Field, isEmbeddedLink } from "siren-types"
 import { doFetch } from "./doFetch"
@@ -15,8 +14,9 @@ import { UserInfo } from "../domain/UserInfo"
 import { Ship } from "../domain/ship"
 import { Square } from "../domain/Square"
 import { makeFleet, makeFleetTypes, makeGameType, makeHitsOrMIsses, makeUserInfo } from "./utils"
+import { paths } from "../router/App"
 
-const baseURL = "http://localhost:8080"
+const baseURL = "http://localhost:8083"
 const homeURL = baseURL + "/api/"
 
 export class RealService implements Service {
@@ -339,11 +339,9 @@ export class RealService implements Service {
 
     enteredGame = async function(token: string, lobbyId: number) : Promise<EnteredGame | undefined> {
         const res = await doFetch(
-            baseURL + 'lobby/' + lobbyId, 
-            {   method: 'DELETE',
-                headers: {
-                    'Content-type': 'application/json',
-                },
+            baseURL + '/api/lobby/' + lobbyId, 
+            {   
+                method: 'DELETE',
                 token: token
             }
         )
