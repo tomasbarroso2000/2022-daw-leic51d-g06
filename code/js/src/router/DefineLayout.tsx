@@ -73,7 +73,7 @@ export function DefineLayout() {
         <div id="content">
             <h1>{gameTypeSearchParam}</h1>
             <div id="board-content">
-                {showGameBoard(gameType.boardSize, ships, hits)}
+                {showGameBoard(gameType.boardSize, ships, hits, false)}
             </div>
         </div>
     )

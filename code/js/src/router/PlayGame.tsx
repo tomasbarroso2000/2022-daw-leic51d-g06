@@ -2,6 +2,8 @@ import * as React from "react";
 import { Link, Navigate, redirect, useSearchParams } from "react-router-dom";
 import { showGameBoard } from "../board";
 import { Game } from "../domain/GamesList";
+import { Ship } from "../domain/ship";
+import { Square } from "../domain/Square";
 import { askService } from "../service/askService";
 import { paths, service } from "./App";
 import { useCurrentUser } from "./Authn";
@@ -10,6 +12,13 @@ function checkGameState(gameState: string, gameType: string): JSX.Element {
     if (gameState === "layout_definition") 
         return <Navigate to={paths['define-layout'] + "?game-type=" + gameType} replace={true}/>
 } 
+
+function isShootingBoard(boardSize: number, fleet: Array<Ship>, hits: Array<Square>, gameState: string): JSX.Element {
+    if(gameState == "shooting")
+        return showGameBoard(boardSize, fleet, hits, true)
+    else
+        return showGameBoard(boardSize, fleet, hits, false)
+}
 
 export function PlayGame() {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -33,7 +42,7 @@ export function PlayGame() {
 
 
     console.log("gameInfo" + JSON.stringify(gameInfo))
-
+    console.log("play game fleet" + JSON.stringify(gameInfo.fleet))
     return (
         <div>
             <div>
@@ -46,11 +55,11 @@ export function PlayGame() {
                 </div>
                 <div className="board-content" id="self-board-container">
                     <h1>Your Board</h1>
-                    {showGameBoard(gameInfo.type.boardSize, gameInfo.fleet, gameInfo.takenHits)}
+                    {showGameBoard(gameInfo.type.boardSize, gameInfo.fleet, gameInfo.takenHits, false)}
                 </div>
                 <div className="board-content" id="enemy-board-container">
                     <h1>Enemy Board</h1>
-                    {showGameBoard(gameInfo.type.boardSize, [], gameInfo.hits)}
+                    {isShootingBoard(gameInfo.type.boardSize, gameInfo.enemySunkFleet, gameInfo.hits, "shooting")}
                 </div>
             </div>
         </div>

@@ -14,6 +14,7 @@ import { UserHome } from "../domain/UserHome"
 import { UserInfo } from "../domain/UserInfo"
 import { Ship } from "../domain/ship"
 import { Square } from "../domain/Square"
+import { makeFleet, makeFleetTypes, makeGameType, makeHitsOrMIsses, makeUserInfo } from "./utils"
 
 const baseURL = "http://localhost:8080"
 const homeURL = baseURL + "/api/"
@@ -102,7 +103,7 @@ export class RealService implements Service {
 
         this.userHomeNavigation = []
 
-        const res = await doFetch(baseURL + path, { token: token })
+        const res = await doFetch(baseURL + path, { "token": token })
 
         if (!res) {
             return undefined
@@ -201,13 +202,17 @@ export class RealService implements Service {
         this.createUserNavigation = []
 
         const res = await doFetch(baseURL + path, {
-                method: 'POST',
-                body: {
-                    name: name,
-                    email: email,
-                    password: password,
-                }
-             })
+            method: 'POST',
+            body: {
+                "name": name,
+                "email": email,
+                "password": password,
+            }
+        })
+
+        if (!res) {
+            return undefined
+        }
 
         const jsonObj = JSON.parse(res)
 
@@ -244,26 +249,22 @@ export class RealService implements Service {
 
         this.createTokenNavigation = []
 
-        const res = async () => {
-            const resp = await fetch(baseURL + path, {
-                method: 'POST',
-                body: JSON.stringify({
-                   email: email,
-                   password: password,
-                }),
-                headers: {
-                   'Content-type': 'application/json',
+        const res = await doFetch(baseURL + path, {
+            method: 'POST',
+            body: {
+                "email": email,
+                "password": password
                 },
-             })
-             const body = await resp.json()
-             return JSON.stringify(body)
-        }
-        const resp = await res()
-        if (!resp) {
+            headers: {
+                'Content-type': 'application/json',
+            }
+        })
+
+        if (!res) {
             return undefined
         }
 
-        const jsonObj = JSON.parse(resp)
+        const jsonObj = JSON.parse(res)
 
         //user creation actions and links
         return {
@@ -283,28 +284,18 @@ export class RealService implements Service {
         }
 
         const jsonObj = JSON.parse(res)
-        //console.log("res: " + JSON.stringify(jsonObj))
-        const fleet: Array<ShipType> = []
-        const listGameTypes: Array<GameType> = []
-        jsonObj.properties["game-types"].forEach(gameType => {
-            gameType.fleet.forEach(ship => {
-                fleet.push ({
-                     name: ship.name,
-                     size: ship.size,
-                     gameType: ship["game-type"]
-                 })
-             })
-            listGameTypes.push(
-                {
-                    name: gameType.name,
-                    boardSize: gameType["board-size"],
-                    shotsPerRound: gameType["shots-per-round"],
-                    layoutDefTime: gameType["layout-def-time-in-secs"],
-                    shootingTime: gameType["shooting-time-in-secs"],
-                    fleet: fleet
-                }
+        const listGameTypes: Array<GameType> = 
+        jsonObj.properties["game-types"].map(gameType => {
+            return makeGameType(
+                gameType.name,
+                gameType["board-size"],
+                gameType["shots-per-round"],
+                gameType["layout-def-time-in-secs"],
+                gameType["shooting-time-in-secs"],
+                makeFleetTypes(gameType.fleet)
             )
         })
+
         return {
             gameTypes: listGameTypes 
         }
@@ -326,12 +317,12 @@ export class RealService implements Service {
         if (!path)
             return undefined
         const res = await doFetch(baseURL + path, {
-                method: 'POST',
-                body: {
-                    "game-type": gameType
-                 },
-                token: token
-             })
+            method: 'POST',
+            body: {
+                "game-type": gameType
+                },
+            token: token
+        })
 
         const jsonObj = JSON.parse(res)
 
@@ -342,22 +333,21 @@ export class RealService implements Service {
     }
 
     enteredGame = async function(token: string, lobbyId: number) : Promise<EnteredGame | undefined> {
-        const res = async () => {
-            const resp = await fetch(baseURL + 'lobby/' + lobbyId, {
-                method: 'DELETE',
+        const res = await doFetch(
+            baseURL + 'lobby/' + lobbyId, 
+            {   method: 'DELETE',
                 headers: {
-                   'Content-type': 'application/json',
+                    'Content-type': 'application/json',
                 },
-             })
-             const body = await resp.json()
-             return JSON.stringify(body)
-        }
-        const resp = await res()
-        if (!resp) {
+                token: token
+            }
+        )
+
+        if (!res) {
             return undefined
         }
 
-        const jsonObj = JSON.parse(resp)
+        const jsonObj = JSON.parse(res)
 
         return {
             gameId: jsonObj.properties.gameId
@@ -397,8 +387,6 @@ export class RealService implements Service {
 
         const jsonObj = JSON.parse(res)
 
-        console.log("jsonObj: " + jsonObj)
-
         jsonObj.links.forEach((link: EmbeddedLink) => {
             const path = paths[link.rel[0]]
             if (path) {
@@ -430,8 +418,6 @@ export class RealService implements Service {
 
         path = path.slice(0, -1) + `${gameId}`;
         
-        console.log("gameInfoLink: " + path)
-        
         const res = await doFetch(
             baseURL + path, 
             { token: token }
@@ -443,90 +429,23 @@ export class RealService implements Service {
 
         const jsonObj = JSON.parse(res)
 
+        const fleetTypes: Array<ShipType> = makeFleetTypes(jsonObj.properties.fleet)
         
-            const fleetTypes: Array<ShipType> = jsonObj.properties.fleet.map(ship => {
-                return {
-                    name: ship.name,
-                    size: ship.size,
-                    gameType: ship["game-type"]
-                }
-            })
-            
-            const gameType: GameType = {
-                name: jsonObj.properties.type.name,
-                boardSize: jsonObj.properties.type["board-size"],
-                shotsPerRound: jsonObj.properties.type["shots-per-round"],
-                layoutDefTime: jsonObj.properties.type["layout-def-time-in-secs"],
-                shootingTime: jsonObj.properties.type["shooting-time-in-secs"],
-                fleet: fleetTypes
-            }
+        const gameType: GameType = makeGameType(
+            jsonObj.properties.type.name,
+            jsonObj.properties.type["board-size"],
+            jsonObj.properties.type["shots-per-round"],
+            jsonObj.properties.type["layout-def-time-in-secs"],
+            jsonObj.properties.type["shooting-time-in-secs"],
+            fleetTypes
+        )
 
-            const opponent: UserInfo = {
-                id: jsonObj.properties.opponent.id,
-                name: jsonObj.properties.opponent.name,
-                score: jsonObj.properties.opponent.sore
-            }
-
-            const fleet: Array<Ship> = jsonObj.properties.fleet.map(ship => {
-                const squares: Array<Square> = ship.squares.map(square => {
-                    return {
-                        row: square.row,
-                        column: square.column
-                    }
-                })
-                return {
-                    firstSquare: ship["first-square"],
-                    name: ship.name,
-                    size: ship.size,
-                    destroyed: ship.destroyed,
-                    orientation: ship.orientation,
-                    userId: ship["user-id"],
-                    gameId: ship["game-id"],
-                    nOfHits: ship["nof-hits"],
-                    squares: squares
-                }
-            })
-
-            const takenHits: Array<Square> = jsonObj.properties["taken-hits"].map(hit => {
-                return {
-                    row: hit.row,
-                    column: hit.column
-                }
-            })
-
-            const enemySunkfleet: Array<Ship> = jsonObj.properties["enemy-sunk-fleet"].map(ship => {
-                const squares: Array<Square> = ship.squares.map(square => {
-                    return {
-                        row: square.row,
-                        column: square.column
-                    }
-                })
-                return {
-                    firstSquare: ship["first-square"],
-                    name: ship.name,
-                    size: ship.size,
-                    destroyed: ship.destroyed,
-                    orientation: ship.orientation,
-                    userId: ship["user-id"],
-                    gameId: ship["game-id"],
-                    nOfHits: ship["nof-hits"],
-                    squares: squares
-                }
-            })
-
-            const hits: Array<Square> = jsonObj.properties.hits.map(hit => {
-                return {
-                    row: hit.row,
-                    column: hit.column
-                }
-            })
-
-            const misses: Array<Square> = jsonObj.properties.misses.map(hit => {
-                return {
-                    row: hit.row,
-                    column: hit.column
-                }
-            })
+        const opponent: UserInfo = makeUserInfo(jsonObj.properties.opponent.id, jsonObj.properties.opponent.name, jsonObj.properties.opponent.score)
+        const fleet: Array<Ship> = makeFleet(jsonObj.properties.fleet)
+        const takenHits: Array<Square> = makeHitsOrMIsses(jsonObj.properties["taken-hits"])
+        const enemySunkFleet: Array<Ship> = makeFleet(jsonObj.properties["enemy-sunk-fleet"])
+        const hits: Array<Square> = makeHitsOrMIsses(jsonObj.properties.hits)
+        const misses: Array<Square> = makeHitsOrMIsses(jsonObj.properties.misses)
 
         return {
             id: jsonObj.properties.id,
@@ -537,7 +456,7 @@ export class RealService implements Service {
             startedAt: jsonObj.properties["started-at"],
             fleet: fleet,
             takenHits: takenHits,
-            enemySunkFleet: enemySunkfleet,
+            enemySunkFleet: enemySunkFleet,
             hits: hits,
             misses: misses
         }

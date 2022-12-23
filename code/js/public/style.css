@@ -393,7 +393,14 @@ div#content-rankings li hr {
   }
 
   .ship {
+    width: var(--tile-size);
+    height: var(--tile-size);
+    border-width: var(--border-width);
     background-color: #aed4e6;
+  }
+
+  .shooting:hover {
+    background-color: rgb(219, 81, 81);
   }
 
   div.cross:after {
