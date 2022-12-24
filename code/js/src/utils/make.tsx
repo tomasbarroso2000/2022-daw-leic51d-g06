@@ -6,10 +6,7 @@ import { UserInfo } from "../domain/UserInfo";
 
 export function makeHitsOrMIsses(hits): Array<Square> {
     return hits.map(hit => {
-        return {
-            row: hit.row,
-            column: hit.column
-        }
+        return new Square(hit.row, hit.column)
     })
 }
 

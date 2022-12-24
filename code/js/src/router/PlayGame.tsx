@@ -1,13 +1,13 @@
 import * as React from "react";
 import { Link, Navigate, redirect, useParams, useSearchParams } from "react-router-dom";
-import { showGameBoard } from "../utils/board";
+import { BoardView, showGameBoard } from "../utils/board";
 import { Game } from "../domain/GamesList";
 import { Ship } from "../domain/ship";
-import { Square } from "../domain/Square";
 import { askService, Result } from "../service/askService";
 import { paths, service } from "./App";
 import { useCurrentUser } from "./Authn";
 import { CurrentUser } from "../domain/CurrentUser";
+import { Square } from "../domain/Square";
 
 function isShootingBoard(boardSize: number, fleet: Array<Ship>, hits: Array<Square>, gameState: string): JSX.Element {
     if(gameState == "shooting")
@@ -60,6 +60,7 @@ function Layout(game: Game) {
 }
 
 function Shooting(game: Game, currentUser: CurrentUser) {
+    console.log("ships: " + JSON.stringify(game.fleet))
     return (
         <div>
             <div>
@@ -71,7 +72,18 @@ function Shooting(game: Game, currentUser: CurrentUser) {
                 </div>
                 <div className="board-content" id="self-board-container">
                     <h1>Your Board</h1>
-                    {showGameBoard(game.type.boardSize, game.fleet, game.takenHits, false)}
+                    {/*showGameBoard(game.type.boardSize, game.fleet, game.takenHits, false)*/}
+                    {BoardView(game.type.boardSize, (square: Square, bool: boolean) => {
+                        const isOccupied: boolean = game.fleet.some((ship: Ship) => {ship.squares.includes(square)})
+                        console.log("isOccupied: " + isOccupied)
+                        const isHit: boolean = game.takenHits.includes(square)
+                        if(isOccupied)
+                            return <div key={JSON.stringify(square)} style={{width: "25px", height: "25px", backgroundColor: "#aed4e6"}}></div>
+                        if(isHit)
+                            return <div key={JSON.stringify(square)} style={{width: "25px", height: "25px", backgroundColor: "#rgb(219, 81, 81)"}}></div>
+                        
+                        return <div key={JSON.stringify(square)} style={{width: "25px", height: "25px", backgroundColor: "#008DD5"}}></div>
+                    })}
                 </div>
                 <div className="board-content" id="enemy-board-container">
                     <h1>Enemy Board</h1>

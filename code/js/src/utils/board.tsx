@@ -92,3 +92,58 @@ export function showDefaultShips(fleet: Array<ShipType>) {
 
     return arrFleet
 }
+
+function createLettersView(boardSize: number): Array<JSX.Element> {
+    const letters: Array<JSX.Element> = []
+    for(let i = 0; i <= boardSize; i++) {
+        if(i == 0) 
+            letters.push(<div key={i} style={{width: "25px", height: "25px", backgroundColor: "#4A6FA5"}}></div>)
+        else 
+            letters.push(
+                <div key={i} style={{width: "25px", height: "25px", backgroundColor: "#4A6FA5"}}>
+                    {String.fromCharCode(i - 1 + 97)}
+                </div>
+            ) 
+    }
+    return letters
+}
+
+function createItems(boardSize: number, getSquareAppearance: (square: Square, bool: boolean) => any): Array<JSX.Element> {
+    const items: Array<JSX.Element> = []
+    const defaultSquare = new Square("a", 0)
+    for (let row: number = defaultSquare.firstRow.charCodeAt(0) - 97 + 1; row <= boardSize + 1; row++) {
+        for (let column: number = defaultSquare.firstColumn; column <= boardSize; column++) {
+            const square = new Square(String.fromCharCode(row - 1 + 97), column - 1)
+            const isLast = 
+                row == square.firstRow.charCodeAt(0) - 97 + boardSize - 1 &&
+                column == square.firstColumn + boardSize - 1
+            if(column - row + 1 == defaultSquare.firstColumn) {
+                items.push(<div key={JSON.stringify(square)} style={{width: "25px", height: "25px", backgroundColor: "#4A6FA5"}}>{row}</div>)
+            } else {
+                items.push(getSquareAppearance(square, isLast))
+            }
+        }
+    }
+    return items
+}
+
+export function BoardView(boardSize: number, getSquareAppearance: (square: Square, bool: boolean) => any): JSX.Element {
+    return (
+        <div>
+            <div
+            style={{
+            display: "grid",
+            gap: 1,
+            gridTemplateColumns: `repeat(${boardSize+1}, 1fr)`,
+            gridTemplateRows: `repeat(${boardSize+1}, 1fr)`,
+            float: "left",
+            textAlign: "center",
+            alignItems: "center"
+                }}
+            > 
+                {createLettersView(boardSize)}
+                {createItems(boardSize, getSquareAppearance)}
+            </div>
+        </div>
+    )
+}
