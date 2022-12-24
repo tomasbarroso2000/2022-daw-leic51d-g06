@@ -1,6 +1,7 @@
 import * as React from "react"
 import { Link, Navigate } from "react-router-dom"
-import { Game, GamesList } from "../domain/GamesList"
+import { Game } from "../domain/Game"
+import { GamesList } from "../domain/GamesList"
 import { askService, Result } from "../service/askService"
 import { paths, service } from "./App"
 import { useCurrentUser } from './Authn'

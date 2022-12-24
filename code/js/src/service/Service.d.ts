@@ -4,7 +4,7 @@ import { CreateUser, UserRequest } from "../domain/CreateUser";
 import { CreateToken } from "../domain/CreateToken";
 import { GameTypes } from "../domain/GameTypes";
 import { EnterLobby, EnteredGame } from "../domain/Lobby";
-import { Game, GamesList } from "../domain/GamesList";
+import { Game, GamesList } from "../domain/Game";
 import { UserHome } from "../domain/UserHome";
 
 interface Service {

@@ -5,9 +5,9 @@ import { Square } from "../domain/Square";
 import { UserInfo } from "../domain/UserInfo";
 
 export function makeHitsOrMIsses(hits): Array<Square> {
-    return hits.map(hit => {
-        return new Square(hit.row, hit.column)
-    })
+    const squares: Array<Square> = []
+    hits.forEach(hit => { squares.push({row: hit.row, column: hit.column}) })
+    return squares
 }
 
 export function makeFleet(fleet): Array<Ship> {

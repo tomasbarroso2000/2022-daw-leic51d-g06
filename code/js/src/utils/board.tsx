@@ -93,57 +93,67 @@ export function showDefaultShips(fleet: Array<ShipType>) {
     return arrFleet
 }
 
-function createLettersView(boardSize: number): Array<JSX.Element> {
-    const letters: Array<JSX.Element> = []
-    for(let i = 0; i <= boardSize; i++) {
-        if(i == 0) 
-            letters.push(<div key={i} style={{width: "25px", height: "25px", backgroundColor: "#4A6FA5"}}></div>)
-        else 
-            letters.push(
-                <div key={i} style={{width: "25px", height: "25px", backgroundColor: "#4A6FA5"}}>
-                    {String.fromCharCode(i - 1 + 97)}
-                </div>
-            ) 
-    }
-    return letters
+
+const borderDivStyle: React.CSSProperties = {
+    width: "25px", 
+    height: "25px",
+    backgroundColor: "#4A6FA5"
 }
 
-function createItems(boardSize: number, getSquareAppearance: (square: Square, bool: boolean) => any): Array<JSX.Element> {
-    const items: Array<JSX.Element> = []
-    const defaultSquare = new Square("a", 0)
-    for (let row: number = defaultSquare.firstRow.charCodeAt(0) - 97 + 1; row <= boardSize + 1; row++) {
-        for (let column: number = defaultSquare.firstColumn; column <= boardSize; column++) {
-            const square = new Square(String.fromCharCode(row - 1 + 97), column - 1)
+/**
+ * Creates column letters squares
+ * @param boardSize the side size of the board
+ * @returns the squares
+ */
+function ColumnNumbersView(boardSize: number): Array<JSX.Element> {
+    const squares: Array<JSX.Element> = []
+    squares.push(<div key={0} style={borderDivStyle}></div>)
+    for(let column = 1; column <= boardSize; column++) {
+        squares.push(<div key={column} style={borderDivStyle}>{column}</div>) 
+    }
+    return squares
+}
+
+function Squares(boardSize: number, getSquareAppearance: (square: Square, isLast: boolean) => JSX.Element): Array<JSX.Element> {
+    const squares: Array<JSX.Element> = []
+    const firstSquare: Square = {row: "a", column: 1}
+    for (let rowNumber: number = firstSquare.row.charCodeAt(0) - 97 + 1; rowNumber <= boardSize; rowNumber++) {
+        const row = String.fromCharCode(rowNumber - 1 + 97)
+        squares.push(<div key={`{row: ${row}, column${0}}`} style={borderDivStyle}>{row}</div>)
+        for (let column: number = firstSquare.column; column <= boardSize; column++) {
+            const square: Square = {row: row, column: column}
             const isLast = 
-                row == square.firstRow.charCodeAt(0) - 97 + boardSize - 1 &&
-                column == square.firstColumn + boardSize - 1
-            if(column - row + 1 == defaultSquare.firstColumn) {
-                items.push(<div key={JSON.stringify(square)} style={{width: "25px", height: "25px", backgroundColor: "#4A6FA5"}}>{row}</div>)
-            } else {
-                items.push(getSquareAppearance(square, isLast))
-            }
+                rowNumber == square.row.charCodeAt(0) - 97 + boardSize - 1 &&
+                column == square.column + boardSize - 1
+            squares.push(getSquareAppearance(square, isLast))
         }
     }
-    return items
+    return squares
 }
 
-export function BoardView(boardSize: number, getSquareAppearance: (square: Square, bool: boolean) => any): JSX.Element {
+function boardDivStyle(boardSize: number): React.CSSProperties {
+    return {
+        display: "grid",
+        gap: 1,
+        gridTemplateColumns: `repeat(${boardSize+1}, 1fr)`,
+        gridTemplateRows: `repeat(${boardSize+1}, 1fr)`,
+        float: "left",
+        textAlign: "center",
+        alignItems: "center"
+    }
+}
+
+/**
+ * Creates a board
+ * @param boardSize the side size of the board
+ * @param getSquareAppearance the function that gets the appearence of each square
+ * @returns the board
+ */
+export function BoardView(boardSize: number, getSquareAppearance: (square: Square, isLast: boolean) => JSX.Element): JSX.Element {
     return (
-        <div>
-            <div
-            style={{
-            display: "grid",
-            gap: 1,
-            gridTemplateColumns: `repeat(${boardSize+1}, 1fr)`,
-            gridTemplateRows: `repeat(${boardSize+1}, 1fr)`,
-            float: "left",
-            textAlign: "center",
-            alignItems: "center"
-                }}
-            > 
-                {createLettersView(boardSize)}
-                {createItems(boardSize, getSquareAppearance)}
-            </div>
+        <div style={boardDivStyle(boardSize)}> 
+            {ColumnNumbersView(boardSize)}
+            {Squares(boardSize, getSquareAppearance)}
         </div>
     )
 }

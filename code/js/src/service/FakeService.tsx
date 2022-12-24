@@ -1,12 +1,13 @@
 import { CreateToken } from "../domain/CreateToken"
 import { CreateUser } from "../domain/CreateUser"
 import { EnteredGame, EnterLobby } from "../domain/Lobby"
-import { Game, GamesList } from "../domain/GamesList"
+import { Game } from "../domain/Game"
 import { GameType, GameTypes } from "../domain/GameTypes"
 import { Home } from "../domain/Home"
 import { Rankings } from "../domain/Rankings"
 import { UserHome } from "../domain/UserHome"
 import { Service } from "./Service"
+import { GamesList } from "../domain/GamesList"
 
 export class FakeService implements Service {
 
