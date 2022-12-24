@@ -410,8 +410,6 @@ export class RealService implements Service {
 
         if (!path)
             return undefined
-
-        path = path.slice(0, -1) + `${gameId}`;
         
         const res = await doFetch(
             baseURL + path, 
@@ -456,4 +454,6 @@ export class RealService implements Service {
             misses: misses
         }
     }
+
+
 }

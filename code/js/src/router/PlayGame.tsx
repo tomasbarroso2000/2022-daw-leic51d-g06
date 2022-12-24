@@ -95,9 +95,41 @@ function Shooting(game: Game, currentUser: CurrentUser) {
 }
 
 function Completed(game: Game) {
+    const yourFleet = game.fleet.map((ship) => 
+        <li>{ship.name}</li>
+    ) 
+    const enemyFleet = game.enemySunkFleet.map((ship) => 
+        <li>{ship.name}</li> //falta colocar o resto dos barcos
+    ) 
+    const gameStats = 
+        <div>
+            <h3>Game Statistics:</h3>
+            <p>Shots: {game.hits.length + game.misses.length}</p>
+            <p>Hits: {game.hits.length}</p>
+            <p>Misses: {game.misses.length}</p>
+            <h3>Your fleet:</h3>
+            <ul>{yourFleet}</ul>
+            <h3>{game.opponent.name}'s fleet</h3>
+            <ul>{enemyFleet}</ul>
+        </div>
+    if (game.playing)    
+        return (
+            <div>
+                <div>
+                    YOU WIN!
+                    {gameStats}
+                </div>
+            </div>
+
+        )
+    else 
     return (
         <div>
-            YOU LOSE BECAUSE YOU ALWAYS LOSE, YOU LOSER
+            <div>
+                YOU LOST!
+                {gameStats}
+            </div>
         </div>
+
     )
-}
+    }
