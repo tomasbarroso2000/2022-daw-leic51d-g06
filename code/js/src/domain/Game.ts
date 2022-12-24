@@ -19,7 +19,9 @@ export type Game = {
     misses: Array<Square>
 }
 
-
+export function isEnemySquareHit(game: Game, square: Square) {
+    return contains(game.hits, square) || contains(game.misses, square)
+}
 
 export function isEnemySquareDestroyed(game: Game, square: Square) {
     return game.enemySunkFleet.some((ship: Ship) => contains(ship.squares, square))

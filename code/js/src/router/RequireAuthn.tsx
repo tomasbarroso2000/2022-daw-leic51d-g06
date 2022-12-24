@@ -28,7 +28,6 @@ export function RequireAuthn({ children }: { children: React.ReactNode }): React
     }
 
     if (user.kind == "success") {
-        console.log("success")
         if (!currentUser)
             setUser({token: token, name: user.result.name})
         return <>{children}</>

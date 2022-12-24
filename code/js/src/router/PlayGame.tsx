@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Link, Navigate, redirect, useParams, useSearchParams } from "react-router-dom";
 import { BoardView, showGameBoard } from "../utils/board";
-import { Game, isEnemySquareAroundDestroyed, isEnemySquareDestroyed } from "../domain/Game";
+import { Game, isEnemySquareAroundDestroyed, isEnemySquareDestroyed, isEnemySquareHit } from "../domain/Game";
 import { Ship } from "../domain/ship";
 import { askService, Result } from "../service/askService";
 import { paths, service } from "./App";
@@ -11,6 +11,7 @@ import { Square } from "../domain/Square";
 import { deepEqual } from "../utils/deepEqual";
 import { contains } from "../utils/contains";
 import { Dispatch, useState } from "react";
+import { remove } from "../utils/remove";
 
 function isShootingBoard(boardSize: number, fleet: Array<Ship>, hits: Array<Square>, gameState: string): JSX.Element {
     if(gameState == "shooting")
@@ -24,6 +25,8 @@ export function PlayGame() {
     const params = useParams()
 
     const [selectedSquares, setSelectedSquares]: [Array<Square>, Dispatch<React.SetStateAction<Square[]>>] = useState([])
+
+    console.log(selectedSquares)
 
     const gameInfo: Result<Game> | undefined = askService(service, service.gameInfo, currentUser.token, params["gameId"])
 
@@ -66,32 +69,41 @@ function Layout(game: Game) {
 
 const INNER_COLOR = "#008DD5"
 const DESTROYED_SHIP_COLOR = "#000000"
-const AROUND_DESTROYED_COLOR = "FF0B5394"
-const SHIP_COLOR = "AED4E6"
-const SELECTED_COLOR = "FF0000"
+const AROUND_DESTROYED_COLOR = "#FF0B5394"
+const SHIP_COLOR = "#AED4E6"
+const SELECTED_COLOR = "#FF0000"
 
-const occupiedSquareStyle: React.CSSProperties = {
-    width: "25px",
-    height: "25px",
-    backgroundColor: SHIP_COLOR
-}
+const SMALL_BOARD_SQUARE_SIZE = 25
+const BIG_BOARD_SQUARE_SIZE = 40
 
-const hitSquareStyle: React.CSSProperties = {
-    width: "25px", 
-    height: "25px", 
-    backgroundColor: "#rgb(219, 81, 81)"
-}
-
-const defaultSquareStyle: React.CSSProperties = {
-    width: "25px", 
-    height: "25px", 
-    backgroundColor: INNER_COLOR
-}
-
-function enemySquareStyle(color: string): React.CSSProperties {
+function occupiedSquareStyle(squareSize: number): React.CSSProperties {
     return {
-        width: "25px", 
-        height: "25px", 
+        width: `${squareSize}px`,
+        height: `${squareSize}px`,
+        backgroundColor: SHIP_COLOR
+    }
+}
+
+function hitSquareStyle(squareSize: number): React.CSSProperties {
+    return {
+        width: `${squareSize}px`, 
+        height: `${squareSize}px`, 
+        backgroundColor: "#rgb(219, 81, 81)"
+    }
+}
+
+ function defaultSquareStyle(squareSize: number): React.CSSProperties {
+    return {
+        width: `${squareSize}px`, 
+        height: `${squareSize}px`, 
+        backgroundColor: INNER_COLOR
+    }
+}
+
+function enemySquareStyle(color: string, squareSize: number): React.CSSProperties {
+    return {
+        width: `${squareSize}px`, 
+        height: `${squareSize}px`, 
         backgroundColor: color
     }
 }
@@ -108,19 +120,17 @@ function Shooting(game: Game, currentUser: CurrentUser, selectedSquares: Array<S
                 </div>
                 <div className="board-content" id="self-board-container">
                     <h1>Your Board</h1>
-                    {BoardView(game.type.boardSize, (square: Square, isLast: boolean) => {
-                        const isOccupied = game.fleet.some((ship: Ship) => ship.squares.some((shipSquare) => deepEqual(shipSquare, square)))
-                        const isHit: boolean = game.takenHits.includes(square)
-                        if(isOccupied)
-                            return <div key={JSON.stringify(square)} style={occupiedSquareStyle}></div>
-                        if(isHit)
-                            return <div key={JSON.stringify(square)} style={hitSquareStyle}></div>
-                        return <div key={JSON.stringify(square)} style={defaultSquareStyle}></div>
+                    {BoardView(game.type.boardSize, SMALL_BOARD_SQUARE_SIZE, (square: Square, squareSize: number, isLast: boolean) => {
+                        const isOccupied = game.fleet.some((ship: Ship) => contains(ship.squares, square))
+                        const isHit: boolean = contains(game.takenHits, square)
+                        const style = isOccupied ? occupiedSquareStyle(squareSize) : defaultSquareStyle(squareSize)
+                        const hit = isHit ? "X" : ""
+                        return <div key={JSON.stringify(square)} style={style}>{hit}</div>
                     })}
                 </div>
                 <div className="board-content" id="enemy-board-container">
                     <h1>Enemy Board</h1>
-                    {BoardView(game.type.boardSize, (square: Square, isLast: boolean) => {
+                    {BoardView(game.type.boardSize, BIG_BOARD_SQUARE_SIZE, (square: Square, squareSize: number, isLast: boolean) => {
                         let canClick = true
                         let squareColor: string
                         if (isEnemySquareDestroyed(game, square)) {
@@ -137,11 +147,23 @@ function Shooting(game: Game, currentUser: CurrentUser, selectedSquares: Array<S
                         } else {
                             squareColor = INNER_COLOR
                         }
-                        const onClick: () => void = canClick ? () => setSelectedSquares(selectedSquares.concat(square)) : () => { }
-                        const style = enemySquareStyle(squareColor)
-                        return <div key={JSON.stringify(square)} onClick={onClick} style={style}></div>
+
+                        const onClick = () => {
+                            if (canClick) {
+                                if (contains(selectedSquares, square))
+                                    setSelectedSquares(remove(selectedSquares, square))
+                                else
+                                    setSelectedSquares(selectedSquares.concat(square))
+                            }
+                        }
+
+                        const onHover: () => void = canClick ? 
+                            () => { squareColor = "#FFFFFF" } :
+                            () => {}
+                        const style = enemySquareStyle(squareColor, squareSize)
+                        const hit = isEnemySquareHit(game, square) ? "X" : ""
+                        return <div key={JSON.stringify(square)} onClick={onClick} onMouseOver={onHover} style={style}>{hit}</div>
                     })}
-                    { /*isShootingBoard(game.type.boardSize, game.enemySunkFleet, game.hits, "shooting")*/ }
                 </div>
             </div>
         </div>
