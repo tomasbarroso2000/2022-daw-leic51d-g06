@@ -399,8 +399,8 @@ div#content-rankings li hr {
     background-color: #aed4e6;
   }
 
-  .shooting:hover {
-    background-color: rgb(219, 81, 81);
+  .canSelect:hover {
+    background-color: rgb(219, 81, 81) !important;
   }
 
   div.cross:after {
