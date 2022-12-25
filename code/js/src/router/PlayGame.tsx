@@ -7,36 +7,19 @@ import { askService, Result } from "../service/askService";
 import { service } from "./App";
 import { useCurrentUser } from "./Authn";
 import { CurrentUser } from "../domain/CurrentUser";
-import { Square, squareToString } from "../domain/Square";
+import { Square } from "../domain/Square";
 import { contains } from "../utils/contains";
-import { Dispatch, useState } from "react";
+import { Dispatch, useCallback, useState } from "react";
 import { remove } from "../utils/remove";
-import { ShipType } from "../domain/ShipType";
-import Draggable from "react-draggable";
 import { Layout } from "./Layout";
 
 export function PlayGame() {
     const currentUser = useCurrentUser()
     const params = useParams()
 
-    const [layoutShips, setLayoutShips]: [Array<LayoutShip>, Dispatch<React.SetStateAction<LayoutShip[]>>] = useState([
-        {
-            type: {
-                name: "carrier",
-                size: 4,
-                gameType: "beginner"
-            },
-            position: {
-                row: "a",
-                column: 1
-            },
-            orientation: "vertical"
-        }
-    ])
+    const [layoutShips, setLayoutShips]: [Array<LayoutShip>, Dispatch<React.SetStateAction<LayoutShip[]>>] = useState([])
 
     const [selectedSquares, setSelectedSquares]: [Array<Square>, Dispatch<React.SetStateAction<Square[]>>] = useState([])
-
-    console.log(selectedSquares)
 
     const gameInfo: Result<Game> | undefined = askService(service, service.gameInfo, currentUser.token, params["gameId"])
 
@@ -52,7 +35,7 @@ export function PlayGame() {
         switch (gameInfo.result.state) {
             case "layout_definition": {
                 console.log("layout_definition")
-                return Layout(gameInfo.result, currentUser, layoutShips, setLayoutShips)
+                return Layout(gameInfo.result, layoutShips, setLayoutShips)
             }
             case "shooting": {
                 console.log("shooting")
@@ -195,3 +178,5 @@ function Completed(game: Game) {
 
     )
     }
+
+

@@ -6,111 +6,27 @@ import { Game } from "../domain/Game"
 import { LayoutShip } from "../domain/ship"
 import { Square, squareToString } from "../domain/Square"
 import { BoardView } from "../utils/board"
+import { deepEqual } from "../utils/deepEqual"
 import { BIG_BOARD_SQUARE_SIZE, INNER_COLOR, SHIP_COLOR } from "./PlayGame"
 
-/*
- * Small example on how to implement drag-and-drop when using the React library.
- * Does not use any external library.
- * 
- * Behaviour:
- * - The example presents SIZE `div` elements, named as "sources", which can be dragged and dropped into SIZE `div` elements, named as "targets".
- * - Each source element can only be dragged once.
- * - Each target element can only receive one source element.
- */
-
-// The number of source and target elements
-const SIZE = 3
-
-// The CSS style for the wrapper div, in order to use CSS Grid.
-const wrapperStyle: React.CSSProperties = {
-    display: 'grid',
-    gridTemplateColumns: "repeat(3, 1fr)",
-    gap: "10px",
-    gridAutoRows: "minmax(100px, auto)",
-}
-
 // The function to compute the CSS style for a source `div`
-function sourceDivStyle(sourceState: SourceState, column: number, row: number): React.CSSProperties {
+function sourceDivStyle(column: number, row: number): React.CSSProperties {
     return {
         gridColumn: column,
         gridRow: row,
         border: "solid",
         width: "50px",
         height: "50px",
-        borderColor: sourceState == 'available' ? 'green' : 'red',
+        borderColor: 'green'
     }
 }
 
-// The function to compute the CSS style for a target `div`
-function targetDivStyle(targetState: TargetState, column: number, row: number): React.CSSProperties {
-    return {
-        gridColumn: column,
-        gridRow: row,
-        border: "solid",
-        width: "100px",
-        height: "100px",
-        borderColor: targetState === undefined ? 'green' : 'red'
-    }
-}
 
-// Helper function to compute an array `[0..len-1]`
-function range(len: number) {
-    return [...Array(len).keys()]
-}
-
-// The state type for each source element.
-type SourceState =
-    | 'available'   // the element was already dropped
-    | 'used'        // the element is available to be dropped
-
-
-// The state type for each target element
-type TargetState =
-    | number        // the target element received the source element with the index provided by the number
-    | undefined     // the target element is available to receive a source element
-
-
-// The overall component state
-type State = {
-    // Each item in the array represents a source element
-    sources: Array<SourceState>
-
-    // Each item in the array represents a target element
-    targets: Array<TargetState>
-}
-
-/*
- * This example also shows the use of a reducer to manage state, via the `useReducer` hook
- * A reducer is a function that receives a current state and an action and produces a next state
- */
-type Action =
-    | { type: 'drop', sourceIx: number, targetIx: number } // the `sourceId` element was dropped on the `targetId` element
-
-const initialState = {
-    sources: new Array(SIZE).fill('available'),
-    targets: new Array(SIZE).fill(undefined),
-}
-
-function reduce(state: State, action: Action): State {
-    switch (action.type) {
-        case 'drop':
-            return {
-                sources: state.sources.map((value, ix) => ix == action.sourceIx ? 'used' : value),
-                targets: state.targets.map((value, ix) => ix == action.targetIx ? action.targetIx : value),
-            }
-
-        default:
-            // unknown action, type system ensures this cannot happen
-            return state
-    }
-}
-
-// The following handlers can be outside the component because they dont use or change state
 function handleDragStart(event: React.DragEvent<HTMLDivElement>) {
-    const ix = event.currentTarget.attributes.getNamedItem('data-ix').textContent
-    console.log(`dragStart - ${ix}`)
+    const shipName = event.currentTarget.attributes.getNamedItem('data-name').textContent
+    console.log(`dragStart - ${shipName}`)
     event.dataTransfer.effectAllowed = "all"
-    event.dataTransfer.setData("text/plain", ix)
+    event.dataTransfer.setData("text/plain", shipName)
 }
 
 function handleDragOver(event: React.DragEvent<HTMLDivElement>) {
@@ -119,53 +35,17 @@ function handleDragOver(event: React.DragEvent<HTMLDivElement>) {
     event.dataTransfer.dropEffect = "copy";
 }
 
-export function App() {
-    const [state, dispatch] = useReducer(reduce, initialState)
 
-    // Handler for the `drop` event, which dispatches a `drop` event to the reducer managing state.
-    const handleDrop = useCallback(function handleDrop(event: React.DragEvent<HTMLDivElement>) {
-        // collect information about the source and the target
-        const sourceIx = parseInt(event.dataTransfer.getData("text/plain"))
-        const targetIx = parseInt(event.currentTarget.attributes.getNamedItem('data-ix').textContent)
+function handleDrop(event: React.DragEvent<HTMLDivElement>) {
 
-        // dispatch a `drop` action to the reducer managing state
-        dispatch({
-            'type': 'drop',
-            sourceIx: sourceIx,
-            targetIx: targetIx,
-        })
-    }, [dispatch])
-    console.log(state)
+    const shipName = event.dataTransfer.getData("text/plain")
+    const square = JSON.parse(event.currentTarget.attributes.getNamedItem('data-square').textContent)
 
-    return (
-        // a source `div` is draggable only if it is 'available'
-        // a source `div` is a drop target only if is available, i.e., its value is still undefined
-        <div>
-            <p>Source elements, draggable into the target elements</p>
-            <div style={wrapperStyle}>
-                {state.sources.map((source, ix) => <div
-                    key={ix}
-                    style={sourceDivStyle(source, ix + 1, 1)}
-                    draggable={source == 'available'}
-                    onDragStart={handleDragStart}
-                    data-ix={ix}
-                >{ix}</div>)}
-            </div>
-            <p> Target elements</p>
-            <div style={wrapperStyle}>
-                {state.targets.map((target, ix) => <div key={ix}
-                    style={targetDivStyle(target, ix + 1, 1)}
-                    onDragOver={target === undefined ? handleDragOver : undefined}
-                    onDrop={target === undefined ? handleDrop : undefined}
-                    data-ix={ix}>
-                    {target}
-                </div>)}
-            </div>
-        </div >
-    )
+    console.log(shipName)
+    console.log(square)
+
+    
 }
-
-// END OF DRAGGING EXAMPLE
 
 function draggableShipDivStyle(shipSize: number, squareSize: number): React.CSSProperties {
     return {
@@ -208,16 +88,40 @@ function DraggableShips(layoutShips: Array<LayoutShip>, squareSize: number): Arr
     return ships
 }
 
-export function Layout(game: Game, currentUser: CurrentUser, layoutShips: Array<LayoutShip>, setLayoutShips: Dispatch<React.SetStateAction<LayoutShip[]>>) {    
+export function Layout(
+    game: Game,
+    layoutShips: Array<LayoutShip>,
+    setLayoutShips: Dispatch<React.SetStateAction<LayoutShip[]>>
+) {    
     return (
-        <div>
-            <h1>Layout</h1>
-            <div>{DraggableShips(layoutShips, BIG_BOARD_SQUARE_SIZE)}</div>
             <div>
-                {BoardView(game.type.boardSize, BIG_BOARD_SQUARE_SIZE, (square: Square, squareSize: number, isLast: boolean) => 
-                    <div id={squareToString(square)} key={squareToString(square)} style={layoutSquareStyle(squareSize)}></div>
-                )}
+                <h1>Layout</h1>
+                <div>
+                    {
+                        game.type.fleet.map((shipType, ix) => 
+                        <div
+                                key={shipType.name}
+                                style={sourceDivStyle(ix + 1, 1)}
+                                draggable="true"
+                                onDragStart={handleDragStart}
+                                data-name={shipType.name}
+                            >{ix}</div>)
+                    }
+                </div>
+                <div>
+                    {BoardView(game.type.boardSize, BIG_BOARD_SQUARE_SIZE, (square: Square, squareSize: number, isLast: boolean) => {
+                        return (
+                            <div key={squareToString(square)} 
+                                style={layoutSquareStyle(squareSize)}
+                                onDragOver={handleDragOver}
+                                onDrop={handleDrop}
+                                data-square={JSON.stringify(square)}>
+                            </div>
+                        )
+                    }
+                    )}
+                </div>
             </div>
-        </div>
+
     )
 }
