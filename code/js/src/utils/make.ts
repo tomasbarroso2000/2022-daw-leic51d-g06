@@ -1,5 +1,5 @@
 import { GameType } from "../domain/GameTypes";
-import { Ship } from "../domain/ship";
+import { Ship } from "../domain/Ship";
 import { ShipType } from "../domain/ShipType";
 import { Square } from "../domain/Square";
 import { UserInfo } from "../domain/UserInfo";
@@ -34,12 +34,12 @@ export function makeUserInfo(id, name, score): UserInfo {
     }
 }
 
-export function makeFleetTypes(fleetTypes): Array<ShipType> {
-    return fleetTypes.map(ship => {
+export function makeTypeFleet(gameTypeFleet): Array<ShipType> {
+    return gameTypeFleet.map(shipType => {
         return {
-            name: ship.name,
-            size: ship.size,
-            gameType: ship["game-type"]
+            name: shipType.name,
+            size: shipType.size,
+            gameType: shipType["game-type"]
         }
     })
 }

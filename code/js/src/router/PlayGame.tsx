@@ -1,21 +1,38 @@
 import * as React from "react";
-import { Link, Navigate, redirect, useParams, useSearchParams } from "react-router-dom";
-import { BoardView, showGameBoard } from "../utils/board";
+import { useParams } from "react-router-dom";
+import { BoardView } from "../utils/board";
 import { Game, isEnemySquareAroundDestroyed, isEnemySquareDestroyed, isEnemySquareHit } from "../domain/Game";
-import { Ship } from "../domain/ship";
+import { LayoutShip, Ship } from "../domain/ship";
 import { askService, Result } from "../service/askService";
-import { paths, service } from "./App";
+import { service } from "./App";
 import { useCurrentUser } from "./Authn";
 import { CurrentUser } from "../domain/CurrentUser";
-import { Square } from "../domain/Square";
-import { deepEqual } from "../utils/deepEqual";
+import { Square, squareToString } from "../domain/Square";
 import { contains } from "../utils/contains";
 import { Dispatch, useState } from "react";
 import { remove } from "../utils/remove";
+import { ShipType } from "../domain/ShipType";
+import Draggable from "react-draggable";
+import { Layout } from "./Layout";
 
 export function PlayGame() {
     const currentUser = useCurrentUser()
     const params = useParams()
+
+    const [layoutShips, setLayoutShips]: [Array<LayoutShip>, Dispatch<React.SetStateAction<LayoutShip[]>>] = useState([
+        {
+            type: {
+                name: "carrier",
+                size: 4,
+                gameType: "beginner"
+            },
+            position: {
+                row: "a",
+                column: 1
+            },
+            orientation: "vertical"
+        }
+    ])
 
     const [selectedSquares, setSelectedSquares]: [Array<Square>, Dispatch<React.SetStateAction<Square[]>>] = useState([])
 
@@ -35,7 +52,7 @@ export function PlayGame() {
         switch (gameInfo.result.state) {
             case "layout_definition": {
                 console.log("layout_definition")
-                return Layout(gameInfo.result)
+                return Layout(gameInfo.result, currentUser, layoutShips, setLayoutShips)
             }
             case "shooting": {
                 console.log("shooting")
@@ -49,22 +66,14 @@ export function PlayGame() {
     }
 }
 
-const INNER_COLOR = "#008DD5"
-const DESTROYED_SHIP_COLOR = "#000000"
-const AROUND_DESTROYED_COLOR = "#FF0B5394"
-const SHIP_COLOR = "#AED4E6"
-const SELECTED_COLOR = "#FF0000"
+export const INNER_COLOR = "#008DD5"
+export const DESTROYED_SHIP_COLOR = "#000000"
+export const AROUND_DESTROYED_COLOR = "#FF0B5394"
+export const SHIP_COLOR = "#AED4E6"
+export const SELECTED_COLOR = "#FF0000"
 
-const SMALL_BOARD_SQUARE_SIZE = 25
-const BIG_BOARD_SQUARE_SIZE = 40
-
-function layoutSquareStyle(squareSize: number): React.CSSProperties {
-    return {
-        width: `${squareSize}px`, 
-        height: `${squareSize}px`, 
-        backgroundColor: INNER_COLOR
-    }
-}
+export const SMALL_BOARD_SQUARE_SIZE = 25
+export const BIG_BOARD_SQUARE_SIZE = 40
 
 function occupiedSquareStyle(squareSize: number): React.CSSProperties {
     return {
@@ -88,17 +97,6 @@ function enemySquareStyle(color: string, squareSize: number): React.CSSPropertie
         height: `${squareSize}px`, 
         backgroundColor: color
     }
-}
-
-function Layout(game: Game) {  
-    return (
-        <div>
-            <h1>Layout</h1>
-            {BoardView(game.type.boardSize, BIG_BOARD_SQUARE_SIZE, (square: Square, squareSize: number, isLast: boolean) =>
-                <div key={JSON.stringify(square)} style={layoutSquareStyle(squareSize)}></div>
-            )}
-        </div>
-    )
 }
 
 function Shooting(game: Game, currentUser: CurrentUser, selectedSquares: Array<Square>, setSelectedSquares: Dispatch<React.SetStateAction<Square[]>>) {

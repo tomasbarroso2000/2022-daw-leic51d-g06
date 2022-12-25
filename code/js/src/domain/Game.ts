@@ -5,10 +5,12 @@ import { Ship } from "./ship"
 import { Square, surroundingSquares } from "./Square"
 import { UserInfo } from "./UserInfo"
 
+export type GameState = "layout_definition" | "shooting" | "completed"
+
 export type Game = {
     id: number,
     type: GameType,
-    state: "layout_definition" | "shooting" | "completed",
+    state: GameState,
     opponent: UserInfo,
     playing: boolean,
     startedAt: string,

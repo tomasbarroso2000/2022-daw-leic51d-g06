@@ -12,7 +12,7 @@ import { EnteredGame, EnterLobby } from "../domain/Lobby"
 import { UserHome } from "../domain/UserHome"
 import { UserInfo } from "../domain/UserInfo"
 import { Ship } from "../domain/ship"
-import { makeFleet, makeFleetTypes, makeGameType, makeHitsOrMIsses, makeUserInfo } from "../utils/make"
+import { makeFleet, makeTypeFleet as makeTypeFleet, makeGameType, makeHitsOrMIsses, makeUserInfo } from "../utils/make"
 import { paths } from "../router/App"   
 import { Square } from "../domain/Square"
 import { GamesList } from "../domain/GamesList"
@@ -293,7 +293,7 @@ export class RealService implements Service {
                 gameType["shots-per-round"],
                 gameType["layout-def-time-in-secs"],
                 gameType["shooting-time-in-secs"],
-                makeFleetTypes(gameType.fleet)
+                makeTypeFleet(gameType.fleet)
             )
         })
 
@@ -407,7 +407,7 @@ export class RealService implements Service {
     }
 
     gameInfo = async function (token: string, gameId: number): Promise<Game | undefined> {
-        let path = `/api/games/info/${gameId}`
+        let path = `/api/games/info/${gameId}` // improve
 
         if (!path)
             return undefined
@@ -423,7 +423,7 @@ export class RealService implements Service {
 
         const jsonObj = JSON.parse(res)
 
-        const fleetTypes: Array<ShipType> = makeFleetTypes(jsonObj.properties.fleet)
+        const fleetTypes: Array<ShipType> = makeTypeFleet(jsonObj.properties.type["fleet"])
         
         const gameType: GameType = makeGameType(
             jsonObj.properties.type["name"],
