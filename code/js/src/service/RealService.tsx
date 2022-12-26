@@ -19,6 +19,8 @@ import { GamesList } from "../domain/GamesList"
 import { LayoutShip } from "../domain/LayoutShip"
 import { DefineLayout } from "../domain/DefineLayout"
 import { SendHits } from "../domain/SendHits"
+import { Forfeit } from "../domain/Forfeit"
+import { json } from "react-router-dom"
 
 const baseURL = "http://localhost:8083"
 const homeURL = baseURL + "/api/"
@@ -43,6 +45,7 @@ export class RealService implements Service {
     enterLobbyAction: Action | undefined = undefined
     defineLayoutAction: Action | undefined = undefined
     sendHitsAction: Action | undefined = undefined
+    forfeitAction: Action | undefined = undefined
 
     /**
      * HOME
@@ -430,6 +433,7 @@ export class RealService implements Service {
 
         this.defineLayoutAction = jsonObj.actions.find((action: Action) => action.name == "define-layout")
         this.sendHitsAction = jsonObj.actions.find((action: Action) => action.name == "send-hits")
+        this.forfeitAction = jsonObj.actions.find((action: Action) => action.name == "forfeit")
 
         const fleetTypes: Array<ShipType> = makeTypeFleet(jsonObj.properties.type["fleet"])
         
@@ -550,6 +554,42 @@ export class RealService implements Service {
         return {
             hitsOutcome: jsonObj.properties["hits-outcome"],
             win: jsonObj.properties.win
+        }
+    }
+
+    /**
+     * FORFEIT
+     */
+
+    ensureForfeitAction = async function (token: string, gameId: number): Promise<Action | undefined> {
+        if (this.forfeitAction == undefined) {
+            return this.gameInfo(token, gameId).then(() => this.forfeitAction)
+        }
+        
+        return this.forfeitAction
+    }
+
+    forfeit = async function (token: string, gameId: number): Promise<Forfeit | undefined> {
+        const action: Action = await this.ensureForfeitAction(token, gameId)
+
+        const res = await doFetch(
+            baseURL + action.href, 
+            { 
+                token: token,
+                method: action.method,
+                body: {
+                    "game-id": gameId
+                }
+            }
+        )
+
+         if (!res) {
+            return undefined
+        }
+
+        const jsonObj = JSON.parse(res)
+        return {
+            state: jsonObj.properties.state
         }
     }
 }   

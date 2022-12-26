@@ -93,7 +93,7 @@ export function Shooting(game: Game, currentUser: CurrentUser, selectedSquares: 
             <div>
                 
                 <button onClick={() => service.sendHits(currentUser.token, game.id, selectedSquares)}>Shoot</button>
-                <button>Forfeit</button>
+                <button onClick={() => service.forfeit(currentUser.token, game.id)}>Forfeit</button>
             </div>
         </div>
     )
