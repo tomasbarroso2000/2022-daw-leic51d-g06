@@ -42,12 +42,13 @@ export function WaitForGame() {
         if (enterLobby.result.waitingForGame) {
             if (!lobbyId)
                 setLobbyId(enterLobby.result.lobbyOrGameId)
-
             return (
-                <div>{gameId != undefined ? `game id is ${gameId}` : "Waiting for game"}</div>
+                
+                <div>{gameId != undefined ? <Navigate to={`${paths['play-game'].replace(":gameId", gameId.toString())}`}/> : "Waiting for game"}</div>
             )
         } else {
-            return <Navigate to={`${paths["play-game"]}/${enterLobby.result.lobbyOrGameId}`} state={{source: location.pathname}} replace={true}/>
+            console.log("didn't wait for game")
+            return <Navigate to={`${paths['play-game'].replace(":gameId", enterLobby.result.lobbyOrGameId.toString())}`}/>
         }
     }
 }

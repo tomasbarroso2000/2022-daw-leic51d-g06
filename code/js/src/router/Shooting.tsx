@@ -1,6 +1,5 @@
 import * as React from "react"
 import { Dispatch } from "react"
-import { Link } from "react-router-dom"
 import { CurrentUser } from "../domain/CurrentUser"
 import { Game, isEnemySquareDestroyed, isEnemySquareAroundDestroyed, isEnemySquareHit } from "../domain/Game"
 import { Ship } from "../domain/ship"
@@ -8,8 +7,7 @@ import { Square } from "../domain/Square"
 import { BoardView } from "../utils/board"
 import { contains } from "../utils/contains"
 import { remove } from "../utils/remove"
-import { paths, service } from "./App"
-import { useCurrentUser } from "./Authn"
+import { service } from "./App"
 import { SHIP_COLOR, INNER_COLOR, SMALL_BOARD_SQUARE_SIZE, BIG_BOARD_SQUARE_SIZE, DESTROYED_SHIP_COLOR, AROUND_DESTROYED_COLOR, SELECTED_COLOR } from "./PlayGame"
 
 function occupiedSquareStyle(squareSize: number): React.CSSProperties {
@@ -91,8 +89,7 @@ export function Shooting(game: Game, currentUser: CurrentUser, selectedSquares: 
                 })}
             </div>
             <div>
-                
-                <button onClick={() => service.sendHits(currentUser.token, game.id, selectedSquares)}>Shoot</button>
+                <button onClick={() => service.sendHits(currentUser.token, game.id, selectedSquares).then(() => setSelectedSquares([]))}>Shoot</button>
                 <button onClick={() => service.forfeit(currentUser.token, game.id)}>Forfeit</button>
             </div>
         </div>
