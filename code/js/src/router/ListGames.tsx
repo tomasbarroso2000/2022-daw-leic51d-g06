@@ -1,4 +1,5 @@
 import * as React from "react"
+import { useState } from "react"
 import { Link, Navigate } from "react-router-dom"
 import { Game } from "../domain/Game"
 import { GamesList } from "../domain/GamesList"
@@ -30,8 +31,13 @@ function Playing(game: Game) {
 export function ListGames() {
     const currentUser = useCurrentUser()
     const limit = 5
-    const skip = 0
+    const [skip, setSkip] = useState(0)
+
+    console.log(skip)
+
     const games: Result<GamesList> | undefined = askService(service, service.games, currentUser.token, limit, skip)
+
+    console.log(games)
 
     if (!games) {
         return (
@@ -46,6 +52,10 @@ export function ListGames() {
             <div>
                 <h1>Games</h1>
                 {games.result.games.map((game: Game) => Playing(game))}
+                <div>
+                    <button onClick={() => {setSkip(skip - limit)}}>Previous</button>
+                    <button onClick={() => {setSkip(skip + limit)}}>Next</button>
+                </div>
                 <div>
                     <Link to={paths['create-game']}>New Game</Link>
                 </div>

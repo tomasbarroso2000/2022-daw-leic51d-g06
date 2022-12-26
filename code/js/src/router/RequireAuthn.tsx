@@ -24,7 +24,6 @@ export function RequireAuthn({ children }: { children: React.ReactNode }): React
     const token = currentUser ? currentUser.token : tokenInCookie
 
     useEffect(() => {
-        console.log("useEffect")
         service.userHome(token)
             .then((userHome: UserHome) => {
                 if (!currentUser)

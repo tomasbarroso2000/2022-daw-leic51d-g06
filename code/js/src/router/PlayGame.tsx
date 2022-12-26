@@ -138,10 +138,11 @@ function Shooting(game: Game, currentUser: CurrentUser, selectedSquares: Array<S
 
                     const onClick = () => {
                         if (canClick) {
-                            if (contains(selectedSquares, square))
+                            if (contains(selectedSquares, square)) {
                                 setSelectedSquares(remove(selectedSquares, square))
-                            else
+                            } else if (selectedSquares.length < game.type.shotsPerRound) {
                                 setSelectedSquares(selectedSquares.concat(square))
+                            } 
                         }
                     }
                     const style = enemySquareStyle(squareColor, squareSize)
