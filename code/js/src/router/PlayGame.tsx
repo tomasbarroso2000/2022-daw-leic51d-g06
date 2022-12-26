@@ -14,6 +14,7 @@ import { remove } from "../utils/remove";
 import { Layout } from "./Layout";
 import { ShipType } from "../domain/ShipType";
 import { LayoutShip } from "../domain/LayoutShip";
+import { useIntervalAsync } from "../utils/useIntervalAsync";
 
 export function PlayGame() {
     const currentUser = useCurrentUser()
@@ -23,7 +24,19 @@ export function PlayGame() {
 
     const [selectedSquares, setSelectedSquares]: [Array<Square>, Dispatch<React.SetStateAction<Square[]>>] = useState([])
 
+    const [gameId, setGameId]: [number | undefined, React.Dispatch<number>] = useState(undefined)
+
     const gameInfo: Result<Game> | undefined = askService(service, service.gameInfo, currentUser.token, params["gameId"])
+
+    const updateGameInfo = useCallback(async () => {
+        if (gameId) {
+            const newGameInfo = await service.gameInfo(currentUser.token, gameId)
+            console.log(newGameInfo)
+        }
+        
+    }, [gameId])
+
+    useIntervalAsync(updateGameInfo, 3000)
 
     if(!gameInfo) {
         return (
@@ -34,6 +47,8 @@ export function PlayGame() {
     }
 
     if (gameInfo.kind == "success") {
+        if (!gameId)
+            setGameId(gameInfo.result.id)
         switch (gameInfo.result.state) {
             case "layout_definition": {
                 console.log("layout_definition")
