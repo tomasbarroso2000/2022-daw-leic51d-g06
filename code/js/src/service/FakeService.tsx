@@ -8,6 +8,8 @@ import { Rankings } from "../domain/Rankings"
 import { UserHome } from "../domain/UserHome"
 import { Service } from "./Service"
 import { GamesList } from "../domain/GamesList"
+import { DefineLayout } from "../domain/DefineLayout"
+import { LayoutShip } from "../domain/LayoutShip"
 
 export class FakeService implements Service {
 
@@ -186,4 +188,10 @@ export class FakeService implements Service {
     }
 
     rankingsNavigation: ["/quaqua"]
+
+    defineLayout = async function (token: string, gameId: number, fleet: LayoutShip[]): Promise<DefineLayout | undefined> {
+        return Promise.resolve(
+            { status: "waiting" }
+        )
+    }
 }

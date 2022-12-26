@@ -14,8 +14,10 @@ import { UserInfo } from "../domain/UserInfo"
 import { Ship } from "../domain/ship"
 import { makeFleet, makeTypeFleet as makeTypeFleet, makeGameType, makeHitsOrMIsses, makeUserInfo } from "../utils/make"
 import { paths } from "../router/App"   
-import { Square } from "../domain/Square"
+import { Square, squareToString } from "../domain/Square"
 import { GamesList } from "../domain/GamesList"
+import { LayoutShip } from "../domain/LayoutShip"
+import { DefineLayout } from "../domain/DefineLayout"
 
 const baseURL = "http://localhost:8083"
 const homeURL = baseURL + "/api/"
@@ -38,6 +40,7 @@ export class RealService implements Service {
     createUserAction: Action | undefined = undefined
     createTokenAction: Action | undefined = undefined
     enterLobbyAction: Action | undefined = undefined
+    defineLayoutAction: Action | undefined = undefined
 
     /**
      * HOME
@@ -423,6 +426,8 @@ export class RealService implements Service {
 
         const jsonObj = JSON.parse(res)
 
+        this.defineLayoutAction = jsonObj.actions.find((action: Action) => action.name == "define-layout")
+
         const fleetTypes: Array<ShipType> = makeTypeFleet(jsonObj.properties.type["fleet"])
         
         const gameType: GameType = makeGameType(
@@ -453,6 +458,53 @@ export class RealService implements Service {
             enemySunkFleet: enemySunkFleet,
             hits: hits,
             misses: misses
+        }
+    }
+
+    /**
+     *  DEFINE LAYOUT
+     */
+    ensureDefineLayoutAction = async function (token: string, gameId: number): Promise<string | undefined> {
+        if (this.defineLayoutAction == undefined) {
+            return this.gameInfo(token, gameId).then(() => this.defineLayoutAction.href)
+        }
+        
+        return this.defineLayoutAction.href
+    }
+
+    defineLayout = async function (token: string, gameId: number, fleet: Array<LayoutShip>): Promise<DefineLayout | undefined> {
+        const path = await this.ensureDefineLayoutAction(token, gameId)
+
+        if (!path)
+            return undefined
+
+        const shipsArray = fleet.map((layoutShip) => {
+            return {
+                "name": layoutShip.type.name,
+                "first-square": squareToString(layoutShip.position),
+                "orientation": layoutShip.orientation
+            }
+        })
+
+        const res = await doFetch(
+                baseURL + path, 
+                { 
+                    token: token,
+                    body: {
+                        "game-id": gameId,
+                        ships: shipsArray
+                    }
+                }
+            )
+
+        if (!res) {
+            return undefined
+        }
+
+        const jsonObj = JSON.parse(res)
+
+        return {
+            status: jsonObj.properties.status
         }
     }
 

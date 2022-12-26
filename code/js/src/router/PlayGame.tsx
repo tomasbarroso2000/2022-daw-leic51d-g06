@@ -1,10 +1,10 @@
 import * as React from "react";
-import { useParams } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 import { BoardView } from "../utils/board";
 import { Game, isEnemySquareAroundDestroyed, isEnemySquareDestroyed, isEnemySquareHit } from "../domain/Game";
 import { Ship } from "../domain/ship";
 import { askService, Result } from "../service/askService";
-import { service } from "./App";
+import { paths, service } from "./App";
 import { useCurrentUser } from "./Authn";
 import { CurrentUser } from "../domain/CurrentUser";
 import { Square } from "../domain/Square";
@@ -12,29 +12,30 @@ import { contains } from "../utils/contains";
 import { Dispatch, useCallback, useState } from "react";
 import { remove } from "../utils/remove";
 import { Layout } from "./Layout";
-import { ShipType } from "../domain/ShipType";
 import { LayoutShip } from "../domain/LayoutShip";
 import { useIntervalAsync } from "../utils/useIntervalAsync";
 
 export function PlayGame() {
     const currentUser = useCurrentUser()
+    console.log(currentUser)
     const params = useParams()
+
+    const gameId = parseInt(params["gameId"])
 
     const [layoutShips, setLayoutShips]: [Array<LayoutShip>, Dispatch<React.SetStateAction<LayoutShip[]>>] = useState([])
 
     const [selectedSquares, setSelectedSquares]: [Array<Square>, Dispatch<React.SetStateAction<Square[]>>] = useState([])
 
-    const [gameId, setGameId]: [number | undefined, React.Dispatch<number>] = useState(undefined)
+    const [gameInfo, setGameInfo]: [Game | undefined, Dispatch<Game>] = useState(undefined)
 
-    const gameInfo: Result<Game> | undefined = askService(service, service.gameInfo, currentUser.token, params["gameId"])
+    //const gameInfo: Result<Game> | undefined = askService(service, service.gameInfo, currentUser.token, gameId)
 
     const updateGameInfo = useCallback(async () => {
-        if (gameId) {
-            const newGameInfo = await service.gameInfo(currentUser.token, gameId)
-            console.log(newGameInfo)
-        }
-        
-    }, [gameId])
+        console.log("updating")
+        const newGameInfo = await service.gameInfo(currentUser.token, gameId)
+        console.log(newGameInfo)
+        setGameInfo(newGameInfo)
+    }, [])
 
     useIntervalAsync(updateGameInfo, 3000)
 
@@ -46,24 +47,21 @@ export function PlayGame() {
         )
     }
 
-    if (gameInfo.kind == "success") {
-        if (!gameId)
-            setGameId(gameInfo.result.id)
-        switch (gameInfo.result.state) {
+        switch (gameInfo.state) {
             case "layout_definition": {
                 console.log("layout_definition")
-                return Layout(gameInfo.result, layoutShips, setLayoutShips)
+                return Layout(gameInfo, layoutShips, setLayoutShips, () => {})
             }
             case "shooting": {
                 console.log("shooting")
-                return Shooting(gameInfo.result, currentUser, selectedSquares, setSelectedSquares)
+                return Shooting(gameInfo, currentUser, selectedSquares, setSelectedSquares)
             }
             case "completed": {
                 console.log("completed")
-                return Completed(gameInfo.result)
+                return Completed(gameInfo)
             }
         }
-    }
+    
 }
 
 export const INNER_COLOR = "#008DD5"

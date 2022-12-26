@@ -4,8 +4,11 @@ import { CreateUser, UserRequest } from "../domain/CreateUser";
 import { CreateToken } from "../domain/CreateToken";
 import { GameTypes } from "../domain/GameTypes";
 import { EnterLobby, EnteredGame } from "../domain/Lobby";
-import { Game, GamesList } from "../domain/Game";
+import { Game } from "../domain/Game";
 import { UserHome } from "../domain/UserHome";
+import { GamesList } from "../domain/GamesList";
+import { DefineLayout } from "../domain/DefineLayout";
+import { LayoutShip } from "../domain/LayoutShip";
 
 interface Service {
 
@@ -19,7 +22,8 @@ interface Service {
     enteredGame: (token: string, lobbyId: number) => Promise<EnteredGame | undefined>
     games: (token: string, limit: number, skip: number) => Promise<GamesList | undefined>
     gameInfo: (token: string, gameId: number) => Promise<Game | undefined> 
-
+    defineLayout: (token: string, gameId: number, fleet: Array<LayoutShip>) => Promise<DefineLayout | undefined>
+    
     homeNavigation: Array<string>
     userHomeNavigation: Array<string>
     rankingsNavigation: Array<string>
