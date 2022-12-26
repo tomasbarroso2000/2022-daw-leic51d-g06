@@ -18,6 +18,7 @@ import { Square, squareToString } from "../domain/Square"
 import { GamesList } from "../domain/GamesList"
 import { LayoutShip } from "../domain/LayoutShip"
 import { DefineLayout } from "../domain/DefineLayout"
+import { SendHits } from "../domain/SendHits"
 
 const baseURL = "http://localhost:8083"
 const homeURL = baseURL + "/api/"
@@ -41,6 +42,7 @@ export class RealService implements Service {
     createTokenAction: Action | undefined = undefined
     enterLobbyAction: Action | undefined = undefined
     defineLayoutAction: Action | undefined = undefined
+    sendHitsAction: Action | undefined = undefined
 
     /**
      * HOME
@@ -427,6 +429,7 @@ export class RealService implements Service {
         const jsonObj = JSON.parse(res)
 
         this.defineLayoutAction = jsonObj.actions.find((action: Action) => action.name == "define-layout")
+        this.sendHitsAction = jsonObj.actions.find((action: Action) => action.name == "send-hits")
 
         const fleetTypes: Array<ShipType> = makeTypeFleet(jsonObj.properties.type["fleet"])
         
@@ -464,32 +467,33 @@ export class RealService implements Service {
     /**
      *  DEFINE LAYOUT
      */
-    ensureDefineLayoutAction = async function (token: string, gameId: number): Promise<string | undefined> {
+    ensureDefineLayoutAction = async function (token: string, gameId: number): Promise<Action | undefined> {
         if (this.defineLayoutAction == undefined) {
-            return this.gameInfo(token, gameId).then(() => this.defineLayoutAction.href)
+            return this.gameInfo(token, gameId).then(() => this.defineLayoutAction)
         }
         
-        return this.defineLayoutAction.href
+        return this.defineLayoutAction
     }
 
     defineLayout = async function (token: string, gameId: number, fleet: Array<LayoutShip>): Promise<DefineLayout | undefined> {
-        const path = await this.ensureDefineLayoutAction(token, gameId)
+        const action: Action = await this.ensureDefineLayoutAction(token, gameId)
 
-        if (!path)
+        if (!action)
             return undefined
 
         const shipsArray = fleet.map((layoutShip) => {
             return {
                 "name": layoutShip.type.name,
-                "first-square": squareToString(layoutShip.position),
+                "first-square": layoutShip.position,
                 "orientation": layoutShip.orientation
             }
         })
 
         const res = await doFetch(
-                baseURL + path, 
+                baseURL + action.href, 
                 { 
                     token: token,
+                    method: action.method,
                     body: {
                         "game-id": gameId,
                         ships: shipsArray
@@ -508,5 +512,44 @@ export class RealService implements Service {
         }
     }
 
+    /**
+     * SEND HITS
+     */
+    ensureSendHitsAction = async function (token: string, gameId: number): Promise<Action | undefined> {
+        if (this.sendHitsAction == undefined) {
+            return this.gameInfo(token, gameId).then(() => this.sendHitsAction)
+        }
+        
+        return this.sendHitsAction
+    }
 
-}
+    sendHits = async function (token: string, gameId: number, squares: Array<Square>): Promise<SendHits | undefined> {
+        const action: Action = await this.ensureSendHitsAction(token, gameId)
+
+        if (!action)
+            return undefined
+
+        const res = await doFetch(
+                baseURL + action.href, 
+                { 
+                    token: token,
+                    method: action.method,
+                    body: {
+                        "game-id": gameId,
+                        squares: squares
+                    }
+                }
+            )
+
+        if (!res) {
+            return undefined
+        }
+
+        const jsonObj = JSON.parse(res)
+
+        return {
+            hitsOutcome: jsonObj.properties["hits-outcome"],
+            win: jsonObj.properties.win
+        }
+    }
+}   

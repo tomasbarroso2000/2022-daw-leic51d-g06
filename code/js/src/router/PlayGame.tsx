@@ -48,11 +48,10 @@ export function PlayGame() {
             </div>
         )
     }
-
     switch (gameInfo.state) {
         case "layout_definition": {
             console.log("layout_definition")
-            return Layout(gameInfo, layoutShips, setLayoutShips, () => {})
+            return Layout(gameInfo, currentUser, layoutShips, setLayoutShips)
         }
         case "shooting": {
             console.log("shooting")
@@ -63,7 +62,6 @@ export function PlayGame() {
             return Completed(gameInfo)
         }
     }
-    
 }
 
 export const INNER_COLOR = "#008DD5"

@@ -11,6 +11,7 @@ import { capitalize } from "../utils/capitalize"
 import { contains } from "../utils/contains"
 import { deepEqual } from "../utils/deepEqual"
 import { replace } from "../utils/replace"
+import { service } from "./App"
 import { BIG_BOARD_SQUARE_SIZE, INNER_COLOR, SHIP_COLOR } from "./PlayGame"
 
 
@@ -165,38 +166,41 @@ function changeOrientation(boardSize: number, layoutShip: LayoutShip, layoutShip
 
 export function Layout(
     game: Game,
+    currentUser: CurrentUser,
     layoutShips: Array<LayoutShip>,
-    setLayoutShips: Dispatch<React.SetStateAction<LayoutShip[]>>,
-    submitLayout: () => void
+    setLayoutShips: Dispatch<React.SetStateAction<LayoutShip[]>>
 ) {  
     if (layoutShips.length == 0) 
         setLayoutShips(initialLayoutShips(game.type))
-    console.log(layoutShips)
-    return (
-            <div>
-                <h1>Layout</h1>
-                <button style={{display: "block"}} onClick={() => {setLayoutShips(initialLayoutShips(game.type))}}>Reset layout</button>
-                
-                <div style={{textAlign: "center"}}>
-                    <div style={{display: "inline-block", verticalAlign: "middle"}}>
-                        {layoutShips.map((layoutShip) => draggableShip(game.type.boardSize, BIG_BOARD_SQUARE_SIZE, layoutShip, layoutShips, setLayoutShips))}
+    if (game.fleet.length == 0)
+        return (
+                <div>
+                    <h1>Layout</h1>
+                    <button style={{display: "block"}} onClick={() => {setLayoutShips(initialLayoutShips(game.type))}}>Reset layout</button>
+                    
+                    <div style={{textAlign: "center"}}>
+                        <div style={{display: "inline-block", verticalAlign: "middle"}}>
+                            {layoutShips.map((layoutShip) => draggableShip(game.type.boardSize, BIG_BOARD_SQUARE_SIZE, layoutShip, layoutShips, setLayoutShips))}
+                        </div>
+                        <div style={{display: "inline-block", verticalAlign: "middle"}}>
+                            {BoardView(game.type.boardSize, BIG_BOARD_SQUARE_SIZE, (square: Square, squareSize: number, isLast: boolean) => {
+                                return (
+                                    <div key={squareToString(square)} 
+                                        style={layoutSquareStyle(squareSize, isSquareOccupied(layoutShips, square))}
+                                        onDragOver={handleDragOver}
+                                        onDrop={makeHandleDropFunction(game.type.boardSize, layoutShips, setLayoutShips)}
+                                        data-square={JSON.stringify(square)}>
+                                    </div>
+                                )
+                            }
+                            )}
+                        </div>
                     </div>
-                    <div style={{display: "inline-block", verticalAlign: "middle"}}>
-                        {BoardView(game.type.boardSize, BIG_BOARD_SQUARE_SIZE, (square: Square, squareSize: number, isLast: boolean) => {
-                            return (
-                                <div key={squareToString(square)} 
-                                    style={layoutSquareStyle(squareSize, isSquareOccupied(layoutShips, square))}
-                                    onDragOver={handleDragOver}
-                                    onDrop={makeHandleDropFunction(game.type.boardSize, layoutShips, setLayoutShips)}
-                                    data-square={JSON.stringify(square)}>
-                                </div>
-                            )
-                        }
-                        )}
-                    </div>
+                    <div><button onClick={() => service.defineLayout(currentUser.token, game.id, layoutShips)}>Submit layout</button></div>
                 </div>
-                <div><button onClick={() => submitLayout()}></button></div>
-            </div>
-
-    )
+        )
+    else
+        return (
+            <div>Waiting for {game.opponent.name}...</div>
+        )
 }
