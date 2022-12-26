@@ -12,6 +12,7 @@ import { contains } from "../utils/contains";
 import { Dispatch, useCallback, useState } from "react";
 import { remove } from "../utils/remove";
 import { Layout } from "./Layout";
+import { ShipType } from "../domain/ShipType";
 
 export function PlayGame() {
     const currentUser = useCurrentUser()
@@ -34,6 +35,13 @@ export function PlayGame() {
     if (gameInfo.kind == "success") {
         switch (gameInfo.result.state) {
             case "layout_definition": {
+                if (layoutShips.length == 0) {
+                    setLayoutShips(
+                        gameInfo.result.type.fleet.map((shipType: ShipType) => {
+                            return {type: shipType, position: undefined, orientation: "horizontal"}
+                        })
+                    )
+                }
                 console.log("layout_definition")
                 return Layout(gameInfo.result, layoutShips, setLayoutShips)
             }
