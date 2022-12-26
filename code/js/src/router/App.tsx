@@ -19,7 +19,6 @@ import { Me } from './Me'
 import { CreateGame } from './CreateGame'
 import { ListGames } from './ListGames'
 import { AuthnContainer } from './Authn'
-import { EnteredGame } from './Lobby'
 import { PlayGame } from './PlayGame'
 import { WaitForGame } from './WaitForGame'
 
@@ -63,10 +62,6 @@ const router = createBrowserRouter([
             {
                 "path": paths['wait-for-game'],
                 "element": <RequireAuthn><WaitForGame /></RequireAuthn>
-            },
-            {
-                "path": paths['lobby'],
-                "element": <RequireAuthn><EnteredGame/></RequireAuthn>
             },
             {
                 "path": paths['me'],

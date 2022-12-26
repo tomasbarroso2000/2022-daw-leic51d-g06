@@ -17,7 +17,7 @@ import { useIntervalAsync } from "../utils/useIntervalAsync";
 
 export function PlayGame() {
     const currentUser = useCurrentUser()
-    console.log(currentUser)
+    console.log("current user: " + currentUser)
     const params = useParams()
 
     const gameId = parseInt(params["gameId"])
@@ -33,6 +33,7 @@ export function PlayGame() {
     const updateGameInfo = useCallback(async () => {
         console.log("updating")
         const newGameInfo = await service.gameInfo(currentUser.token, gameId)
+        console.log("newGameInfo: " + newGameInfo)
         console.log(newGameInfo)
         setGameInfo(newGameInfo)
     }, [])
@@ -40,6 +41,7 @@ export function PlayGame() {
     useIntervalAsync(updateGameInfo, 3000)
 
     if(!gameInfo) {
+        console.log("!gameInfo")
         return (
             <div>
                 ...loading...
@@ -47,20 +49,20 @@ export function PlayGame() {
         )
     }
 
-        switch (gameInfo.state) {
-            case "layout_definition": {
-                console.log("layout_definition")
-                return Layout(gameInfo, layoutShips, setLayoutShips, () => {})
-            }
-            case "shooting": {
-                console.log("shooting")
-                return Shooting(gameInfo, currentUser, selectedSquares, setSelectedSquares)
-            }
-            case "completed": {
-                console.log("completed")
-                return Completed(gameInfo)
-            }
+    switch (gameInfo.state) {
+        case "layout_definition": {
+            console.log("layout_definition")
+            return Layout(gameInfo, layoutShips, setLayoutShips, () => {})
         }
+        case "shooting": {
+            console.log("shooting")
+            return Shooting(gameInfo, currentUser, selectedSquares, setSelectedSquares)
+        }
+        case "completed": {
+            console.log("completed")
+            return Completed(gameInfo)
+        }
+    }
     
 }
 
