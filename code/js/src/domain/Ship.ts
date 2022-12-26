@@ -25,6 +25,6 @@ export function nextSquareFunction(orientation: ShipOrientation) {
 
 export type LayoutShip = {
     type: ShipType,
-    position: Square,
+    position: Square | undefined,
     orientation: ShipOrientation
 }

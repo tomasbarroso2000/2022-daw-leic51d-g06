@@ -6,6 +6,7 @@ import { LayoutShip, Ship } from "../domain/ship";
 import { askService, Result } from "../service/askService";
 import { service } from "./App";
 import { useCurrentUser } from "./Authn";
+<<<<<<< HEAD
 import { CurrentUser } from "../domain/CurrentUser"
 import { Square } from "../domain/Square"
 import { contains } from "../utils/contains"
@@ -13,6 +14,15 @@ import { Dispatch, useCallback, useState } from "react"
 import { remove } from "../utils/remove"
 import { Layout } from "./Layout"
 import { useIntervalAsync } from "../utils/useIntervalAsync"
+=======
+import { CurrentUser } from "../domain/CurrentUser";
+import { Square } from "../domain/Square";
+import { contains } from "../utils/contains";
+import { Dispatch, useCallback, useState } from "react";
+import { remove } from "../utils/remove";
+import { Layout } from "./Layout";
+import { ShipType } from "../domain/ShipType";
+>>>>>>> bddb122409e1b5fbe81a9f549b14680be37ef551
 
 export function PlayGame() {
     const currentUser = useCurrentUser()
@@ -43,6 +53,13 @@ export function PlayGame() {
     if (gameInfo.kind == "success") {
         switch (gameInfo.state) {
             case "layout_definition": {
+                if (layoutShips.length == 0) {
+                    setLayoutShips(
+                        gameInfo.result.type.fleet.map((shipType: ShipType) => {
+                            return {type: shipType, position: undefined, orientation: "horizontal"}
+                        })
+                    )
+                }
                 console.log("layout_definition")
                 return Layout(gameInfo, layoutShips, setLayoutShips)
             }

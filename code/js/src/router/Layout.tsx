@@ -35,16 +35,29 @@ function handleDragOver(event: React.DragEvent<HTMLDivElement>) {
     event.dataTransfer.dropEffect = "copy";
 }
 
+function makeHandleDropFunction(layoutShips: Array<LayoutShip>, setLayoutShips: Dispatch<React.SetStateAction<LayoutShip[]>>) {
+    return function handleDrop(event: React.DragEvent<HTMLDivElement>) {
 
-function handleDrop(event: React.DragEvent<HTMLDivElement>) {
+        const layoutShip: LayoutShip = JSON.parse(event.dataTransfer.getData("text/plain"))
+        const square: Square = JSON.parse(event.currentTarget.attributes.getNamedItem('data-square').textContent)
 
-    const shipName = event.dataTransfer.getData("text/plain")
-    const square = JSON.parse(event.currentTarget.attributes.getNamedItem('data-square').textContent)
+        console.log(layoutShip)
+        console.log(square)
 
-    console.log(shipName)
-    console.log(square)
-
-    
+        setLayoutShips(layoutShips.map((originalLayoutShip) => {
+            if (deepEqual(originalLayoutShip.type, layoutShip.type)) {
+                console.log("same ship in " + originalLayoutShip.type.name)
+                return {
+                    type: originalLayoutShip.type,
+                    position: square,
+                    orientation: originalLayoutShip.orientation
+                }
+            } else {
+                console.log("noship")
+                return originalLayoutShip
+            }
+        }))
+    }
 }
 
 function draggableShipDivStyle(shipSize: number, squareSize: number): React.CSSProperties {
@@ -92,20 +105,22 @@ export function Layout(
     game: Game,
     layoutShips: Array<LayoutShip>,
     setLayoutShips: Dispatch<React.SetStateAction<LayoutShip[]>>
-) {    
+) {  
+    console.log(layoutShips)  
     return (
             <div>
                 <h1>Layout</h1>
                 <div>
                     {
-                        game.type.fleet.map((shipType, ix) => 
+                        layoutShips.map((layoutShip, ix) => 
                         <div
-                                key={shipType.name}
-                                style={sourceDivStyle(ix + 1, 1)}
-                                draggable="true"
-                                onDragStart={handleDragStart}
-                                data-name={shipType.name}
-                            >{ix}</div>)
+                            key={layoutShip.type.name}
+                            style={sourceDivStyle(ix + 1, 1)}
+                            draggable="true"
+                            onDragStart={handleDragStart}
+                            data-name={JSON.stringify(layoutShip)}>
+                            {ix}
+                        </div>)
                     }
                 </div>
                 <div>
@@ -114,8 +129,9 @@ export function Layout(
                             <div key={squareToString(square)} 
                                 style={layoutSquareStyle(squareSize)}
                                 onDragOver={handleDragOver}
-                                onDrop={handleDrop}
+                                onDrop={makeHandleDropFunction(layoutShips, setLayoutShips)}
                                 data-square={JSON.stringify(square)}>
+                                {layoutShips.some((layoutShip: LayoutShip) => layoutShip.position && deepEqual(layoutShip.position, square)) ? "X" : ""}
                             </div>
                         )
                     }
