@@ -6,12 +6,13 @@ import { LayoutShip, Ship } from "../domain/ship";
 import { askService, Result } from "../service/askService";
 import { service } from "./App";
 import { useCurrentUser } from "./Authn";
-import { CurrentUser } from "../domain/CurrentUser";
-import { Square } from "../domain/Square";
-import { contains } from "../utils/contains";
-import { Dispatch, useCallback, useState } from "react";
-import { remove } from "../utils/remove";
-import { Layout } from "./Layout";
+import { CurrentUser } from "../domain/CurrentUser"
+import { Square } from "../domain/Square"
+import { contains } from "../utils/contains"
+import { Dispatch, useCallback, useState } from "react"
+import { remove } from "../utils/remove"
+import { Layout } from "./Layout"
+import { useIntervalAsync } from "../utils/useIntervalAsync"
 
 export function PlayGame() {
     const currentUser = useCurrentUser()
@@ -21,7 +22,15 @@ export function PlayGame() {
 
     const [selectedSquares, setSelectedSquares]: [Array<Square>, Dispatch<React.SetStateAction<Square[]>>] = useState([])
 
-    const gameInfo: Result<Game> | undefined = askService(service, service.gameInfo, currentUser.token, params["gameId"])
+    const [gameInfo, setGameInfo]: [Game | undefined, React.Dispatch<any>] = useState(undefined)
+
+    const updateGameInfo = useCallback(async () => {
+        const newGameInfo = await service.gameInfo(currentUser.token, gameInfo.)
+        console.log(newGameInfo)
+        setGameInfo(newGameInfo)
+    }, [gameInfo])
+
+    useIntervalAsync(updateGameInfo, 3000)
 
     if(!gameInfo) {
         return (
@@ -32,18 +41,18 @@ export function PlayGame() {
     }
 
     if (gameInfo.kind == "success") {
-        switch (gameInfo.result.state) {
+        switch (gameInfo.state) {
             case "layout_definition": {
                 console.log("layout_definition")
-                return Layout(gameInfo.result, layoutShips, setLayoutShips)
+                return Layout(gameInfo, layoutShips, setLayoutShips)
             }
             case "shooting": {
                 console.log("shooting")
-                return Shooting(gameInfo.result, currentUser, selectedSquares, setSelectedSquares)
+                return Shooting(gameInfo, currentUser, selectedSquares, setSelectedSquares)
             }
             case "completed": {
                 console.log("completed")
-                return Completed(gameInfo.result)
+                return Completed(gameInfo)
             }
         }
     }
