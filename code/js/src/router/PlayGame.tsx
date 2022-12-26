@@ -2,7 +2,7 @@ import * as React from "react";
 import { useParams } from "react-router-dom";
 import { BoardView } from "../utils/board";
 import { Game, isEnemySquareAroundDestroyed, isEnemySquareDestroyed, isEnemySquareHit } from "../domain/Game";
-import { LayoutShip, Ship } from "../domain/ship";
+import { Ship } from "../domain/ship";
 import { askService, Result } from "../service/askService";
 import { service } from "./App";
 import { useCurrentUser } from "./Authn";
@@ -13,6 +13,7 @@ import { Dispatch, useCallback, useState } from "react";
 import { remove } from "../utils/remove";
 import { Layout } from "./Layout";
 import { ShipType } from "../domain/ShipType";
+import { LayoutShip } from "../domain/LayoutShip";
 
 export function PlayGame() {
     const currentUser = useCurrentUser()
@@ -35,13 +36,6 @@ export function PlayGame() {
     if (gameInfo.kind == "success") {
         switch (gameInfo.result.state) {
             case "layout_definition": {
-                if (layoutShips.length == 0) {
-                    setLayoutShips(
-                        gameInfo.result.type.fleet.map((shipType: ShipType) => {
-                            return {type: shipType, position: undefined, orientation: "horizontal"}
-                        })
-                    )
-                }
                 console.log("layout_definition")
                 return Layout(gameInfo.result, layoutShips, setLayoutShips)
             }

@@ -1,25 +1,17 @@
 import * as React from "react"
-import { Dispatch, useCallback, useReducer } from "react"
-import Draggable from "react-draggable"
+import { Dispatch,  } from "react"
 import { CurrentUser } from "../domain/CurrentUser"
 import { Game } from "../domain/Game"
-import { LayoutShip } from "../domain/ship"
-import { Square, squareToString } from "../domain/Square"
+import { GameType } from "../domain/GameTypes"
+import { LayoutShip, layoutShipSquares, nextSquareFunction, otherOrientation, ShipOrientation } from "../domain/LayoutShip"
+import { ShipType } from "../domain/ShipType"
+import { Square, squareToString, surroundingSquares } from "../domain/Square"
 import { BoardView } from "../utils/board"
+import { capitalize } from "../utils/capitalize"
+import { contains } from "../utils/contains"
 import { deepEqual } from "../utils/deepEqual"
+import { replace } from "../utils/replace"
 import { BIG_BOARD_SQUARE_SIZE, INNER_COLOR, SHIP_COLOR } from "./PlayGame"
-
-// The function to compute the CSS style for a source `div`
-function sourceDivStyle(column: number, row: number): React.CSSProperties {
-    return {
-        gridColumn: column,
-        gridRow: row,
-        border: "solid",
-        width: "50px",
-        height: "50px",
-        borderColor: 'green'
-    }
-}
 
 
 function handleDragStart(event: React.DragEvent<HTMLDivElement>) {
@@ -35,70 +27,140 @@ function handleDragOver(event: React.DragEvent<HTMLDivElement>) {
     event.dataTransfer.dropEffect = "copy";
 }
 
-function makeHandleDropFunction(layoutShips: Array<LayoutShip>, setLayoutShips: Dispatch<React.SetStateAction<LayoutShip[]>>) {
+function makeHandleDropFunction(boardSize: number, layoutShips: Array<LayoutShip>, setLayoutShips: Dispatch<React.SetStateAction<LayoutShip[]>>) {
     return function handleDrop(event: React.DragEvent<HTMLDivElement>) {
 
         const layoutShip: LayoutShip = JSON.parse(event.dataTransfer.getData("text/plain"))
         const square: Square = JSON.parse(event.currentTarget.attributes.getNamedItem('data-square').textContent)
 
+        if (!isSquareValidForShip(boardSize, square, layoutShip, layoutShips))
+            return
+
+        const newLayoutShip: LayoutShip = JSON.parse(JSON.stringify(layoutShip))
+        newLayoutShip.position = square
+
         console.log(layoutShip)
         console.log(square)
 
         setLayoutShips(layoutShips.map((originalLayoutShip) => {
-            if (deepEqual(originalLayoutShip.type, layoutShip.type)) {
-                console.log("same ship in " + originalLayoutShip.type.name)
-                return {
-                    type: originalLayoutShip.type,
-                    position: square,
-                    orientation: originalLayoutShip.orientation
-                }
-            } else {
-                console.log("noship")
+            if (deepEqual(originalLayoutShip.type, newLayoutShip.type))
+                return newLayoutShip
+            else
                 return originalLayoutShip
-            }
         }))
     }
 }
 
 function draggableShipDivStyle(shipSize: number, squareSize: number): React.CSSProperties {
     return {
-        display: "grid",
+        display: "inline",
         gap: 1,
-        gridTemplateColumns: `repeat(${shipSize}, 1fr)`,
-        gridTemplateRows: `repeat(1, 1fr)`,
         float: "left",
         textAlign: "center",
         alignItems: "center",
     }
 }
 
-function layoutSquareStyle(squareSize: number): React.CSSProperties {
+function layoutSquareStyle(squareSize: number, isOccupied: boolean): React.CSSProperties {
     return {
         width: `${squareSize}px`, 
         height: `${squareSize}px`, 
-        backgroundColor: INNER_COLOR
+        backgroundColor: isOccupied ? SHIP_COLOR : INNER_COLOR
     }
 }
 
-function layoutShipSquareStyle(squareSize: number): React.CSSProperties {
+function layoutShipSquareStyle(squareSize: number, isFirst: boolean): React.CSSProperties {
     return {
-        width: `${squareSize}px`, 
-        height: `${squareSize}px`, 
-        backgroundColor: SHIP_COLOR
+        display: "inline-block",
+        marginRight: "1px",
+        width: isFirst ? `${squareSize-4}px` : `${squareSize}px`, 
+        height: isFirst? `${squareSize-4}px` : `${squareSize}px`, 
+        backgroundColor: SHIP_COLOR,
+        border: isFirst ? "2px solid red" : undefined
     }
 }
 
-function DraggableShips(layoutShips: Array<LayoutShip>, squareSize: number): Array<JSX.Element> {
-    const ships: Array<JSX.Element> = []
-    layoutShips.map((ship: LayoutShip) => {
-        const shipType = ship.type
-        const squares: Array<JSX.Element> = []
-        for (let i = 0; i < shipType.size; i++) {
-            squares.push(<div style={layoutShipSquareStyle(squareSize)}></div>)
+function unavailableSquares(layoutShips: Array<LayoutShip>, filteredShip: LayoutShip): Array<Square> {
+    const squares = []
+    layoutShips.forEach((ship) => {
+        if (ship.position && !filteredShip.position || ship.position && ! deepEqual(ship.position, filteredShip.position)) {
+            const shipSquares = layoutShipSquares(ship)
+            shipSquares.forEach((square) => {
+                const unavailableSquares = surroundingSquares(square)
+                unavailableSquares.forEach((unavailableSquare) => {
+                    if (!contains(squares, unavailableSquare))
+                        squares.push(unavailableSquare)
+                })
+            })
         }
-        ships.push(<Draggable><div style={draggableShipDivStyle(shipType.size, squareSize)}>{squares}</div></Draggable>)
     })
-    return ships
+    return squares
+}
+
+function isSquareValidForShip(boardSize: number, square: Square, layoutShip: LayoutShip, layoutShips: Array<LayoutShip>) {
+    if (!square)
+        return true
+    console.log("valid square")
+    const invalidSquares = unavailableSquares(layoutShips, layoutShip)
+    let currSquare = square
+    const nextSquare = nextSquareFunction(layoutShip.orientation)
+    let valid = true
+    for (let i = 0; i < layoutShip.type.size; i++) {
+        if (currSquare.row.charCodeAt(0) < 'a'.charCodeAt(0) || currSquare.row.charCodeAt(0) >= 'a'.charCodeAt(0) + boardSize ||
+            currSquare.column < 1 || currSquare.column >= 1 + boardSize || contains(invalidSquares, currSquare))
+            valid = false
+        currSquare = nextSquare(currSquare)
+    }
+    return valid
+}
+
+function isSquareOccupied(layoutShips: Array<LayoutShip>, square: Square) {
+    return layoutShips.some((layoutShip: LayoutShip) => contains(layoutShipSquares(layoutShip), square))
+}
+
+function draggableShip(
+    boardSize: number,
+    squareSize: number,
+    layoutShip: LayoutShip,
+    layoutShips: Array<LayoutShip>,
+    setLayoutShips: Dispatch<React.SetStateAction<LayoutShip[]>>
+): JSX.Element {
+    
+    const shipType = layoutShip.type
+    const shipSquares: Array<JSX.Element> = []
+    shipSquares.push(<div style={layoutShipSquareStyle(squareSize, true)}></div>)
+    for (let i = 1; i < shipType.size; i++) {
+        shipSquares.push(<div style={layoutShipSquareStyle(squareSize, false)}></div>)
+    }
+
+    return (
+        <div style={{marginBottom: "50px", marginRight: "200px"}}>
+            <div>{capitalize(layoutShip.type.name)}</div>
+            <div
+                key={layoutShip.type.name}
+                style={draggableShipDivStyle(layoutShip.type.size, squareSize)}
+                onClick={changeOrientation(boardSize, layoutShip, layoutShips, setLayoutShips)}
+                draggable="true"
+                onDragStart={handleDragStart}
+                data-name={JSON.stringify(layoutShip)}>
+                {shipSquares}
+            </div>
+        </div>
+    )
+}
+
+function initialLayoutShips(gameType: GameType): Array<LayoutShip> {
+    return gameType.fleet.map((shipType: ShipType) => {
+        return {type: shipType, position: undefined, orientation: "horizontal"}
+    })
+}
+
+function changeOrientation(boardSize: number, layoutShip: LayoutShip, layoutShips: Array<LayoutShip>, setLayoutShips: Dispatch<React.SetStateAction<LayoutShip[]>>) {
+    const newLayoutShip: LayoutShip = JSON.parse(JSON.stringify(layoutShip))
+    newLayoutShip.orientation = otherOrientation(newLayoutShip.orientation)
+    if (!isSquareValidForShip(boardSize, newLayoutShip.position, newLayoutShip, layoutShips))
+        return () => { console.log("invalid positioning") }
+    return () => { setLayoutShips(replace(layoutShips, layoutShip, newLayoutShip)) }
 }
 
 export function Layout(
@@ -106,36 +168,31 @@ export function Layout(
     layoutShips: Array<LayoutShip>,
     setLayoutShips: Dispatch<React.SetStateAction<LayoutShip[]>>
 ) {  
-    console.log(layoutShips)  
+    if (layoutShips.length == 0) 
+        setLayoutShips(initialLayoutShips(game.type))
+    console.log(layoutShips)
     return (
             <div>
                 <h1>Layout</h1>
-                <div>
-                    {
-                        layoutShips.map((layoutShip, ix) => 
-                        <div
-                            key={layoutShip.type.name}
-                            style={sourceDivStyle(ix + 1, 1)}
-                            draggable="true"
-                            onDragStart={handleDragStart}
-                            data-name={JSON.stringify(layoutShip)}>
-                            {ix}
-                        </div>)
-                    }
+                <button style={{display: "block"}} onClick={() => {setLayoutShips(initialLayoutShips(game.type))}}>Reset layout</button>
+                
+                <div style={{textAlign: "center"}}>
+                <div style={{display: "inline-block", verticalAlign: "middle"}}>
+                    {layoutShips.map((layoutShip) => draggableShip(game.type.boardSize, BIG_BOARD_SQUARE_SIZE, layoutShip, layoutShips, setLayoutShips))}
                 </div>
-                <div>
+                <div style={{display: "inline-block", verticalAlign: "middle"}}>
                     {BoardView(game.type.boardSize, BIG_BOARD_SQUARE_SIZE, (square: Square, squareSize: number, isLast: boolean) => {
                         return (
                             <div key={squareToString(square)} 
-                                style={layoutSquareStyle(squareSize)}
+                                style={layoutSquareStyle(squareSize, isSquareOccupied(layoutShips, square))}
                                 onDragOver={handleDragOver}
-                                onDrop={makeHandleDropFunction(layoutShips, setLayoutShips)}
+                                onDrop={makeHandleDropFunction(game.type.boardSize, layoutShips, setLayoutShips)}
                                 data-square={JSON.stringify(square)}>
-                                {layoutShips.some((layoutShip: LayoutShip) => layoutShip.position && deepEqual(layoutShip.position, square)) ? "X" : ""}
                             </div>
                         )
                     }
                     )}
+                </div>
                 </div>
             </div>
 
