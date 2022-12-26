@@ -9,6 +9,8 @@ import { UserHome } from "../domain/UserHome";
 import { GamesList } from "../domain/GamesList";
 import { DefineLayout } from "../domain/DefineLayout";
 import { LayoutShip } from "../domain/LayoutShip";
+import { SendHits } from "../domain/SendHits";
+import { Square } from "../domain/Square";
 
 interface Service {
 
@@ -23,6 +25,7 @@ interface Service {
     games: (token: string, limit: number, skip: number) => Promise<GamesList | undefined>
     gameInfo: (token: string, gameId: number) => Promise<Game | undefined> 
     defineLayout: (token: string, gameId: number, fleet: Array<LayoutShip>) => Promise<DefineLayout | undefined>
+    sendHits: (token: string, gameId: number, squares: Array<Square>) => Promise<SendHits | undefined>
     
     homeNavigation: Array<string>
     userHomeNavigation: Array<string>

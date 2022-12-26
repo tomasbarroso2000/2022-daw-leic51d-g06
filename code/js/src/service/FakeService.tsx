@@ -10,6 +10,8 @@ import { Service } from "./Service"
 import { GamesList } from "../domain/GamesList"
 import { DefineLayout } from "../domain/DefineLayout"
 import { LayoutShip } from "../domain/LayoutShip"
+import { SendHits } from "../domain/SendHits"
+import { Square } from "../domain/Square"
 
 export class FakeService implements Service {
 
@@ -192,6 +194,15 @@ export class FakeService implements Service {
     defineLayout = async function (token: string, gameId: number, fleet: LayoutShip[]): Promise<DefineLayout | undefined> {
         return Promise.resolve(
             { status: "waiting" }
+        )
+    }
+
+    sendHits = async function (token: string, gameId: number, squares: Array<Square>): Promise<SendHits | undefined> {
+        return Promise.resolve(
+            {
+                hitsOutcome: [],
+                win: false
+            }
         )
     }
 }
