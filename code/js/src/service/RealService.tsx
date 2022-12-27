@@ -17,9 +17,6 @@ import { paths } from "../router/App"
 import { Square, squareToString } from "../domain/Square"
 import { GamesList } from "../domain/GamesList"
 import { LayoutShip } from "../domain/LayoutShip"
-import { DefineLayout } from "../domain/DefineLayout"
-import { SendHits } from "../domain/SendHits"
-import { Forfeit } from "../domain/Forfeit"
 import { json } from "react-router-dom"
 
 const baseURL = "http://localhost:8083"
@@ -435,37 +432,7 @@ export class RealService implements Service {
         this.sendHitsAction = jsonObj.actions.find((action: Action) => action.name == "send-hits")
         this.forfeitAction = jsonObj.actions.find((action: Action) => action.name == "forfeit")
 
-        const fleetTypes: Array<ShipType> = makeTypeFleet(jsonObj.properties.type["fleet"])
-        
-        const gameType: GameType = makeGameType(
-            jsonObj.properties.type["name"],
-            jsonObj.properties.type["board-size"],
-            jsonObj.properties.type["shots-per-round"],
-            jsonObj.properties.type["layout-def-time-in-secs"],
-            jsonObj.properties.type["shooting-time-in-secs"],
-            fleetTypes
-        )
-
-        const opponent: UserInfo = makeUserInfo(jsonObj.properties.opponent.id, jsonObj.properties.opponent.name, jsonObj.properties.opponent.score)
-        const fleet: Array<Ship> = makeFleet(jsonObj.properties.fleet)
-        const takenHits: Array<Square> = makeHitsOrMIsses(jsonObj.properties["taken-hits"])
-        const enemySunkFleet: Array<Ship> = makeFleet(jsonObj.properties["enemy-sunk-fleet"])
-        const hits: Array<Square> = makeHitsOrMIsses(jsonObj.properties.hits)
-        const misses: Array<Square> = makeHitsOrMIsses(jsonObj.properties.misses)
-
-        return {
-            id: jsonObj.properties.id,
-            type: gameType,
-            state: jsonObj.properties.state,
-            opponent: opponent,
-            playing: jsonObj.properties.playing,
-            startedAt: jsonObj.properties["started-at"],
-            fleet: fleet,
-            takenHits: takenHits,
-            enemySunkFleet: enemySunkFleet,
-            hits: hits,
-            misses: misses
-        }
+        return this.makeGameObj(jsonObj)
     }
 
     /**
@@ -479,7 +446,7 @@ export class RealService implements Service {
         return this.defineLayoutAction
     }
 
-    defineLayout = async function (token: string, gameId: number, fleet: Array<LayoutShip>): Promise<DefineLayout | undefined> {
+    defineLayout = async function (token: string, gameId: number, fleet: Array<LayoutShip>): Promise<Game | undefined> {
         const action: Action = await this.ensureDefineLayoutAction(token, gameId)
 
         if (!action)
@@ -511,9 +478,7 @@ export class RealService implements Service {
 
         const jsonObj = JSON.parse(res)
 
-        return {
-            status: jsonObj.properties.status
-        }
+        return this.makeGameObj(jsonObj)
     }
 
     /**
@@ -527,7 +492,7 @@ export class RealService implements Service {
         return this.sendHitsAction
     }
 
-    sendHits = async function (token: string, gameId: number, squares: Array<Square>): Promise<SendHits | undefined> {
+    sendHits = async function (token: string, gameId: number, squares: Array<Square>): Promise<Game | undefined> {
         const action: Action = await this.ensureSendHitsAction(token, gameId)
 
         if (!action)
@@ -551,10 +516,7 @@ export class RealService implements Service {
 
         const jsonObj = JSON.parse(res)
 
-        return {
-            hitsOutcome: jsonObj.properties["hits-outcome"],
-            win: jsonObj.properties.win
-        }
+        return this.makeGameObj(jsonObj)
     }
 
     /**
@@ -569,7 +531,7 @@ export class RealService implements Service {
         return this.forfeitAction
     }
 
-    forfeit = async function (token: string, gameId: number): Promise<Forfeit | undefined> {
+    forfeit = async function (token: string, gameId: number): Promise<Game | undefined> {
         const action: Action = await this.ensureForfeitAction(token, gameId)
 
         const res = await doFetch(
@@ -588,8 +550,38 @@ export class RealService implements Service {
         }
 
         const jsonObj = JSON.parse(res)
+        return this.makeGameObj(jsonObj)
+    }
+
+    makeGameObj = function (jsonObj: any) {
+        const fleetTypes: Array<ShipType> = makeTypeFleet(jsonObj.properties.type["fleet"])
+        const gameType: GameType = makeGameType(
+            jsonObj.properties.type["name"],
+            jsonObj.properties.type["board-size"],
+            jsonObj.properties.type["shots-per-round"],
+            jsonObj.properties.type["layout-def-time-in-secs"],
+            jsonObj.properties.type["shooting-time-in-secs"],
+            fleetTypes
+        )
+        const opponent: UserInfo = makeUserInfo(jsonObj.properties.opponent.id, jsonObj.properties.opponent.name, jsonObj.properties.opponent.score)
+        const fleet: Array<Ship> = makeFleet(jsonObj.properties.fleet)
+        const takenHits: Array<Square> = makeHitsOrMIsses(jsonObj.properties["taken-hits"])
+        const enemySunkFleet: Array<Ship> = makeFleet(jsonObj.properties["enemy-sunk-fleet"])
+        const hits: Array<Square> = makeHitsOrMIsses(jsonObj.properties.hits)
+        const misses: Array<Square> = makeHitsOrMIsses(jsonObj.properties.misses)
+
         return {
-            state: jsonObj.properties.state
+            id: jsonObj.properties.id,
+            type: gameType,
+            state: jsonObj.properties.state,
+            opponent: opponent,
+            playing: jsonObj.properties.playing,
+            startedAt: jsonObj.properties["started-at"],
+            fleet: fleet,
+            takenHits: takenHits,
+            enemySunkFleet: enemySunkFleet,
+            hits: hits,
+            misses: misses
         }
     }
 }   

@@ -8,9 +8,7 @@ import { Rankings } from "../domain/Rankings"
 import { UserHome } from "../domain/UserHome"
 import { Service } from "./Service"
 import { GamesList } from "../domain/GamesList"
-import { DefineLayout } from "../domain/DefineLayout"
 import { LayoutShip } from "../domain/LayoutShip"
-import { SendHits } from "../domain/SendHits"
 import { Square } from "../domain/Square"
 
 export class FakeService implements Service {
@@ -191,17 +189,72 @@ export class FakeService implements Service {
 
     rankingsNavigation: ["/quaqua"]
 
-    defineLayout = async function (token: string, gameId: number, fleet: LayoutShip[]): Promise<DefineLayout | undefined> {
+    defineLayout = async function (token: string, gameId: number, fleet: LayoutShip[]): Promise<Game | undefined> {
         return Promise.resolve(
-            { status: "waiting" }
+            {
+                id: 1,
+                type: {
+                    name: "beginner",
+                        boardSize: 10,
+                        shotsPerRound: 1,
+                        layoutDefTime: 60,
+                        shootingTime: 60,
+                        fleet: [
+                            {
+                                name: "duckShip",
+                                size: 99,
+                                gameType: "hardcore"
+                            }
+                        ]
+                },
+                state: "layout_definition",
+                opponent: {
+                    id: 8,
+                            name: "Fiona2",
+                            score: 0
+                },
+                playing: false,
+                startedAt: "",
+                fleet: [],
+                takenHits: [],
+                enemySunkFleet: [],
+                hits: [],
+                misses: []
+            }
         )
     }
 
-    sendHits = async function (token: string, gameId: number, squares: Array<Square>): Promise<SendHits | undefined> {
+    sendHits = async function (token: string, gameId: number, squares: Array<Square>): Promise<Game | undefined> {
         return Promise.resolve(
             {
-                hitsOutcome: [],
-                win: false
+                id: 1,
+                type: {
+                    name: "beginner",
+                        boardSize: 10,
+                        shotsPerRound: 1,
+                        layoutDefTime: 60,
+                        shootingTime: 60,
+                        fleet: [
+                            {
+                                name: "duckShip",
+                                size: 99,
+                                gameType: "hardcore"
+                            }
+                        ]
+                },
+                state: "shooting",
+                opponent: {
+                    id: 8,
+                            name: "Fiona2",
+                            score: 0
+                },
+                playing: false,
+                startedAt: "",
+                fleet: [],
+                takenHits: [],
+                enemySunkFleet: [],
+                hits: [],
+                misses: []
             }
         )
     }
