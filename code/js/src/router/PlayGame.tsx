@@ -10,6 +10,7 @@ import { useIntervalAsync } from "../utils/useIntervalAsync";
 import { Shooting } from "./Shooting";
 import { FinishedGame } from "./FinishedGame";
 import { useParams } from "react-router-dom";
+import { calcTimeLeft } from "../utils/calcTimeLeft";
 
 export function PlayGame() {
     const currentUser = useCurrentUser()
@@ -18,6 +19,7 @@ export function PlayGame() {
     const [layoutShips, setLayoutShips]: [Array<LayoutShip>, Dispatch<React.SetStateAction<LayoutShip[]>>] = useState([])
     const [selectedSquares, setSelectedSquares]: [Array<Square>, Dispatch<React.SetStateAction<Square[]>>] = useState([])
     const [gameInfo, setGameInfo]: [Game | undefined, Dispatch<Game>] = useState(undefined)
+    const [timer, setTimer]: [number | undefined, Dispatch<number>] = useState(undefined)
 
     const updateGameInfo = useCallback(async () => {
         console.log("updating")
@@ -27,7 +29,27 @@ export function PlayGame() {
         setGameInfo(newGameInfo)
     }, [])
 
+    const updateTimer = useCallback(() => {
+        if (gameInfo) {
+            console.log("updating timer")
+            switch (gameInfo.state) {
+                case "layout_definition": {
+                    setTimer(Math.round(calcTimeLeft(gameInfo.type.layoutDefTime, Date.parse(gameInfo.startedAt))))
+                    break
+                }
+                case "shooting": {
+                    setTimer(Math.round(calcTimeLeft(gameInfo.type.shootingTime, Date.parse(gameInfo.startedAt))))
+                    break
+                }
+                case "completed": {
+                    setTimer(0)
+                }
+            }
+        }
+    }, [gameInfo])
+
     useIntervalAsync(updateGameInfo, 3000)
+    setInterval(updateTimer, 1000)
 
     if(!gameInfo) {
         console.log("!gameInfo")
@@ -40,11 +62,11 @@ export function PlayGame() {
     switch (gameInfo.state) {
         case "layout_definition": {
             console.log("layout_definition")
-            return Layout(gameInfo, currentUser, layoutShips, setLayoutShips)
+            return Layout(gameInfo, currentUser, timer, layoutShips, setLayoutShips)
         }
         case "shooting": {
             console.log("shooting")
-            return Shooting(gameInfo, currentUser, selectedSquares, setSelectedSquares)
+            return Shooting(gameInfo, currentUser, timer, selectedSquares, setSelectedSquares)
         }
         case "completed": {
             console.log("completed")

@@ -5,6 +5,7 @@ import { Game, isEnemySquareDestroyed, isEnemySquareAroundDestroyed, isEnemySqua
 import { Ship } from "../domain/ship"
 import { Square } from "../domain/Square"
 import { BoardView } from "../utils/board"
+import { capitalize } from "../utils/capitalize"
 import { contains } from "../utils/contains"
 import { remove } from "../utils/remove"
 import { service } from "./App"
@@ -34,15 +35,21 @@ function enemySquareStyle(color: string, squareSize: number): React.CSSPropertie
     }
 }
 
-export function Shooting(game: Game, currentUser: CurrentUser, selectedSquares: Array<Square>, setSelectedSquares: Dispatch<React.SetStateAction<Square[]>>) {
+export function Shooting(
+    game: Game,
+    currentUser: CurrentUser, 
+    timer: number, 
+    selectedSquares: Array<Square>, 
+    setSelectedSquares: Dispatch<React.SetStateAction<Square[]>>
+) {
     return (
         <div>
             <div>
-                <h1>Game type: {game.type.name}</h1>
-                <p>Shots per round: {game.type.shotsPerRound}</p>
-                <p>Shooting time: {game.type.shootingTime}</p>
-                <h2>{currentUser.name + " VS " + game.opponent.name}</h2>
+                <h1>Game type: {capitalize(game.type.name)}</h1>
+                <h2>{`${currentUser.name} vs. ${game.opponent.name}`}</h2>
             </div>
+            <div>Timer: {timer}</div>
+            <div>{game.playing ? "Shooting" : "Waiting"}</div>
             <div className="board-content" id="self-board-container">
                 <h1>Your Board</h1>
                 {BoardView(game.type.boardSize, SMALL_BOARD_SQUARE_SIZE, (square: Square, squareSize: number, isLast: boolean) => {

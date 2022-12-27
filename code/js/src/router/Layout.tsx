@@ -167,6 +167,7 @@ function changeOrientation(boardSize: number, layoutShip: LayoutShip, layoutShip
 export function Layout(
     game: Game,
     currentUser: CurrentUser,
+    timer: number,
     layoutShips: Array<LayoutShip>,
     setLayoutShips: Dispatch<React.SetStateAction<LayoutShip[]>>
 ) {  
@@ -177,7 +178,7 @@ export function Layout(
                 <div>
                     <h1>Layout</h1>
                     <button style={{display: "block"}} onClick={() => {setLayoutShips(initialLayoutShips(game.type))}}>Reset layout</button>
-                    
+                    <div>{timer}</div>
                     <div style={{textAlign: "center"}}>
                         <div style={{display: "inline-block", verticalAlign: "middle"}}>
                             {layoutShips.map((layoutShip) => draggableShip(game.type.boardSize, BIG_BOARD_SQUARE_SIZE, layoutShip, layoutShips, setLayoutShips))}

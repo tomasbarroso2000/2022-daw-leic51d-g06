@@ -28,6 +28,6 @@ export function askService(
         return () => {
             cancelled = true
         }
-    }, [serviceFunction])
+    }, [serviceFunction, ...args])
     return content
 }
