@@ -3,7 +3,7 @@ import { Game} from "../domain/Game";
 import { service } from "./App";
 import { useCurrentUser } from "./Authn";
 import { Square } from "../domain/Square";
-import { Dispatch, useCallback, useState } from "react";
+import { Dispatch, useCallback, useEffect, useState } from "react";
 import { Layout } from "./Layout";
 import { LayoutShip } from "../domain/LayoutShip";
 import { useIntervalAsync } from "../utils/useIntervalAsync";
@@ -29,27 +29,32 @@ export function PlayGame() {
         setGameInfo(newGameInfo)
     }, [])
 
-    const updateTimer = useCallback(() => {
-        if (gameInfo) {
-            console.log("updating timer")
-            switch (gameInfo.state) {
-                case "layout_definition": {
-                    setTimer(Math.round(calcTimeLeft(gameInfo.type.layoutDefTime, Date.parse(gameInfo.startedAt))))
-                    break
-                }
-                case "shooting": {
-                    setTimer(Math.round(calcTimeLeft(gameInfo.type.shootingTime, Date.parse(gameInfo.startedAt))))
-                    break
-                }
-                case "completed": {
-                    setTimer(0)
+    useEffect(() => {
+        const tid = setInterval(() => {
+            if (gameInfo) {
+                console.log("updating timer")
+                switch (gameInfo.state) {
+                    case "layout_definition": {
+                        setTimer(Math.round(calcTimeLeft(gameInfo.type.layoutDefTime, Date.parse(gameInfo.startedAt))))
+                        break
+                    }
+                    case "shooting": {
+                        setTimer(Math.round(calcTimeLeft(gameInfo.type.shootingTime, Date.parse(gameInfo.startedAt))))
+                        break
+                    }
+                    case "completed": {
+                        setTimer(0)
+                    }
                 }
             }
+        }, 1000)
+        return () => {
+            console.log(`Cancel effect`)
+            clearInterval(tid)
         }
     }, [gameInfo])
 
     useIntervalAsync(updateGameInfo, 3000)
-    setInterval(updateTimer, 1000)
 
     if(!gameInfo) {
         console.log("!gameInfo")
