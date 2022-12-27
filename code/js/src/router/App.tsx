@@ -29,7 +29,7 @@ export const paths = {
     "create-token": "/login",
     "me": "/me",
     "create-game": "/games/new",
-    "wait-for-game": "/games/new/:gameType",
+    "wait-for-game": "/games/new/:lobbyId",
     "list-games": "/games/list",
     "play-game": "/games/play/:gameId"
 }
