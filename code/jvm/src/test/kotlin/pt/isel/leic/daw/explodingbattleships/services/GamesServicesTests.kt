@@ -7,9 +7,6 @@ import org.junit.jupiter.api.assertThrows
 import pt.isel.leic.daw.explodingbattleships.data.mem.DataMem
 import pt.isel.leic.daw.explodingbattleships.domain.DataList
 import pt.isel.leic.daw.explodingbattleships.domain.GameTypeWithFleet
-import pt.isel.leic.daw.explodingbattleships.domain.HitOutcome
-import pt.isel.leic.daw.explodingbattleships.domain.HitsOutcome
-import pt.isel.leic.daw.explodingbattleships.domain.LayoutOutcomeStatus
 import pt.isel.leic.daw.explodingbattleships.domain.ShipCreationInfo
 import pt.isel.leic.daw.explodingbattleships.domain.ShipState
 import pt.isel.leic.daw.explodingbattleships.domain.ShipType
@@ -108,8 +105,8 @@ class GamesServicesTests {
             ShipCreationInfo("carrier", Square('a', 1), "horizontal"),
             ShipCreationInfo("battleship", Square('c', 1), "vertical")
         )
-        val expectedLayoutOutcome = LayoutOutcomeStatus.WAITING
-        val actualLayoutOutcome = services.sendLayout(userId, gameId, ships)
+        val expectedLayoutOutcome = "layout_definition"
+        val actualLayoutOutcome = services.sendLayout(userId, gameId, ships).game.state
         assertEquals(expectedLayoutOutcome, actualLayoutOutcome)
         assertEquals(2, data.mockData.ships.filter { it.gameId == gameId && it.userId == userId }.size)
     }
@@ -122,8 +119,8 @@ class GamesServicesTests {
             ShipCreationInfo("carrier", Square('a', 1), "horizontal"),
             ShipCreationInfo("battleship", Square('c', 1), "vertical")
         )
-        val expectedLayoutOutcome = LayoutOutcomeStatus.STARTED
-        val actualLayoutOutcome = services.sendLayout(userId, gameId, ships)
+        val expectedLayoutOutcome = "shooting"
+        val actualLayoutOutcome = services.sendLayout(userId, gameId, ships).game.state
         assertEquals(expectedLayoutOutcome, actualLayoutOutcome)
         assertEquals(2, data.mockData.ships.filter { it.gameId == gameId && it.userId == userId }.size)
     }
@@ -200,22 +197,16 @@ class GamesServicesTests {
     fun send_hits() {
         val userId = 5
         val gameId = 2
-        val expectedHitsOutcome = HitsOutcome(
-            listOf(
-                HitOutcome(Square('d', 2), true),
-                HitOutcome(Square('e', 2), true, "destroyer")
-            ),
-            false
-        )
-        val actualHitsOutcome = services.sendHits(
+        val expectedOutcome = false
+        val actualOutcome = services.sendHits(
             userId,
             gameId,
             listOf(
                 Square('d', 2),
                 Square('e', 2)
             )
-        )
-        assertEquals(expectedHitsOutcome, actualHitsOutcome)
+        ).playing
+        assertEquals(expectedOutcome, actualOutcome)
         assertEquals(3, data.mockData.hits.filter { it.gameId == 2 && it.userId == 6 }.size)
     }
 
@@ -321,15 +312,9 @@ class GamesServicesTests {
             Square('a', 1),
             Square('b', 1)
         )
-        val expectedHitsOutcome = HitsOutcome(
-            listOf(
-                HitOutcome(Square('a', 1), true, null),
-                HitOutcome(Square('b', 1), true, "destroyer")
-            ),
-            true
-        )
-        val actualHitsOutcome = services.sendHits(userId, gameId, squares)
-        assertEquals(expectedHitsOutcome, actualHitsOutcome)
+        val actualOutcome = services.sendHits(userId, gameId, squares)
+        assertEquals(true, actualOutcome.playing)
+        assertEquals("completed", actualOutcome.game.state)
     }
 
     @Test
@@ -384,7 +369,7 @@ class GamesServicesTests {
     fun forfeit() {
         val userId = 5
         val gameId = 2
-        val gameState = services.forfeit(userId, gameId)
+        val gameState = services.forfeit(userId, gameId).game.state
         assertEquals("completed", gameState)
     }
 }

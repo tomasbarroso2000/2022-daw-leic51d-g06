@@ -63,7 +63,7 @@ class GamesDataDb : GamesData {
         }
     }
 
-    override fun setGameToShooting(transaction: Transaction, gameId: Int) {
+    override fun setGameStateShooting(transaction: Transaction, gameId: Int) {
         (transaction as TransactionDataDb).withHandle { handle ->
             handle.createUpdate("update games set state = 'shooting', started_at = now() where id = :gameId")
                 .bind("gameId", gameId)

@@ -6,8 +6,6 @@ import pt.isel.leic.daw.explodingbattleships.domain.FullGameInfo
 import pt.isel.leic.daw.explodingbattleships.domain.Game
 import pt.isel.leic.daw.explodingbattleships.domain.GameType
 import pt.isel.leic.daw.explodingbattleships.domain.GameTypeWithFleet
-import pt.isel.leic.daw.explodingbattleships.domain.HitOutcome
-import pt.isel.leic.daw.explodingbattleships.domain.HitsOutcome
 import pt.isel.leic.daw.explodingbattleships.domain.Ship
 import pt.isel.leic.daw.explodingbattleships.domain.ShipCreationInfo
 import pt.isel.leic.daw.explodingbattleships.domain.ShipType
@@ -16,7 +14,6 @@ import pt.isel.leic.daw.explodingbattleships.domain.Token
 import pt.isel.leic.daw.explodingbattleships.domain.UserInfo
 import pt.isel.leic.daw.explodingbattleships.domain.toSquare
 import pt.isel.leic.daw.explodingbattleships.services.UsersServices
-import java.lang.IllegalArgumentException
 import java.time.Instant
 import java.util.regex.Pattern
 
@@ -52,55 +49,44 @@ fun shipsValid(fleetComposition: List<ShipType>, ships: List<ShipCreationInfo>) 
     ships.map { it.name }.containsAll(fleetComposition.map { it.name })
 
 /**
- * Responsible for executing the hit, producing a list with the hits outcome
- * and if any ship was destroyed
+ * Responsible for executing the hits
  * @param transaction the current transaction
  * @param game the current game
  * @param squares the squares that will be hit
  * @param playerId the player id
  * @param data the data module to be used
- * @return a list with the hits outcome
  */
-fun executeHit(transaction: Transaction, game: Game, squares: List<Square>, playerId: Int, data: Data): HitsOutcome {
+fun executeHits(transaction: Transaction, game: Game, squares: List<Square>, playerId: Int, data: Data) {
     val shipsSquares = data.shipsData.getShipsAndSquares(transaction, game.id, playerId)
-    val hitOutcomeList = mutableListOf<HitOutcome>()
     squares.forEach { square ->
         val entry = shipsSquares.entries.find { it.value.contains(square) }
         if (entry != null) {
             data.hitsData.createHit(transaction, square, game.id, playerId, true)
             data.shipsData.updateNumOfHits(transaction, game.id, playerId, entry.key.firstSquare)
-            val destroyed = maybeDestroyShip(transaction, playerId, game.id, entry.key, data)
-            if (destroyed) {
-                hitOutcomeList.add(HitOutcome(square, true, entry.key.name))
-            } else {
-                hitOutcomeList.add(HitOutcome(square, true))
-            }
+            maybeDestroyShip(transaction, playerId, game.id, entry.key, data)
         } else {
             data.hitsData.createHit(transaction, square, game.id, playerId, false)
-            hitOutcomeList.add(HitOutcome(square, false))
         }
     }
-    if (winConditionDetection(transaction, game.id, playerId, data)) {
-        return HitsOutcome(hitOutcomeList, true)
-    }
-    data.gamesData.changeCurrPlayer(transaction, game.id, game.idlePlayer())
-    return HitsOutcome(hitOutcomeList, false)
 }
 
 /**
  * Checks if a ship was destroyed this turn or not
+ * @param transaction the current transaction
+ * @param userId the user id
+ * @param gameId the game id
+ * @param ship the ship
+ * @param data the data module to be used
  */
-fun maybeDestroyShip(transaction: Transaction, userId: Int, gameId: Int, ship: Ship, data: Data): Boolean {
+fun maybeDestroyShip(transaction: Transaction, userId: Int, gameId: Int, ship: Ship, data: Data) {
     val nOfHits = data.shipsData.getShip(transaction, ship.firstSquare, gameId, userId)?.nOfHits
     if (ship.size == nOfHits) {
         data.shipsData.destroyShip(transaction, gameId, userId, ship.firstSquare)
-        return true
     }
-    return false
 }
 
 /**
- * Checks if player won
+ * Checks if the enemy's fleet is destroyed
  */
 fun winConditionDetection(transaction: Transaction, gameId: Int, playerId: Int, data: Data): Boolean =
     data.shipsData.getFleet(transaction, gameId, playerId).let { fleet ->
@@ -112,8 +98,15 @@ fun winConditionDetection(transaction: Transaction, gameId: Int, playerId: Int, 
  * @param game the game
  * @return true if the time is over
  */
-fun GameTypeWithFleet.isTimeOver(game: Game) =
-    game.startedAt.plusSeconds(shootingTimeInSecs.toLong()) <= Instant.now()
+fun GameTypeWithFleet.isTimeOver(game: Game): Boolean {
+    if (game.state == "shooting") {
+        return game.startedAt.plusSeconds(shootingTimeInSecs.toLong()) <= Instant.now()
+    }
+    if (game.state == "layout_definition") {
+        return game.startedAt.plusSeconds(layoutDefTimeInSecs.toLong()) <= Instant.now()
+    }
+    return false
+}
 
 /**
  * Gets a game type
@@ -136,10 +129,13 @@ fun getGameType(transaction: Transaction, gameType: String, data: Data) =
 fun computeGame(transaction: Transaction, gameId: Int, data: Data): Game {
     val game = getGameOrThrow(transaction, gameId, data)
     val gameType = getGameType(transaction, game.type, data)
+    if (game.state == "layout_definition" && gameType.isTimeOver(game)) {
+        data.gamesData.setGameStateCompleted(transaction, game.id)
+        return getData { data.gamesData.getGame(transaction, game.id) }
+    }
     if (game.state == "shooting" && gameType.isTimeOver(game)) {
         data.gamesData.changeCurrPlayer(transaction, game.id, game.idlePlayer())
-        return data.gamesData.getGame(transaction, game.id)
-            ?: throw IllegalArgumentException("Get game is null")
+        return getData { data.gamesData.getGame(transaction, game.id) }
     }
     return game
 }

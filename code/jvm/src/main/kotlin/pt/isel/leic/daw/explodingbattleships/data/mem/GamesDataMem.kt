@@ -37,7 +37,7 @@ class GamesDataMem(private val mockData: MockData) : GamesData {
         }
     }
 
-    override fun setGameToShooting(transaction: Transaction, gameId: Int) {
+    override fun setGameStateShooting(transaction: Transaction, gameId: Int) {
         mockData.games.find { it.id == gameId }?.let { game ->
             mockData.games.remove(game)
             val newGame = game.copy(state = "shooting", startedAt = Instant.now())

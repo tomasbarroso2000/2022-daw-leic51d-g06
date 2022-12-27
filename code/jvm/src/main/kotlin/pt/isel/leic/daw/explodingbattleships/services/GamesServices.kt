@@ -4,7 +4,6 @@ import org.springframework.stereotype.Component
 import pt.isel.leic.daw.explodingbattleships.data.Data
 import pt.isel.leic.daw.explodingbattleships.domain.DataList
 import pt.isel.leic.daw.explodingbattleships.domain.FullGameInfo
-import pt.isel.leic.daw.explodingbattleships.domain.LayoutOutcomeStatus
 import pt.isel.leic.daw.explodingbattleships.domain.ShipCreationInfo
 import pt.isel.leic.daw.explodingbattleships.domain.Square
 import pt.isel.leic.daw.explodingbattleships.domain.toSquare
@@ -18,11 +17,13 @@ import pt.isel.leic.daw.explodingbattleships.services.utils.checkPlayerInGame
 import pt.isel.leic.daw.explodingbattleships.services.utils.checkShipLayout
 import pt.isel.leic.daw.explodingbattleships.services.utils.computeGame
 import pt.isel.leic.daw.explodingbattleships.services.utils.doService
-import pt.isel.leic.daw.explodingbattleships.services.utils.executeHit
+import pt.isel.leic.daw.explodingbattleships.services.utils.executeHits
+import pt.isel.leic.daw.explodingbattleships.services.utils.getData
 import pt.isel.leic.daw.explodingbattleships.services.utils.getFullGameInfo
 import pt.isel.leic.daw.explodingbattleships.services.utils.getGameOrThrow
 import pt.isel.leic.daw.explodingbattleships.services.utils.getGameType
 import pt.isel.leic.daw.explodingbattleships.services.utils.squareInBoard
+import pt.isel.leic.daw.explodingbattleships.services.utils.winConditionDetection
 
 @Component
 class GamesServices(private val data: Data) {
@@ -143,12 +144,17 @@ class GamesServices(private val data: Data) {
             )
             verifiedSquares.add(square)
         }
-        val hitsOutcome = executeHit(transaction, game, squares, game.idlePlayer(), data)
-        if (hitsOutcome.win) {
+
+        executeHits(transaction, game, squares, game.idlePlayer(), data)
+
+        if (winConditionDetection(transaction, game.id, game.idlePlayer(), data)) {
             data.gamesData.setGameStateCompleted(transaction, game.id)
             data.usersData.increasePlayerScore(transaction, userId, WINNING_POINTS)
+        } else {
+            data.gamesData.changeCurrPlayer(transaction, game.id, game.idlePlayer())
         }
-        hitsOutcome
+        val updatedGame = getData { data.gamesData.getGame(transaction, gameId) }
+        getFullGameInfo(transaction, updatedGame, userId, data)
     }
 
     /**
@@ -157,7 +163,7 @@ class GamesServices(private val data: Data) {
      * @param userId the user id
      * @param gameId the game id
      * @param ships a list with all the information regarding the positioning of the ships
-     * @return the layout outcome status
+     * @return the update game
      */
     fun sendLayout(userId: Int, gameId: Int, ships: List<ShipCreationInfo>) = doService(data) { transaction ->
         val game = getGameOrThrow(transaction, gameId, data)
@@ -173,18 +179,17 @@ class GamesServices(private val data: Data) {
         val layout = checkShipLayout(transaction, userId, game, ships, data)
         data.shipsData.defineLayout(transaction, game.id, userId, layout)
         if (data.shipsData.checkEnemyLayoutDone(transaction, game.id, userId)) {
-            data.gamesData.setGameToShooting(transaction, game.id)
-            LayoutOutcomeStatus.STARTED
-        } else {
-            LayoutOutcomeStatus.WAITING
+            data.gamesData.setGameStateShooting(transaction, game.id)
         }
+        val updatedGame = getData { data.gamesData.getGame(transaction, gameId) }
+        getFullGameInfo(transaction, updatedGame, userId, data)
     }
 
     /**
      * Changes the game state to completed and gives the victory to the other player
      * @param userId the user id
      * @param gameId the game id
-     * @return the game state
+     * @return the updated game
      */
     fun forfeit(userId: Int, gameId: Int) = doService(data) { transaction ->
         val game = getGameOrThrow(transaction, gameId, data)
@@ -194,7 +199,8 @@ class GamesServices(private val data: Data) {
         data.gamesData.setGameStateCompleted(transaction, game.id)
         data.gamesData.changeCurrPlayer(transaction, game.id, idlePlayer)
         data.usersData.increasePlayerScore(transaction, idlePlayer, WINNING_POINTS)
-        "completed"
+        val updatedGame = getData { data.gamesData.getGame(transaction, gameId) }
+        getFullGameInfo(transaction, updatedGame, userId, data)
     }
 
     fun getGameTypesAndShips() = doService(data) { transaction ->

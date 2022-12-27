@@ -49,7 +49,7 @@ interface GamesData {
      * @param transaction the current transaction
      * @param gameId the game to be changed
      */
-    fun setGameToShooting(transaction: Transaction, gameId: Int)
+    fun setGameStateShooting(transaction: Transaction, gameId: Int)
 
     /**
      * Sets the game state to completed

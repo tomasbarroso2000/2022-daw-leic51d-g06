@@ -24,8 +24,6 @@ import pt.isel.leic.daw.explodingbattleships.http.models.output.FleetStateOutput
 import pt.isel.leic.daw.explodingbattleships.http.models.output.GameStateOutputModel
 import pt.isel.leic.daw.explodingbattleships.http.models.output.GameTypesOutputModel
 import pt.isel.leic.daw.explodingbattleships.http.models.output.GamesOutputModel
-import pt.isel.leic.daw.explodingbattleships.http.models.output.HitsOutputModel
-import pt.isel.leic.daw.explodingbattleships.http.models.output.LayoutOutputModel
 import pt.isel.leic.daw.explodingbattleships.http.models.output.NumberOfPlayedGamesOutputModel
 import pt.isel.leic.daw.explodingbattleships.http.toGameOutputModel
 import pt.isel.leic.daw.explodingbattleships.infra.siren
@@ -247,11 +245,11 @@ class GamesController(private val services: GamesServices) {
             .status(Successes.CREATED)
             .contentType(APPLICATION_SIREN)
             .body(
-                siren(HitsOutputModel(res.hitsOutcome, res.win)) {
+                siren(res.toGameOutputModel()) {
                     link(Uris.Games.sendHits(), Rels.SELF)
                     link(Uris.home(), Rels.HOME)
                     link(Uris.Games.gameInfo(input.gameId), Rels.GAME)
-                    clazz("HitsOutputModel")
+                    clazz("GameOutputModel")
                 }
             )
     }
@@ -273,11 +271,11 @@ class GamesController(private val services: GamesServices) {
             .status(Successes.CREATED)
             .contentType(APPLICATION_SIREN)
             .body(
-                siren(LayoutOutputModel(res)) {
+                siren(res.toGameOutputModel()) {
                     link(Uris.Games.defineLayout(), Rels.SELF)
                     link(Uris.home(), Rels.HOME)
                     link(Uris.Games.gameInfo(input.gameId), Rels.GAME)
-                    clazz("LayoutOutputModel")
+                    clazz("GameOutputModel")
                 }
             )
     }
@@ -285,7 +283,7 @@ class GamesController(private val services: GamesServices) {
     /**
      * Handles the put request for forfeiting
      * @param user the user that sent the request
-     * @param gameId the game id
+     * @param input the input with the game id
      */
     @PutMapping(Uris.Games.FORFEIT)
     fun forfeit(
@@ -298,10 +296,10 @@ class GamesController(private val services: GamesServices) {
             .status(Successes.CREATED)
             .contentType(APPLICATION_SIREN)
             .body(
-                siren(GameStateOutputModel(res)) {
+                siren(res.toGameOutputModel()) {
                     link(Uris.Games.forfeit(), Rels.SELF)
                     link(Uris.home(), Rels.HOME)
-                    clazz("GameStateOutputModel")
+                    clazz("GameOutputModel")
                 }
             )
     }
