@@ -16,7 +16,7 @@ interface Service {
 
     home: () => Promise<Home | undefined>
     userHome: (token: string) => Promise<UserHome | undefined>
-    rankings: () => Promise<Rankings | undefined>
+    rankings: (limit: number, skip: number) => Promise<Rankings | undefined>
     createUser: (name:string, email: string, password: string) => Promise<CreateUser | undefined>
     createToken: (email: string, password: string) => Promise<CreateToken |undefined>
     gameTypes: () => Promise<GameTypes | undefined>

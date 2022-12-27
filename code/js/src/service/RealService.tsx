@@ -155,7 +155,7 @@ export class RealService implements Service {
         return this.rankingsLink.href
     }
 
-    rankings = async function (): Promise<Rankings | undefined> {
+    rankings = async function (limit: number, skip: number): Promise<Rankings | undefined> {
         const path = await this.ensureRankingsLink()
 
         if (!path)
@@ -163,7 +163,7 @@ export class RealService implements Service {
 
         this.rankingsNavigation = []
 
-        const res = await doFetch(baseURL + path)
+        const res = await doFetch(baseURL + path + `?limit=${limit}&skip=${skip}`)
 
         if (!res) {
             return undefined
@@ -180,7 +180,7 @@ export class RealService implements Service {
 
         return {
             rankings: jsonObj.properties["rankings"],
-            hasMore: jsonObj.properties["hasMore"]
+            hasMore: jsonObj.properties["has-more"]
         }
     }
 

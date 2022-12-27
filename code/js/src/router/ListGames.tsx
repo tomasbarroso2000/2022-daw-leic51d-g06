@@ -4,6 +4,7 @@ import { Link, Navigate } from "react-router-dom"
 import { Game } from "../domain/Game"
 import { GamesList } from "../domain/GamesList"
 import { askService, Result } from "../service/askService"
+import { ButtonFab } from "../utils/ButtonFab"
 import { paths, service } from "./App"
 import { useCurrentUser } from './Authn'
 
@@ -53,8 +54,8 @@ export function ListGames() {
                 <h1>Games</h1>
                 {games.result.games.map((game: Game) => Playing(game))}
                 <div>
-                    <button onClick={() => {setSkip(skip - limit)}}>Previous</button>
-                    <button onClick={() => {setSkip(skip + limit)}}>Next</button>
+                    <ButtonFab isDisabled={skip == 0} onClick={() => {setSkip(skip - limit)}} text={"Previous"}/>
+                    <ButtonFab isDisabled={!games.result.hasMore} onClick={() => {setSkip(skip + limit)}} text={"Next"}/>
                 </div>
                 <div>
                     <Link to={paths['create-game']}>New Game</Link>

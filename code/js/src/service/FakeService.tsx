@@ -42,7 +42,7 @@ export class FakeService implements Service {
 
     userHomeNavigation: string[]
 
-    rankings = function (): Promise<Rankings> {
+    rankings = function (limit: number, skip: number): Promise<Rankings> {
         return Promise.resolve(
             {
                 rankings: [
