@@ -5,6 +5,7 @@ import { Game, isEnemySquareDestroyed, isEnemySquareAroundDestroyed, isEnemySqua
 import { Ship } from "../domain/ship"
 import { Square } from "../domain/Square"
 import { BoardView } from "../utils/board"
+import { ButtonFab } from "../utils/ButtonFab"
 import { capitalize } from "../utils/capitalize"
 import { contains } from "../utils/contains"
 import { remove } from "../utils/remove"
@@ -96,8 +97,8 @@ export function Shooting(
                 })}
             </div>
             <div>
-                <button onClick={() => service.sendHits(currentUser.token, game.id, selectedSquares).then(() => setSelectedSquares([]))}>Shoot</button>
-                <button onClick={() => service.forfeit(currentUser.token, game.id)}>Forfeit</button>
+                <ButtonFab isDisabled={!game.playing} onClick={() => {service.sendHits(currentUser.token, game.id, selectedSquares).then(() => setSelectedSquares([]))}} text={"Shoot"}/>
+                <ButtonFab isDisabled={!game.playing} onClick={() => {service.forfeit(currentUser.token, game.id)}} text={"Forfeit"}/>
             </div>
         </div>
     )
