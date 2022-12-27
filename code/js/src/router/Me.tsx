@@ -21,11 +21,18 @@ export function Me() {
 
     if (userHome.kind == "success") {
         return (
-            <div>
-                <div>{`Oh hi, ${userHome.result.name}`}</div>
-                <div>{`Your score is ${userHome.result.score}`}</div>
-                <div>
-                    <Link to={paths['home']}>home</Link>
+            <div id="content">
+                <div id="user">
+                    <span></span>
+                    <h1>Hello There! <br /> {`Welcome back, ${userHome.result.name}.`}</h1>
+                    <p>{`Overall Score`}</p>
+                    <div id="score-circle">
+                        <p>{userHome.result.score}</p>
+                    </div>
+                    <div id="footer">
+                        <Link to={paths['home']} className="nav-user">Home</Link>
+                        <Link to={paths['list-games']} className="nav-user">Play game</Link>
+                    </div>
                 </div>
             </div>
         )

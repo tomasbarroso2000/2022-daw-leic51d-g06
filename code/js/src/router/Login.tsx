@@ -67,16 +67,25 @@ export function Login() {
     
         return (
             <div id="content">
-                <h1>Login</h1>
-                <fieldset disabled={isSubmitting}>
-                    <form onSubmit={handleSubmit}>
-                        {fields.result.map((field: Field) => 
-                            <input key={field.name} type={field.type} name={field.name} value={inputs[field.name] || ""} placeholder={field.name} onChange={handleChange}/>
-                        )}
-                        <input id="create-token" type="submit" value="Login" />
-                    </form>
-                </fieldset>
-                {error}
+                <div id="login">
+                    <div id="right-side-login">
+                        <h1>Login</h1>
+                        <fieldset disabled={isSubmitting}>
+                            <form onSubmit={handleSubmit}>
+                                {fields.result.map((field: Field) => 
+                                    <input key={field.name} type={field.type} name={field.name} value={inputs[field.name] || ""} placeholder={field.name} onChange={handleChange}/>
+                                )}
+                                <input id="create-token" type="submit" value="Login" />
+                            </form>
+                        </fieldset>
+                        {error}   
+                    </div>
+                    <div id="left-side-login">
+                        <img src="images/logo.png" alt="battleship-logo" id="logo" />
+                        <h1>Exploding <br /> Battleships</h1>
+                        <p>Lets play a game</p>
+                    </div>
+                </div>
             </div>
         )
     }
