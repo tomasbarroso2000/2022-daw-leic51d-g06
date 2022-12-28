@@ -76,10 +76,6 @@ const router = createBrowserRouter([
                 "element": <RequireAuthn><PlayGame /></RequireAuthn>
             },
             {
-                "path": "/users/:uid/games/:gid",
-                "element": <UserGameDetail />
-            },
-            {
                 "path": "*",
                 "element": <Navigate to="/"/>
             }
@@ -93,26 +89,6 @@ export const service = new RealService()
 export function App() {
     return (
         <RouterProvider router={router} />
-    )
-}
-
-function UserDetail() {
-    const {uid} = useParams()
-    return (
-        <div>
-            <h2>User Detail</h2>
-            {uid}
-        </div>
-    )
-}
-
-function UserGameDetail() {
-    const {gid, uid} = useParams()
-    return (
-        <div>
-            <h2>User Game Detail</h2>
-            {uid}, {gid}
-        </div>
     )
 }
  

@@ -10,8 +10,33 @@ import { Service } from "./Service"
 import { GamesList } from "../domain/GamesList"
 import { LayoutShip } from "../domain/LayoutShip"
 import { Square } from "../domain/Square"
+import { Field } from "siren-types"
+import { paths } from "../router/App"
 
 export class FakeService implements Service {
+
+    getCreateUserFields = function (): Promise<Field[]> {
+        return Promise.resolve([
+            {name: "name", type: "text"},
+            {name: "email", type: "email"},
+            {name: "password", type: "password"}
+        ])
+    }
+
+    getCreateTokenFields = function (): Promise<Field[]> {
+        return Promise.resolve([
+            {name: "email", type: "email"},
+            {name: "password", type: "password"}
+        ])
+    }
+
+    createUser = function (name: string, email: string, password: string): Promise<CreateUser> {
+        return Promise.resolve(
+            {
+                id: 1
+            }
+        )
+    }
 
     createToken: (email: string, password: string) => Promise<CreateToken>
 
@@ -25,7 +50,7 @@ export class FakeService implements Service {
         )
     }
 
-    homeNavigation = ["/rankings"]
+    homeNavigation = [paths["rankings"], paths["create-user"], paths["create-token"], paths["list-games"]]
 
     userHome = function (token: string): Promise<UserHome> {
         return Promise.resolve(
@@ -65,14 +90,6 @@ export class FakeService implements Service {
         )
     }
 
-    createUser = function (): Promise<CreateUser> {
-        return Promise.resolve(
-            {
-                id: 1
-            }
-        )
-    }
-
     gameTypes = async function (): Promise<GameTypes | undefined> {
         return Promise.resolve(
             {
@@ -105,7 +122,7 @@ export class FakeService implements Service {
         )
     }
 
-    enteredGame = async function (token:string, lobbyId: number) : Promise<EnteredGame> {
+    enteredGame = async function (token: string, lobbyId: number) : Promise<EnteredGame> {
         return Promise.resolve(
             {
                 gameId: 1
@@ -113,7 +130,7 @@ export class FakeService implements Service {
         )
     }
 
-    games = async function (): Promise<GamesList | undefined> {
+    games = async function (token: string, limit: number, skip: number): Promise<GamesList | undefined> {
         return Promise.resolve(
             {
             games: [
@@ -128,7 +145,7 @@ export class FakeService implements Service {
                         fleet: [
                             {
                                 name: "duckShip",
-                                size: 99,
+                                size: 5,
                                 gameType: "hardcore"
                             }
                         ]
@@ -152,7 +169,7 @@ export class FakeService implements Service {
         })
     }
 
-    gameInfo = async function (): Promise<Game | undefined> {
+    gameInfo = async function (token: string, gameId: number): Promise<Game | undefined> {
         return Promise.resolve(
             {
                 id: 1,
@@ -165,12 +182,12 @@ export class FakeService implements Service {
                         fleet: [
                             {
                                 name: "duckShip",
-                                size: 99,
+                                size: 5,
                                 gameType: "hardcore"
                             }
                         ]
                 },
-                state: "shooting",
+                state: "layout_definition",
                 opponent: {
                     id: 8,
                             name: "Fiona2",
@@ -225,6 +242,41 @@ export class FakeService implements Service {
     }
 
     sendHits = async function (token: string, gameId: number, squares: Array<Square>): Promise<Game | undefined> {
+        return Promise.resolve(
+            {
+                id: 1,
+                type: {
+                    name: "beginner",
+                        boardSize: 10,
+                        shotsPerRound: 1,
+                        layoutDefTime: 60,
+                        shootingTime: 60,
+                        fleet: [
+                            {
+                                name: "duckShip",
+                                size: 99,
+                                gameType: "hardcore"
+                            }
+                        ]
+                },
+                state: "shooting",
+                opponent: {
+                    id: 8,
+                            name: "Fiona2",
+                            score: 0
+                },
+                playing: false,
+                startedAt: "",
+                fleet: [],
+                takenHits: [],
+                enemySunkFleet: [],
+                hits: [],
+                misses: []
+            }
+        )
+    }
+
+    forfeit = async function (token: string, gameId: number): Promise<Game | undefined> {
         return Promise.resolve(
             {
                 id: 1,

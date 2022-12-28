@@ -42,9 +42,10 @@ export function RequireAuthn({ children }: { children: React.ReactNode }): React
 
     if (authentication == "success") {
         return <>{children}</>
-    } else {
-        if (tokenInCookie) 
+    } else if (authentication == "error") {
+        if (tokenInCookie) {
             removeCookie("token")
+        }
         return <Navigate to="/login" state={{source: location.pathname}} replace={true}/>
     } 
 }

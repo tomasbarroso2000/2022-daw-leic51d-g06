@@ -81,6 +81,16 @@ function layoutShipSquareStyle(squareSize: number, isFirst: boolean): React.CSSP
     }
 }
 
+function layoutShipPropertiesStyle(squareSize: number): React.CSSProperties {
+    return {
+        display: "inline", 
+        width: `${squareSize}px`,
+        height: `${squareSize}px`, 
+        lineHeight: `${squareSize}px`, 
+        textAlign: "center"
+    }
+}
+
 function unavailableSquares(layoutShips: Array<LayoutShip>, filteredShip: LayoutShip): Array<Square> {
     const squares = []
     layoutShips.forEach((ship) => {
@@ -137,14 +147,34 @@ function draggableShip(
     return (
         <div style={{marginBottom: "50px", marginRight: "200px"}}>
             <div>{capitalize(layoutShip.type.name)}</div>
-            <div
-                key={layoutShip.type.name}
-                style={draggableShipDivStyle(layoutShip.type.size, squareSize)}
-                onClick={changeOrientation(boardSize, layoutShip, layoutShips, setLayoutShips)}
-                draggable="true"
-                onDragStart={handleDragStart}
-                data-name={JSON.stringify(layoutShip)}>
-                {shipSquares}
+            <div style={{display: "flex"}}>
+                <div
+                    key={layoutShip.type.name}
+                    style={draggableShipDivStyle(layoutShip.type.size, squareSize)}
+                    onClick={changeOrientation(boardSize, layoutShip, layoutShips, setLayoutShips)}
+                    draggable="true"
+                    onDragStart={handleDragStart}
+                    data-name={JSON.stringify(layoutShip)}>
+                    {shipSquares}
+                </div>
+                <div style={layoutShipPropertiesStyle(squareSize)}>
+                    {layoutShip.orientation == "horizontal" ? "—" : "|"}
+                </div>
+                <div style={layoutShipPropertiesStyle(squareSize)}>
+                    <button 
+                        style={layoutShip.position ? undefined : {display: "none"}} 
+                        onClick={() => {
+                            setLayoutShips(
+                                replace(
+                                    layoutShips, 
+                                    layoutShip, 
+                                    {type: layoutShip.type, position: undefined, orientation: layoutShip.orientation}
+                                )
+                            )
+                    }}>{"<"}
+                    </button>
+                
+                </div>
             </div>
         </div>
     )
@@ -177,7 +207,7 @@ export function Layout(
         return (
                 <div>
                     <h1>Layout</h1>
-                    <button style={{display: "block"}} onClick={() => {setLayoutShips(initialLayoutShips(game.type))}}>Reset layout</button>
+                    <div>Grab ships by the first square and press the rotate button to rotate them</div>
                     <div>Timer: {timer}</div>
                     <div style={{textAlign: "center"}}>
                         <div style={{display: "inline-block", verticalAlign: "middle"}}>

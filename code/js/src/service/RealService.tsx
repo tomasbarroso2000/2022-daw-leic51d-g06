@@ -29,8 +29,6 @@ export class RealService implements Service {
     gamesNavigation = []
     createUserNavigation = []
 
-    homeActions = []
-    userHomeActions = []
 
     userHomeLink: EmbeddedLink | undefined = undefined
     rankingsLink: EmbeddedLink | undefined = undefined
@@ -50,7 +48,6 @@ export class RealService implements Service {
 
     home = async function (): Promise<Home | undefined> {
         this.homeNavigation = []
-        this.homeActions = []
 
         const res = await doFetch(homeURL)
 
@@ -74,7 +71,7 @@ export class RealService implements Service {
         jsonObj.actions.forEach((action: Action) => {
             const path = paths[action.name]
             if (path) {
-                this.homeActions.push(path)
+                this.homeNavigation.push(path)
             }
         })
 
@@ -127,7 +124,7 @@ export class RealService implements Service {
         jsonObj.actions.forEach((action: Action) => {
             const path = paths[action.name]
             if (path) {
-                this.userHomeActions.push(path)
+                this.userHomeNavigation.push(path)
             }
         })
 

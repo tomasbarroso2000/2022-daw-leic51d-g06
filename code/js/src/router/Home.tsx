@@ -48,18 +48,12 @@ export function Home() {
                                     <Link to={nav}>{nav.slice(1)}</Link>
                                 </li>
                             )}
-                            {service.homeActions.map((nav) => 
-                                <li key={nav}> 
-                                    <Link to={nav}>{nav.slice(1)}</Link>
-                                </li>
-                            )}
                                 <li>
                                     <Link to={paths['list-games']}>play</Link>
                                 </li>
                         </ol> 
                     </div>
                 </div>
-                
             </div>
         )
     }
