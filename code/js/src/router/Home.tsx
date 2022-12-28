@@ -43,14 +43,17 @@ export function Home() {
                     <div id="menu">
                         <h2 id="menu-title">Menu</h2>
                         <ol>
+                            <li>
+                                <Link to={paths['me']}>Profile</Link>
+                            </li>
                             {service.homeNavigation.map((nav) => 
                                 <li key={nav}> 
                                     <Link to={nav}>{nav.slice(1)}</Link>
                                 </li>
                             )}
-                                <li>
-                                    <Link to={paths['list-games']}>play</Link>
-                                </li>
+                            <li>
+                                <Link to={paths['list-games']}>play</Link>
+                            </li>
                         </ol> 
                     </div>
                 </div>
