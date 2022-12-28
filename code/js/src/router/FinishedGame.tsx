@@ -8,14 +8,16 @@ export function FinishedGame(game: Game) {
         if(ship.destroyed)
             return <li>{ship.name} was destroyed</li>
         else
-            return <li>{ship.name} took {ship.nOfHits} hits</li>
+            return <li>{ship.name} took {ship.nOfHits} hit(s)</li>
     }) 
-    const enemyFleet = game.enemySunkFleet.map((ship) => {
-        if(ship.destroyed)
+    const enemyFleet = function() {
+        const enemySunkFleet = game.enemySunkFleet
+        if (enemySunkFleet.length == 0) 
+            return <p>No enemy ships were destroyed</p>
+        enemySunkFleet.map((ship) => {
             return <li>{ship.name} was destroyed</li>
-        else
-            return <li>{ship.name} took {ship.nOfHits} hits</li>
-    }) 
+        }) 
+    }
     const gameStats = 
         <div>
             <h3>Game Statistics:</h3>
@@ -25,7 +27,7 @@ export function FinishedGame(game: Game) {
             <h3>Your fleet:</h3>
             <ul>{yourFleet}</ul>
             <h3>{game.opponent.name}'s fleet</h3>
-            <ul>{enemyFleet}</ul>
+            <ul>{enemyFleet()}</ul>
         </div>
     if (game.playing)    
         return (

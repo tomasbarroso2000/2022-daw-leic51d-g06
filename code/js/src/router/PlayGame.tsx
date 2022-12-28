@@ -69,7 +69,7 @@ export function PlayGame() {
     switch (gameInfo.state) {
         case "layout_definition": {
             console.log("layout_definition")
-            return Layout(gameInfo, currentUser, timer, layoutShips, setLayoutShips)
+            return Layout(gameInfo, currentUser, timer, layoutShips, setLayoutShips, setGameInfo)
         }
         case "shooting": {
             console.log("shooting")

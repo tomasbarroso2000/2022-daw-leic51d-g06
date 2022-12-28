@@ -199,7 +199,8 @@ export function Layout(
     currentUser: CurrentUser,
     timer: number,
     layoutShips: Array<LayoutShip>,
-    setLayoutShips: Dispatch<React.SetStateAction<LayoutShip[]>>
+    setLayoutShips: Dispatch<React.SetStateAction<LayoutShip[]>>,
+    setGameInfo: React.Dispatch<Game>
 ) {  
     if (layoutShips.length == 0) 
         setLayoutShips(initialLayoutShips(game.type))
@@ -227,7 +228,7 @@ export function Layout(
                             )}
                         </div>
                     </div>
-                    <div><button onClick={() => service.defineLayout(currentUser.token, game.id, layoutShips)}>Submit layout</button></div>
+                    <div><button onClick={() => { service.defineLayout(currentUser.token, game.id, layoutShips).then((game) => setGameInfo(game))}}>Submit layout</button></div>
                 </div>
         )
     else
