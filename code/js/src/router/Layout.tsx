@@ -206,11 +206,13 @@ export function Layout(
         setLayoutShips(initialLayoutShips(game.type))
     if (game.fleet.length == 0)
         return (
-                <div>
-                    <h1>Define Your Layout</h1>
-                    <h2>{`${currentUser.name} vs. ${game.opponent.name}`}</h2>
-                    <div>Grab ships by the first square and press the rotate button to rotate them</div>
-                    <div>Timer: {timer}</div>
+                <div id="layout-content">
+                    <div id="layout-status">
+                        <h1>Define Your Layout</h1>
+                        <h2>{`${currentUser.name} vs. ${game.opponent.name}`}</h2>
+                        <p>Grab ships by the first square and press the rotate button to rotate them</p>
+                        <p>Time left: {timer}</p>
+                    </div>
                     <div style={{textAlign: "center"}}>
                         <div style={{display: "inline-block", verticalAlign: "middle"}}>
                             {layoutShips.map((layoutShip) => draggableShip(game.type.boardSize, BIG_BOARD_SQUARE_SIZE, layoutShip, layoutShips, setLayoutShips))}

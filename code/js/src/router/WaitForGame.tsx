@@ -22,6 +22,10 @@ export function WaitForGame() {
 
     useIntervalAsync(updateGameId, 3000)
     return (
-        <div>{gameId != undefined ? <Navigate to={`${paths['play-game'].replace(":gameId", gameId.toString())}`}/> : "Waiting for game"}</div>
+        <div id="lobby">
+            {gameId != undefined ? <Navigate to={`${paths['play-game'].replace(":gameId", gameId.toString())}`}/> : <h1>Waiting for game</h1>}
+            <div className="lds-default"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+            <p>Remember always have fun!</p>
+        </div>        
     )
 }

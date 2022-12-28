@@ -5,7 +5,8 @@ function borderDivStyle(squareSize: number): React.CSSProperties {
     return {
         width: `${squareSize}px`, 
         height: `${squareSize}px`,
-        backgroundColor: "#4A6FA5"
+        backgroundColor: "#4A6FA5",
+        color: "white"
     }
 }
 
@@ -19,7 +20,7 @@ function ColumnNumbersView(boardSize: number, squareSize: number): Array<JSX.Ele
     const squares: Array<JSX.Element> = []
     squares.push(<div key={0} style={borderDivStyle(squareSize)}></div>)
     for(let column = 1; column <= boardSize; column++) {
-        squares.push(<div key={column} style={borderDivStyle(squareSize)}>{column}</div>) 
+        squares.push(<div key={column} className="board-header" style={borderDivStyle(squareSize)}><p>{column}</p></div>) 
     }
     return squares
 }
@@ -33,7 +34,7 @@ function Squares(
     const firstSquare: Square = {row: "a", column: 1}
     for (let rowNumber: number = firstSquare.row.charCodeAt(0) - 97 + 1; rowNumber <= boardSize; rowNumber++) {
         const row = String.fromCharCode(rowNumber - 1 + 97)
-        squares.push(<div key={`{row: ${row}, column${0}}`} style={borderDivStyle(squareSize)}>{row}</div>)
+        squares.push(<div key={`{row: ${row}, column${0}}`} className="board-header" style={borderDivStyle(squareSize)}><p>{row}</p></div>)
         for (let column: number = firstSquare.column; column <= boardSize; column++) {
             const square: Square = {row: row, column: column}
             const isLast = 
@@ -51,7 +52,7 @@ function boardDivStyle(boardSize: number): React.CSSProperties {
         gap: 1,
         gridTemplateColumns: `repeat(${boardSize+1}, 1fr)`,
         gridTemplateRows: `repeat(${boardSize+1}, 1fr)`,
-        float: "left",
+        float: "right",
         textAlign: "center",
         alignItems: "center"
     }
