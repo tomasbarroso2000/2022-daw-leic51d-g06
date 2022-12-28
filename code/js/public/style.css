@@ -541,3 +541,128 @@ div#content-rankings li hr {
   div#footer .nav-user:hover {
     text-decoration: underline;
   }
+
+  div#content div#games-list-content {
+    margin: 50px auto;
+    text-align: center;
+    min-width: 40%;
+    min-height: 40%;
+    max-width: fit-content;
+    padding: 15px;
+    border-radius: 10px;
+    background-color: #e5e5f7;
+    opacity: 0.8;
+    background-image:  repeating-radial-gradient( circle at 0 0, transparent 0, #e5e5f7 10px ), repeating-linear-gradient( #444cf755, #2196F3 );
+    height: fit-content;
+    text-align: center;
+}
+
+  div#games-list-content button#game-new-btn {
+    background-color: transparent;
+    font-weight: bolder;
+    border-radius: 2em;
+    padding: 10px 20px;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    border: 3px solid #242424;
+    color: #000000;
+    transition: .4s;
+    font-size: 14px;
+  }
+
+  div#games-list-content button#game-new-btn:hover {
+    background-color: #00000061;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: .4s;
+  }
+
+  div#games-list-content div#nav {
+    margin: 10px auto;
+    vertical-align: middle;
+    width: 100%;
+  }
+
+  div#games-list-content div.game-box {
+    max-width: 150px;
+    height: 150px;
+    font-size: 15px;
+    text-align: center;
+    background-color: white;
+    padding: 20px;
+    color: #282c34;
+    border-radius: 4px;
+    display: inline-block;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+    margin: 20px;
+    vertical-align: middle;
+  }
+
+  div.game-box p {
+    margin-bottom: 30px;
+  }
+
+  div.game-box button {
+    background-color: transparent;
+    border: 1px solid #282c34;
+    padding: 5px 10px;
+    font-size: 12px;
+    font-weight: bold;
+    bottom: 0;
+    transition: .4s;
+  }
+
+  div.game-box button:hover {
+    font-size: 14px;
+    transition: .4s;
+  }
+
+  div#nav button {
+    width: 100px;
+    padding: 5px 0px;
+    background-color: transparent;
+    color: #282c34;
+    font-weight: bold;
+    margin: 4px;
+    display: inline-block;
+    border: none;
+    padding-left: 0;
+    font-size: 16pt;
+    transition: .4s;
+  }
+
+  div#nav button:hover {
+    color: #1183ec;
+    transition: .4s;
+    cursor: pointer;
+  }
+
+  div#nav span {
+    font-size: 20pt;
+    font-weight: bold;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  div#nav .arrow-left {
+    width: 15px;
+    height: 15px;
+    border: 2px solid #333;
+    border-left: 0;
+    border-top: 0;
+    transform: rotate(135deg);
+    display: inline-block;
+    margin-right: -10px;
+  }
+
+  div#nav .arrow-right {
+    width: 15px;
+    height: 15px;
+    border: 2px solid #333;
+    border-left: 0;
+    border-top: 0;
+    transform: rotate(315deg);
+    display: inline-block;
+    margin-left: -25px;
+  }

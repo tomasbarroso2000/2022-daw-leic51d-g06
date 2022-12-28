@@ -21,7 +21,7 @@ function Playing(game: Game) {
 
     return (
         <div key={game.id} className="game-box">
-            <p>Game type: {game.type.name}</p>
+            <h3>Game type: {game.type.name}</h3>
             <p>Game state: {game.state}</p>
             {result}
             <button><Link to={paths['play-game'].replace(":gameId", game.id.toString())}>Enter Game</Link></button>
@@ -50,15 +50,20 @@ export function ListGames() {
 
     if (games.kind == "success") {
         return (
-            <div>
+            <div id="content">
                 <h1>Games</h1>
-                {games.result.games.map((game: Game) => Playing(game))}
-                <div>
-                    <ButtonFab isDisabled={skip == 0} onClick={() => {setSkip(skip - limit)}} text={"Previous"}/>
-                    <ButtonFab isDisabled={!games.result.hasMore} onClick={() => {setSkip(skip + limit)}} text={"Next"}/>
-                </div>
-                <div>
-                    <Link to={paths['create-game']}>New Game</Link>
+                <div id="games-list-content">
+                    <div id="nav">
+                        <div className="arrow-left"></div>
+                        <ButtonFab isDisabled={skip == 0} onClick={() => {setSkip(skip - limit)}} text={"Previous"} />
+                        <span> | </span>
+                        <ButtonFab isDisabled={!games.result.hasMore} onClick={() => {setSkip(skip + limit)}} text={"Next"} />
+                        <div className="arrow-right"></div>
+                    </div>
+                    {games.result.games.map((game: Game) => Playing(game))}
+                    <div>
+                        <Link to={paths['create-game']}><button id="game-new-btn">New Game</button></Link>
+                    </div>
                 </div>
             </div>
         )
