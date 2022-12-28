@@ -21,6 +21,7 @@ export function PlayGame() {
     const [selectedSquares, setSelectedSquares]: [Array<Square>, Dispatch<React.SetStateAction<Square[]>>] = useState([])
     const [gameInfo, setGameInfo]: [Game | undefined, Dispatch<Game>] = useState(undefined)
     const [timer, setTimer]: [number | undefined, Dispatch<number>] = useState(undefined)
+    const [loading, setLoading]: [boolean, Dispatch<boolean>] = useState(false)
     const [gameRemoved, setGameRemoved] = useState(false)
 
     const updateGameInfo = useCallback(async () => {
@@ -69,7 +70,7 @@ export function PlayGame() {
     switch (gameInfo.state) {
         case "layout_definition": {
             console.log("layout_definition")
-            return Layout(gameInfo, currentUser, timer, layoutShips, setLayoutShips, setGameInfo)
+            return Layout(gameInfo, currentUser, timer, layoutShips, loading, setLayoutShips, setGameInfo, setLoading)
         }
         case "shooting": {
             console.log("shooting")

@@ -7,6 +7,7 @@ import { LayoutShip, layoutShipSquares, nextSquareFunction, otherOrientation, Sh
 import { ShipType } from "../domain/ShipType"
 import { Square, squareToString, surroundingSquares } from "../domain/Square"
 import { BoardView } from "../utils/board"
+import { ButtonFab } from "../utils/ButtonFab"
 import { capitalize } from "../utils/capitalize"
 import { contains } from "../utils/contains"
 import { deepEqual } from "../utils/deepEqual"
@@ -199,8 +200,10 @@ export function Layout(
     currentUser: CurrentUser,
     timer: number,
     layoutShips: Array<LayoutShip>,
+    loading: boolean,
     setLayoutShips: Dispatch<React.SetStateAction<LayoutShip[]>>,
-    setGameInfo: React.Dispatch<Game>
+    setGameInfo: Dispatch<Game>,
+    setLoading: Dispatch<boolean>
 ) {  
     if (layoutShips.length == 0) 
         setLayoutShips(initialLayoutShips(game.type))
@@ -232,10 +235,16 @@ export function Layout(
                         </div>
                     </div>
                     <div>
-                        <button onClick={() => { 
-                            service.defineLayout(currentUser.token, game.id, layoutShips).then((game) => setGameInfo(game))}
-                        }>Submit layout
-                        </button>
+                        <ButtonFab 
+                            isDisabled={loading}
+                            onClick={() => {
+                                setLoading(true)
+                                service.defineLayout(currentUser.token, game.id, layoutShips).then((game) => {
+                                    setGameInfo(game)
+                                    setLoading(false)
+                                })
+                            }}
+                            text={"Submit Layout"}/>
                     </div>
                 </div>
         )
