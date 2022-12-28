@@ -6,7 +6,7 @@ import { CurrentUser } from "../domain/CurrentUser";
 import { askService, Result } from "../service/askService"
 import { service } from "./App"
 import { useSetUser } from "./Authn"
-import { Cookies, useCookies } from "react-cookie"; // npm install react-cookie
+import { useCookies } from "react-cookie";
 import { Loading } from "./Loading";
  
 export function Login() {

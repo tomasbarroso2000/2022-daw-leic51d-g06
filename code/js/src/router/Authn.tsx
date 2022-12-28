@@ -1,15 +1,6 @@
 import * as React from 'react'
-import {
-    useState,
-    createContext,
-    useContext,
-} from 'react'
-import { Cookies, useCookies } from 'react-cookie'
-import { CreateCookie } from '../domain/CreateToken';
+import { useState, createContext, useContext } from 'react'
 import { CurrentUser } from '../domain/CurrentUser'
-import { UserHome } from '../domain/UserHome';
-import { askService } from '../service/askService';
-import { service } from './App';
 
 type ContextType = {
     user: CurrentUser | undefined

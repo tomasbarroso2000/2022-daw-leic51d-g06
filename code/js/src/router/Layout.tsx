@@ -207,7 +207,8 @@ export function Layout(
     if (game.fleet.length == 0)
         return (
                 <div>
-                    <h1>Layout</h1>
+                    <h1>Define Your Layout</h1>
+                    <h2>{`${currentUser.name} vs. ${game.opponent.name}`}</h2>
                     <div>Grab ships by the first square and press the rotate button to rotate them</div>
                     <div>Timer: {timer}</div>
                     <div style={{textAlign: "center"}}>
@@ -228,7 +229,12 @@ export function Layout(
                             )}
                         </div>
                     </div>
-                    <div><button onClick={() => { service.defineLayout(currentUser.token, game.id, layoutShips).then((game) => setGameInfo(game))}}>Submit layout</button></div>
+                    <div>
+                        <button onClick={() => { 
+                            service.defineLayout(currentUser.token, game.id, layoutShips).then((game) => setGameInfo(game))}
+                        }>Submit layout
+                        </button>
+                    </div>
                 </div>
         )
     else
