@@ -1,6 +1,7 @@
 import * as React from "react"
 import { useState, useCallback } from 'react'
 import { Navigate, useParams } from "react-router-dom"
+import { replace } from "../utils/replace"
 import { useIntervalAsync } from "../utils/useIntervalAsync"
 import { paths, service } from "./App"
 import { useCurrentUser } from './Authn'
@@ -21,9 +22,13 @@ export function WaitForGame() {
     }, [gameId])
 
     useIntervalAsync(updateGameId, 3000)
+
+    if (gameId)
+        return <Navigate to={`${paths['play-game'].replace(":gameId", gameId.toString())}`} replace/>
+
     return (
         <div id="lobby">
-            {gameId != undefined ? <Navigate to={`${paths['play-game'].replace(":gameId", gameId.toString())}`}/> : <h1>Waiting for game</h1>}
+            <h1>Waiting for game</h1>
             <div className="lds-default"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
             <p>Remember always have fun!</p>
         </div>        

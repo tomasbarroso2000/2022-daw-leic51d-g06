@@ -10,7 +10,7 @@ import { capitalize } from "../utils/capitalize"
 import { contains } from "../utils/contains"
 import { remove } from "../utils/remove"
 import { service } from "./App"
-import { SHIP_COLOR, INNER_COLOR, SMALL_BOARD_SQUARE_SIZE, BIG_BOARD_SQUARE_SIZE, DESTROYED_SHIP_COLOR, AROUND_DESTROYED_COLOR, SELECTED_COLOR } from "./PlayGame"
+import { SHIP_COLOR, INNER_COLOR, SMALL_BOARD_SQUARE_CONST, BIG_BOARD_SQUARE_CONST, DESTROYED_SHIP_COLOR, AROUND_DESTROYED_COLOR, SELECTED_COLOR } from "./PlayGame"
 
 function occupiedSquareStyle(squareSize: number): React.CSSProperties {
     return {
@@ -53,7 +53,7 @@ export function Shooting(
             <div>{game.playing ? "Shooting" : "Waiting"}</div>
             <div className="board-content" id="self-board-container">
                 <h1>Your Board</h1>
-                {BoardView(game.type.boardSize, SMALL_BOARD_SQUARE_SIZE, (square: Square, squareSize: number, isLast: boolean) => {
+                {BoardView(game.type.boardSize, SMALL_BOARD_SQUARE_CONST / game.type.boardSize, (square: Square, squareSize: number, isLast: boolean) => {
                     const isOccupied = game.fleet.some((ship: Ship) => contains(ship.squares, square))
                     const isHit: boolean = contains(game.takenHits, square)
                     const style = isOccupied ? occupiedSquareStyle(squareSize) : defaultSquareStyle(squareSize)
@@ -63,7 +63,7 @@ export function Shooting(
             </div>
             <div className="board-content" id="enemy-board-container">
                 <h1>Enemy Board</h1>
-                {BoardView(game.type.boardSize, BIG_BOARD_SQUARE_SIZE, (square: Square, squareSize: number, isLast: boolean) => {
+                {BoardView(game.type.boardSize, BIG_BOARD_SQUARE_CONST / game.type.boardSize, (square: Square, squareSize: number, isLast: boolean) => {
                     let canClick = true
                     let squareColor: string
                     if (isEnemySquareDestroyed(game, square)) {

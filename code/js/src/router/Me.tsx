@@ -5,7 +5,6 @@ import { askService, Result } from "../service/askService"
 import { paths, service } from "./App"
 import { useCurrentUser } from './Authn'
 import { Loading } from "./Loading"
-import { Login } from "./Login"
 
 export function Me() {
     const currentUser = useCurrentUser()

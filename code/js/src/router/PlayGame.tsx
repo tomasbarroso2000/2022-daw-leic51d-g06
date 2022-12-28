@@ -3,10 +3,9 @@ import { Game} from "../domain/Game";
 import { paths, service } from "./App";
 import { useCurrentUser } from "./Authn";
 import { Square } from "../domain/Square";
-import { Dispatch, useCallback, useEffect, useState } from "react";
+import { Dispatch, useEffect, useState } from "react";
 import { Layout } from "./Layout";
 import { LayoutShip } from "../domain/LayoutShip";
-import { useIntervalAsync } from "../utils/useIntervalAsync";
 import { Shooting } from "./Shooting";
 import { FinishedGame } from "./FinishedGame";
 import { Navigate, useParams } from "react-router-dom";
@@ -22,14 +21,32 @@ export function PlayGame() {
     const [gameInfo, setGameInfo]: [Game | undefined, Dispatch<Game>] = useState(undefined)
     const [timer, setTimer]: [number | undefined, Dispatch<number>] = useState(undefined)
     const [loading, setLoading]: [boolean, Dispatch<boolean>] = useState(false)
-    const [gameRemoved, setGameRemoved] = useState(false)
+    const [goBack, setGoBack] = useState(false)
 
-    const updateGameInfo = useCallback(async () => {
-        const newGameInfo = await service.gameInfo(currentUser.token, gameId)
-        if (gameInfo && gameInfo.state == "layout_definition" && newGameInfo.state == "completed")
-            setGameRemoved(true)
-        setGameInfo(newGameInfo)
-    }, [])
+    useEffect(() => {
+        const tid = setInterval(() => {
+            service.gameInfo(currentUser.token, gameId)
+            .then((newGameInfo: Game) => {
+                console.log(newGameInfo)
+                if (gameInfo && gameInfo.state == "layout_definition" && newGameInfo.state == "completed") {
+                    console.log("go back dud")
+                    if (!goBack)
+                        setGoBack(true)
+                } else {
+                    setGameInfo(newGameInfo)
+                }
+                
+            })
+            .catch(() => {
+                console.log("catch")
+                if (!goBack)
+                    setGoBack(true)
+            })
+        }, gameInfo ? 3000 : 1000)
+        return () => {
+            clearInterval(tid)
+        }
+    }, [gameInfo])
 
     useEffect(() => {
         const tid = setInterval(() => {
@@ -38,11 +55,7 @@ export function PlayGame() {
                 switch (gameInfo.state) {
                     case "layout_definition": {
                         const timeLeft = Math.round(calcTimeLeft(gameInfo.type.layoutDefTime, Date.parse(gameInfo.startedAt)))
-                        if (timeLeft <= 0) {
-                            setGameRemoved(true)
-                        } else {
-                            setTimer(timeLeft)
-                        } 
+                        setTimer(timeLeft)
                         break
                     }
                     case "shooting": {
@@ -57,14 +70,12 @@ export function PlayGame() {
         }
     }, [gameInfo])
 
-    useIntervalAsync(updateGameInfo, 3000)
+    if (goBack) {
+        return <Navigate to={paths["list-games"]}></Navigate>
+    }
 
     if(!gameInfo) {
         return <Loading />
-    }
-
-    if (gameRemoved) {
-        return <Navigate to={paths["list-games"]}></Navigate>
     }
 
     switch (gameInfo.state) {
@@ -89,7 +100,7 @@ export const AROUND_DESTROYED_COLOR = "#FF0B5394"
 export const SHIP_COLOR = "#AED4E6"
 export const SELECTED_COLOR = "#FF0000"
 
-export const SMALL_BOARD_SQUARE_SIZE = 25
-export const BIG_BOARD_SQUARE_SIZE = 40
+export const SMALL_BOARD_SQUARE_CONST = 250
+export const BIG_BOARD_SQUARE_CONST = 400
 
 

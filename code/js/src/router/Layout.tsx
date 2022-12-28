@@ -13,7 +13,7 @@ import { contains } from "../utils/contains"
 import { deepEqual } from "../utils/deepEqual"
 import { replace } from "../utils/replace"
 import { service } from "./App"
-import { BIG_BOARD_SQUARE_SIZE, INNER_COLOR, SHIP_COLOR } from "./PlayGame"
+import { BIG_BOARD_SQUARE_CONST, INNER_COLOR, SHIP_COLOR } from "./PlayGame"
 
 
 function handleDragStart(event: React.DragEvent<HTMLDivElement>) {
@@ -140,17 +140,16 @@ function draggableShip(
     
     const shipType = layoutShip.type
     const shipSquares: Array<JSX.Element> = []
-    shipSquares.push(<div style={layoutShipSquareStyle(squareSize, true)}></div>)
+    shipSquares.push(<div key={shipType.name + 0} style={layoutShipSquareStyle(squareSize, true)}></div>)
     for (let i = 1; i < shipType.size; i++) {
-        shipSquares.push(<div style={layoutShipSquareStyle(squareSize, false)}></div>)
+        shipSquares.push(<div key={shipType.name + i} style={layoutShipSquareStyle(squareSize, false)}></div>)
     }
 
     return (
-        <div style={{marginBottom: "50px", marginRight: "200px"}}>
+        <div key={layoutShip.type.name} style={{marginBottom: "50px", marginRight: "200px"}}>
             <div>{capitalize(layoutShip.type.name)}</div>
             <div style={{display: "flex"}}>
                 <div
-                    key={layoutShip.type.name}
                     style={draggableShipDivStyle(layoutShip.type.size, squareSize)}
                     onClick={changeOrientation(boardSize, layoutShip, layoutShips, setLayoutShips)}
                     draggable="true"
@@ -207,6 +206,9 @@ export function Layout(
 ) {  
     if (layoutShips.length == 0) 
         setLayoutShips(initialLayoutShips(game.type))
+
+    const squareSize = BIG_BOARD_SQUARE_CONST / game.type.boardSize
+
     if (game.fleet.length == 0)
         return (
                 <div id="layout-content">
@@ -218,10 +220,10 @@ export function Layout(
                     </div>
                     <div style={{textAlign: "center"}}>
                         <div style={{display: "inline-block", verticalAlign: "middle"}}>
-                            {layoutShips.map((layoutShip) => draggableShip(game.type.boardSize, BIG_BOARD_SQUARE_SIZE, layoutShip, layoutShips, setLayoutShips))}
+                            {layoutShips.map((layoutShip) => draggableShip(game.type.boardSize, squareSize, layoutShip, layoutShips, setLayoutShips))}
                         </div>
                         <div style={{display: "inline-block", verticalAlign: "middle"}}>
-                            {BoardView(game.type.boardSize, BIG_BOARD_SQUARE_SIZE, (square: Square, squareSize: number, isLast: boolean) => {
+                            {BoardView(game.type.boardSize, squareSize, (square: Square, squareSize: number, isLast: boolean) => {
                                 return (
                                     <div key={squareToString(square)} 
                                         style={layoutSquareStyle(squareSize, isSquareOccupied(layoutShips, square))}

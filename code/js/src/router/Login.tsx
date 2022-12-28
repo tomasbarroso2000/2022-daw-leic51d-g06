@@ -8,13 +8,13 @@ import { service } from "./App"
 import { useSetUser } from "./Authn"
 import { useCookies } from "react-cookie";
 import { Loading } from "./Loading";
+import { ProblemJson } from "../domain/ProblemJson";
  
 export function Login() {
     const fields: Result<Array<Field>> | undefined = askService(service, service.getCreateTokenFields)
 
     const [inputs, setInputs]: [any, React.Dispatch<React.SetStateAction<{}>>] = useState({})
     const [isSubmitting, setIsSubmitting] = useState(false)
-    const [error, setError] = useState(undefined)
     const [redirect, setRedirect] = useState(false)
     const setUser = useSetUser()
     const [cookies, setCookie] = useCookies();
@@ -32,7 +32,6 @@ export function Login() {
         function handleChange(ev: React.FormEvent<HTMLInputElement>) {
             const name = ev.currentTarget.name
             setInputs({ ...inputs, [name]: ev.currentTarget.value })
-            setError(undefined)
         }
     
         function handleSubmit(ev: React.FormEvent<HTMLFormElement>) {
@@ -41,24 +40,20 @@ export function Login() {
             service.createToken(inputs.email, inputs.password)
                 .then(token => {
                     setIsSubmitting(false)
-                    if (token.token) {
-                        service.userHome(token.token).then((userHome) => {
-                            console.log(`setUser(${token.token})`)
-                            const newCurrentUser: CurrentUser = {
-                                token: token.token,
-                                name: userHome.name
-                            }
-                            setUser(newCurrentUser)
-                            setCookie("token", token.token)
-                            setRedirect(true)
-                        })
-                    } else {
-                        setError("Invalid username or password")
-                    }
+                    service.userHome(token.token).then((userHome) => {
+                        console.log(`setUser(${token.token})`)
+                        const newCurrentUser: CurrentUser = {
+                            token: token.token,
+                            name: userHome.name
+                        }
+                        setUser(newCurrentUser)
+                        setCookie("token", token.token)
+                        setRedirect(true)
+                    })
                 })
-                .catch(() => {
+                .catch((e: ProblemJson) => {
                     setIsSubmitting(false)
-                    setError("Something went wrong!")
+                    alert(e.detail)
                 })
         }
     
@@ -74,8 +69,7 @@ export function Login() {
                                 )}
                                 <input id="create-token" type="submit" value="Login" />
                             </form>
-                        </fieldset>
-                        {error}   
+                        </fieldset>  
                     </div>
                     <div id="left-side-login">
                         <img src="images/logo.png" alt="battleship-logo" id="logo" />
