@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Game} from "../domain/Game";
-import { service } from "./App";
+import { paths, service } from "./App";
 import { useCurrentUser } from "./Authn";
 import { Square } from "../domain/Square";
 import { Dispatch, useCallback, useEffect, useState } from "react";
@@ -9,8 +9,9 @@ import { LayoutShip } from "../domain/LayoutShip";
 import { useIntervalAsync } from "../utils/useIntervalAsync";
 import { Shooting } from "./Shooting";
 import { FinishedGame } from "./FinishedGame";
-import { useParams } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 import { calcTimeLeft } from "../utils/calcTimeLeft";
+import { Loading } from "./Loading";
 
 export function PlayGame() {
     const currentUser = useCurrentUser()
@@ -20,12 +21,12 @@ export function PlayGame() {
     const [selectedSquares, setSelectedSquares]: [Array<Square>, Dispatch<React.SetStateAction<Square[]>>] = useState([])
     const [gameInfo, setGameInfo]: [Game | undefined, Dispatch<Game>] = useState(undefined)
     const [timer, setTimer]: [number | undefined, Dispatch<number>] = useState(undefined)
+    const [gameRemoved, setGameRemoved] = useState(false)
 
     const updateGameInfo = useCallback(async () => {
-        console.log("updating")
         const newGameInfo = await service.gameInfo(currentUser.token, gameId)
-        console.log("newGameInfo: " + newGameInfo)
-        console.log(newGameInfo)
+        if (gameInfo && gameInfo.state == "layout_definition" && newGameInfo.state == "completed")
+            setGameRemoved(true)
         setGameInfo(newGameInfo)
     }, [])
 
@@ -35,21 +36,22 @@ export function PlayGame() {
                 console.log("updating timer")
                 switch (gameInfo.state) {
                     case "layout_definition": {
-                        setTimer(Math.round(calcTimeLeft(gameInfo.type.layoutDefTime, Date.parse(gameInfo.startedAt))))
+                        const timeLeft = Math.round(calcTimeLeft(gameInfo.type.layoutDefTime, Date.parse(gameInfo.startedAt)))
+                        if (timeLeft <= 0) {
+                            setGameRemoved(true)
+                        } else {
+                            setTimer(timeLeft)
+                        } 
                         break
                     }
                     case "shooting": {
                         setTimer(Math.round(calcTimeLeft(gameInfo.type.shootingTime, Date.parse(gameInfo.startedAt))))
                         break
                     }
-                    case "completed": {
-                        setTimer(0)
-                    }
                 }
             }
         }, 1000)
         return () => {
-            console.log(`Cancel effect`)
             clearInterval(tid)
         }
     }, [gameInfo])
@@ -57,13 +59,13 @@ export function PlayGame() {
     useIntervalAsync(updateGameInfo, 3000)
 
     if(!gameInfo) {
-        console.log("!gameInfo")
-        return (
-            <div>
-                ...loading...
-            </div>
-        )
+        return <Loading />
     }
+
+    if (gameRemoved) {
+        return <Navigate to={paths["list-games"]}></Navigate>
+    }
+
     switch (gameInfo.state) {
         case "layout_definition": {
             console.log("layout_definition")

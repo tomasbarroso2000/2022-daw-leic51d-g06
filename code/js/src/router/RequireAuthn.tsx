@@ -7,6 +7,7 @@ import { UserHome } from '../domain/UserHome'
 import { askService, Result } from '../service/askService'
 import { service } from './App'
 import { useCurrentUser, useSetUser } from './Authn'
+import { Loading } from './Loading'
 
 type Authentication = "error" | "success" | undefined
 
@@ -36,11 +37,7 @@ export function RequireAuthn({ children }: { children: React.ReactNode }): React
     }, [])
 
     if (!authentication) {
-        return (
-            <div>
-                ...loading...
-            </div>
-        )
+        return <Loading />
     }
 
     if (authentication == "success") {

@@ -4,6 +4,7 @@ import { UserHome } from "../domain/UserHome"
 import { askService, Result } from "../service/askService"
 import { paths, service } from "./App"
 import { useCurrentUser } from './Authn'
+import { Loading } from "./Loading"
 import { Login } from "./Login"
 
 export function Me() {
@@ -12,11 +13,7 @@ export function Me() {
     const userHome: Result<UserHome> | undefined = askService(service, service.userHome, currentUser.token)
     
     if (!userHome) {
-        return (
-            <div>
-                ...loading...
-            </div>
-        )
+        return <Loading />
     }
 
     if (userHome.kind == "success") {

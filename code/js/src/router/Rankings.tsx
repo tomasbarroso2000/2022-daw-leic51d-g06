@@ -4,6 +4,7 @@ import { UserInfo } from "../domain/UserInfo"
 import { askService } from "../service/askService"
 import { ButtonFab } from "../utils/ButtonFab"
 import { service } from "./App"
+import { Loading } from "./Loading"
 
 export function Rankings() {
     const limit = 5
@@ -14,11 +15,7 @@ export function Rankings() {
     let rank = 0
 
     if (!rankings) {
-        return (
-            <div>
-                ...loading...
-            </div>
-        )
+        return <Loading />
     }
 
     if (rankings.kind == "success") {

@@ -5,6 +5,7 @@ import { GameType, GameTypes } from "../domain/GameTypes"
 import { askService, Result } from "../service/askService"
 import { paths, service } from "./App"
 import { useCurrentUser } from './Authn'
+import { Loading } from "./Loading"
 
 export function CreateGame() {
     const gameTypes: Result<GameTypes> | undefined = askService(service, service.gameTypes)
@@ -13,11 +14,7 @@ export function CreateGame() {
     const [gameId, setGameId] : [number | undefined, React.Dispatch<any>] = useState(undefined)
 
     if (!gameTypes) {
-        return (
-            <div>
-                ...loading...
-            </div>
-        )
+        return <Loading />
     }
 
     async function onPlayClick(gameType: GameType) {

@@ -4,6 +4,7 @@ import { Home } from "../domain/Home"
 import { askService, Result } from "../service/askService"
 import { paths, service } from "./App"
 import { useCurrentUser } from "./Authn"
+import { Loading } from "./Loading"
 
 function UserInfo() {
     const currentUser = useCurrentUser()
@@ -15,11 +16,7 @@ export function Home() {
     const home: Result<Home> | undefined = askService(service, service.home)
 
     if (!home) {
-        return (
-            <div>
-                ...loading...
-            </div>
-        )
+        return <Loading />
     }
 
     if (home.kind == "success") {
