@@ -4,12 +4,18 @@ import { Game } from "../domain/Game"
 import { paths } from "./App"
 
 export function FinishedGame(game: Game) {
-    const yourFleet = game.fleet.map((ship) => 
-        <li>{ship.name}</li>
-    ) 
-    const enemyFleet = game.enemySunkFleet.map((ship) => 
-        <li>{ship.name}</li> //falta colocar o resto dos barcos
-    ) 
+    const yourFleet = game.fleet.map((ship) => {
+        if(ship.destroyed)
+            return <li>{ship.name} was destroyed</li>
+        else
+            return <li>{ship.name} took {ship.nOfHits} hits</li>
+    }) 
+    const enemyFleet = game.enemySunkFleet.map((ship) => {
+        if(ship.destroyed)
+            return <li>{ship.name} was destroyed</li>
+        else
+            return <li>{ship.name} took {ship.nOfHits} hits</li>
+    }) 
     const gameStats = 
         <div>
             <h3>Game Statistics:</h3>
