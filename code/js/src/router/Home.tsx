@@ -1,18 +1,16 @@
 import * as React from "react"
+import { useCookies } from "react-cookie"
 import { Link } from "react-router-dom"
 import { Home } from "../domain/Home"
 import { askService, Result } from "../service/askService"
 import { paths, service } from "./App"
-import { useCurrentUser } from "./Authn"
+import { useCurrentUser, useSetUser } from "./Authn"
 import { Loading } from "./Loading"
 
-function UserInfo() {
-    const currentUser = useCurrentUser()
-    if(currentUser != null)
-        return <h3>{currentUser.name}</h3>
-}
-
 export function Home() {
+    const currentUser = useCurrentUser()
+    const setCurrentUser = useSetUser()
+    const [cookies, setCookie, removeCookie] = useCookies(["token"]);
     const home: Result<Home> | undefined = askService(service, service.home)
 
     if (!home) {
@@ -42,19 +40,23 @@ export function Home() {
                     
                     <div id="menu">
                         <h2 id="menu-title">Menu</h2>
-                        <ol>
-                            <li>
-                                <Link to={paths['me']}>Profile</Link>
-                            </li>
+                        <ul>
+                            {currentUser ? 
+                                <li>
+                                    <Link to={paths['user-home']}>{currentUser.name}</Link>
+                                    <button onClick={() => {setCurrentUser(undefined); removeCookie("token")}}>Sign Out</button>
+                                </li> : 
+                                <li><Link to={paths['create-token']}>Sign In</Link></li>
+                            }
                             {service.homeNavigation.map((nav) => 
                                 <li key={nav}> 
                                     <Link to={nav}>{nav.slice(1)}</Link>
                                 </li>
                             )}
                             <li>
-                                <Link to={paths['list-games']}>play</Link>
+                                <Link to={paths['games']}>play</Link>
                             </li>
-                        </ol> 
+                        </ul> 
                     </div>
                 </div>
             </div>

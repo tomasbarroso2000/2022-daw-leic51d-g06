@@ -1,14 +1,15 @@
 import * as React from "react";
 import { useState } from "react";
-import { useLocation, Navigate } from "react-router-dom";
+import { useLocation, Navigate, Link } from "react-router-dom";
 import { Field } from "siren-types";
 import { CurrentUser } from "../domain/CurrentUser";
 import { askService, Result } from "../service/askService"
-import { service } from "./App"
+import { paths, service } from "./App"
 import { useSetUser } from "./Authn"
 import { useCookies } from "react-cookie";
 import { Loading } from "./Loading";
 import { ProblemJson } from "../domain/ProblemJson";
+import { capitalize } from "../utils/capitalize";
  
 export function Login() {
     const fields: Result<Array<Field>> | undefined = askService(service, service.getCreateTokenFields)
@@ -65,10 +66,13 @@ export function Login() {
                         <fieldset disabled={isSubmitting}>
                             <form onSubmit={handleSubmit}>
                                 {fields.result.map((field: Field) => 
-                                    <input key={field.name} type={field.type} name={field.name} value={inputs[field.name] || ""} placeholder={field.name} onChange={handleChange}/>
+                                    <input key={field.name} type={field.type} name={field.name} value={inputs[field.name] || ""} placeholder={capitalize(field.name)} onChange={handleChange}/>
                                 )}
                                 <input id="create-token" type="submit" value="Login" />
                             </form>
+                            <Link to={paths["create-user"]}>
+                                <div id="btn-container"><button>Create User</button></div>
+                            </Link>
                         </fieldset>  
                     </div>
                     <div id="left-side-login">

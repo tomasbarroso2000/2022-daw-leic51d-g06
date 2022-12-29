@@ -36,9 +36,12 @@ export function Rankings() {
                         </li>
                     )}
                 </ul>
-                <div>
+                <div id="nav">
+                    <div className="arrow-left"></div>
                     <ButtonFab isDisabled={skip == 0} onClick={() => {setSkip(skip - limit)}} text={"Previous"}/>
+                    <span> | </span>
                     <ButtonFab isDisabled={!rankings.result.hasMore} onClick={() => {setSkip(skip + limit)}} text={"Next"}/>
+                    <div className="arrow-right"></div>
                 </div>
             </div>
         )

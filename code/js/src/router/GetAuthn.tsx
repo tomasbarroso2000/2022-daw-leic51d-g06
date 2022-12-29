@@ -9,7 +9,12 @@ import { Loading } from './Loading'
 
 type Authentication = "error" | "success" | undefined
 
-export function RequireAuthn({ children }: { children: React.ReactNode }): React.ReactElement {
+export type GetAuthnProps = {
+    required?: boolean,
+    children: React.ReactNode
+}
+
+export function GetAuthn(props: GetAuthnProps): React.ReactElement {
     const location = useLocation()
     const [cookies, setCookie, removeCookie] = useCookies(["token"]);
     const currentUser = useCurrentUser()
@@ -39,9 +44,9 @@ export function RequireAuthn({ children }: { children: React.ReactNode }): React
         return <Loading />
     }
 
-    if (authentication == "success") {
-        return <>{children}</>
-    } else if (authentication == "error") {
+    if (authentication == "success" || !props.required) {
+        return <>{props.children}</>
+    } else {
         if (tokenInCookie) 
             removeCookie("token")
         return <Navigate to="/login" state={{source: location.pathname}} replace={true}/>

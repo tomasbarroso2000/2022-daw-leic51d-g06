@@ -29,7 +29,7 @@ export function CreateGame() {
         if (lobbyId)
             return <Navigate to={`${paths['wait-for-game'].replace(":lobbyId", lobbyId.toString())}`}/>
         if (gameId)
-            return <Navigate to={`${paths['play-game'].replace(":gameId", gameId.toString())}`}/>
+            return <Navigate to={`${paths['game'].replace(":gameId", gameId.toString())}`}/>
         else
             return (
                 <div id="content-games-type">

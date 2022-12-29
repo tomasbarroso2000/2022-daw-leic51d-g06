@@ -1,20 +1,12 @@
 import * as React from 'react'
-import {
-    createBrowserRouter, 
-    Link, 
-    Navigate, 
-    Outlet, 
-    RouterProvider, 
-    useParams,
-    useRouteError
-} from 'react-router-dom'
+import { createBrowserRouter, Navigate, Outlet, RouterProvider } from 'react-router-dom'
 import { FakeService } from '../service/FakeService'
 import { RealService } from '../service/RealService'
 import { Home } from './Home'
 import { Rankings } from './Rankings'
 import { CreateUser } from './CreateUser'
 import { Login } from './Login'
-import { RequireAuthn } from './RequireAuthn'
+import { GetAuthn } from './GetAuthn'
 import { Me } from './Me'
 import { CreateGame } from './CreateGame'
 import { ListGames } from './ListGames'
@@ -27,11 +19,11 @@ export const paths = {
     "rankings": "/rankings",
     "create-user": "/signup",
     "create-token": "/login",
-    "me": "/me",
-    "create-game": "/games/new",
+    "user-home": "/me",
+    "game-types": "/games/new",
     "wait-for-game": "/games/new/:lobbyId",
-    "list-games": "/games/list",
-    "play-game": "/games/play/:gameId"
+    "games": "/games/list",
+    "game": "/games/play/:gameId"
 }
 
 const router = createBrowserRouter([
@@ -41,7 +33,7 @@ const router = createBrowserRouter([
         "children": [
             {
                 "path": paths['home'],
-                "element": <Home />
+                "element": <GetAuthn><Home /></GetAuthn>
             },
             {
                 "path": paths['rankings'],
@@ -56,24 +48,24 @@ const router = createBrowserRouter([
                 "element": <Login />
             },
             {
-                "path": paths['create-game'],
-                "element": <RequireAuthn><CreateGame /></RequireAuthn>
+                "path": paths['game-types'],
+                "element": <GetAuthn required={false}><CreateGame /></GetAuthn>
             },
             {
                 "path": paths['wait-for-game'],
-                "element": <RequireAuthn><WaitForGame /></RequireAuthn>
+                "element": <GetAuthn required><WaitForGame /></GetAuthn>
             },
             {
-                "path": paths['me'],
-                "element": <RequireAuthn><Me /></RequireAuthn>
+                "path": paths['user-home'],
+                "element": <GetAuthn required><Me /></GetAuthn>
             },
             {
-                "path": paths['list-games'],
-                "element": <RequireAuthn><ListGames /></RequireAuthn>
+                "path": paths['games'],
+                "element": <GetAuthn required><ListGames /></GetAuthn>
             },
             {
-                "path": paths['play-game'],
-                "element": <RequireAuthn><PlayGame /></RequireAuthn>
+                "path": paths['game'],
+                "element": <GetAuthn required><PlayGame /></GetAuthn>
             },
             {
                 "path": "*",

@@ -10,7 +10,7 @@ import { capitalize } from "../utils/capitalize"
 import { contains } from "../utils/contains"
 import { remove } from "../utils/remove"
 import { service } from "./App"
-import { SHIP_COLOR, INNER_COLOR, SMALL_BOARD_SQUARE_CONST, BIG_BOARD_SQUARE_CONST, DESTROYED_SHIP_COLOR, AROUND_DESTROYED_COLOR, SELECTED_COLOR } from "./PlayGame"
+import { SHIP_COLOR, INNER_COLOR, SMALL_BOARD_SQUARE_CONST, BIG_BOARD_SQUARE_CONST, DESTROYED_SHIP_COLOR, AROUND_DESTROYED_COLOR, SELECTED_COLOR } from "../utils/board"
 
 function occupiedSquareStyle(squareSize: number): React.CSSProperties {
     return {
@@ -47,7 +47,7 @@ export function Shooting(
         <div id="layout-content">
             <div style={{float: "left"}}>
                 <div id="layout-status">
-                    <h1>Game type: {capitalize(game.type.name)}</h1>
+                    <h1>Game Type: {capitalize(game.type.name)}</h1>
                     <h2>{`${currentUser.name} vs. ${game.opponent.name}`}</h2>
                     <p>Phase: {game.playing ? "Shooting" : "Waiting"}</p>
                 </div>

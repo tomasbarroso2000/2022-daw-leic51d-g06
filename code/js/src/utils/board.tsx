@@ -1,12 +1,30 @@
 import * as React from "react"
 import { Square } from "../domain/Square"
 
+export const INNER_COLOR = "#008DD5"
+export const DESTROYED_SHIP_COLOR = "#000000"
+export const AROUND_DESTROYED_COLOR = "#FF0B5394"
+export const SHIP_COLOR = "#AED4E6"
+export const SELECTED_COLOR = "#FF0000"
+
+export const SMALL_BOARD_SQUARE_CONST = 250
+export const BIG_BOARD_SQUARE_CONST = 400
+
+const SQUARE_TEXT_CONST = 1.5
+
+function squareTextStyle(squareSize): React.CSSProperties {
+    return {fontSize: `${squareSize / SQUARE_TEXT_CONST}px`}
+}
+
 function borderDivStyle(squareSize: number): React.CSSProperties {
     return {
         width: `${squareSize}px`, 
         height: `${squareSize}px`,
         backgroundColor: "#4A6FA5",
-        color: "white"
+        color: "white",
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
     }
 }
 
@@ -20,7 +38,7 @@ function ColumnNumbersView(boardSize: number, squareSize: number): Array<JSX.Ele
     const squares: Array<JSX.Element> = []
     squares.push(<div key={0} style={borderDivStyle(squareSize)}></div>)
     for(let column = 1; column <= boardSize; column++) {
-        squares.push(<div key={column} className="board-header" style={borderDivStyle(squareSize)}><p>{column}</p></div>) 
+        squares.push(<div key={column} style={borderDivStyle(squareSize)}><p style={squareTextStyle(squareSize)}>{column}</p></div>) 
     }
     return squares
 }
@@ -34,7 +52,7 @@ function Squares(
     const firstSquare: Square = {row: "a", column: 1}
     for (let rowNumber: number = firstSquare.row.charCodeAt(0) - 97 + 1; rowNumber <= boardSize; rowNumber++) {
         const row = String.fromCharCode(rowNumber - 1 + 97)
-        squares.push(<div key={`{row: ${row}, column${0}}`} className="board-header" style={borderDivStyle(squareSize)}><p>{row}</p></div>)
+        squares.push(<div key={`{row: ${row}, column${0}}`} style={borderDivStyle(squareSize)}><p style={squareTextStyle(squareSize)}>{row}</p></div>)
         for (let column: number = firstSquare.column; column <= boardSize; column++) {
             const square: Square = {row: row, column: column}
             const isLast = 

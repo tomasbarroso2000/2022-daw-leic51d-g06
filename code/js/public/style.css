@@ -328,12 +328,12 @@ div#left-side-content div#menu h2#menu-title {
     color: #f7a400;
 }
 
-div#left-side-content div#menu ol {
+div#left-side-content div#menu ul {
     font-size: 20px;
     transition: .4s;
 }
 
-div#left-side-content div#menu ol li:hover {
+div#left-side-content div#menu ul li:hover {
     color: #f7a400;
     font-size: 24px;
     transition: .4s;
@@ -443,8 +443,8 @@ div#content-rankings li hr {
   }
 
   #board-content {
-   width: fit-content;
-   margin: 20px auto;
+    width: fit-content;
+    margin: 20px auto;
   }
 
   .ship {
@@ -474,7 +474,7 @@ div#content-rankings li hr {
     display: inline-block;
   }
 
-  div#content div#user {
+  div#user {
     width: fit-content;
     height: fit-content;
     top: 0;
@@ -781,10 +781,6 @@ div#content-rankings li hr {
     }
   }
 
-  .board-header p {
-    padding-top: 10px;
-  }
-
   #layout-status h1{
     text-align: center;
   }
@@ -939,10 +935,6 @@ div#content-rankings li hr {
 
   div#game-over h1 {
     padding-bottom: 10px;
-  }
-
-  #self-board-container .board-header p {
-    padding-top: 0px;
   }
 
   #enemy-board-container p.text {

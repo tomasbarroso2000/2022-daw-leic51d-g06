@@ -9,6 +9,7 @@ import { useSetUser } from "./Authn"
 import { Cookies, useCookies } from "react-cookie"; // npm install react-cookie
 import { Loading } from "./Loading";
 import { ProblemJson } from "../domain/ProblemJson";
+import { capitalize } from "../utils/capitalize";
 
 export function CreateUser() {
     const fields: Result<Array<Field>> | undefined = askService(service, service.getCreateUserFields)
@@ -68,7 +69,7 @@ export function CreateUser() {
                         <fieldset disabled={isSubmitting}>
                             <form onSubmit={handleSubmit}>
                                 {fields.result.map((field: Field) => 
-                                    <input key={field.name} type={field.type} name={field.name} value={inputs[field.name] || ""} placeholder={field.name} onChange={handleChange} />
+                                    <input key={field.name} type={field.type} name={field.name} value={inputs[field.name] || ""} placeholder={capitalize(field.name)} onChange={handleChange} />
                                 )}
                                 <input id="create-user" type="submit" value="Sign Up" />
                             </form>

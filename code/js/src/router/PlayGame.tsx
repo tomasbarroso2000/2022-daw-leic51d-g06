@@ -29,7 +29,6 @@ export function PlayGame() {
             .then((newGameInfo: Game) => {
                 console.log(newGameInfo)
                 if (gameInfo && gameInfo.state == "layout_definition" && newGameInfo.state == "completed") {
-                    console.log("go back dud")
                     if (!goBack)
                         setGoBack(true)
                 } else {
@@ -38,7 +37,6 @@ export function PlayGame() {
                 
             })
             .catch(() => {
-                console.log("catch")
                 if (!goBack)
                     setGoBack(true)
             })
@@ -71,7 +69,7 @@ export function PlayGame() {
     }, [gameInfo])
 
     if (goBack) {
-        return <Navigate to={paths["list-games"]}></Navigate>
+        return <Navigate to={paths["games"]}></Navigate>
     }
 
     if(!gameInfo) {
@@ -93,14 +91,5 @@ export function PlayGame() {
         }
     }
 }
-
-export const INNER_COLOR = "#008DD5"
-export const DESTROYED_SHIP_COLOR = "#000000"
-export const AROUND_DESTROYED_COLOR = "#FF0B5394"
-export const SHIP_COLOR = "#AED4E6"
-export const SELECTED_COLOR = "#FF0000"
-
-export const SMALL_BOARD_SQUARE_CONST = 250
-export const BIG_BOARD_SQUARE_CONST = 400
 
 

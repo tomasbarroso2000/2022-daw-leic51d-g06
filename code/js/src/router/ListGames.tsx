@@ -34,7 +34,7 @@ function Playing(game: Game) {
             <h3>Game type: {capitalize(game.type.name)}</h3>
             <p>Game state: {getState(game)}</p>
             {result}
-            <button><Link to={paths['play-game'].replace(":gameId", game.id.toString())}>Enter Game</Link></button>
+            <button><Link to={paths['game'].replace(":gameId", game.id.toString())}>Enter Game</Link></button>
         </div>
     )
 }
@@ -68,7 +68,7 @@ export function ListGames() {
                     </div>
                     {games.result.games.map((game: Game) => Playing(game))}
                     <div>
-                        <Link to={paths['create-game']}><button id="game-new-btn">New Game</button></Link>
+                        <Link to={paths['game-types']}><button id="game-new-btn">New Game</button></Link>
                     </div>
                 </div>
             </div>

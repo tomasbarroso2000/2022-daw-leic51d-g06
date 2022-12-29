@@ -13,7 +13,7 @@ import { contains } from "../utils/contains"
 import { deepEqual } from "../utils/deepEqual"
 import { replace } from "../utils/replace"
 import { service } from "./App"
-import { BIG_BOARD_SQUARE_CONST, INNER_COLOR, SHIP_COLOR } from "./PlayGame"
+import { BIG_BOARD_SQUARE_CONST, INNER_COLOR, SHIP_COLOR } from "../utils/board"
 
 
 function handleDragStart(event: React.DragEvent<HTMLDivElement>) {
@@ -216,7 +216,7 @@ export function Layout(
                         <div id="layout-status">
                             <h1>Define Your Layout</h1>
                             <h2>{`${currentUser.name} vs. ${game.opponent.name}`}</h2>
-                            <p>Grab ships by the first square and press the rotate button to rotate them</p>
+                            <p>Grab ships by the first square and press it to rotate them</p>
                         </div>
                         <div id="timer">Time left: <p>{timer}</p></div>
                         <div id="btn-container">

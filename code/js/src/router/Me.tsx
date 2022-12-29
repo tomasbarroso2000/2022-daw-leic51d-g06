@@ -6,6 +6,14 @@ import { paths, service } from "./App"
 import { useCurrentUser } from './Authn'
 import { Loading } from "./Loading"
 
+const meDivStyle: React.CSSProperties = {
+    display: "flex",
+    alignItems: "center",
+    height: "100vh",
+    textAlign: "center",
+    justifyContent: "center"
+}
+
 export function Me() {
     const currentUser = useCurrentUser()
 
@@ -17,7 +25,7 @@ export function Me() {
 
     if (userHome.kind == "success") {
         return (
-            <div id="content">
+            <div style={meDivStyle}>
                 <div id="user">
                     <span></span>
                     <h1>Hello There! <br /> {`Welcome back, ${userHome.result.name}.`}</h1>
@@ -27,7 +35,7 @@ export function Me() {
                     </div>
                     <div id="footer">
                         <Link to={paths['home']} className="nav-user">Home</Link>
-                        <Link to={paths['list-games']} className="nav-user">Play game</Link>
+                        <Link to={paths['games']} className="nav-user">Play game</Link>
                     </div>
                 </div>
             </div>
