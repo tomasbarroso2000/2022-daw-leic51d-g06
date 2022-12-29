@@ -12,7 +12,7 @@ export const BIG_BOARD_SQUARE_CONST = 400
 
 const SQUARE_TEXT_CONST = 1.5
 
-function squareTextStyle(squareSize): React.CSSProperties {
+export function squareTextStyle(squareSize: number): React.CSSProperties {
     return {fontSize: `${squareSize / SQUARE_TEXT_CONST}px`}
 }
 
