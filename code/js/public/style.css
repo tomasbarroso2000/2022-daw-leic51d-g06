@@ -669,7 +669,7 @@ div#content-rankings li hr {
     margin-left: -25px;
   }
 
-  div#lobby {
+  div#wait {
     overflow-y: hidden;
     background-color: #282c34;
     width: 500px;
@@ -685,12 +685,12 @@ div#content-rankings li hr {
     transform: translateY(-50%);
   }
 
-  div#lobby h1 {
+  div#wait h1 {
     margin: 20px;
     color: #aed4e6;
   }
 
-  div#lobby p {
+  div#wait p {
     color: white;
     font-size: 18px;
     margin-bottom: 20px;
@@ -789,10 +789,162 @@ div#content-rankings li hr {
     text-align: center;
   }
 
+  #layout-content {
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-image: url("images/stacked-waves.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: absolute;
+  }
+
   #layout-content #layout-status {
-    width: fit-content;
+    width: 200px;
     height: fit-content;
     padding: 25px;
     margin: 20px;
     box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+    border-radius: 4px;
+    background-color: #282c34;
+    color: white;
+  }
+
+  #layout-content #timer {
+    width: 200px;
+    height: fit-content;
+    padding: 25px;
+    margin: 20px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+    text-align: center;
+    border-radius: 4px;
+    background-color: rgb(74, 111, 165);
+    color: white;
+  }
+
+  div#btn-container {
+    text-align: center;
+    width: 200px;
+    margin-left: 20px;
+    padding: 25px;
+  }
+
+  div#btn-container button {
+    width: 100px;
+    padding: 10px;
+    border: 1px solid #282c34;
+    margin: auto;
+    background-color: transparent;
+    font-weight: bold;
+    transition: .4s;
+  }
+
+  div#board-container {
+    text-align: center;
+    float: left;
+    padding-right: 50px;
+    margin-left: 50px;
+  }
+
+  div#ships-layout-container {
+    display: inline-block;
+    vertical-align: middle;
+    width: fit-content;
+    text-align: left;
+    padding: 25px;
+  }
+
+  div#btn-container button:hover {
+    background-color: rgba(40, 40, 40, 0.201);
+    transition: .4s;
+    cursor: pointer;
+  }
+
+  #timer p {
+    color: rgb(229, 48, 48);
+  }
+
+  .reset-btn {
+    background-color: rgb(248, 121, 121);
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    transition: .4s;
+  }
+
+  .reset-btn:hover {
+    background-color: rgb(229, 48, 48);
+    cursor: pointer;
+    transition: .4s;
+  }
+
+  div#game-over {
+    width: fit-content;
+    padding: 20px;
+    margin: 0 auto;
+    border-radius: 4px;
+    background-color: #282c34;
+    color: white;
+    top: 50%;
+    transform: translateY(50%);
+    text-align: center;
+  }
+
+  div#game-over div#game-end-stats {
+    text-align: justify;
+  }
+
+  div#win-bg {
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-image: url("images/fireworks.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: absolute;
+  }
+
+  div#lose-bg {
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-image: url("images/shipwreck.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: absolute;
+  }
+
+  div#game-over button {
+    margin-top: 15px;
+    margin-bottom: 5px;
+    background-color: white;
+    color: black;
+    padding: 5px 10px;
+    border: none;
+    font-weight: bold;
+    border-radius: 4px;
+    transition: .4s;
+  }
+
+  div#game-over button:hover {
+    cursor: pointer;
+    background-color: #2196F3;
+    color: white;
+    transition: .4s;
+  }
+
+  div#game-over h1 {
+    padding-bottom: 10px;
+  }
+
+  #self-board-container .board-header p {
+    padding-top: 0px;
+  }
+
+  #enemy-board-container p.text {
+    font-size: 28px;
   }

@@ -27,7 +27,7 @@ export function WaitForGame() {
         return <Navigate to={`${paths['play-game'].replace(":gameId", gameId.toString())}`} replace/>
 
     return (
-        <div id="lobby">
+        <div id="wait">
             <h1>Waiting for game</h1>
             <div className="lds-default"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
             <p>Remember always have fun!</p>

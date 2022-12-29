@@ -146,7 +146,7 @@ function draggableShip(
     }
 
     return (
-        <div key={layoutShip.type.name} style={{marginBottom: "50px", marginRight: "200px"}}>
+        <div key={layoutShip.type.name} style={{marginBottom: "50px"}}>
             <div>{capitalize(layoutShip.type.name)}</div>
             <div style={{display: "flex"}}>
                 <div
@@ -161,7 +161,7 @@ function draggableShip(
                     {layoutShip.orientation == "horizontal" ? "—" : "|"}
                 </div>
                 <div style={layoutShipPropertiesStyle(squareSize)}>
-                    <button 
+                    <button className="reset-btn"
                         style={layoutShip.position ? undefined : {display: "none"}} 
                         onClick={() => {
                             setLayoutShips(
@@ -171,7 +171,7 @@ function draggableShip(
                                     {type: layoutShip.type, position: undefined, orientation: layoutShip.orientation}
                                 )
                             )
-                    }}>{"<"}
+                    }}>{"Reset"}
                     </button>
                 
                 </div>
@@ -212,14 +212,28 @@ export function Layout(
     if (game.fleet.length == 0)
         return (
                 <div id="layout-content">
-                    <div id="layout-status">
-                        <h1>Define Your Layout</h1>
-                        <h2>{`${currentUser.name} vs. ${game.opponent.name}`}</h2>
-                        <p>Grab ships by the first square and press the rotate button to rotate them</p>
-                        <p>Time left: {timer}</p>
+                    <div style={{float: "left"}}>
+                        <div id="layout-status">
+                            <h1>Define Your Layout</h1>
+                            <h2>{`${currentUser.name} vs. ${game.opponent.name}`}</h2>
+                            <p>Grab ships by the first square and press the rotate button to rotate them</p>
+                        </div>
+                        <div id="timer">Time left: <p>{timer}</p></div>
+                        <div id="btn-container">
+                            <ButtonFab 
+                                isDisabled={loading}
+                                onClick={() => {
+                                    setLoading(true)
+                                    service.defineLayout(currentUser.token, game.id, layoutShips).then((game) => {
+                                        setGameInfo(game)
+                                        setLoading(false)
+                                    })
+                                }}
+                                text={"Submit Layout"}/>
+                        </div>
                     </div>
-                    <div style={{textAlign: "center"}}>
-                        <div style={{display: "inline-block", verticalAlign: "middle"}}>
+                    <div id="board-container">
+                        <div id="ships-layout-container">
                             {layoutShips.map((layoutShip) => draggableShip(game.type.boardSize, squareSize, layoutShip, layoutShips, setLayoutShips))}
                         </div>
                         <div style={{display: "inline-block", verticalAlign: "middle"}}>
@@ -236,22 +250,14 @@ export function Layout(
                             )}
                         </div>
                     </div>
-                    <div>
-                        <ButtonFab 
-                            isDisabled={loading}
-                            onClick={() => {
-                                setLoading(true)
-                                service.defineLayout(currentUser.token, game.id, layoutShips).then((game) => {
-                                    setGameInfo(game)
-                                    setLoading(false)
-                                })
-                            }}
-                            text={"Submit Layout"}/>
-                    </div>
                 </div>
         )
     else
         return (
-            <div>Waiting for {game.opponent.name}...</div>
+            <div id="wait">
+                <h1>Waiting for {game.opponent.name}...</h1>
+                <div className="lds-default"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+                <p>Almost there!</p>
+            </div>
         )
 }

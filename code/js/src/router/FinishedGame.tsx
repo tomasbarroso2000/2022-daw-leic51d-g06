@@ -31,28 +31,31 @@ export function FinishedGame(game: Game) {
         </div>
     if (game.playing)    
         return (
-            <div>
-                <div>
-                    YOU WIN!
-                    {gameStats}
-                </div>
-                <div>
-                    <Link to={paths["home"]}>Continue</Link>
+            <div id="win-bg">
+                <div id="game-over">
+                    <h1>YOU WIN!</h1>
+                    <div id="game-end-stats">
+                        {gameStats}
+                    </div>
+                    <div>
+                        <Link to={paths["home"]}><button>Continue</button></Link>
+                    </div>
                 </div>
             </div>
 
         )
     else 
     return (
-        <div>
-            <div>
-                YOU LOST!
-                {gameStats}
-            </div>
-            <div>
-                <Link to={paths["home"]}>Continue</Link>
+        <div id="lose-bg">
+            <div id="game-over">
+                <h1>YOU LOST!</h1>
+                <div id="game-end-stats">
+                    {gameStats}
+                </div>
+                <div>
+                    <Link to={paths["home"]}><button>Continue</button></Link>
+                </div>
             </div>
         </div>
-
     )
     }
