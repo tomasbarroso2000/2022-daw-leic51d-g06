@@ -50,7 +50,10 @@ export function Shooting(
     currentUser: CurrentUser, 
     timer: number, 
     selectedSquares: Array<Square>, 
-    setSelectedSquares: Dispatch<React.SetStateAction<Square[]>>
+    loading: boolean,
+    setSelectedSquares: Dispatch<React.SetStateAction<Square[]>>,
+    setGameInfo: Dispatch<Game>,
+    setLoading: Dispatch<boolean>
 ) {
     return (
         <div id="layout-content">
@@ -62,8 +65,27 @@ export function Shooting(
                 </div>
                 <div id="timer">Time left: <p>{timer}</p></div>
                 <div id="btn-container">
-                    <ButtonFab isDisabled={!game.playing} onClick={() => {service.sendHits(currentUser.token, game.id, selectedSquares).then(() => setSelectedSquares([]))}} text={"Shoot"}/>
-                    <ButtonFab isDisabled={!game.playing} onClick={() => {service.forfeit(currentUser.token, game.id)}} text={"Forfeit"}/>
+                    <ButtonFab
+                        isDisabled={!game.playing || loading} 
+                        onClick={() => {
+                            setLoading(true)
+                            service.sendHits(currentUser.token, game.id, selectedSquares).then((game) =>{
+                                setSelectedSquares([])
+                                setGameInfo(game)
+                                setLoading(false)
+                            })
+                        }} 
+                        text={"Shoot"}/>
+                    <ButtonFab 
+                        isDisabled={!game.playing || loading} 
+                        onClick={() => {
+                            setLoading(true)
+                            service.forfeit(currentUser.token, game.id).then((game) => {
+                                setGameInfo(game)
+                                setLoading(false)
+                            })
+                        }} 
+                        text={"Forfeit"}/>
                 </div>
             </div>
             <div className="board-content" id="self-board-container" style={{marginTop: "100px"}}>

@@ -83,7 +83,7 @@ export function PlayGame() {
         }
         case "shooting": {
             console.log("shooting")
-            return Shooting(gameInfo, currentUser, timer, selectedSquares, setSelectedSquares)
+            return Shooting(gameInfo, currentUser, timer, selectedSquares, loading, setSelectedSquares, setGameInfo, setLoading)
         }
         case "completed": {
             console.log("completed")
