@@ -69,7 +69,7 @@ export function CreateUser() {
                         <fieldset disabled={isSubmitting}>
                             <form onSubmit={handleSubmit}>
                                 {fields.result.map((field: Field) => 
-                                    <input key={field.name} type={field.type} name={field.name} value={inputs[field.name] || ""} placeholder={capitalize(field.name)} onChange={handleChange} />
+                                    <input required key={field.name} type={field.type} name={field.name} value={inputs[field.name] || ""} placeholder={capitalize(field.name)} onChange={handleChange} />
                                 )}
                                 <input id="create-user" type="submit" value="Sign Up" />
                             </form>

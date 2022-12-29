@@ -58,10 +58,7 @@ export class RealService implements Service {
         const jsonObj = JSON.parse(res)
 
         jsonObj.links.forEach((link: EmbeddedLink) => {
-            const path = paths[link.rel[0]]
-            if (path) {
-                this.homeNavigation.push(path)
-            }
+            this.homeNavigation.push(link.rel[0])
         })
 
         this.userHomeLink = jsonObj.links.find((link: EmbeddedLink) => link.rel[0] == "user-home")
@@ -69,10 +66,7 @@ export class RealService implements Service {
         this.gamesLink = jsonObj.links.find((link: EmbeddedLink) => link.rel[0] == "games")
 
         jsonObj.actions.forEach((action: Action) => {
-            const path = paths[action.name]
-            if (path) {
-                this.homeNavigation.push(path)
-            }
+            this.homeNavigation.push(action.name)
         })
 
         this.createUserAction = jsonObj.actions.find((action: Action) => action.name == "create-user")
@@ -117,17 +111,11 @@ export class RealService implements Service {
         const jsonObj = JSON.parse(res)
 
         jsonObj.links.forEach((link: EmbeddedLink) => {
-            const path = paths[link.rel[0]]
-            if (path) {
-                this.userHomeNavigation.push(path)
-            }
+            this.userHomeNavigation.push(link.rel[0])
         })
 
         jsonObj.actions.forEach((action: Action) => {
-            const path = paths[action.name]
-            if (path) {
-                this.userHomeNavigation.push(path)
-            }
+            this.userHomeNavigation.push(action.name)
         })
 
         this.enterLobbyAction = jsonObj.actions.find((action: Action) => action.name == "enter-lobby")
@@ -168,10 +156,7 @@ export class RealService implements Service {
         const jsonObj = JSON.parse(res)
 
         jsonObj.links.forEach((link: EmbeddedLink) => {
-            const path = paths[link.rel[0]]
-            if (path) {
-                this.rankingsNavigation.push(path)
-            }
+            this.rankingsNavigation.push(link.rel[0])
         })
 
         return {
@@ -246,13 +231,10 @@ export class RealService implements Service {
         }
     }
 
-    // needs to be dynamic
     createToken = async function (email: string, password: string): Promise<CreateToken | undefined> {
         const path = await this.ensureCreateTokenAction()
         if (!path)
             return undefined
-
-        this.createTokenNavigation = []
 
         const res = await doFetch(baseURL + path, {
             method: 'POST',
@@ -271,7 +253,6 @@ export class RealService implements Service {
 
         const jsonObj = JSON.parse(res)
 
-        //user creation actions and links
         return {
             token: jsonObj.properties.token
         }
@@ -333,9 +314,6 @@ export class RealService implements Service {
 
         const jsonObj = JSON.parse(res)
 
-        console.log("jsonObj")
-        console.log(jsonObj)
-
         return {
             waitingForGame: jsonObj.properties["waiting-for-game"],
             lobbyOrGameId: jsonObj.properties["lobby-or-game-id"]
@@ -379,8 +357,6 @@ export class RealService implements Service {
 
         if (!path)
             return undefined
-
-        console.log("gamesLink: " + path)
         
         this.gamesNavigation = []
 
@@ -411,7 +387,7 @@ export class RealService implements Service {
     }
 
     gameInfo = async function (token: string, gameId: number): Promise<Game | undefined> {
-        let path = `/api/games/info/${gameId}` // improve
+        let path = `/api/games/info/${gameId}`
 
         if (!path)
             return undefined

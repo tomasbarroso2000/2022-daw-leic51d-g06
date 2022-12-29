@@ -50,7 +50,7 @@ export class FakeService implements Service {
         )
     }
 
-    homeNavigation = [paths["rankings"], paths["create-user"], paths["create-token"], paths["list-games"]]
+    homeNavigation = ["rankings", "create-user", "create-token", "list-games"]
 
     userHome = function (token: string): Promise<UserHome> {
         return Promise.resolve(

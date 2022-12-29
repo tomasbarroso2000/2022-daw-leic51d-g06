@@ -40,23 +40,15 @@ export function Home() {
                     
                     <div id="menu">
                         <h2 id="menu-title">Menu</h2>
-                        <ul>
+                        {currentUser ? <button onClick={() => {setCurrentUser(undefined); removeCookie("token")}}>Sign Out</button> : undefined}
+                        <div id="menu-nav">
                             {currentUser ? 
-                                <li>
-                                    <Link to={paths['user-home']}>{currentUser.name}</Link>
-                                    <button onClick={() => {setCurrentUser(undefined); removeCookie("token")}}>Sign Out</button>
-                                </li> : 
-                                <li><Link to={paths['create-token']}>Sign In</Link></li>
+                                (service.homeNavigation.includes("user-home") ? <div><Link to={paths['user-home']}>{currentUser.name}</Link></div> : undefined) : 
+                                (service.homeNavigation.includes("create-token") ? <div><Link to={paths['create-token']}>Login</Link></div> : undefined)
                             }
-                            {service.homeNavigation.map((nav) => 
-                                <li key={nav}> 
-                                    <Link to={nav}>{nav.slice(1)}</Link>
-                                </li>
-                            )}
-                            <li>
-                                <Link to={paths['games']}>play</Link>
-                            </li>
-                        </ul> 
+                            {service.homeNavigation.includes("rankings") ? <div key={"rankings"}><Link to={paths["rankings"]}>Rankings</Link></div> : undefined}
+                            {service.homeNavigation.includes("games") ? <div key={"games"}><Link to={paths["games"]}>Play</Link></div> : undefined}
+                        </div> 
                     </div>
                 </div>
             </div>

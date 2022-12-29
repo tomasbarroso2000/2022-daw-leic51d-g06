@@ -3,6 +3,7 @@ import { useState } from "react"
 import { Link, Navigate } from "react-router-dom"
 import { GameType, GameTypes } from "../domain/GameTypes"
 import { askService, Result } from "../service/askService"
+import { capitalize } from "../utils/capitalize"
 import { paths, service } from "./App"
 import { useCurrentUser } from './Authn'
 import { Loading } from "./Loading"
@@ -35,24 +36,27 @@ export function CreateGame() {
                 <div id="content-games-type">
                     {gameTypes.result.gameTypes.map((type: GameType) => 
                             <div className="game-type" key={type.name}>
-                                <h3>{type.name}</h3>
+                                <h3>{capitalize(type.name)}</h3>
                                 <hr />
                                 <ul>
-                                    <li>Board size: {type.boardSize}</li>
-                                    <li>Shots per round: {type.shotsPerRound}</li>
-                                    <li>Layout definition time: {type.layoutDefTime}</li>
-                                    <li>Shooting time: {type.shootingTime}</li>
-                                    <h4>Ships in Game</h4>
-                                    {type.fleet.map(ship => 
-                                        <ul key={ship.gameType + "+" + ship.name}>
-                                            <li> Name: {ship.name}</li>
-                                            <li> Size: {ship.size}</li>
-                                        </ul>   
-                                    )}
-                                    
+                                    <li>Board: {type.boardSize}x{type.boardSize}</li>
+                                    <li>Shots: {type.shotsPerRound}</li>
+                                    <li>Layout time: {type.layoutDefTime} seconds</li>
+                                    <li>Shooting time: {type.shootingTime} seconds</li>
+                                    <div id="fleet-section">
+                                        <h4 id="fleet-show">Fleet size: {type.fleet.length}</h4>
+                                        <div id="fleet">
+                                            {type.fleet.map(ship => 
+                                                <ul key={ship.gameType + "+" + ship.name}>
+                                                    <li><b>{capitalize(ship.name)}</b></li>
+                                                    <li>Size: {ship.size}</li>
+                                                </ul>   
+                                            )}
+                                        </div>
+                                    </div>
                                 </ul>
                                 <div className="center-align-content">
-                                    <button onClick={() => {onPlayClick(type)}}>play</button>
+                                    <button onClick={() => {onPlayClick(type)}}>Start</button>
                                 </div>
                             </div>
                     )}
