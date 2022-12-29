@@ -26,7 +26,7 @@ In order to test the code that depends on the API responses without actually nee
 
 #### GetAuthn
 
-GetAuthn is a React element that verifies authentication when loading a page. This element uses the token stored in the LoggedInContext if there is one or the one stored in the cookies. The required attribute can be used to declare if a page requires authentication or not. If the page requires authentication, the user is redirected to the Login page in abscence of one.
+GetAuthn is a React element that verifies authentication when loading a page. This element uses the token stored in the LoggedInContext if there is one or the one stored in the cookies. The required attribute can be used to declare if a page requires authentication or not. If the page requires authentication, the user is redirected to the Login page in the abscence of one.
 
 #### Home
 
@@ -38,7 +38,7 @@ The Login page allows the user to login and start playing. If the user doesn't y
 
 #### CreateUser
 
-The CreateUser page allows the creation of a new user. The new user must supply a username, an email address that is not yet used and a password that is at least 4 characters long and has at least 1 lowercase letter, 1 uppercase letter, 1 number and 1 special character.
+The CreateUser page allows the creation of a new user. The new user must supply a username, an email address that is not yet used and a password that is at least 4 characters long and has at least 1 lowercase letter, 1 uppercase letter and 1 number.
 
 #### Rankings
 
@@ -64,7 +64,7 @@ The PlayGame page is where the actual game is played. This page includes all the
 
 Biggest challenges we faced while developing the client application:
 
-- Because the Siren Hypermedia is a completelly new technology for us, it was really challenging to figure out the best way to interpret the Siren API responses and to establish the connections between each entity. Although a good navigation in the client application was achieved, our use and understanding of the Siren technology is still far from perfect;
+- Because the Siren Hypermedia is a completely new technology for us, it was really challenging to figure out the best way to interpret the Siren API responses and to establish the connections between each entity. Although a good navigation in the client application was achieved, our use and understanding of the Siren technology is still far from perfect;
 - Most of the styling code is in a CSS (Cascading Style Sheets) file but we also used the React framework to define the styling of the HTML elements which might be an organization problem;
 - Building the drag-and-drop system was challenging since we never had to something smiliar before. We achieved a working system but it has some limitations and might not be very intuitive to the user. Because of this fact, we decided to include some instructions in the layout definition page so the user can better understand how to proceed;
 - Understanding how hooks work in React and managing state with hooks brought a lot of challenges our way since we had to learn a lot of rules that need to be followed when using this technology.
