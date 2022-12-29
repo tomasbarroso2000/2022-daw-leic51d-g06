@@ -186,6 +186,32 @@ div#login div#right-side-login {
     float: right;
 }
 
+div#right-side-login div#create-user-btn {
+  float: right;
+  margin-right: 168px;
+  margin-top: -107px;
+}
+
+div#create-user-btn button{
+    padding: 10px 15px;
+    color: #282c34;
+    margin: auto;
+    background-color: #aed4e6;
+    font-weight: bold;
+    font-size: 13px;
+    transition: .4s;
+    cursor: pointer;
+    position: absolute;
+    border-radius: 2px;
+    border: none;
+}
+
+div#create-user-btn button:hover {
+  transition: .4s;
+  cursor: pointer;
+  background-color: white;
+}
+
 div#right-side-login h1 {
     color: white;
 }
@@ -238,13 +264,14 @@ div#content form input[type="text"], input[type="email"], input[type="password"]
 }
 
 div#content form input[type="submit"] {
-    display: block;
+    display: inline-block;
     margin: 20px auto;
     text-align: center;
     padding: 10px 25px;
     background-color: #282c34;
     color: white;
     transition: .4s;
+    margin-left: 65px
 }
 
 div#content form input[type="submit"]:hover {

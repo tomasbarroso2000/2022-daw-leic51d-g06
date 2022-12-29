@@ -71,7 +71,9 @@ export function Login() {
                                 <input id="create-token" type="submit" value="Login" />
                             </form>
                             <Link to={paths["create-user"]}>
-                                <div id="btn-container"><button>Create User</button></div>
+                                <div id="create-user-btn">
+                                    <button>Create User</button>
+                                </div>
                             </Link>
                         </fieldset>  
                     </div>
