@@ -57,13 +57,13 @@ class HomeController(private val services: GamesServices) {
                     link(Uris.Users.home(), Rels.USER_HOME)
                     link(Uris.Users.rankings(), Rels.RANKINGS)
                     link(Uris.Games.games(), Rels.GAMES)
-                    clazz("HomeOutputModel")
                     entity(
                         value = NumberOfPlayedGamesOutputModel(services.getNumberOfPlayedGames()),
                         rel = Rels.NR_OF_TOTAL_GAMES
                     ) {
                         link(Uris.Games.nrOfGames(), Rels.SELF)
                     }
+                    clazz("HomeOutputModel")
                 }
             )
     }

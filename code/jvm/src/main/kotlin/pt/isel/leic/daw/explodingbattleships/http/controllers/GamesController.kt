@@ -21,11 +21,13 @@ import pt.isel.leic.daw.explodingbattleships.http.models.input.ForfeitInputModel
 import pt.isel.leic.daw.explodingbattleships.http.models.input.HitsInputModel
 import pt.isel.leic.daw.explodingbattleships.http.models.input.LayoutInputModel
 import pt.isel.leic.daw.explodingbattleships.http.models.output.FleetStateOutputModel
+import pt.isel.leic.daw.explodingbattleships.http.models.output.GameOutputModel
 import pt.isel.leic.daw.explodingbattleships.http.models.output.GameStateOutputModel
 import pt.isel.leic.daw.explodingbattleships.http.models.output.GameTypesOutputModel
 import pt.isel.leic.daw.explodingbattleships.http.models.output.GamesOutputModel
 import pt.isel.leic.daw.explodingbattleships.http.models.output.NumberOfPlayedGamesOutputModel
 import pt.isel.leic.daw.explodingbattleships.http.toGameOutputModel
+import pt.isel.leic.daw.explodingbattleships.infra.SirenBuilderScope
 import pt.isel.leic.daw.explodingbattleships.infra.siren
 import pt.isel.leic.daw.explodingbattleships.services.GamesServices
 import javax.validation.Valid
@@ -86,6 +88,24 @@ class GamesController(private val services: GamesServices) {
             )
     }
 
+    private fun attachGameEntities(sirenBuilderScope: SirenBuilderScope<GameOutputModel>, userId: Int, gameId: Int) {
+        sirenBuilderScope.entity(value = GameStateOutputModel(services.getGameState(gameId)), rel = Rels.GAME_STATE) {
+            link(Uris.Games.gameState(gameId), Rels.SELF)
+        }
+        sirenBuilderScope.entity(
+            value = FleetStateOutputModel(services.fleetState(userId, gameId, true)),
+            rel = Rels.PLAYER_FLEET
+        ) {
+            link(Uris.Games.playerFleet(gameId), Rels.SELF)
+        }
+        sirenBuilderScope.entity(
+            value = FleetStateOutputModel(services.fleetState(userId, gameId, false)),
+            rel = Rels.ENEMY_FLEET
+        ) {
+            link(Uris.Games.enemyFleet(gameId), Rels.SELF)
+        }
+    }
+
     /**
      * Handles a get request for the game info
      * @param user the user that sent the request
@@ -135,22 +155,8 @@ class GamesController(private val services: GamesServices) {
                     }
                     link(Uris.Users.home(), Rels.USER_HOME)
                     link(Uris.home(), Rels.HOME)
+                    attachGameEntities(this, user.id, gameId)
                     clazz("GameOutputModel")
-                    entity(value = GameStateOutputModel(services.getGameState(gameId)), rel = Rels.GAME_STATE) {
-                        link(Uris.Games.gameState(gameId), Rels.SELF)
-                    }
-                    entity(
-                        value = FleetStateOutputModel(services.fleetState(user.id, gameId, true)),
-                        rel = Rels.PLAYER_FLEET
-                    ) {
-                        link(Uris.Games.playerFleet(gameId), Rels.SELF)
-                    }
-                    entity(
-                        value = FleetStateOutputModel(services.fleetState(user.id, gameId, false)),
-                        rel = Rels.ENEMY_FLEET
-                    ) {
-                        link(Uris.Games.enemyFleet(gameId), Rels.SELF)
-                    }
                 }
             )
     }
@@ -264,6 +270,7 @@ class GamesController(private val services: GamesServices) {
                     link(Uris.Games.sendHits(), Rels.SELF)
                     link(Uris.home(), Rels.HOME)
                     link(Uris.Games.gameInfo(input.gameId), Rels.GAME)
+                    attachGameEntities(this, user.id, input.gameId)
                     clazz("GameOutputModel")
                 }
             )
@@ -290,6 +297,7 @@ class GamesController(private val services: GamesServices) {
                     link(Uris.Games.defineLayout(), Rels.SELF)
                     link(Uris.home(), Rels.HOME)
                     link(Uris.Games.gameInfo(input.gameId), Rels.GAME)
+                    attachGameEntities(this, user.id, input.gameId)
                     clazz("GameOutputModel")
                 }
             )
@@ -314,6 +322,7 @@ class GamesController(private val services: GamesServices) {
                 siren(res.toGameOutputModel()) {
                     link(Uris.Games.forfeit(), Rels.SELF)
                     link(Uris.home(), Rels.HOME)
+                    attachGameEntities(this, user.id, input.gameId)
                     clazz("GameOutputModel")
                 }
             )

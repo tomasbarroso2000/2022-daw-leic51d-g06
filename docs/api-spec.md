@@ -3,7 +3,9 @@
 ### Introduction
 
 All the success responses produced by this API use the Siren hypermedia specification.
-The error responses use the Problem Json specification that provides the details of each error.  
+The error responses use the Problem Json specification that provides the details of each error.
+
+Note: Every endpoint that relates to some activity withing a game (send hits, define layout, forfeit) responds with the updated version of the game in question.
 
 ### Hypermedia Relations
 
@@ -12,13 +14,15 @@ The error responses use the Problem Json specification that provides the details
 ### Home
 
 #### Home
+
 URI: /api/
 
 Method: GET
 
 Success response status: 200 - OK
 
-Response body parameters:
+Response body properties:
+
 ```json
 {
   "name": "Exploding Battleships",
@@ -39,7 +43,8 @@ Authorization: Bearer token
 
 Success response status: 200 - OK
 
-Response body parameters:
+Response body properties:
+
 ```json
 {
   "id": "3",
@@ -56,6 +61,7 @@ URI: /api/users
 Method: POST
 
 Request body:
+
 ```json
 {
   "name": "Fiona",
@@ -66,7 +72,8 @@ Request body:
 
 Success response status: 201 - CREATED
 
-Response body parameters:
+Response body properties:
+
 ```json
 {
   "id": "3"
@@ -80,6 +87,7 @@ URI: /api/token
 Method: POST
 
 Request body:
+
 ```json
 {
   "email": "iloveshrek@gmail.com",
@@ -89,7 +97,8 @@ Request body:
 
 Success response status: 201 - CREATED
 
-Response body parameters:
+Response body properties:
+
 ```json
 {
   "token": "a74509f5-2ba6-419a-9947-8c3b977236db"
@@ -104,7 +113,8 @@ Method: GET
 
 Success response status: 200 - OK
 
-Response body parameters:
+Response body properties:
+
 ```json
 {
   "rankings": {
@@ -129,6 +139,7 @@ Method: POST
 Authorization: Bearer token
 
 Request body:
+
 ```json
 {
   "game-type": "beginner"
@@ -137,7 +148,8 @@ Request body:
 
 Success response status: 200 - OK
 
-Response body parameters:
+Response body properties:
+
 ```json
 {
   "waiting-for-game": true,
@@ -149,13 +161,14 @@ Response body parameters:
 
 URI: /api/lobby/{lobbyId}
 
-Method: PUT
+Method: DELETE
 
 Authorization: Bearer token
 
 Success response status: 200 - OK
 
-Response body parameters:
+Response body properties:
+
 ```json
 {
   "game-id": 2
@@ -163,6 +176,202 @@ Response body parameters:
 ```
 
 ### Games
+
+#### Game Types
+
+URI: /api/games/types
+
+Method: GET
+
+Success response status: 200 - OK
+
+```json
+{
+  "game-types": [
+    {
+      "name": "beginner",
+      "board-size": 10,
+      "shots-per-round": 1,
+      "layout-def-time-in-secs": 60,
+      "shooting-time-in-secs": 60,
+      "fleet": [
+        {
+          "name": "carrier",
+          "size": 6,
+          "game-type": "beginner"
+        },
+        {
+          "name": "battleship",
+          "size": 5,
+          "game-type": "beginner"
+        },
+        {
+          "name": "cruiser",
+          "size": 4,
+          "game-type": "beginner"
+        },
+        {
+          "name": "submarine",
+          "size": 4,
+          "game-type": "beginner"
+        },
+        {
+          "name": "destroyer",
+          "size": 3,
+          "game-type": "beginner"
+        }
+      ]
+    },
+    {
+      "name": "experienced",
+      "board-size": 12,
+      "shots-per-round": 5,
+      "layout-def-time-in-secs": 30,
+      "shooting-time-in-secs": 60,
+      "fleet": [
+        {
+          "name": "carrier",
+          "size": 5,
+          "game-type": "experienced"
+        },
+        {
+          "name": "battleship",
+          "size": 4,
+          "game-type": "experienced"
+        },
+        {
+          "name": "cruiser",
+          "size": 3,
+          "game-type": "experienced"
+        },
+        {
+          "name": "submarine",
+          "size": 3,
+          "game-type": "experienced"
+        },
+        {
+          "name": "destroyer",
+          "size": 2,
+          "game-type": "experienced"
+        }
+      ]
+    },
+    {
+      "name": "expert",
+      "board-size": 15,
+      "shots-per-round": 6,
+      "layout-def-time-in-secs": 30,
+      "shooting-time-in-secs": 30,
+      "fleet": [
+        {
+          "name": "carrier",
+          "size": 5,
+          "game-type": "expert"
+        },
+        {
+          "name": "battleship",
+          "size": 4,
+          "game-type": "expert"
+        },
+        {
+          "name": "destroyer",
+          "size": 3,
+          "game-type": "expert"
+        }
+      ]
+    }
+  ]
+}
+```
+
+#### Available Games
+
+URI: /api/games?limit={limit}&skip={skip}
+
+Method: GET
+
+Authorization: Bearer token
+
+Success response status: 200 - OK
+
+```json
+{
+  "games": [
+    {
+      "id": 1,
+      "type": {
+        "name": "beginner",
+        "board-size": 10,
+        "shots-per-round": 1,
+        "layout-def-time-in-secs": 60,
+        "shooting-time-in-secs": 60,
+        "fleet": [
+          {
+            "name": "carrier",
+            "size": 6,
+            "game-type": "beginner"
+          },
+          {
+            "name": "battleship",
+            "size": 5,
+            "game-type": "beginner"
+          },
+          {
+            "name": "cruiser",
+            "size": 4,
+            "game-type": "beginner"
+          },
+          {
+            "name": "submarine",
+            "size": 4,
+            "game-type": "beginner"
+          },
+          {
+            "name": "destroyer",
+            "size": 3,
+            "game-type": "beginner"
+          }
+        ]
+      },
+      "state": "layout_definition",
+      "opponent": {
+        "id": 6,
+        "name": "LordFarquaadReal",
+        "score": 60
+      },
+      "playing": false,
+      "started-at": "2022-10-30T16:51:55.593619Z",
+      "fleet": [
+        {
+          "first-square": "a1",
+          "name": "carrier",
+          "size": 5,
+          "n-of-hits": 0,
+          "destroyed": false,
+          "orientation": "horizontal",
+          "user-id": 1,
+          "game-id": 1
+        }
+      ],
+      "taken-hits": [
+        {
+          "row": "c",
+          "column": 1
+        }
+      ],
+      "enemy-sunk-fleet": [],
+      "hits": [
+        {
+          "row": "c",
+          "column": 1
+        }
+      ],
+      "misses": []
+    }
+  ],
+  "has-more": false
+}
+```
 
 #### Game Info
 
@@ -174,13 +383,51 @@ Authorization: Bearer token
 
 Success response status: 200 - OK
 
-Response body parameters:
+Response body properties:
+
 ```json
 {
   "id": 1,
-  "type": "beginner",
+  "type": {
+    "name": "beginner",
+    "board-size": 10,
+    "shots-per-round": 1,
+    "layout-def-time-in-secs": 60,
+    "shooting-time-in-secs": 60,
+    "fleet": [
+      {
+        "name": "carrier",
+        "size": 6,
+        "game-type": "beginner"
+      },
+      {
+        "name": "battleship",
+        "size": 5,
+        "game-type": "beginner"
+      },
+      {
+        "name": "cruiser",
+        "size": 4,
+        "game-type": "beginner"
+      },
+      {
+        "name": "submarine",
+        "size": 4,
+        "game-type": "beginner"
+      },
+      {
+        "name": "destroyer",
+        "size": 3,
+        "game-type": "beginner"
+      }
+    ]
+  },
   "state": "layout_definition",
-  "opponent": 2,
+  "opponent": {
+    "id": 6,
+    "name": "LordFarquaadReal",
+    "score": 60
+  },
   "playing": false,
   "started-at": "2022-10-30T16:51:55.593619Z",
   "fleet": [
@@ -220,7 +467,8 @@ Method: GET
 
 Success response status: 200 - OK
 
-Response body parameters:
+Response body properties:
+
 ```json
 {
   "nr": 2
@@ -235,7 +483,8 @@ Method: GET
 
 Success response status: 200 - OK
 
-Response body parameters:
+Response body properties:
+
 ```json
 {
   "state": "shooting"
@@ -252,7 +501,8 @@ Authorization: Bearer token
 
 Success response status: 200 - OK
 
-Response body parameters:
+Response body properties:
+
 ```json
 {
   "fleet": [
@@ -274,7 +524,8 @@ Authorization: Bearer token
 
 Success response status: 200 - OK
 
-Response body parameters:
+Response body properties:
+
 ```json
 {
   "fleet": [
@@ -295,6 +546,7 @@ Method: PUT
 Authorization: Bearer token
 
 Request body:
+
 ```json
 {
   "game-id": 2,
@@ -309,20 +561,79 @@ Request body:
 
 Success response status: 201 - CREATED
 
-Response body parameters:
+Response body properties:
+
 ```json
 {
-  "hits-outcome": [
-    {
-      "square": {
-        "row": "a",
-        "column": 1
+  "id": 1,
+  "type": {
+    "name": "beginner",
+    "board-size": 10,
+    "shots-per-round": 1,
+    "layout-def-time-in-secs": 60,
+    "shooting-time-in-secs": 60,
+    "fleet": [
+      {
+        "name": "carrier",
+        "size": 6,
+        "game-type": "beginner"
       },
-      "hit-ship": false,
-      "destroyed-ship": null
+      {
+        "name": "battleship",
+        "size": 5,
+        "game-type": "beginner"
+      },
+      {
+        "name": "cruiser",
+        "size": 4,
+        "game-type": "beginner"
+      },
+      {
+        "name": "submarine",
+        "size": 4,
+        "game-type": "beginner"
+      },
+      {
+        "name": "destroyer",
+        "size": 3,
+        "game-type": "beginner"
+      }
+    ]
+  },
+  "state": "layout_definition",
+  "opponent": {
+    "id": 6,
+    "name": "LordFarquaadReal",
+    "score": 60
+  },
+  "playing": false,
+  "started-at": "2022-10-30T16:51:55.593619Z",
+  "fleet": [
+    {
+      "first-square": "a1",
+      "name": "carrier",
+      "size": 5,
+      "n-of-hits": 0,
+      "destroyed": false,
+      "orientation": "horizontal",
+      "user-id": 1,
+      "game-id": 1
     }
   ],
-  "win": false
+  "taken-hits": [
+    {
+      "row": "c",
+      "column": 1
+    }
+  ],
+  "enemy-sunk-fleet": [],
+  "hits": [
+    {
+      "row": "c",
+      "column": 1
+    }
+  ],
+  "misses": []
 }
 ```
 
@@ -335,6 +646,7 @@ Method: PUT
 Authorization: Bearer token
 
 Request body:
+
 ```json
 {
   "game-id": 2,
@@ -350,9 +662,172 @@ Request body:
 
 Success response status: 201 - CREATED
 
-Response body parameters:
+Response body properties:
+
 ```json
 {
-  "status": "waiting"
+  "id": 1,
+  "type": {
+    "name": "beginner",
+    "board-size": 10,
+    "shots-per-round": 1,
+    "layout-def-time-in-secs": 60,
+    "shooting-time-in-secs": 60,
+    "fleet": [
+      {
+        "name": "carrier",
+        "size": 6,
+        "game-type": "beginner"
+      },
+      {
+        "name": "battleship",
+        "size": 5,
+        "game-type": "beginner"
+      },
+      {
+        "name": "cruiser",
+        "size": 4,
+        "game-type": "beginner"
+      },
+      {
+        "name": "submarine",
+        "size": 4,
+        "game-type": "beginner"
+      },
+      {
+        "name": "destroyer",
+        "size": 3,
+        "game-type": "beginner"
+      }
+    ]
+  },
+  "state": "layout_definition",
+  "opponent": {
+    "id": 6,
+    "name": "LordFarquaadReal",
+    "score": 60
+  },
+  "playing": false,
+  "started-at": "2022-10-30T16:51:55.593619Z",
+  "fleet": [
+    {
+      "first-square": "a1",
+      "name": "carrier",
+      "size": 5,
+      "n-of-hits": 0,
+      "destroyed": false,
+      "orientation": "horizontal",
+      "user-id": 1,
+      "game-id": 1
+    }
+  ],
+  "taken-hits": [
+    {
+      "row": "c",
+      "column": 1
+    }
+  ],
+  "enemy-sunk-fleet": [],
+  "hits": [
+    {
+      "row": "c",
+      "column": 1
+    }
+  ],
+  "misses": []
+}
+```
+
+#### Forfeit
+
+URI: /api/games/forfeit
+
+Method: PUT
+
+Authorization: Bearer token
+
+Request body:
+
+```json
+{
+  "game-id": 2
+}
+```
+
+Success response status: 201 - CREATED
+
+Response body properties:
+
+```json
+{
+  "id": 1,
+  "type": {
+    "name": "beginner",
+    "board-size": 10,
+    "shots-per-round": 1,
+    "layout-def-time-in-secs": 60,
+    "shooting-time-in-secs": 60,
+    "fleet": [
+      {
+        "name": "carrier",
+        "size": 6,
+        "game-type": "beginner"
+      },
+      {
+        "name": "battleship",
+        "size": 5,
+        "game-type": "beginner"
+      },
+      {
+        "name": "cruiser",
+        "size": 4,
+        "game-type": "beginner"
+      },
+      {
+        "name": "submarine",
+        "size": 4,
+        "game-type": "beginner"
+      },
+      {
+        "name": "destroyer",
+        "size": 3,
+        "game-type": "beginner"
+      }
+    ]
+  },
+  "state": "completed",
+  "opponent": {
+    "id": 6,
+    "name": "LordFarquaadReal",
+    "score": 60
+  },
+  "playing": false,
+  "started-at": "2022-10-30T16:51:55.593619Z",
+  "fleet": [
+    {
+      "first-square": "a1",
+      "name": "carrier",
+      "size": 5,
+      "n-of-hits": 0,
+      "destroyed": false,
+      "orientation": "horizontal",
+      "user-id": 1,
+      "game-id": 1
+    }
+  ],
+  "taken-hits": [
+    {
+      "row": "c",
+      "column": 1
+    }
+  ],
+  "enemy-sunk-fleet": [],
+  "hits": [
+    {
+      "row": "c",
+      "column": 1
+    }
+  ],
+  "misses": []
 }
 ```
