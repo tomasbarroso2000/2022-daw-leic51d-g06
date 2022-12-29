@@ -12,7 +12,7 @@ insert into tokens values
 insert into game_types values
     ('beginner', 10, 1, 60, 60),
     ('experienced', 12, 5, 60, 30),
-    ('expert', 15, 6, 30, 30);
+    ('expert', 15, 6, 60, 15);
 
 insert into games (type, state, player1, player2, curr_player, started_at) values
     ('beginner', 'layout_definition', 1, 2, 1, now()),
