@@ -30,11 +30,11 @@ GetAuthn is a React element that verifies authentication when loading a page. Th
 
 #### Home
 
-The Home page shows some information about the application and the developers. From this page, the user can navigate to the Login page and start playing some battleships games as well as check the rankings of the game.
+The Home page shows some information about the application and the developers. From this page, the user can navigate to the Login page and start playing some battleships games as well as check the rankings of the players.
 
 #### Login
 
-The Login page allows the user to login and start playing. If the user doesn't yet have an account, there is also a button on this page to go to the user creation page.
+The Login page allows the user to login and start playing. If the user doesn't yet have an account, there is also a button on this page to navigate to the user creation page.
 
 #### CreateUser
 
@@ -67,7 +67,7 @@ Biggest challenges we faced while developing the client application:
 - Because the Siren Hypermedia is a completelly new technology for us, it was really challenging to figure out the best way to interpret the Siren API responses and to establish the connections between each entity. Although a good navigation in the client application was achieved, our use and understanding of the Siren technology is still far from perfect;
 - Most of the styling code is in a CSS (Cascading Style Sheets) file but we also used the React framework to define the styling of the HTML elements which might be an organization problem;
 - Building the drag-and-drop system was challenging since we never had to something smiliar before. We achieved a working system but it has some limitations and might not be very intuitive to the user. Because of this fact, we decided to include some instructions in the layout definition page so the user can better understand how to proceed;
-- Understanding how hooks work in React and managing state with hooks brought a lot of challenges our way since we had to learn a lot of rules that need to be followed when using this technology;
+- Understanding how hooks work in React and managing state with hooks brought a lot of challenges our way since we had to learn a lot of rules that need to be followed when using this technology.
 
 ##
 
