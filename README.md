@@ -1,7 +1,5 @@
 # DAW project
 
-Please edit this document with an introduction to your project, including links to all the existing documentation.
-
 ## Exploding Battleships
 This project was developed for the Web Applications Development (DAW) course and consists of a web-based Battleships game that allows two people to play online against each other. 
 
@@ -11,6 +9,8 @@ Frontend applications communicate with the backend service using an HTTP API. Th
 
 ### Documentation
 [Backend service technical report](https://github.com/isel-leic-daw/2022-daw-leic51d-g06/blob/main/docs/README.md)
+
+[Frontend application technical report](https://github.com/isel-leic-daw/2022-daw-leic51d-g06/blob/main/docs/README.md)
 
 [Server run instructions](https://github.com/isel-leic-daw/2022-daw-leic51d-g06/blob/main/code/jvm/README.md) 
 
