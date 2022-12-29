@@ -1,26 +1,21 @@
 import * as React from "react"
 import { Link, Navigate } from "react-router-dom"
 import { Game } from "../domain/Game"
+import { capitalize } from "../utils/capitalize"
 import { paths } from "./App"
 
 export function FinishedGame(game: Game) {
     if (game.fleet.length == 0)
         return <Navigate to={paths["games"]} replace></Navigate>
 
-    const yourFleet = game.fleet.map((ship) => {
-        if(ship.destroyed)
-            return <li>{ship.name} was destroyed</li>
-        else
-            return <li>{ship.name} took {ship.nOfHits} hit(s)</li>
-    }) 
-    const enemyFleet = function() {
-        const enemySunkFleet = game.enemySunkFleet
-        if (enemySunkFleet.length == 0) 
-            return <p>No enemy ships were destroyed</p>
-        enemySunkFleet.map((ship) => {
-            return <li>{ship.name} was destroyed</li>
-        }) 
-    }   
+    const yourFleet = game.fleet.map((ship) => ship.destroyed ? 
+        <li>{capitalize(ship.name)} was destroyed</li> : 
+        <li>{capitalize(ship.name)} took {ship.nOfHits} hits</li>) 
+
+    const enemyFleet = game.enemySunkFleet.length == 0 ? 
+        <p>No enemy ships were destroyed</p> : 
+        game.enemySunkFleet.map((ship) => <li>{capitalize(ship.name)} was destroyed</li>)
+
     return (
         <div id={game.playing ? "win-bg" : "lose-bg"}>
             <div id="game-over">
@@ -34,7 +29,7 @@ export function FinishedGame(game: Game) {
                         <h3>Your fleet:</h3>
                         <ul>{yourFleet}</ul>
                         <h3>{game.opponent.name}'s fleet</h3>
-                        <ul>{enemyFleet()}</ul>
+                        <ul>{enemyFleet}</ul>
                     </div>
                 </div>
                 <div>

@@ -4,7 +4,7 @@ import { CurrentUser } from "../domain/CurrentUser"
 import { Game, isEnemySquareDestroyed, isEnemySquareAroundDestroyed, isEnemySquareHit } from "../domain/Game"
 import { Ship } from "../domain/ship"
 import { Square } from "../domain/Square"
-import { BoardView } from "../utils/board"
+import { BoardView, squareTextStyle } from "../utils/board"
 import { ButtonFab } from "../utils/ButtonFab"
 import { capitalize } from "../utils/capitalize"
 import { contains } from "../utils/contains"
@@ -16,7 +16,10 @@ function occupiedSquareStyle(squareSize: number): React.CSSProperties {
     return {
         width: `${squareSize}px`,
         height: `${squareSize}px`,
-        backgroundColor: SHIP_COLOR
+        backgroundColor: SHIP_COLOR,
+        display: "flex",
+        alignItems: 'center',
+        justifyContent: 'center'
     }
 }
 
@@ -24,7 +27,10 @@ function occupiedSquareStyle(squareSize: number): React.CSSProperties {
     return {
         width: `${squareSize}px`, 
         height: `${squareSize}px`, 
-        backgroundColor: INNER_COLOR
+        backgroundColor: INNER_COLOR,
+        display: "flex",
+        alignItems: 'center',
+        justifyContent: 'center'
     }
 }
 
@@ -32,7 +38,10 @@ function enemySquareStyle(color: string, squareSize: number): React.CSSPropertie
     return {
         width: `${squareSize}px`, 
         height: `${squareSize}px`, 
-        backgroundColor: color
+        backgroundColor: color,
+        display: "flex",
+        alignItems: 'center',
+        justifyContent: 'center'
     }
 }
 
@@ -85,7 +94,7 @@ export function Shooting(
                     const isOccupied = game.fleet.some((ship: Ship) => contains(ship.squares, square))
                     const isHit: boolean = contains(game.takenHits, square)
                     const style = isOccupied ? occupiedSquareStyle(squareSize) : defaultSquareStyle(squareSize)
-                    const hit = isHit ? <p>X</p> : <p></p>
+                    const hit = isHit ? <p style={squareTextStyle(squareSize)}>X</p> : undefined
                     return <div key={JSON.stringify(square)} style={style}>{hit}</div>
                 })}
             </div>
@@ -103,6 +112,9 @@ export function Shooting(
                     } else if (contains(game.hits, square)) {
                         squareColor = SHIP_COLOR,
                         canClick = false
+                    } else if (contains(game.misses, square)) {
+                        squareColor = INNER_COLOR,
+                        canClick = false
                     } else if (contains(selectedSquares, square)) {
                         squareColor = SELECTED_COLOR
                     } else {
@@ -119,8 +131,8 @@ export function Shooting(
                         }
                     }
                     const style = enemySquareStyle(squareColor, squareSize)
-                    const hit = isEnemySquareHit(game, square) ? <p className="text">X</p> : <p className="text"></p>
-                    const className = !contains(selectedSquares, square) && canClick ? "canSelect" : ""
+                    const hit = isEnemySquareHit(game, square) ? <p style={squareTextStyle(squareSize)}>X</p> : undefined
+                    const className = (!contains(selectedSquares, square) && canClick) ? "canSelect" : ""
                     return <div key={JSON.stringify(square)} className={className} onClick={onClick} style={style}>{hit}</div>
                 })}
             </div>
