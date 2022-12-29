@@ -36,7 +36,7 @@ object Uris {
         const val PLAYER_FLEET = "games/fleet/player/{gameId}"
         const val ENEMY_FLEET = "games/fleet/enemy/{gameId}"
         const val NR_OF_GAMES = "games/total"
-        const val STATE = "games/state/{gameId}"
+        const val GAME_STATE = "games/state/{gameId}"
         const val FORFEIT = "games/forfeit"
 
         fun games(): URI = URI(BASE_PATH + GAMES)
@@ -47,7 +47,7 @@ object Uris {
         fun playerFleet(gameId: Int): URI = UriTemplate(BASE_PATH + PLAYER_FLEET).expand(gameId)
         fun enemyFleet(gameId: Int): URI = UriTemplate(BASE_PATH + ENEMY_FLEET).expand(gameId)
         fun nrOfGames(): URI = URI(BASE_PATH + NR_OF_GAMES)
-        fun state(gameId: Int): URI = UriTemplate(BASE_PATH + STATE).expand(gameId)
+        fun gameState(gameId: Int): URI = UriTemplate(BASE_PATH + GAME_STATE).expand(gameId)
         fun forfeit(): URI = URI(BASE_PATH + FORFEIT)
     }
 }

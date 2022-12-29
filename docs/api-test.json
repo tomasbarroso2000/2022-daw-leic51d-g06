@@ -1,8 +1,9 @@
 {
 	"info": {
-		"_postman_id": "44502705-4480-482f-8405-d0933cfa0154",
+		"_postman_id": "ce134350-2ac6-4c69-afef-6fe22c3d5bd7",
 		"name": "ExplodingBattleships",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "18405597"
 	},
 	"item": [
 		{
@@ -240,6 +241,42 @@
 							],
 							"path": [
 								"types"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "forfeit",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "nsyJxf8ot8dKt7uoVcTqXZEbwnODNsGxSW4ZwTH9gEE=",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"game-id\": 15\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}games/forfeit",
+							"host": [
+								"{{BASE_URL}}games"
+							],
+							"path": [
+								"forfeit"
 							]
 						}
 					},

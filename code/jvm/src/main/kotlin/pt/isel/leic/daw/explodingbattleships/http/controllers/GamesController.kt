@@ -136,6 +136,21 @@ class GamesController(private val services: GamesServices) {
                     link(Uris.Users.home(), Rels.USER_HOME)
                     link(Uris.home(), Rels.HOME)
                     clazz("GameOutputModel")
+                    entity(value = GameStateOutputModel(services.getGameState(gameId)), rel = Rels.GAME_STATE) {
+                        link(Uris.Games.gameState(gameId), Rels.SELF)
+                    }
+                    entity(
+                        value = FleetStateOutputModel(services.fleetState(user.id, gameId, true)),
+                        rel = Rels.PLAYER_FLEET
+                    ) {
+                        link(Uris.Games.playerFleet(gameId), Rels.SELF)
+                    }
+                    entity(
+                        value = FleetStateOutputModel(services.fleetState(user.id, gameId, false)),
+                        rel = Rels.ENEMY_FLEET
+                    ) {
+                        link(Uris.Games.enemyFleet(gameId), Rels.SELF)
+                    }
                 }
             )
     }
@@ -163,7 +178,7 @@ class GamesController(private val services: GamesServices) {
      * Handles a get request for the game state
      * @param gameId the game id
      */
-    @GetMapping(Uris.Games.STATE)
+    @GetMapping(Uris.Games.GAME_STATE)
     fun getGameState(@PathVariable gameId: Int) =
         doApiTask {
             val res = services.getGameState(gameId)
@@ -172,7 +187,7 @@ class GamesController(private val services: GamesServices) {
                 .contentType(APPLICATION_SIREN)
                 .body(
                     siren(GameStateOutputModel(res)) {
-                        link(Uris.Games.state(gameId), Rels.SELF)
+                        link(Uris.Games.gameState(gameId), Rels.SELF)
                         link(Uris.home(), Rels.HOME)
                         link(Uris.Games.gameInfo(gameId), Rels.GAME)
                         clazz("GameStateOutputModel")

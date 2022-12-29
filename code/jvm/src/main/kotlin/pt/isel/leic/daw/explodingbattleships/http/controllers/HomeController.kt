@@ -13,14 +13,16 @@ import pt.isel.leic.daw.explodingbattleships.http.Uris
 import pt.isel.leic.daw.explodingbattleships.http.Uris.BASE_PATH
 import pt.isel.leic.daw.explodingbattleships.http.doApiTask
 import pt.isel.leic.daw.explodingbattleships.http.models.output.HomeOutputModel
+import pt.isel.leic.daw.explodingbattleships.http.models.output.NumberOfPlayedGamesOutputModel
 import pt.isel.leic.daw.explodingbattleships.infra.siren
+import pt.isel.leic.daw.explodingbattleships.services.GamesServices
 
 /**
  * The Home controller
  */
 @RestController
 @RequestMapping(BASE_PATH)
-class HomeController {
+class HomeController(private val services: GamesServices) {
 
     /**
      * Handles a get request for the home resource
@@ -54,9 +56,14 @@ class HomeController {
                     link(Uris.home(), Rels.SELF)
                     link(Uris.Users.home(), Rels.USER_HOME)
                     link(Uris.Users.rankings(), Rels.RANKINGS)
-                    link(Uris.Games.nrOfGames(), Rels.NR_OF_TOTAL_GAMES)
                     link(Uris.Games.games(), Rels.GAMES)
                     clazz("HomeOutputModel")
+                    entity(
+                        value = NumberOfPlayedGamesOutputModel(services.getNumberOfPlayedGames()),
+                        rel = Rels.NR_OF_TOTAL_GAMES
+                    ) {
+                        link(Uris.Games.nrOfGames(), Rels.SELF)
+                    }
                 }
             )
     }

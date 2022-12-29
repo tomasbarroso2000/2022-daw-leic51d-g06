@@ -15,4 +15,7 @@ object Rels {
     val ENTERED_GAME = LinkRelation("entered-game")
     val GAMES = LinkRelation("games")
     val GAME_TYPES = LinkRelation("game-types")
+    val GAME_STATE = LinkRelation("game-state")
+    val PLAYER_FLEET = LinkRelation("player-fleet")
+    val ENEMY_FLEET = LinkRelation("enemy-fleet")
 }
