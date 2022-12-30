@@ -18,7 +18,7 @@ import { Square, squareToString } from "../domain/Square"
 import { GamesList } from "../domain/GamesList"
 import { LayoutShip } from "../domain/LayoutShip"
 
-const baseURL = "http://localhost:8083"
+const baseURL = process.env.BASE_URL || "http://localhost:8083"
 const homeURL = baseURL + "/api/"
 
 export class RealService implements Service {

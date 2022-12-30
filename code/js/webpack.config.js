@@ -1,3 +1,5 @@
+const webpack = require('webpack')
+
 module.exports = {
     mode: "development",
     resolve: {
@@ -21,5 +23,10 @@ module.exports = {
                 exclude: /node_modules/
             }
         ]
-    }
+    },
+    plugins: [
+        new webpack.DefinePlugin({
+          'process.env.BASE_URL': JSON.stringify(process.env.BASE_URL),
+        })
+    ]
 }

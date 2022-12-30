@@ -5,6 +5,7 @@ services:
       context: .
       dockerfile: ./Dockerfile
     environment:
+      #BASE_URL: "http://192.168.1.85:8083" # Uncomment and replace the IP address with your private IP address
       SERVER: "http://nginx:8080"
     ports: 
       - 8083:8083
