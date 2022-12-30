@@ -4,11 +4,12 @@ module.exports = {
         extensions: [".js", ".ts", ".tsx"]
     },
     devServer: {
+        port: 8083,
         historyApiFallback: true,
         proxy: {
             "/api": {
                 target: "http://localhost:8083",
-                router: () => "http://localhost:8080",
+                router: () => process.env.SERVER_HOSTNAME || "http://localhost:8080"
             },
         },
     },

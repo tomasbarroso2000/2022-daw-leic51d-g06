@@ -1,7 +1,7 @@
 import { contains } from "../utils/contains"
 import { deepEqual } from "../utils/deepEqual"
 import { GameType } from "./GameTypes"
-import { Ship } from "./ship"
+import { Ship } from "./Ship"
 import { Square, surroundingSquares } from "./Square"
 import { UserInfo } from "./UserInfo"
 
