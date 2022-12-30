@@ -2,9 +2,16 @@
 
 ## Development time commands
 
-* Start docker image with development time services (can also be done by running the composeUp Gradle task)
+* Execute the Gradle task extractUberJar so that the artifcats required for the server to run can be created and start docker image with development time services
+```
+gradlew extractUberJar
+```
 ```
 docker compose up --build --force-recreate 
+```
+OR
+```
+gradlew composeUp
 ```
     
 * Start shell on postgres container
