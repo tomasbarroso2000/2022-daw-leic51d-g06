@@ -17,7 +17,6 @@ import { paths } from "../router/App"
 import { Square, squareToString } from "../domain/Square"
 import { GamesList } from "../domain/GamesList"
 import { LayoutShip } from "../domain/LayoutShip"
-import { json } from "react-router-dom"
 
 const baseURL = "http://localhost:8083"
 const homeURL = baseURL + "/api/"

@@ -9,7 +9,7 @@ module.exports = {
         proxy: {
             "/api": {
                 target: "http://localhost:8083",
-                router: () => process.env.SERVER_HOSTNAME || "http://localhost:8080"
+                router: () => process.env.SERVER || "http://localhost:8080"
             },
         },
     },

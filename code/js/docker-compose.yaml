@@ -5,7 +5,7 @@ services:
       context: .
       dockerfile: ./Dockerfile
     environment:
-      SERVER_HOSTNAME: "http://nginx:8080"
+      SERVER: "http://nginx:8080"
     ports: 
       - 8083:8083
     depends_on:

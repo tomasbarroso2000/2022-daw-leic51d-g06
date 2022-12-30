@@ -1,5 +1,5 @@
 # Use the official Node.js image as the base image
-FROM node:14
+FROM node
 
 # Create a new directory for the project
 RUN mkdir -p /usr/src/app
@@ -12,10 +12,6 @@ COPY package.json .
 
 # Install the dependencies
 RUN npm install
-
-RUN npm install --save-dev webpack webpack-cli
-
-RUN npm install --save-dev react
 
 # Copy the rest of the project files to the working directory
 RUN mkdir -p ./src
