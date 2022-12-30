@@ -8,6 +8,7 @@ import { useCurrentUser, useSetUser } from "./Authn"
 import { Loading } from "./Loading"
 
 export function Home() {
+    document.title = "Exploding Battleships"
     const currentUser = useCurrentUser()
     const setCurrentUser = useSetUser()
     const [cookies, setCookie, removeCookie] = useCookies(["token"]);
@@ -40,8 +41,8 @@ export function Home() {
                     
                     <div id="menu">
                         <h2 id="menu-title">Menu</h2>
-                        {currentUser ? <button onClick={() => {setCurrentUser(undefined); removeCookie("token")}}>Sign Out</button> : undefined}
                         <div id="menu-nav">
+                            {currentUser ? <button onClick={() => {setCurrentUser(undefined); removeCookie("token")}}>Sign Out</button> : undefined}
                             {currentUser ? 
                                 (service.homeNavigation.includes("user-home") ? <div><Link to={paths['user-home']}>{currentUser.name}</Link></div> : undefined) : 
                                 (service.homeNavigation.includes("create-token") ? <div><Link to={paths['create-token']}>Login</Link></div> : undefined)

@@ -7,6 +7,7 @@ import { service } from "./App"
 import { Loading } from "./Loading"
 
 export function Rankings() {
+    document.title = "Rankings"
     const limit = 5
     const [skip, setSkip] = useState(0)
 

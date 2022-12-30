@@ -40,6 +40,7 @@ function Playing(game: Game) {
 }
 
 export function ListGames() {
+    document.title = "Games"
     const currentUser = useCurrentUser()
     const limit = 5
     const [skip, setSkip] = useState(0)

@@ -13,6 +13,7 @@ import { ListGames } from './ListGames'
 import { AuthnContainer } from './Authn'
 import { PlayGame } from './PlayGame'
 import { WaitForGame } from './WaitForGame'
+import { useEffect, useState } from 'react'
 
 export const paths = {
     "home": "/",
@@ -79,6 +80,7 @@ export const service = new RealService()
 //export const service = new FakeService()
 
 export function App() {
+    document.title = "Exploding Battleships"
     return (
         <RouterProvider router={router} />
     )

@@ -15,10 +15,12 @@ const meDivStyle: React.CSSProperties = {
 }
 
 export function Me() {
+    document.title = "Profile"
+
     const currentUser = useCurrentUser()
 
     const userHome: Result<UserHome> | undefined = askService(service, service.userHome, currentUser.token)
-    
+
     if (!userHome) {
         return <Loading />
     }
@@ -41,4 +43,8 @@ export function Me() {
             </div>
         )
     }    
+}
+
+function setPageTitle() {
+    throw new Error("Function not implemented.")
 }

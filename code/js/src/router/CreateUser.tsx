@@ -12,6 +12,7 @@ import { ProblemJson } from "../domain/ProblemJson";
 import { capitalize } from "../utils/capitalize";
 
 export function CreateUser() {
+    document.title = "Create Account"
     const fields: Result<Array<Field>> | undefined = askService(service, service.getCreateUserFields)
     
     const [inputs, setInputs]: [any, React.Dispatch<React.SetStateAction<{}>>] = useState({})

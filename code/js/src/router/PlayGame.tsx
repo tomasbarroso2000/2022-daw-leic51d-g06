@@ -13,6 +13,7 @@ import { calcTimeLeft } from "../utils/calcTimeLeft";
 import { Loading } from "./Loading";
 
 export function PlayGame() {
+    document.title = "Play Game"
     const currentUser = useCurrentUser()
     const params = useParams()
     const gameId = parseInt(params["gameId"])

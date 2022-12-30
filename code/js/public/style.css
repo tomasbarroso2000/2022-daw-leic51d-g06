@@ -87,7 +87,7 @@ div#content-games-type .game-type {
   display: inline-block;
   width: 20%;
   margin: 0 auto;
-  height: 50vh;
+  height: fit-content;
   right: 0;
   left: 0;
   text-align: left;
@@ -98,13 +98,15 @@ div#content-games-type .game-type {
   padding: 15px;
   font-family: 'Open Sans', sans-serif;
   padding: 20px 0px;
-
+  padding-bottom: 30px;
+  margin-top: 25vh;
 }
 
 div#fleet {
   display: none;
   position: absolute;
-  margin-left: -20px;
+  border-radius: 4px;
+  margin-top: 10px;
   background-color: #f1f1f1;
   width: 15%;
   padding-bottom: 10px;
@@ -115,7 +117,9 @@ div#fleet {
   z-index: 1;
 }
 
-#fleet-section:hover #fleet {display: block;}
+#fleet-section:hover #fleet {
+  display: block;
+}
 
 div#content-games-type .game-type ul > * {
     list-style-type: none;
@@ -204,6 +208,11 @@ div#create-user-btn button{
     position: absolute;
     border-radius: 2px;
     border: none;
+}
+
+div#right-side-login input#create-user {
+  display: block;
+  margin: 0 auto;
 }
 
 div#create-user-btn button:hover {
@@ -376,10 +385,20 @@ div#left-side-content div#menu div#menu-nav {
     transition: .4s;
 }
 
-div#left-side-content div#menu div#menu-nav a:hover {
+div#menu-nav button {
+  font-size: 30px;
+  transition: .4s;
+  font-family: 'Quicksand', sans-serif;
+  border: none;
+  background-color: transparent;
+  padding: 0;
+}
+
+div#left-side-content div#menu div#menu-nav a:hover, div#menu-nav button:hover {
     color: #f7a400;
     font-size: 34px;
     transition: .4s;
+    cursor: pointer;
 }
 
 div#content-rankings {
@@ -631,7 +650,7 @@ div#content-rankings li hr {
 
   div#games-list-content div.game-box {
     max-width: 150px;
-    height: 150px;
+    height: 180px;
     font-size: 15px;
     text-align: center;
     background-color: white;
@@ -884,6 +903,7 @@ div#content-rankings li hr {
     float: left;
     padding-right: 50px;
     margin-left: 50px;
+    margin-top: 80px;
   }
 
   div#ships-layout-container {
@@ -892,6 +912,7 @@ div#content-rankings li hr {
     width: fit-content;
     text-align: left;
     padding: 25px;
+    padding-right: 100px;
   }
 
   div#btn-container button:hover {

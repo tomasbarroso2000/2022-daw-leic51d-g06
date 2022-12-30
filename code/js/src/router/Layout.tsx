@@ -137,7 +137,7 @@ function draggableShip(
     layoutShips: Array<LayoutShip>,
     setLayoutShips: Dispatch<React.SetStateAction<LayoutShip[]>>
 ): JSX.Element {
-    
+    document.title = "Layout Stage"
     const shipType = layoutShip.type
     const shipSquares: Array<JSX.Element> = []
     shipSquares.push(<div key={shipType.name + 0} style={layoutShipSquareStyle(squareSize, true)}></div>)
@@ -203,7 +203,8 @@ export function Layout(
     setLayoutShips: Dispatch<React.SetStateAction<LayoutShip[]>>,
     setGameInfo: Dispatch<Game>,
     setLoading: Dispatch<boolean>
-) {  
+) { 
+
     if (layoutShips.length == 0) 
         setLayoutShips(initialLayoutShips(game.type))
 

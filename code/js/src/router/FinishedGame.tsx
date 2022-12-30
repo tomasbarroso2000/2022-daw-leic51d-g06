@@ -5,6 +5,7 @@ import { capitalize } from "../utils/capitalize"
 import { paths } from "./App"
 
 export function FinishedGame(game: Game) {
+    document.title = "Game Over"
     if (game.fleet.length == 0)
         return <Navigate to={paths["games"]} replace></Navigate>
 

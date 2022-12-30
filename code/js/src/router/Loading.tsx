@@ -12,6 +12,7 @@ const loadingTextStyle: React.CSSProperties = {
 }
 
 export function Loading() {
+    document.title = "Loading"
     return (
         <div style={loadingStyle}>
             <div style={loadingTextStyle}>Loading...</div>

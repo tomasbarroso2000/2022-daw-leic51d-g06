@@ -55,6 +55,7 @@ export function Shooting(
     setGameInfo: Dispatch<Game>,
     setLoading: Dispatch<boolean>
 ) {
+    document.title = "Shooting Stage"
     return (
         <div id="layout-content">
             <div style={{float: "left"}}>

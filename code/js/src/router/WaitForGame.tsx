@@ -6,6 +6,7 @@ import { paths, service } from "./App"
 import { useCurrentUser } from './Authn'
 
 export function WaitForGame() {
+    document.title = "Waiting In Lobby"
     const currentUser = useCurrentUser()
     const params = useParams()
     const [gameId, setGameId]: [number | undefined, React.Dispatch<any>] = useState(undefined)

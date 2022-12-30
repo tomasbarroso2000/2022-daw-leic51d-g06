@@ -12,6 +12,7 @@ import { ProblemJson } from "../domain/ProblemJson";
 import { capitalize } from "../utils/capitalize";
  
 export function Login() {
+    document.title = "Login"
     const fields: Result<Array<Field>> | undefined = askService(service, service.getCreateTokenFields)
 
     const [inputs, setInputs]: [any, React.Dispatch<React.SetStateAction<{}>>] = useState({})

@@ -9,6 +9,7 @@ import { useCurrentUser } from './Authn'
 import { Loading } from "./Loading"
 
 export function CreateGame() {
+    document.title = "Create Game"
     const gameTypes: Result<GameTypes> | undefined = askService(service, service.gameTypes)
     const currentUser = useCurrentUser()
     const [lobbyId, setLobbyId] : [number | undefined, React.Dispatch<any>] = useState(undefined)
