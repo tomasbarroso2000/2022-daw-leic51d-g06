@@ -60,8 +60,8 @@ class GamesServicesTests {
         )
         val expected = listOf(
             GameTypeWithFleet("beginner", 10, 1, 60, 60, beginnerShips),
-            GameTypeWithFleet("experienced", 12, 5, 30, 60, experiencedShips),
-            GameTypeWithFleet("expert", 15, 6, 30, 30, expertShips)
+            GameTypeWithFleet("experienced", 12, 5, 60, 30, experiencedShips),
+            GameTypeWithFleet("expert", 15, 6, 60, 15, expertShips)
         )
         assertEquals(expected, outcome)
     }
