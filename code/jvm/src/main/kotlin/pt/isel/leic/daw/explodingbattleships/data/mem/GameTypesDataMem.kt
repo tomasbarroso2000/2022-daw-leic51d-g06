@@ -14,8 +14,8 @@ class GameTypesDataMem(private val mockData: MockData) : GameTypesData {
             gameType.name,
             gameType.boardSize,
             gameType.shotsPerRound,
-            gameType.shootingTimeInSecs,
             gameType.layoutDefTimeInSecs,
+            gameType.shootingTimeInSecs,
             fleet
         )
     }
@@ -26,8 +26,8 @@ class GameTypesDataMem(private val mockData: MockData) : GameTypesData {
                 gameType.name,
                 gameType.boardSize,
                 gameType.shotsPerRound,
-                gameType.shootingTimeInSecs,
                 gameType.layoutDefTimeInSecs,
+                gameType.shootingTimeInSecs,
                 mockData.shipTypes.filter { it.gameType == gameType.name }
             )
         }

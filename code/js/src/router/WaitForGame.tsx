@@ -28,7 +28,7 @@ export function WaitForGame() {
         <div id="wait">
             <h1>Waiting for game</h1>
             <div className="lds-default"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-            <p>Remember always have fun!</p>
+            <p>Remember to always have fun!</p>
         </div>        
     )
 }

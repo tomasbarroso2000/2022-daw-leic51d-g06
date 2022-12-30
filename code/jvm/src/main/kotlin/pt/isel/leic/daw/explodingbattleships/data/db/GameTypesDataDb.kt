@@ -21,8 +21,8 @@ class GameTypesDataDb : GameTypesData {
                 gameType.name,
                 gameType.boardSize,
                 gameType.shotsPerRound,
-                gameType.shootingTimeInSecs,
                 gameType.layoutDefTimeInSecs,
+                gameType.shootingTimeInSecs,
                 fleet
             )
         }
@@ -38,8 +38,8 @@ class GameTypesDataDb : GameTypesData {
                         gameType.name,
                         gameType.boardSize,
                         gameType.shotsPerRound,
-                        gameType.shootingTimeInSecs,
                         gameType.layoutDefTimeInSecs,
+                        gameType.shootingTimeInSecs,
                         fleet
                     )
                 }

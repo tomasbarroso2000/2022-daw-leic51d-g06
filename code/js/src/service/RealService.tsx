@@ -270,6 +270,9 @@ export class RealService implements Service {
         }
 
         const jsonObj = JSON.parse(res)
+
+        console.log(jsonObj)
+
         const listGameTypes: Array<GameType> = 
         jsonObj.properties["game-types"].map(gameType => {
             return makeGameType(

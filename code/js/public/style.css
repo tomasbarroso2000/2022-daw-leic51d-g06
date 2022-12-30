@@ -84,7 +84,7 @@ div#content-games-type {
 }
 
 div#content-games-type .game-type {
-  display: inline-block;
+  display: inline-grid;
   width: 20%;
   margin: 0 auto;
   height: fit-content;
@@ -154,7 +154,7 @@ div#content-games-type .game-type div.center-align-content button {
 }
 
 div#content-games-type .game-type div.center-align-content button:hover {
-    border: 4px solid #f7a400;
+    outline: 2px solid #f7a400;
     background-color: white;
     color: black;
     cursor: pointer;
