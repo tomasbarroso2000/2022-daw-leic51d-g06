@@ -30,7 +30,7 @@ export function GetAuthn(props: GetAuthnProps): React.ReactElement {
         service.userHome(token)
             .then((userHome: UserHome) => {
                 if (!currentUser)
-                    setCurrentUser({token: token, name: userHome.name})
+                    setCurrentUser({ token: token, name: userHome.name })
                 setAuthentication("success")
             })
             .catch(() => {
@@ -45,8 +45,8 @@ export function GetAuthn(props: GetAuthnProps): React.ReactElement {
     if (authentication == "success" || !props.required) {
         return <>{props.children}</>
     } else {
-        if (tokenInCookie) 
+        if (tokenInCookie)
             removeCookie("token")
-        return <Navigate to="/login" state={{source: location.pathname}} replace={true}/>
-    } 
+        return <Navigate to="/login" state={{ source: location.pathname }} replace={true} />
+    }
 }

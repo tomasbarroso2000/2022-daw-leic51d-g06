@@ -9,12 +9,12 @@ export function FinishedGame(game: Game) {
     if (game.fleet.length == 0)
         return <Navigate to={paths["games"]} replace></Navigate>
 
-    const yourFleet = game.fleet.map((ship) => ship.destroyed ? 
-        <li>{capitalize(ship.name)} was destroyed</li> : 
-        <li>{capitalize(ship.name)} took {ship.nOfHits} hits</li>) 
+    const yourFleet = game.fleet.map((ship) => ship.destroyed ?
+        <li>{capitalize(ship.name)} was destroyed</li> :
+        <li>{capitalize(ship.name)} took {ship.nOfHits} hits</li>)
 
-    const enemyFleet = game.enemySunkFleet.length == 0 ? 
-        <p>No enemy ships were destroyed</p> : 
+    const enemyFleet = game.enemySunkFleet.length == 0 ?
+        <p>No enemy ships were destroyed</p> :
         game.enemySunkFleet.map((ship) => <li>{capitalize(ship.name)} was destroyed</li>)
 
     return (
@@ -39,4 +39,4 @@ export function FinishedGame(game: Game) {
             </div>
         </div>
     )
-    }
+}

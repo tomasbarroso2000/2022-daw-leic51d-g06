@@ -13,7 +13,6 @@ import { ListGames } from './ListGames'
 import { AuthnContainer } from './Authn'
 import { PlayGame } from './PlayGame'
 import { WaitForGame } from './WaitForGame'
-import { useEffect, useState } from 'react'
 
 export const paths = {
     "home": "/",
@@ -70,7 +69,7 @@ const router = createBrowserRouter([
             },
             {
                 "path": "*",
-                "element": <Navigate to="/"/>
+                "element": <Navigate to="/" />
             }
         ]
     }
@@ -85,4 +84,3 @@ export function App() {
         <RouterProvider router={router} />
     )
 }
- 

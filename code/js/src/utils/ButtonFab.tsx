@@ -8,4 +8,4 @@ export type ButtonFabProps = {
 
 export function ButtonFab(props: ButtonFabProps) {
     return <button disabled={props.isDisabled} onClick={props.onClick}>{props.text}</button>;
-  }
+}

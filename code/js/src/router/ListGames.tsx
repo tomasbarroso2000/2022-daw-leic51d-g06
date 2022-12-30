@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useState } from "react"
-import { Link, Navigate } from "react-router-dom"
+import { Link } from "react-router-dom"
 import { Game } from "../domain/Game"
 import { GamesList } from "../domain/GamesList"
 import { askService, Result } from "../service/askService"
@@ -58,9 +58,9 @@ export function ListGames() {
                 <div id="games-list-content">
                     <div id="nav">
                         <div className="arrow-left"></div>
-                        <ButtonFab isDisabled={skip == 0} onClick={() => {setSkip(skip - limit)}} text={"Previous"} />
+                        <ButtonFab isDisabled={skip == 0} onClick={() => { setSkip(skip - limit) }} text={"Previous"} />
                         <span> | </span>
-                        <ButtonFab isDisabled={!games.result.hasMore} onClick={() => {setSkip(skip + limit)}} text={"Next"} />
+                        <ButtonFab isDisabled={!games.result.hasMore} onClick={() => { setSkip(skip + limit) }} text={"Next"} />
                         <div className="arrow-right"></div>
                     </div>
                     {games.result.games.map((game: Game) => Playing(game))}

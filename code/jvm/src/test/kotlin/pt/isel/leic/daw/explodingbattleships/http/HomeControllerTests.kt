@@ -13,8 +13,7 @@ class HomeControllerTests {
     @Test
     fun get_home() {
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port/api/").build()
-        client.get().uri("games/info/1")
-            .header("Authorization", "Bearer 123")
+        client.get().uri("")
             .exchange()
             .expectStatus().isOk
     }

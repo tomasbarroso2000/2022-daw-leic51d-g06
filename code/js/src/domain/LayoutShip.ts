@@ -4,11 +4,11 @@ import { right, down, Square } from "./Square"
 export type ShipOrientation = "horizontal" | "vertical"
 
 export function otherOrientation(orientation: ShipOrientation): ShipOrientation {
-    return orientation == "horizontal" ? "vertical" : "horizontal" 
+    return orientation == "horizontal" ? "vertical" : "horizontal"
 }
 
 export function nextSquareFunction(orientation: ShipOrientation) {
-    return orientation  == "horizontal" ? right : down
+    return orientation == "horizontal" ? right : down
 }
 
 export type LayoutShip = {

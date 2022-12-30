@@ -35,21 +35,21 @@ export function Home() {
                             <h4>Version: {home.result.version}</h4>
                         </div>
                     </div>
-                    
+
                 </div>
                 <div id="left-side-content">
-                    
+
                     <div id="menu">
                         <h2 id="menu-title">Menu</h2>
                         <div id="menu-nav">
-                            {currentUser ? <button onClick={() => {setCurrentUser(undefined); removeCookie("token")}}>Sign Out</button> : undefined}
-                            {currentUser ? 
-                                (service.homeNavigation.includes("user-home") ? <div><Link to={paths['user-home']}>{currentUser.name}</Link></div> : undefined) : 
+                            {currentUser ? <button onClick={() => { setCurrentUser(undefined); removeCookie("token") }}>Sign Out</button> : undefined}
+                            {currentUser ?
+                                (service.homeNavigation.includes("user-home") ? <div><Link to={paths['user-home']}>{currentUser.name}</Link></div> : undefined) :
                                 (service.homeNavigation.includes("create-token") ? <div><Link to={paths['create-token']}>Login</Link></div> : undefined)
                             }
                             {service.homeNavigation.includes("rankings") ? <div key={"rankings"}><Link to={paths["rankings"]}>Rankings</Link></div> : undefined}
                             {service.homeNavigation.includes("games") ? <div key={"games"}><Link to={paths["games"]}>Play</Link></div> : undefined}
-                        </div> 
+                        </div>
                     </div>
                 </div>
             </div>

@@ -3,7 +3,7 @@ import { Square } from "../domain/Square"
 
 export const INNER_COLOR = "#008DD5"
 export const DESTROYED_SHIP_COLOR = "#000000"
-export const AROUND_DESTROYED_COLOR = "#FF0B5394"
+export const AROUND_DESTROYED_COLOR = "#0074AF"
 export const SHIP_COLOR = "#AED4E6"
 export const SELECTED_COLOR = "#FF0000"
 

@@ -1,5 +1,4 @@
-import { ShipType } from "./ShipType"
-import { down, right, Square } from "./Square"
+import { Square } from "./Square"
 
 export type Ship = {
     firstSquare: Square,

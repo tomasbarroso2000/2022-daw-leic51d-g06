@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Game} from "../domain/Game";
+import { Game } from "../domain/Game";
 import { paths, service } from "./App";
 import { useCurrentUser } from "./Authn";
 import { Square } from "../domain/Square";
@@ -27,19 +27,19 @@ export function PlayGame() {
     useEffect(() => {
         const tid = setInterval(() => {
             service.gameInfo(currentUser.token, gameId)
-            .then((newGameInfo: Game) => {
-                if (gameInfo && gameInfo.state == "layout_definition" && newGameInfo.state == "completed") {
+                .then((newGameInfo: Game) => {
+                    if (gameInfo && gameInfo.state == "layout_definition" && newGameInfo.state == "completed") {
+                        if (!goBack)
+                            setGoBack(true)
+                    } else {
+                        setGameInfo(newGameInfo)
+                    }
+
+                })
+                .catch(() => {
                     if (!goBack)
                         setGoBack(true)
-                } else {
-                    setGameInfo(newGameInfo)
-                }
-                
-            })
-            .catch(() => {
-                if (!goBack)
-                    setGoBack(true)
-            })
+                })
         }, gameInfo ? 3000 : 1000)
         return () => {
             clearInterval(tid)
@@ -71,7 +71,7 @@ export function PlayGame() {
         return <Navigate to={paths["games"]}></Navigate>
     }
 
-    if(!gameInfo) {
+    if (!gameInfo) {
         return <Loading />
     }
 

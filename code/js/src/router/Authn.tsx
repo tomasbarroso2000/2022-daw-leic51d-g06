@@ -13,9 +13,9 @@ const LoggedInContext = createContext<ContextType>({
 
 export function AuthnContainer({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState(undefined)
-    
+
     return (
-        <LoggedInContext.Provider value = {{ user: user, setUser: setUser }}>
+        <LoggedInContext.Provider value={{ user: user, setUser: setUser }}>
             {children}
         </LoggedInContext.Provider>
     )

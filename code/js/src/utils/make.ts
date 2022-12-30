@@ -6,14 +6,14 @@ import { UserInfo } from "../domain/UserInfo";
 
 export function makeHitsOrMIsses(hits): Array<Square> {
     const squares: Array<Square> = []
-    hits.forEach(hit => { squares.push({row: hit.row, column: hit.column}) })
+    hits.forEach(hit => { squares.push({ row: hit.row, column: hit.column }) })
     return squares
 }
 
 export function makeFleet(fleet): Array<Ship> {
     return fleet.map(ship => {
         return {
-            firstSquare: {row: ship["first-square"].charAt(0), column: ship["first-square"].charCodeAt(1)-48},
+            firstSquare: { row: ship["first-square"].charAt(0), column: ship["first-square"].charCodeAt(1) - 48 },
             name: ship.name,
             size: ship.size,
             destroyed: ship.destroyed,
@@ -45,11 +45,11 @@ export function makeTypeFleet(gameTypeFleet): Array<ShipType> {
 }
 
 export function makeGameType(
-    name, 
-    boardSize, 
-    shotsPerRound, 
-    layoutDefTime, 
-    shootingTime, 
+    name,
+    boardSize,
+    shotsPerRound,
+    layoutDefTime,
+    shootingTime,
     fleetTypes: Array<ShipType>
 ): GameType {
     return {

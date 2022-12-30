@@ -22,13 +22,13 @@ export function WaitForGame() {
     useIntervalAsync(updateGameId, 3000)
 
     if (gameId)
-        return <Navigate to={`${paths['game'].replace(":gameId", gameId.toString())}`} replace/>
+        return <Navigate to={`${paths['game'].replace(":gameId", gameId.toString())}`} replace />
 
     return (
         <div id="wait">
             <h1>Waiting for game</h1>
             <div className="lds-default"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
             <p>Remember to always have fun!</p>
-        </div>        
+        </div>
     )
 }

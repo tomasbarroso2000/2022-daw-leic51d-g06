@@ -30,11 +30,11 @@ export function isEnemySquareDestroyed(game: Game, square: Square) {
 }
 
 export function isEnemySquareAroundDestroyed(game: Game, square: Square) {
-    return game.enemySunkFleet.some((ship: Ship) => 
-        ship.squares.some((shipSquare) => 
+    return game.enemySunkFleet.some((ship: Ship) =>
+        ship.squares.some((shipSquare) =>
             contains(surroundingSquares(shipSquare), square) &&
             !deepEqual(shipSquare, square)
         )
     )
 }
-    
+

@@ -42,7 +42,7 @@ export function Me() {
                 </div>
             </div>
         )
-    }    
+    }
 }
 
 function setPageTitle() {

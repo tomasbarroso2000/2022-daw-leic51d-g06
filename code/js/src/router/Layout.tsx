@@ -1,9 +1,9 @@
 import * as React from "react"
-import { Dispatch,  } from "react"
+import { Dispatch, } from "react"
 import { CurrentUser } from "../domain/CurrentUser"
 import { Game } from "../domain/Game"
 import { GameType } from "../domain/GameTypes"
-import { LayoutShip, layoutShipSquares, nextSquareFunction, otherOrientation, ShipOrientation } from "../domain/LayoutShip"
+import { LayoutShip, layoutShipSquares, nextSquareFunction, otherOrientation } from "../domain/LayoutShip"
 import { ShipType } from "../domain/ShipType"
 import { Square, squareToString, surroundingSquares } from "../domain/Square"
 import { BoardView } from "../utils/board"
@@ -60,8 +60,8 @@ function draggableShipDivStyle(shipSize: number, squareSize: number): React.CSSP
 
 function layoutSquareStyle(squareSize: number, isOccupied: boolean): React.CSSProperties {
     return {
-        width: `${squareSize}px`, 
-        height: `${squareSize}px`, 
+        width: `${squareSize}px`,
+        height: `${squareSize}px`,
         backgroundColor: isOccupied ? SHIP_COLOR : INNER_COLOR
     }
 }
@@ -70,8 +70,8 @@ function layoutShipSquareStyle(squareSize: number, isFirst: boolean): React.CSSP
     return {
         display: "inline-block",
         marginRight: "1px",
-        width: isFirst ? `${squareSize-4}px` : `${squareSize}px`, 
-        height: isFirst? `${squareSize-4}px` : `${squareSize}px`, 
+        width: isFirst ? `${squareSize - 4}px` : `${squareSize}px`,
+        height: isFirst ? `${squareSize - 4}px` : `${squareSize}px`,
         backgroundColor: SHIP_COLOR,
         border: isFirst ? "2px solid red" : undefined
     }
@@ -79,10 +79,10 @@ function layoutShipSquareStyle(squareSize: number, isFirst: boolean): React.CSSP
 
 function layoutShipPropertiesStyle(squareSize: number): React.CSSProperties {
     return {
-        display: "inline", 
+        display: "inline",
         width: `${squareSize}px`,
-        height: `${squareSize}px`, 
-        lineHeight: `${squareSize}px`, 
+        height: `${squareSize}px`,
+        lineHeight: `${squareSize}px`,
         textAlign: "center"
     }
 }
@@ -90,7 +90,7 @@ function layoutShipPropertiesStyle(squareSize: number): React.CSSProperties {
 function unavailableSquares(layoutShips: Array<LayoutShip>, filteredShip: LayoutShip): Array<Square> {
     const squares = []
     layoutShips.forEach((ship) => {
-        if (ship.position && !filteredShip.position || ship.position && ! deepEqual(ship.position, filteredShip.position)) {
+        if (ship.position && !filteredShip.position || ship.position && !deepEqual(ship.position, filteredShip.position)) {
             const shipSquares = layoutShipSquares(ship)
             shipSquares.forEach((square) => {
                 const unavailableSquares = surroundingSquares(square)
@@ -140,9 +140,9 @@ function draggableShip(
     }
 
     return (
-        <div key={layoutShip.type.name} style={{marginBottom: "50px"}}>
+        <div key={layoutShip.type.name} style={{ marginBottom: "50px" }}>
             <div>{capitalize(layoutShip.type.name)}</div>
-            <div style={{display: "flex"}}>
+            <div style={{ display: "flex" }}>
                 <div
                     style={draggableShipDivStyle(layoutShip.type.size, squareSize)}
                     onClick={changeOrientation(boardSize, layoutShip, layoutShips, setLayoutShips)}
@@ -156,18 +156,18 @@ function draggableShip(
                 </div>
                 <div style={layoutShipPropertiesStyle(squareSize)}>
                     <button className="reset-btn"
-                        style={layoutShip.position ? undefined : {display: "none"}} 
+                        style={layoutShip.position ? undefined : { display: "none" }}
                         onClick={() => {
                             setLayoutShips(
                                 replace(
-                                    layoutShips, 
-                                    layoutShip, 
-                                    {type: layoutShip.type, position: undefined, orientation: layoutShip.orientation}
+                                    layoutShips,
+                                    layoutShip,
+                                    { type: layoutShip.type, position: undefined, orientation: layoutShip.orientation }
                                 )
                             )
-                    }}>{"Reset"}
+                        }}>{"Reset"}
                     </button>
-                
+
                 </div>
             </div>
         </div>
@@ -176,7 +176,7 @@ function draggableShip(
 
 function initialLayoutShips(gameType: GameType): Array<LayoutShip> {
     return gameType.fleet.map((shipType: ShipType) => {
-        return {type: shipType, position: undefined, orientation: "horizontal"}
+        return { type: shipType, position: undefined, orientation: "horizontal" }
     })
 }
 
@@ -197,55 +197,55 @@ export function Layout(
     setLayoutShips: Dispatch<React.SetStateAction<LayoutShip[]>>,
     setGameInfo: Dispatch<Game>,
     setLoading: Dispatch<boolean>
-) { 
+) {
 
-    if (layoutShips.length == 0) 
+    if (layoutShips.length == 0)
         setLayoutShips(initialLayoutShips(game.type))
 
     const squareSize = BIG_BOARD_SQUARE_CONST / game.type.boardSize
 
     if (game.fleet.length == 0)
         return (
-                <div id="layout-content">
-                    <div style={{float: "left"}}>
-                        <div id="layout-status">
-                            <h1>Define Your Layout</h1>
-                            <h2>{`${currentUser.name} vs. ${game.opponent.name}`}</h2>
-                            <p>Grab ships by the first square and press it to rotate them</p>
-                        </div>
-                        <div id="timer">Time left: <p>{timer}</p></div>
-                        <div id="btn-container">
-                            <ButtonFab 
-                                isDisabled={loading}
-                                onClick={() => {
-                                    setLoading(true)
-                                    service.defineLayout(currentUser.token, game.id, layoutShips).then((game) => {
-                                        setGameInfo(game)
-                                        setLoading(false)
-                                    })
-                                }}
-                                text={"Submit Layout"}/>
-                        </div>
+            <div id="layout-content">
+                <div style={{ float: "left" }}>
+                    <div id="layout-status">
+                        <h1>Define Your Layout</h1>
+                        <h2>{`${currentUser.name} vs. ${game.opponent.name}`}</h2>
+                        <p>Grab ships by the first square and press it to rotate them</p>
                     </div>
-                    <div id="board-container">
-                        <div id="ships-layout-container">
-                            {layoutShips.map((layoutShip) => draggableShip(game.type.boardSize, squareSize, layoutShip, layoutShips, setLayoutShips))}
-                        </div>
-                        <div style={{display: "inline-block", verticalAlign: "middle"}}>
-                            {BoardView(game.type.boardSize, squareSize, (square: Square, squareSize: number, isLast: boolean) => {
-                                return (
-                                    <div key={squareToString(square)} 
-                                        style={layoutSquareStyle(squareSize, isSquareOccupied(layoutShips, square))}
-                                        onDragOver={handleDragOver}
-                                        onDrop={makeHandleDropFunction(game.type.boardSize, layoutShips, setLayoutShips)}
-                                        data-square={JSON.stringify(square)}>
-                                    </div>
-                                )
-                            }
-                            )}
-                        </div>
+                    <div id="timer">Time left: <p>{timer}</p></div>
+                    <div id="btn-container">
+                        <ButtonFab
+                            isDisabled={loading}
+                            onClick={() => {
+                                setLoading(true)
+                                service.defineLayout(currentUser.token, game.id, layoutShips).then((game) => {
+                                    setGameInfo(game)
+                                    setLoading(false)
+                                })
+                            }}
+                            text={"Submit Layout"} />
                     </div>
                 </div>
+                <div id="board-container">
+                    <div id="ships-layout-container">
+                        {layoutShips.map((layoutShip) => draggableShip(game.type.boardSize, squareSize, layoutShip, layoutShips, setLayoutShips))}
+                    </div>
+                    <div style={{ display: "inline-block", verticalAlign: "middle" }}>
+                        {BoardView(game.type.boardSize, squareSize, (square: Square, squareSize: number, isLast: boolean) => {
+                            return (
+                                <div key={squareToString(square)}
+                                    style={layoutSquareStyle(squareSize, isSquareOccupied(layoutShips, square))}
+                                    onDragOver={handleDragOver}
+                                    onDrop={makeHandleDropFunction(game.type.boardSize, layoutShips, setLayoutShips)}
+                                    data-square={JSON.stringify(square)}>
+                                </div>
+                            )
+                        }
+                        )}
+                    </div>
+                </div>
+            </div>
         )
     else
         return (

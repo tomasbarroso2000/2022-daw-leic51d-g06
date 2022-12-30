@@ -4,7 +4,7 @@ export function replace<T>(list: Array<T>, originalElement: T, newElement: T) {
     return list.map((elem: T) => {
         if (deepEqual(elem, originalElement))
             return newElement
-        else 
+        else
             return elem
     })
 }

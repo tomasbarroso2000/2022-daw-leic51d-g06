@@ -1,5 +1,5 @@
 export async function doFetch(
-	url: string, 
+	url: string,
 	options: any | undefined = undefined
 ) {
 	const resp = options ? await fetchWithOptions(url, options) : await fetch(url)
@@ -13,7 +13,7 @@ export async function doFetch(
 			throw "unauthorized"
 		}
 	}
-	
+
 }
 
 async function fetchWithOptions(url: string, options: any) {
@@ -34,7 +34,7 @@ function makeBody(body: any | undefined): string | undefined {
 }
 
 function makeHeaders(
-	body: any | undefined, 
+	body: any | undefined,
 	token: string | undefined
 ): any {
 	const headers = {}

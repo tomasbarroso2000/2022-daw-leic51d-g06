@@ -8,6 +8,6 @@ package pt.isel.leic.daw.explodingbattleships.http.models.output
  */
 data class HomeOutputModel(
     val name: String = "Exploding Battleships",
-    val version: String = "0.1.0",
+    val version: String = "1.0.0",
     val authors: List<String> = listOf("Alexandre Madeira", "Miguel Palma", "Tomás Barroso")
 )

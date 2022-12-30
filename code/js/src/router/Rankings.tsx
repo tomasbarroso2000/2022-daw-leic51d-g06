@@ -29,7 +29,7 @@ export function Rankings() {
                             <dt>Rank - Name: </dt><dd>Score: </dd>
                         </dl>
                     </li>
-                    {rankings.result.rankings.map((user: UserInfo) => 
+                    {rankings.result.rankings.map((user: UserInfo) =>
                         <li key={user.id}>
                             <dl>
                                 <dt id="rankings-player">{++rank} - {user.name}</dt><span></span><dd>{user.score}</dd>
@@ -39,9 +39,9 @@ export function Rankings() {
                 </ul>
                 <div id="nav">
                     <div className="arrow-left"></div>
-                    <ButtonFab isDisabled={skip == 0} onClick={() => {setSkip(skip - limit)}} text={"Previous"}/>
+                    <ButtonFab isDisabled={skip == 0} onClick={() => { setSkip(skip - limit) }} text={"Previous"} />
                     <span> | </span>
-                    <ButtonFab isDisabled={!rankings.result.hasMore} onClick={() => {setSkip(skip + limit)}} text={"Next"}/>
+                    <ButtonFab isDisabled={!rankings.result.hasMore} onClick={() => { setSkip(skip + limit) }} text={"Next"} />
                     <div className="arrow-right"></div>
                 </div>
             </div>

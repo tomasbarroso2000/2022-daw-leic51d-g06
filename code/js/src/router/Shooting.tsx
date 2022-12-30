@@ -23,10 +23,10 @@ function occupiedSquareStyle(squareSize: number): React.CSSProperties {
     }
 }
 
- function defaultSquareStyle(squareSize: number): React.CSSProperties {
+function defaultSquareStyle(squareSize: number): React.CSSProperties {
     return {
-        width: `${squareSize}px`, 
-        height: `${squareSize}px`, 
+        width: `${squareSize}px`,
+        height: `${squareSize}px`,
         backgroundColor: INNER_COLOR,
         display: "flex",
         alignItems: 'center',
@@ -36,8 +36,8 @@ function occupiedSquareStyle(squareSize: number): React.CSSProperties {
 
 function enemySquareStyle(color: string, squareSize: number): React.CSSProperties {
     return {
-        width: `${squareSize}px`, 
-        height: `${squareSize}px`, 
+        width: `${squareSize}px`,
+        height: `${squareSize}px`,
         backgroundColor: color,
         display: "flex",
         alignItems: 'center',
@@ -47,9 +47,9 @@ function enemySquareStyle(color: string, squareSize: number): React.CSSPropertie
 
 export function Shooting(
     game: Game,
-    currentUser: CurrentUser, 
-    timer: number, 
-    selectedSquares: Array<Square>, 
+    currentUser: CurrentUser,
+    timer: number,
+    selectedSquares: Array<Square>,
     loading: boolean,
     setSelectedSquares: Dispatch<React.SetStateAction<Square[]>>,
     setGameInfo: Dispatch<Game>,
@@ -58,7 +58,7 @@ export function Shooting(
     document.title = "Shooting Stage"
     return (
         <div id="layout-content">
-            <div style={{float: "left"}}>
+            <div style={{ float: "left" }}>
                 <div id="layout-status">
                     <h1>Game Type: {capitalize(game.type.name)}</h1>
                     <h2>{`${currentUser.name} vs. ${game.opponent.name}`}</h2>
@@ -67,29 +67,39 @@ export function Shooting(
                 <div id="timer">Time left: <p>{timer}</p></div>
                 <div id="btn-container">
                     <ButtonFab
-                        isDisabled={!game.playing || loading} 
+                        isDisabled={!game.playing || loading}
                         onClick={() => {
                             setLoading(true)
-                            service.sendHits(currentUser.token, game.id, selectedSquares).then((game) =>{
-                                setSelectedSquares([])
-                                setGameInfo(game)
-                                setLoading(false)
-                            })
-                        }} 
-                        text={"Shoot"}/>
-                    <ButtonFab 
-                        isDisabled={!game.playing || loading} 
+                            service.sendHits(currentUser.token, game.id, selectedSquares)
+                                .then((game) => {
+                                    setSelectedSquares([])
+                                    setGameInfo(game)
+                                    setLoading(false)
+                                })
+                                .catch(() => {
+                                    setLoading(false)
+                                    alert("An error occurred")
+                                })
+                        }}
+                        text={"Shoot"} />
+                    <ButtonFab
+                        isDisabled={!game.playing || loading}
                         onClick={() => {
                             setLoading(true)
-                            service.forfeit(currentUser.token, game.id).then((game) => {
-                                setGameInfo(game)
-                                setLoading(false)
-                            })
-                        }} 
-                        text={"Forfeit"}/>
+                            service.forfeit(currentUser.token, game.id)
+                                .then((game) => {
+                                    setGameInfo(game)
+                                    setLoading(false)
+                                })
+                                .catch(() => {
+                                    setLoading(false)
+                                    alert("An error occurred")
+                                })
+                        }}
+                        text={"Forfeit"} />
                 </div>
             </div>
-            <div className="board-content" id="self-board-container" style={{marginTop: "100px"}}>
+            <div className="board-content" id="self-board-container" style={{ marginTop: "100px" }}>
                 <h1>Your Board</h1>
                 {BoardView(game.type.boardSize, SMALL_BOARD_SQUARE_CONST / game.type.boardSize, (square: Square, squareSize: number, isLast: boolean) => {
                     const isOccupied = game.fleet.some((ship: Ship) => contains(ship.squares, square))
@@ -112,10 +122,10 @@ export function Shooting(
                         canClick = false
                     } else if (contains(game.hits, square)) {
                         squareColor = SHIP_COLOR,
-                        canClick = false
+                            canClick = false
                     } else if (contains(game.misses, square)) {
                         squareColor = INNER_COLOR,
-                        canClick = false
+                            canClick = false
                     } else if (contains(selectedSquares, square)) {
                         squareColor = SELECTED_COLOR
                     } else {
@@ -128,7 +138,7 @@ export function Shooting(
                                 setSelectedSquares(remove(selectedSquares, square))
                             } else if (selectedSquares.length < game.type.shotsPerRound) {
                                 setSelectedSquares(selectedSquares.concat(square))
-                            } 
+                            }
                         }
                     }
                     const style = enemySquareStyle(squareColor, squareSize)

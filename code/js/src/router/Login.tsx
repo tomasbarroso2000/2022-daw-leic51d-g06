@@ -10,7 +10,7 @@ import { useCookies } from "react-cookie";
 import { Loading } from "./Loading";
 import { ProblemJson } from "../domain/ProblemJson";
 import { capitalize } from "../utils/capitalize";
- 
+
 export function Login() {
     document.title = "Login"
     const fields: Result<Array<Field>> | undefined = askService(service, service.getCreateTokenFields)
@@ -28,14 +28,14 @@ export function Login() {
 
     if (fields.kind == "success") {
         if (redirect) {
-            return <Navigate to={location.state?.source?.pathname || "/me"} replace={true}/>
+            return <Navigate to={location.state?.source?.pathname || "/me"} replace={true} />
         }
-    
+
         function handleChange(ev: React.FormEvent<HTMLInputElement>) {
             const name = ev.currentTarget.name
             setInputs({ ...inputs, [name]: ev.currentTarget.value })
         }
-    
+
         function handleSubmit(ev: React.FormEvent<HTMLFormElement>) {
             ev.preventDefault()
             setIsSubmitting(true)
@@ -57,7 +57,7 @@ export function Login() {
                     alert(e.detail)
                 })
         }
-    
+
         return (
             <div id="content">
                 <div id="login">
@@ -65,8 +65,8 @@ export function Login() {
                         <h1>Login</h1>
                         <fieldset disabled={isSubmitting}>
                             <form onSubmit={handleSubmit}>
-                                {fields.result.map((field: Field) => 
-                                    <input required key={field.name} type={field.type} name={field.name} value={inputs[field.name] || ""} placeholder={capitalize(field.name)} onChange={handleChange}/>
+                                {fields.result.map((field: Field) =>
+                                    <input required key={field.name} type={field.type} name={field.name} value={inputs[field.name] || ""} placeholder={capitalize(field.name)} onChange={handleChange} />
                                 )}
                                 <input id="create-token" type="submit" value="Login" />
                             </form>
@@ -75,7 +75,7 @@ export function Login() {
                                     <button>Create User</button>
                                 </div>
                             </Link>
-                        </fieldset>  
+                        </fieldset>
                     </div>
                     <div id="left-side-login">
                         <img src="images/logo.png" alt="battleship-logo" id="logo" />
