@@ -45,11 +45,7 @@ export function ListGames() {
     const limit = 5
     const [skip, setSkip] = useState(0)
 
-    console.log(skip)
-
     const games: Result<GamesList> | undefined = askService(service, service.games, currentUser.token, limit, skip)
-
-    console.log(games)
 
     if (!games) {
         return <Loading />

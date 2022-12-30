@@ -28,7 +28,6 @@ export function PlayGame() {
         const tid = setInterval(() => {
             service.gameInfo(currentUser.token, gameId)
             .then((newGameInfo: Game) => {
-                console.log(newGameInfo)
                 if (gameInfo && gameInfo.state == "layout_definition" && newGameInfo.state == "completed") {
                     if (!goBack)
                         setGoBack(true)
@@ -50,7 +49,6 @@ export function PlayGame() {
     useEffect(() => {
         const tid = setInterval(() => {
             if (gameInfo) {
-                console.log("updating timer")
                 switch (gameInfo.state) {
                     case "layout_definition": {
                         const timeLeft = Math.round(calcTimeLeft(gameInfo.type.layoutDefTime, Date.parse(gameInfo.startedAt)))
@@ -79,15 +77,12 @@ export function PlayGame() {
 
     switch (gameInfo.state) {
         case "layout_definition": {
-            console.log("layout_definition")
             return Layout(gameInfo, currentUser, timer, layoutShips, loading, setLayoutShips, setGameInfo, setLoading)
         }
         case "shooting": {
-            console.log("shooting")
             return Shooting(gameInfo, currentUser, timer, selectedSquares, loading, setSelectedSquares, setGameInfo, setLoading)
         }
         case "completed": {
-            console.log("completed")
             return FinishedGame(gameInfo)
         }
     }

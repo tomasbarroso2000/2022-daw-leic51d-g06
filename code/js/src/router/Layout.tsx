@@ -18,14 +18,12 @@ import { BIG_BOARD_SQUARE_CONST, INNER_COLOR, SHIP_COLOR } from "../utils/board"
 
 function handleDragStart(event: React.DragEvent<HTMLDivElement>) {
     const shipName = event.currentTarget.attributes.getNamedItem('data-name').textContent
-    console.log(`dragStart - ${shipName}`)
     event.dataTransfer.effectAllowed = "all"
     event.dataTransfer.setData("text/plain", shipName)
 }
 
 function handleDragOver(event: React.DragEvent<HTMLDivElement>) {
     event.preventDefault()
-    console.log("dragOver")
     event.dataTransfer.dropEffect = "copy";
 }
 
@@ -40,9 +38,6 @@ function makeHandleDropFunction(boardSize: number, layoutShips: Array<LayoutShip
 
         const newLayoutShip: LayoutShip = JSON.parse(JSON.stringify(layoutShip))
         newLayoutShip.position = square
-
-        console.log(layoutShip)
-        console.log(square)
 
         setLayoutShips(layoutShips.map((originalLayoutShip) => {
             if (deepEqual(originalLayoutShip.type, newLayoutShip.type))
@@ -112,7 +107,6 @@ function unavailableSquares(layoutShips: Array<LayoutShip>, filteredShip: Layout
 function isSquareValidForShip(boardSize: number, square: Square, layoutShip: LayoutShip, layoutShips: Array<LayoutShip>) {
     if (!square)
         return true
-    console.log("valid square")
     const invalidSquares = unavailableSquares(layoutShips, layoutShip)
     let currSquare = square
     const nextSquare = nextSquareFunction(layoutShip.orientation)

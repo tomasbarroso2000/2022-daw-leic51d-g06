@@ -24,8 +24,6 @@ export function GetAuthn(props: GetAuthnProps): React.ReactElement {
 
     const tokenInCookie = cookies.token
 
-    console.log(tokenInCookie)
-
     const token = currentUser ? currentUser.token : tokenInCookie
 
     useEffect(() => {

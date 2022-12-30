@@ -10,7 +10,6 @@ export async function doFetch(
 		if (resp.body) {
 			throw await resp.json()
 		} else {
-			console.log("unauthorized")
 			throw "unauthorized"
 		}
 	}

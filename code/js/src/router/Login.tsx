@@ -43,7 +43,6 @@ export function Login() {
                 .then(token => {
                     setIsSubmitting(false)
                     service.userHome(token.token).then((userHome) => {
-                        console.log(`setUser(${token.token})`)
                         const newCurrentUser: CurrentUser = {
                             token: token.token,
                             name: userHome.name

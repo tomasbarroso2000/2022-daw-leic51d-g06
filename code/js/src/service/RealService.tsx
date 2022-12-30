@@ -72,8 +72,6 @@ export class RealService implements Service {
 
         this.createTokenAction = jsonObj.actions.find((action: Action) => action.name == "create-token")
 
-        console.log(this.homeNavigation)
-
         return {
             name: jsonObj.properties.name,
             authors: jsonObj.properties.authors,
@@ -269,8 +267,6 @@ export class RealService implements Service {
         }
 
         const jsonObj = JSON.parse(res)
-
-        console.log(jsonObj)
 
         const listGameTypes: Array<GameType> = 
         jsonObj.properties["game-types"].map(gameType => {
