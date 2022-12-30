@@ -12,7 +12,9 @@ Frontend applications communicate with the backend service using an HTTP API. Th
 
 [Frontend application technical report](https://github.com/isel-leic-daw/2022-daw-leic51d-g06/blob/main/docs/frontend-report.md)
 
-[Server run instructions](https://github.com/isel-leic-daw/2022-daw-leic51d-g06/blob/main/code/jvm/README.md) 
+[Server run instructions](https://github.com/isel-leic-daw/2022-daw-leic51d-g06/blob/main/code/jvm/README.md)
+
+[Web application run instructions](https://github.com/isel-leic-daw/2022-daw-leic51d-g06/blob/main/code/js/README.md)
 
 [HTTP API specification](https://github.com/isel-leic-daw/2022-daw-leic51d-g06/blob/main/docs/api-spec.md)
 
