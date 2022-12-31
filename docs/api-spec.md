@@ -5,11 +5,13 @@
 All the success responses produced by this API use the Siren hypermedia specification.
 The error responses use the Problem Json specification that provides the details of each error.
 
-Note: Every endpoint that relates to some activity withing a game (send hits, define layout, forfeit) responds with the updated version of the game in question.
+Note: Every endpoint that relates to some activity within a game (send hits, define layout, forfeit) responds with the updated version of the game in question.
 
 ### Hypermedia Relations
 
-![image](https://user-images.githubusercontent.com/76069448/198892372-c400f351-da00-4d23-bd62-5e9bff4bbb86.png)
+![apinav](https://user-images.githubusercontent.com/76069448/210137544-ce67dfb2-8c58-46c1-adf3-f72cc6d48ee8.png)
+
+Note: Every endpoint has a link to itslef (SELF) and a link to the Home endpoint. Those relations were not drawn in the diagram to achieve a less cluttered and more understandable diagram.
 
 ### Home
 
@@ -26,7 +28,7 @@ Response body properties:
 ```json
 {
   "name": "Exploding Battleships",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "authors": ["Alexandre Madeira", "Miguel Palma", "Tomás Barroso"]
 }
 ```
