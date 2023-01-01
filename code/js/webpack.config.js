@@ -1,7 +1,7 @@
 const webpack = require('webpack')
 
 module.exports = {
-    mode: "development",
+    mode: "production",
     resolve: {
         extensions: [".js", ".ts", ".tsx"]
     },
@@ -11,7 +11,7 @@ module.exports = {
         proxy: {
             "/api": {
                 target: "http://localhost:8083",
-                router: () => process.env.SERVER || "http://localhost:8080"
+                router: () => "http://localhost:8080"
             },
         },
     },
@@ -26,7 +26,7 @@ module.exports = {
     },
     plugins: [
         new webpack.DefinePlugin({
-          'process.env.BASE_URL': JSON.stringify(process.env.BASE_URL),
+          'process.env.BASE_URL': undefined //|| JSON.stringify('http://192.168.1.85:8083'), // Replace the IP address with your private IP address
         })
     ]
 }

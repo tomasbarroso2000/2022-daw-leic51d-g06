@@ -1,16 +1,18 @@
 version: '3.8'
 services:
-  client-app:
+  # The service running the client app
+  nginx-client:
+    container_name: nginx-client
+    hostname: nginx-client
     build:
       context: .
       dockerfile: ./Dockerfile
-    environment:
-      #BASE_URL: "http://192.168.1.85:8083" # Uncomment and replace the IP address with your private IP address
-      SERVER: "http://nginx:8080"
-    ports: 
+    ports:
       - 8083:8083
+    volumes:
+      - ../js/tests/nginx:/etc/nginx
     depends_on:
-      - nginx
+      - nginx-server
   # The service running the DB
   db-tests:
     container_name: db-tests
@@ -62,10 +64,10 @@ services:
       PORT: 8080
       POSTGRES_URI: "jdbc:postgresql://db-tests:5432/db?user=dbuser&password=changeit"
 
-  # The service running the load-balancer
-  nginx:
-    container_name: nginx
-    hostname: nginx
+  # The service running the load-balancer for the server
+  nginx-server:
+    container_name: nginx-server
+    hostname: nginx-server
     image: nginx
     ports:
       - 8080:8080
