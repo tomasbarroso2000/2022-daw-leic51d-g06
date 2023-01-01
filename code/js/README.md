@@ -10,25 +10,14 @@ cd ../jvm
 gradlew extractUberJar
 ```
 
-* Start docker image with development time services and web client
+* Compile source code to be run in a docker container
+```
+npm run build
+```
+
+* Start docker image with the client application ready to be used
 ```
 docker compose up --build --force-recreate 
 ```
 
-Note: The docker-compose.yaml file contains instructions on how to get the application to be visible to every device in the private network.
-
-* Start shell on postgres container
-
-```
-docker exec -ti db-tests bash
-```
-
-* Start `psql` inside postgres container
-```
-psql -U dbuser -d db
-```
-* `psql` commands
-  * `\h` - show help. 
-  * `\d <table>` - show table.
-  * `select ... ;` - execute query.
-  * `\q` - quit `psql`.
+Note: The webpack.config.js file contains instructions on how to get the application to be visible to every device in the private network.
