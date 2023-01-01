@@ -24,8 +24,6 @@ services:
       - POSTGRES_USER=dbuser
       - POSTGRES_PASSWORD=changeit
       - POSTGRES_DB=db
-    ports:
-      - 5432:5432
 
   # spring-service-1 and spring-service-2 are used to illustrate scenarios with a fixed number of servers
   # with static and well know names.
