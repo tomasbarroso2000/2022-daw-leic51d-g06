@@ -51,7 +51,7 @@ create table if not exists hits(
 
 create table if not exists ships(
    first_square varchar(5) check (first_square ~ '[a-z][0-9]+'),
-   name varchar(20) not null check (name in ('carrier', 'battleship', 'cruiser', 'submarine', 'destroyer')),
+   name varchar(20) not null references ship_types(name),
    size integer not null check (size > 0),
    n_of_hits integer check (n_of_hits >= 0),
    destroyed bool not null,
@@ -64,7 +64,7 @@ create table if not exists ships(
 create table if not exists lobbies(
     id serial primary key,
 	user_id integer references users(id),
-	game_type varchar(20) not null check (game_type in ('beginner', 'experienced', 'expert')),
+	game_type varchar(20) not null references game_types(name),
 	enter_time timestamp not null,
 	game_id integer references  games(id)
 );
