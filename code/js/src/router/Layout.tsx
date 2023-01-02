@@ -188,6 +188,15 @@ function changeOrientation(boardSize: number, layoutShip: LayoutShip, layoutShip
     return () => { setLayoutShips(replace(layoutShips, layoutShip, newLayoutShip)) }
 }
 
+function areAllShipsInTheBoard(ships: LayoutShip[]): boolean {
+    ships.map((ship) => {
+        if (!ship.position) {
+            return false
+        }
+    })
+    return true
+}
+
 export function Layout(
     game: Game,
     currentUser: CurrentUser,
@@ -216,7 +225,7 @@ export function Layout(
                     <div id="timer">Time left: <p>{timer}</p></div>
                     <div id="btn-container">
                         <ButtonFab
-                            isDisabled={loading}
+                            isDisabled={loading || !layoutShips.every((ship) => ship.position)}
                             onClick={() => {
                                 setLoading(true)
                                 service.defineLayout(currentUser.token, game.id, layoutShips).then((game) => {

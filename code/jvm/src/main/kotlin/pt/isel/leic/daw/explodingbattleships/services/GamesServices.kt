@@ -49,14 +49,16 @@ class GamesServices(private val data: Data) {
             hasMore = userGames.hasMore
             for (game in userGames.list) {
                 val updatedGame = computeGame(transaction, game.id, data)
-                userPlayingGames.add(
-                    getFullGameInfo(
-                        transaction,
-                        updatedGame,
-                        userId,
-                        data
+                if (updatedGame.state != "completed") {
+                    userPlayingGames.add(
+                        getFullGameInfo(
+                            transaction,
+                            updatedGame,
+                            userId,
+                            data
+                        )
                     )
-                )
+                }
             }
             if (userPlayingGames.size == userGames.list.size) {
                 break
