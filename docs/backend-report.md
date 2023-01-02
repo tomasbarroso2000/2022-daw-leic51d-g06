@@ -1,6 +1,6 @@
 ## Introduction
 
-This document contains the relevant design and implementation aspects of the battleships game api.
+This document contains the relevant design and implementation aspects of the Exploding Battleships game API.
 
 ## Modeling the database
 
@@ -8,12 +8,12 @@ This document contains the relevant design and implementation aspects of the bat
 
 The following diagram holds the Entity-Relationship model for the information managed by the system.
 
-![draw_final](https://user-images.githubusercontent.com/76069448/198884875-fc5e7b0b-584c-4a29-aba7-735af61aadb2.jpg)
+![er](https://user-images.githubusercontent.com/76069448/210234478-41775281-52be-439a-a15f-24e490543b8a.png)
 
 We highlight the following aspects:
 
 - The realtions between users and games represent the player1, the player2 and the current player, respectively;
-- The users entity is associated to every other entity.
+- The fact that the game types and the ship types are stored in the database allows for the easy creation of new game/ship types by an administrator. 
 
 The conceptual model has the following restrictions:
 
@@ -21,17 +21,15 @@ The conceptual model has the following restrictions:
 - The score in the users entity must be above or equal to zero;
 - The type, state and started_at in the games entity cannot be null;
 - The curr_player must be either player1 or player2;
-- The type in the games entity must be "beginner", "experienced" or "expert";
 - The state in the games entity must be "layout_definition", "shooting" or "completed";
 - The hit_timestamp and on_ship in the hits entity cannot be null;
 - The square in the hits and ship entities must follow a specific format (a letter followed by a number);
 - The name, size, destroyed and orientation in the ships entity cannot be null;
 - The size in the ships entity must be above 0;
 - The n_of_hits in the ships entity must be above or equal to zero;
-- The name in the ships entity must be "carrier", "battleship", "cruiser", "submarine" or "destroyer";
 - The orientation in the ships entity must be "vertical" or "horizontal";
 - The game_type and enter_time in the lobbies entity cannot be null;
-- The game_type in the lobbies entity must be "beginner", "experienced" or "advanced".
+- The board_size, shots_per_round, layout_def_time_in_secs, shooting_time_in_secs in the game_types cannot be null.
 
 ### Physical Model
 
@@ -39,9 +37,9 @@ The physical model of the database is available in [create.sql](https://github.c
 
 We highlight the following aspects of this model:
 
-- Our design allows the user to be associated with many tokens (stored in the database) which should happen in "real-world applications" where a new token is generated for each session;
-- The stored password is just the hash code of the actual password to provide more security;
-- The physical model contains tables that are not currently used but will be useful for improving the flexibility of the application in the near future.
+- Our design allows the user to be associated with multiple tokens (3) (stored in the database) which should happen in "real-world applications" where a new token is generated for each session;
+- The stored passwords and tokens are just the hash code of the actual value to provide more security;
+- We thought about adding privilege levels to the users so that there could be database managers within the users. Even though it is not yet implemented, it could be something to think about in the future.
 
 ## Software organization
 
@@ -83,7 +81,7 @@ The pipeline section contains the interceptor that converts a bearer token into 
 Identified defects:
 
 - The authenticated endpoints require 2 different connections to the database (one for the authentication and one for the actual operation);
-- The services module uses error codes based on the http protocol which should only be known by the http module;
+- The services module uses error codes based on the HTTP protocol which should only be known by the http module;
 - Because the Kotlin language's type system has no knowledge of the exceptions that might be thrown in a function, it might be better to stop using exceptions in the services module to represent an error and replace them with different return types for each error in every function;
 
 ##
