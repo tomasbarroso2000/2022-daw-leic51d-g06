@@ -67,7 +67,7 @@ export function Shooting(
                 <div id="timer">Time left: <p>{timer}</p></div>
                 <div id="btn-container">
                     <ButtonFab
-                        isDisabled={!game.playing || loading}
+                        isDisabled={!game.playing || loading || selectedSquares.length == 0}
                         onClick={() => {
                             setLoading(true)
                             service.sendHits(currentUser.token, game.id, selectedSquares)
