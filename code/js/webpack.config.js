@@ -26,7 +26,7 @@ module.exports = {
     },
     plugins: [
         new webpack.DefinePlugin({
-          'process.env.BASE_URL': undefined //|| JSON.stringify('http://192.168.1.85:8083'), // Replace the IP address with your private IP address
+          'process.env.BASE_URL': undefined //|| JSON.stringify('http://<YOUR IP>:8083') // Remove comment and write your private IP address
         })
     ]
 }
