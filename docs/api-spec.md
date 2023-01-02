@@ -5,7 +5,9 @@
 All the success responses produced by this API use the Siren hypermedia specification.
 The error responses use the Problem Json specification that provides the details of each error.
 
-Note: Every endpoint that relates to some activity within a game (send hits, define layout, forfeit) responds with the updated version of the game in question.
+Notes: 
+- Every endpoint that relates to some activity within a game (send hits, define layout, forfeit) responds with the updated version of the game in question;
+- If a game is in the completed state, the winner of the game is the current player of that game.
 
 ### Hypermedia Relations
 
