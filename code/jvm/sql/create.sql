@@ -51,7 +51,7 @@ create table if not exists hits(
 
 create table if not exists ships(
    first_square varchar(5) check (first_square ~ '[a-z][0-9]+'),
-   name varchar(20) not null references ship_types(name),
+   name varchar(20) not null,
    size integer not null check (size > 0),
    n_of_hits integer check (n_of_hits >= 0),
    destroyed bool not null,
