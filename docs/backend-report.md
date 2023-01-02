@@ -8,7 +8,7 @@ This document contains the relevant design and implementation aspects of the Exp
 
 The following diagram holds the Entity-Relationship model for the information managed by the system.
 
-![er](https://user-images.githubusercontent.com/76069448/210234478-41775281-52be-439a-a15f-24e490543b8a.png)
+![er](https://user-images.githubusercontent.com/76069448/210240970-e52d074b-913a-4bc7-a09b-1e84d4cbd58c.png)
 
 We highlight the following aspects:
 
@@ -24,7 +24,7 @@ The conceptual model has the following restrictions:
 - The state in the games entity must be "layout_definition", "shooting" or "completed";
 - The hit_timestamp and on_ship in the hits entity cannot be null;
 - The square in the hits and ship entities must follow a specific format (a letter followed by a number);
-- The name, size, destroyed and orientation in the ships entity cannot be null;
+- The name, size, destroyed, n_of_hits and orientation in the ships entity cannot be null;
 - The size in the ships entity must be above 0;
 - The n_of_hits in the ships entity must be above or equal to zero;
 - The orientation in the ships entity must be "vertical" or "horizontal";
@@ -82,7 +82,7 @@ Identified defects:
 
 - The authenticated endpoints require 2 different connections to the database (one for the authentication and one for the actual operation);
 - Using the current player to define the winner of a completed game might not be the ideal way to do it. After implementing the ending of a game when the layouts of the players aren't submitted, no player wins but the current player still has a value. Even though no player's score is increased, one of the two players is logically considered the winner (the player that first entered the lobby);
-- It is redundant to have the size attribute in the ships table. Since a ship has a type (which also has a size), the size of the ship will always be the same as the ship type size;
+- The name and size of a ship should be associated with its ship type (there should be a relationship between the ships and ship_types entities). Since this would cause a major refactor in the whole project and the client applications, it's something that we'll have to figure out when we have the time to do it;
 - The http and database modules are not fully tested because, since those tests require a full reset of the database, we focused our attention more on the services logic tests which give us more insightful results about the design quality of our code; 
 - The services module uses error codes based on the HTTP protocol which should only be known by the http module;
 - Because the Kotlin language's type system has no knowledge of the exceptions that might be thrown in a function, it might be better to stop using exceptions in the services module to represent an error and replace them with different return types for each error in every function.
