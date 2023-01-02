@@ -1,6 +1,6 @@
 ## Introduction
 
-This document contains the relevant design and implementation aspects of the client application of the battleships game.
+This document contains the relevant design and implementation aspects of the client application of the Exploding Battleships game.
 
 ## Software organization
 
