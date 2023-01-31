@@ -188,16 +188,7 @@ function changeOrientation(boardSize: number, layoutShip: LayoutShip, layoutShip
     return () => { setLayoutShips(replace(layoutShips, layoutShip, newLayoutShip)) }
 }
 
-function areAllShipsInTheBoard(ships: LayoutShip[]): boolean {
-    ships.map((ship) => {
-        if (!ship.position) {
-            return false
-        }
-    })
-    return true
-}
-
-export function Layout(
+export function layout(
     game: Game,
     currentUser: CurrentUser,
     timer: number,

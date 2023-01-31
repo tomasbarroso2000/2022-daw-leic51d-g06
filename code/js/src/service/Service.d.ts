@@ -18,7 +18,7 @@ interface Service {
     rankings: (limit: number, skip: number) => Promise<Rankings | undefined>
     createUser: (name: string, email: string, password: string) => Promise<CreateUser | undefined>
     createToken: (email: string, password: string) => Promise<CreateToken | undefined>
-    gameTypes: () => Promise<GameTypes | undefined>
+    gameTypes: (token: string) => Promise<GameTypes | undefined>
     enterLobby: (token: string, gameType: string) => Promise<EnterLobby | undefined>
     enteredGame: (token: string, lobbyId: number) => Promise<EnteredGame | undefined>
     games: (token: string, limit: number, skip: number) => Promise<GamesList | undefined>

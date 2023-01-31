@@ -90,7 +90,7 @@ export class FakeService implements Service {
         )
     }
 
-    gameTypes = async function (): Promise<GameTypes | undefined> {
+    gameTypes = async function (token: string): Promise<GameTypes | undefined> {
         return Promise.resolve(
             {
                 gameTypes: [

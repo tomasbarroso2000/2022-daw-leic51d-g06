@@ -10,8 +10,10 @@ import { Loading } from "./Loading"
 
 export function CreateGame() {
     document.title = "Create Game"
-    const gameTypes: Result<GameTypes> | undefined = askService(service, service.gameTypes)
     const currentUser = useCurrentUser()
+
+    const gameTypes: Result<GameTypes> | undefined = askService(service, service.gameTypes, currentUser.token)
+    
     const [lobbyId, setLobbyId]: [number | undefined, React.Dispatch<any>] = useState(undefined)
     const [gameId, setGameId]: [number | undefined, React.Dispatch<any>] = useState(undefined)
 

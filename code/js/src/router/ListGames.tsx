@@ -18,7 +18,7 @@ function getState(game: Game) {
     }
 }
 
-function Playing(game: Game) {
+function playing(game: Game) {
     let result: JSX.Element
 
     if (game.state != "shooting") {
@@ -63,7 +63,7 @@ export function ListGames() {
                         <ButtonFab isDisabled={!games.result.hasMore} onClick={() => { setSkip(skip + limit) }} text={"Next"} />
                         <div className="arrow-right"></div>
                     </div>
-                    {games.result.games.map((game: Game) => Playing(game))}
+                    {games.result.games.map((game: Game) => playing(game))}
                     <div>
                         <Link to={paths['game-types']}><button id="game-new-btn">New Game</button></Link>
                     </div>

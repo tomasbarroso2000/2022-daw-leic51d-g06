@@ -45,7 +45,7 @@ function enemySquareStyle(color: string, squareSize: number): React.CSSPropertie
     }
 }
 
-export function Shooting(
+export function shooting(
     game: Game,
     currentUser: CurrentUser,
     timer: number,

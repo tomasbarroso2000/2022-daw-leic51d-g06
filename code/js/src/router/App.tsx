@@ -49,7 +49,7 @@ const router = createBrowserRouter([
             },
             {
                 "path": paths['game-types'],
-                "element": <GetAuthn required={false}><CreateGame /></GetAuthn>
+                "element": <GetAuthn required><CreateGame /></GetAuthn>
             },
             {
                 "path": paths['wait-for-game'],

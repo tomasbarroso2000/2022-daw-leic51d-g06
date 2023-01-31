@@ -4,10 +4,10 @@ import { paths, service } from "./App";
 import { useCurrentUser } from "./Authn";
 import { Square } from "../domain/Square";
 import { Dispatch, useEffect, useState } from "react";
-import { Layout } from "./Layout";
+import { layout } from "./layout";
 import { LayoutShip } from "../domain/LayoutShip";
-import { Shooting } from "./Shooting";
-import { FinishedGame } from "./FinishedGame";
+import { shooting } from "./shooting";
+import { finishedGame } from "./finishedGame";
 import { Navigate, useParams } from "react-router-dom";
 import { calcTimeLeft } from "../utils/calcTimeLeft";
 import { Loading } from "./Loading";
@@ -77,13 +77,13 @@ export function PlayGame() {
 
     switch (gameInfo.state) {
         case "layout_definition": {
-            return Layout(gameInfo, currentUser, timer, layoutShips, loading, setLayoutShips, setGameInfo, setLoading)
+            return layout(gameInfo, currentUser, timer, layoutShips, loading, setLayoutShips, setGameInfo, setLoading)
         }
         case "shooting": {
-            return Shooting(gameInfo, currentUser, timer, selectedSquares, loading, setSelectedSquares, setGameInfo, setLoading)
+            return shooting(gameInfo, currentUser, timer, selectedSquares, loading, setSelectedSquares, setGameInfo, setLoading)
         }
         case "completed": {
-            return FinishedGame(gameInfo)
+            return finishedGame(gameInfo)
         }
     }
 }

@@ -1,9 +1,9 @@
 import { Home } from "../domain/Home"
 import { Rankings } from "../domain/Rankings"
 import { Service } from "./Service"
-import { EmbeddedLink, Action, Field, isEmbeddedLink } from "siren-types"
+import { EmbeddedLink, Action, Field } from "siren-types"
 import { doFetch } from "../utils/doFetch"
-import { CreateUser, UserRequest } from "../domain/CreateUser"
+import { CreateUser } from "../domain/CreateUser"
 import { CreateToken } from "../domain/CreateToken"
 import { GameType, GameTypes } from "../domain/GameTypes"
 import { ShipType } from "../domain/ShipType"
@@ -32,6 +32,7 @@ export class RealService implements Service {
     userHomeLink: EmbeddedLink | undefined = undefined
     rankingsLink: EmbeddedLink | undefined = undefined
     gamesLink: EmbeddedLink | undefined = undefined
+    gameTypesLink: EmbeddedLink | undefined = undefined
     gameInfoLink: EmbeddedLink | undefined = undefined
     
     createUserAction: Action | undefined = undefined
@@ -166,11 +167,11 @@ export class RealService implements Service {
      * CREATE USER
      */
 
-    ensureCreateUserAction = async function (): Promise<string | undefined> {
+    ensureCreateUserAction = async function (): Promise<Action | undefined> {
         if (this.createUserAction == undefined) {
-            return this.home().then(() => this.createUserAction.href)
+            return this.home().then(() => this.createUserAction)
         }
-        return this.createUserAction.href
+        return this.createUserAction
     }
 
     getCreateUserFields = async function (): Promise<Array<Field> | undefined> {
@@ -182,14 +183,15 @@ export class RealService implements Service {
     }
 
     createUser = async function (name:string, email: string, password: string): Promise<CreateUser | undefined> {
-        const path = await this.ensureCreateUserAction()
-        if (!path)
+        const action: Action | undefined = await this.ensureCreateUserAction()
+
+        if (!action)
             return undefined
 
         this.createUserNavigation = []
 
-        const res = await doFetch(baseURL + path, {
-            method: 'POST',
+        const res = await doFetch(baseURL + action.href, {
+            method: action.method,
             body: {
                 "name": name,
                 "email": email,
@@ -213,11 +215,11 @@ export class RealService implements Service {
      *  LOGIN
      */
 
-     ensureCreateTokenAction = async function (): Promise<string | undefined> {
+     ensureCreateTokenAction = async function (): Promise<Action | undefined> {
         if (this.createTokenAction == undefined) {
-            return this.home().then(() => this.createTokenAction.href)
+            return this.home().then(() => this.createTokenAction)
         }   
-        return this.createTokenAction.href
+        return this.createTokenAction
     }
 
     getCreateTokenFields = async function (): Promise<Array<Field> | undefined> {
@@ -229,12 +231,13 @@ export class RealService implements Service {
     }
 
     createToken = async function (email: string, password: string): Promise<CreateToken | undefined> {
-        const path = await this.ensureCreateTokenAction()
-        if (!path)
+        const action: Action | undefined = await this.ensureCreateTokenAction()
+
+        if (!action)
             return undefined
 
-        const res = await doFetch(baseURL + path, {
-            method: 'POST',
+        const res = await doFetch(baseURL + action.href, {
+            method: action.method,
             body: {
                 "email": email,
                 "password": password
@@ -259,8 +262,20 @@ export class RealService implements Service {
      * CREATE GAME
      */
 
-    gameTypes = async function (): Promise<GameTypes | undefined> {
-        const res = await doFetch(baseURL + "/api/games/types")
+    ensureGameTypesLink = async function (token: string): Promise<string | undefined> {
+        if (this.gameTypesLink == undefined) {
+            return this.games(token, 1, 0).then(() => this.gameTypesLink.href)
+        }
+        return this.gameTypesLink.href
+    }
+
+    gameTypes = async function (token: string): Promise<GameTypes | undefined> {
+        const path = await this.ensureGameTypesLink(token)
+
+        if (!path)
+            return undefined
+
+        const res = await doFetch(baseURL + path)
 
         if (!res) {
             return undefined
@@ -289,21 +304,21 @@ export class RealService implements Service {
      * LOBBY
      */
 
-    ensureEnterLobbyAction = async function (token: string): Promise<string | undefined> {
+    ensureEnterLobbyAction = async function (token: string): Promise<Action | undefined> {
         if (this.enterLobbyAction == undefined) {
-            return this.userHome(token).then(() => this.enterLobbyAction.href)
+            return this.userHome(token).then(() => this.enterLobbyAction)
         }
-        return this.enterLobbyAction.href
+        return this.enterLobbyAction
     }
 
     enterLobby = async function(token: string, gameType: string) : Promise<EnterLobby | undefined> {
-        const path = await this.ensureEnterLobbyAction()
+        const action: Action | undefined = await this.ensureEnterLobbyAction()
 
-        if (!path)
+        if (!action)
             return undefined
 
-        const res = await doFetch(baseURL + path, {
-            method: 'POST',
+        const res = await doFetch(baseURL + action.href, {
+            method: action.method,
             body: {
                 "game-type": gameType
             },
@@ -376,7 +391,7 @@ export class RealService implements Service {
             }
         })
 
-        this.gameInfoLink = jsonObj.links.find((link: EmbeddedLink) => link.rel[0] == "game")
+        this.gameTypesLink = jsonObj.links.find((link: EmbeddedLink) => link.rel[0] == "game-types")
 
         return {
             games: jsonObj.properties.games,
